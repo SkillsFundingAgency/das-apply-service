@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Roatp;
@@ -16,52 +15,63 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
             _qnaApiClient = qnaApiClient;
         }
 
+        /// <summary>
+        /// Resets the all pages when it would have been dependant (aka branched) on a particular route.
+        /// </summary>
+        /// <param name="applicationId">The application to reset</param>
+        /// <param name="routeId">The new route</param>
         public async Task ResetRouteQuestions(Guid applicationId, int routeId)
         {
+            await ResetDescribeYourOrganisationSectionTags(applicationId, routeId);
+            await ResetTypeOfApprenticeshipTrainingSectionTags(applicationId, routeId);
+        }
+
+        private async Task ResetDescribeYourOrganisationSectionTags(Guid applicationId, int routeId)
+        {
+            const int sequenceNo = RoatpWorkflowSequenceIds.YourOrganisation;
+            const int sectionNo = RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation;
 
             switch (routeId)
             {
                 case ApplicationRoute.MainProviderApplicationRoute:
-                    await ResetSection14TasksForEmployerTags(applicationId);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_Supporting);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Supporting);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_Supporting);
-                    break;
                 case ApplicationRoute.SupportingProviderApplicationRoute:
-                    await ResetSection14TasksForEmployerTags(applicationId);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_MainEmployer);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_MainEmployer);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_MainEmployer);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage);
                     break;
                 case ApplicationRoute.EmployerProviderApplicationRoute:
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteType);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyType);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolType);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFA);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFA);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_Supporting);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Supporting);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_Supporting);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage);
                     break;
             }
-        
         }
 
-        private async Task ResetSection14TasksForEmployerTags(Guid applicationId)
+        private async Task ResetTypeOfApprenticeshipTrainingSectionTags(Guid applicationId, int routeId)
         {
-            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage);
-            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteType);
-            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyType);
-            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolType);
-            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFA);
-            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFA);
+            const int sequenceNo = RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining;
+            const int sectionNo = RoatpWorkflowSectionIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining;
+
+            switch (routeId)
+            {
+                case ApplicationRoute.MainProviderApplicationRoute:
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_Supporting);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Supporting);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_Supporting);
+                    break;
+                case ApplicationRoute.SupportingProviderApplicationRoute:
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_MainEmployer);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_MainEmployer);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_MainEmployer);
+                    break;
+                case ApplicationRoute.EmployerProviderApplicationRoute:
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_Supporting);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Supporting);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_Supporting);
+                    break;
+            }
         }
     }
 }

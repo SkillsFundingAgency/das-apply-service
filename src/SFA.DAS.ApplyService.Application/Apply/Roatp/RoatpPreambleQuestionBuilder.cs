@@ -68,6 +68,7 @@
         public static string SchoolType = "YO-180";
         public static string RegisteredESFA = "YO-200";
         public static string FundedESFA = "YO-210";
+        public static string SupportedByOFS = "YO-220";
         public static string OrganisationDescription = "YO-230";
         public static string OfficeForStudents = "YO-235";
         public static string InitialTeacherTraining = "YO-240";
@@ -166,6 +167,7 @@
         public static class PlanningApprenticeshipTraining
         {
             public const int WhatYouWillNeed = 1;
+            public const int TypeOfApprenticeshipTraining = 2;
         }
 
         public static class DeliveringApprenticeshipTraining
@@ -229,6 +231,7 @@
             public static string SchoolType = "180";
             public static string RegisteredESFA = "200";
             public static string FundedESFA = "210";
+            public static string SupportedByOFS = "220";
             public static string OrganisationDescription = "230";
         }
 

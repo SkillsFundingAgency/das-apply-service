@@ -119,7 +119,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return reviewOutcomes;
         }
 
-
         [HttpGet("Clarification/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/Download/{fileName}")]
         public async Task<IActionResult> DownloadClarificationFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string fileName)
         {
