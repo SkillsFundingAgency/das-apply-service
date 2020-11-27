@@ -34,7 +34,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                     RoatpWorkflowSectionIds.Preamble,
                     RoatpWorkflowPageIds.Preamble,
                     RoatpPreambleQuestionIdConstants.TwoInTwelveMonths)).ReturnsAsync(ValueOfQuestion);
-            var actualResult = _controller.GetTradingName(_applicationId).Result;
+
+            var actualResult = _controller.GetTwoInTwelveMonths(_applicationId).Result;
 
             Assert.AreEqual(ValueOfQuestion, actualResult);
         }
@@ -50,7 +51,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                     RoatpWorkflowPageIds.Preamble,
                     RoatpPreambleQuestionIdConstants.TwoInTwelveMonths)).ReturnsAsync((string)null);
 
-            var actualResult = _controller.GetTradingName(_applicationId).Result;
+            var actualResult = _controller.GetTwoInTwelveMonths(_applicationId).Result;
 
             Assert.IsNull(actualResult);
         }
