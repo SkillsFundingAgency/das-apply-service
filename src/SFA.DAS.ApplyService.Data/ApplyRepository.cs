@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Domain.Apply.Gateway;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -872,6 +873,23 @@ namespace SFA.DAS.ApplyService.Data
                     new { applicationId });
 
                 return applyDataResults.FirstOrDefault();
+            }
+        }
+
+        public async Task<IEnumerable<GatewayApplicationStatusCount>> GetGatewayApplicationStatusCounts()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applicationStatuses = await connection.QueryAsync<GatewayApplicationStatusCount>(
+                    @"select
+                        a.GatewayReviewStatus as GatewayApplicationStatus,
+                        count(1) as 'Count'
+                        from Apply a
+                        where a.DeletedAt is null
+                        group by a.GatewayReviewStatus
+                        ");
+
+                return applicationStatuses;
             }
         }
 
