@@ -56,7 +56,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return new InitialTeacherTraining
             {
                 DoesOrganisationOfferInitialTeacherTraining = false,
-                IsPostGradOnlyApprenticeship = false
+                IsPostGradOnlyApprenticeship = null
             };
         }
 
