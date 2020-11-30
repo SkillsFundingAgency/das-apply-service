@@ -152,7 +152,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, string gatewayReviewStatus, string gatewayReviewComment, string userName)
+        public async Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, string gatewayReviewStatus, string gatewayReviewComment, string userId, string userName)
         {
             var applicationStatus = ApplicationStatus.GatewayAssessed;
             if(gatewayReviewStatus.Equals(GatewayReviewStatus.ClarificationSent))
@@ -165,9 +165,11 @@ namespace SFA.DAS.ApplyService.Data
                                                       ,[GatewayReviewStatus] = @gatewayReviewStatus
                                                       ,[GatewayReviewComment] = @gatewayReviewComment
                                                       ,[UpdatedAt] = GetUTCDATE()
-                                                      ,[UpdatedBy] = @userName
+                                                      ,[UpdatedBy] = @userName 
+                                                      ,[GatewayUserId] = @userId
+                                                      ,[GatewayUsername] = @userName
                                                  WHERE [ApplicationId] = @applicationId",
-                    new { applicationId, applicationStatus, gatewayReviewStatus, gatewayReviewComment, userName });
+                    new { applicationId, applicationStatus, gatewayReviewStatus, gatewayReviewComment, userId, userName });
             }
 
             return await Task.FromResult(true);
@@ -340,6 +342,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
                             apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            apply.GatewayUserName,                            
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
