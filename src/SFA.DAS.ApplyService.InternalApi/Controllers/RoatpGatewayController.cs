@@ -46,10 +46,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
          public async Task<ActionResult<GatewayCommonDetails>> GetGatewayCommonDetails(Guid applicationId, string pageId,
              string userName)
          {
-             var applicationDetails = await _applyRepository.GetApplication(applicationId);
-
-             var ukprn = applicationDetails.ApplyData.ApplyDetails.UKPRN;
+            var applicationDetails = await _applyRepository.GetApplication(applicationId);
+ 
+            var ukprn = applicationDetails.ApplyData.ApplyDetails.UKPRN;
             var organisationName = applicationDetails.ApplyData.ApplyDetails.OrganisationName;
+            var providerRouteName = applicationDetails.ApplyData.ApplyDetails.ProviderRouteName;
             var checkedOn = applicationDetails?.ApplyData?.GatewayReviewDetails?.SourcesCheckedOn;
             var submittedOn = applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn;
             var status = await _applyRepository.GetGatewayPageStatus(applicationId, pageId);
@@ -62,6 +63,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 ApplicationSubmittedOn = submittedOn,
                 CheckedOn = checkedOn,
                 LegalName = organisationName,
+                ProviderRouteName = providerRouteName,
                 Status = status,
                 GatewayReviewStatus = gatewayReviewStatus,
                 OptionPassText = status == GatewayAnswerStatus.Pass ? comments: null,

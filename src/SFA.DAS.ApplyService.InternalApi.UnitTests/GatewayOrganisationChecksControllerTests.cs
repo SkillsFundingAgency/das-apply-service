@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -26,6 +23,37 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _logger = new Mock<ILogger<GatewayOrganisationChecksController>>();
             _controller = new GatewayOrganisationChecksController(_qnaApiClient.Object, _logger.Object);
+        }
+
+        [Test]
+        public void get_two_in_twelve_months_returns_expected_value_when_present()
+        {
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.Preamble,
+                    RoatpWorkflowSectionIds.Preamble,
+                    RoatpWorkflowPageIds.Preamble,
+                    RoatpPreambleQuestionIdConstants.TwoInTwelveMonths)).ReturnsAsync(ValueOfQuestion);
+
+            var actualResult = _controller.GetTwoInTwelveMonths(_applicationId).Result;
+
+            Assert.AreEqual(ValueOfQuestion, actualResult);
+        }
+
+
+        [Test]
+        public void get_two_in_twelve_months_returns_no_value_when_not_present()
+        {
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.Preamble,
+                    RoatpWorkflowSectionIds.Preamble,
+                    RoatpWorkflowPageIds.Preamble,
+                    RoatpPreambleQuestionIdConstants.TwoInTwelveMonths)).ReturnsAsync((string)null);
+
+            var actualResult = _controller.GetTwoInTwelveMonths(_applicationId).Result;
+
+            Assert.IsNull(actualResult);
         }
 
         [Test]
