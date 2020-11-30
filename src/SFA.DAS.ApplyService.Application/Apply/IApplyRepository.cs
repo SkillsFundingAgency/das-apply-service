@@ -4,6 +4,7 @@ using SFA.DAS.ApplyService.Domain.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Domain.Apply.Gateway;
 
 namespace SFA.DAS.ApplyService.Application.Apply
 {
@@ -73,5 +74,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, DateTime applicationDeterminedDate, string updatedBy);
         Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId);
+        Task<IEnumerable<GatewayApplicationStatusCount>> GetGatewayApplicationStatusCounts();
     }
 }
