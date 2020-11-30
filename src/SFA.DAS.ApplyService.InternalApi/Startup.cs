@@ -131,7 +131,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.ApplyService.InternalApi", Version = "v1" });
-
+                c.CustomSchemaIds(x => x.FullName); // Fixes issue when the same type name appears twice
                 if (_env.IsDevelopment())
                 {
                     var basePath = AppContext.BaseDirectory;
