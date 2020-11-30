@@ -308,6 +308,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
                             apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            apply.GatewayUserName,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,

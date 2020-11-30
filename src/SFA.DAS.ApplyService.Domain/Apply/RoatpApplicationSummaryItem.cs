@@ -18,6 +18,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string GatewayReviewStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
+        public string GatewayUserName { get; set; }
     }
 
     public class RoatpFinancialSummaryItem : RoatpApplicationSummaryItem
