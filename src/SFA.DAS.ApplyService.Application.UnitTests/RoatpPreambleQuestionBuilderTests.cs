@@ -53,6 +53,18 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         }
 
         [Test]
+        public void Preamble_questions_contains_TwoInTwelveMonths()
+        {
+            var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
+
+            questions.Should().NotBeNull();
+
+            var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.TwoInTwelveMonths);
+            question.Should().NotBeNull();
+            question.Value.Should().Be("No");
+        }
+
+        [Test]
         public void Preamble_questions_contains_UKPRN()
         {
             var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);

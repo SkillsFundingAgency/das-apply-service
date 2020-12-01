@@ -1,11 +1,10 @@
-﻿using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
-
-namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
+﻿namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     using System;
     using System.Linq;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
     using SFA.DAS.ApplyService.Web.Infrastructure;
     using System.Threading.Tasks;
     using Domain.Apply;
@@ -40,12 +39,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IUkprnWhitelistValidator _ukprnWhitelistValidator;
         private readonly IResetRouteQuestionsService _resetRouteQuestionsService;
 
-        private const string GetHelpSubmittedForPageFormatString = "Roatp_GetHelpSubmitted_{0}";
-
-        private string[] StatusOnlyCompanyNumberPrefixes = new[] { "IP", "SP", "IC", "SI", "NP", "NV", "RC", "SR", "NR", "NO" };
-
-        private string[] ExcludedCharityCommissionPrefixes = new[] { "SC", "NI" };
-
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient,
                                                   IUkrlpApiClient ukrlpApiClient, ISessionService sessionService,
                                                   ICompaniesHouseApiClient companiesHouseApiClient,
@@ -77,9 +70,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             if (!ModelState.IsValid)
             {
-                var model = new SelectApplicationRouteViewModel();
-                model.ApplicationRoutes = await GetApplicationRoutesForOrganisation();
-                model.ErrorMessages = new List<ValidationErrorDetail>();
+                var model = new SelectApplicationRouteViewModel
+                {
+                    ApplicationRoutes = await GetApplicationRoutesForOrganisation(),
+                    ErrorMessages = new List<ValidationErrorDetail>()
+                };
+
                 var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
                 foreach (var modelError in modelErrors)
                 {
@@ -93,10 +89,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
             }
 
-            if (routeViewModel?.ApplicationRouteId == ApplicationRoute.SupportingProviderApplicationRoute)
+            if (routeViewModel.ApplicationRouteId == ApplicationRoute.SupportingProviderApplicationRoute)
+            {
                 return View("~/Views/Roatp/TermsAndConditionsSupporting.cshtml", new ConditionsOfAcceptanceViewModel { ApplicationId = routeViewModel.ApplicationId, ApplicationRouteId = routeViewModel.ApplicationRouteId });
-
-            return View("~/Views/Roatp/TermsAndConditions.cshtml", new ConditionsOfAcceptanceViewModel { ApplicationId = routeViewModel.ApplicationId, ApplicationRouteId = routeViewModel.ApplicationRouteId });
+            }
+            else
+            {
+                return View("~/Views/Roatp/TermsAndConditions.cshtml", new ConditionsOfAcceptanceViewModel { ApplicationId = routeViewModel.ApplicationId, ApplicationRouteId = routeViewModel.ApplicationRouteId });
+            }
         }
 
         [HttpPost]
@@ -121,22 +121,53 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 return RedirectToAction("TermsAndConditionsNotAgreed", "RoatpShutterPages", model);
             }
-
-            if (model.ApplicationId == null || model.ApplicationId == Guid.Empty)
+            else if (model.ApplicationId == Guid.Empty)
             {
                 return await StartApplication(new SelectApplicationRouteViewModel
-                { ApplicationRouteId = model.ApplicationRouteId, ApplicationId = model.ApplicationId });
+                {
+                    ApplicationRouteId = model.ApplicationRouteId,
+                    ApplicationId = model.ApplicationId
+                });
 
             }
+            else
+            {
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
+            }
+        }
 
-            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
+        [HttpGet("two-in-twelve-months")]
+        public IActionResult TwoInTwelveMonths()
+        {
+            var model = new TwoInTwelveMonthsViewModel();
+            PopulateGetHelpWithQuestion(model, "TwoApplicationsWithinTwelveMonths");
+
+            return View("~/Views/Roatp/TwoInTwelveMonths.cshtml", model);
+        }
+
+        [HttpPost("two-in-twelve-months")]
+        public IActionResult TwoInTwelveMonths(TwoInTwelveMonthsViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/TwoInTwelveMonths.cshtml", model);
+            }
+
+            if (model.HasTwoInTwelveMonths is true)
+            {
+                return RedirectToAction("TwoApplicationsWithinTwelveMonths", "RoatpShutterPages");
+            }
+            else
+            {
+                return RedirectToAction("EnterApplicationUkprn");
+            }
         }
 
         [Route("enter-uk-provider-reference-number")]
         public IActionResult EnterApplicationUkprn(string ukprn)
         {
             var model = new SearchByUkprnViewModel();
-            if (!String.IsNullOrWhiteSpace(ukprn))
+            if (!string.IsNullOrWhiteSpace(ukprn))
             {
                 model.UKPRN = ukprn;
             }
@@ -152,7 +183,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             long ukprn = 0;
             string validationMessage = string.Empty;
-            if (String.IsNullOrWhiteSpace(model.UKPRN))
+
+            if (string.IsNullOrWhiteSpace(model.UKPRN))
             {
                 validationMessage = UkprnValidationMessages.MissingUkprn;
             }
@@ -169,7 +201,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             }
 
-            if (!String.IsNullOrEmpty(validationMessage))
+            if (!string.IsNullOrEmpty(validationMessage))
             {
                 model.ErrorMessages = new List<ValidationErrorDetail>
                 {
@@ -245,7 +277,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
             }
 
-            if (model.ApplicationId == null || model.ApplicationId == Guid.Empty)
+            if (model.ApplicationId == Guid.Empty)
             {
                 return await StartRoatpApplication(model);
             }
@@ -258,7 +290,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [Route("organisation-levy-paying-employer")]
         public IActionResult ConfirmLevyStatus(Guid applicationId, string ukprn, int applicationRouteId)
         {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             var viewModel = new EmployerLevyStatusViewModel
             {
                 ApplicationId = applicationId,
@@ -289,7 +320,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/ConfirmLevyStatus.cshtml", model);
             }
 
-            if (model.ApplicationId == null || model.ApplicationId == Guid.Empty)
+            if (model.ApplicationId == Guid.Empty)
             {
                 var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
                 applicationDetails.LevyPayingEmployer = model.LevyPayingEmployer;
@@ -305,7 +336,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     LevyPayingEmployer = model.LevyPayingEmployer
                 };
 
-                if (selectApplicationRouteModel.ApplicationId == null || selectApplicationRouteModel.ApplicationId == Guid.Empty)
+                if (selectApplicationRouteModel.ApplicationId == Guid.Empty)
                 {
                     return await TermsAndConditions(new SelectApplicationRouteViewModel { ApplicationRouteId = model.ApplicationRouteId });
                 }
@@ -314,6 +345,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return await UpdateApplicationProviderRoute(selectApplicationRouteModel);
                 }
             }
+
             return RedirectToAction("IneligibleNonLevy", new { applicationId = model.ApplicationId });
         }
 
@@ -345,14 +377,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             if (model.ContinueWithApplication == "Y")
             {
-                if (model.ApplicationId == null || model.ApplicationId == Guid.Empty)
+                if (model.ApplicationId == Guid.Empty)
                 {
                     return RedirectToAction("SelectApplicationRoute");
                 }
-                return RedirectToAction("ChangeApplicationProviderRoute", new { applicationId = model.ApplicationId });
+                else
+                {
+                    return RedirectToAction("ChangeApplicationProviderRoute", new { applicationId = model.ApplicationId });
+                }
             }
-
-            return RedirectToAction("NonLevyAbandonedApplication", "RoatpShutterPages");
+            else
+            {
+                return RedirectToAction("NonLevyAbandonedApplication", "RoatpShutterPages");
+            }
         }
 
         [Route("choose-provider-route")]
@@ -386,7 +423,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                 return RedirectToAction("ConfirmLevyStatus", new { ukprn = applicationDetails.UKPRN, applicationRouteId = model.ApplicationRouteId });
             }
-            return await TermsAndConditions(new SelectApplicationRouteViewModel { ApplicationRouteId = model.ApplicationRouteId });
+            else
+            {
+                return await TermsAndConditions(new SelectApplicationRouteViewModel { ApplicationRouteId = model.ApplicationRouteId });
+            }
         }
 
         public async Task<IActionResult> VerifyOrganisationDetails()
@@ -400,8 +440,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 return RedirectToAction("ApplicationInProgress", "RoatpShutterPages", new ExistingApplicationViewModel { UKPRN = providerDetails.UKPRN });
             }
-
-            if (existingApplicationStatuses.Any(x => x.Status == ApplicationStatus.Submitted))
+            else if (existingApplicationStatuses.Any(x => x.Status == ApplicationStatus.Submitted))
             {
                 return RedirectToAction("ApplicationPreviouslySubmitted", "RoatpShutterPages", new ExistingApplicationViewModel { UKPRN = providerDetails.UKPRN });
             }
@@ -427,13 +466,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 {
                     return RedirectToAction("CompaniesHouseNotAvailable", "RoatpShutterPages");
                 }
-
-                if (companyDetails.Status == CompaniesHouseSummary.CompanyStatusNotFound)
+                else if (companyDetails.Status == CompaniesHouseSummary.CompanyStatusNotFound)
                 {
                     return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
                 }
-
-                if (!CompaniesHouseValidator.CompaniesHouseStatusValid(companyDetails.CompanyNumber, companyDetails.Status))
+                else if (!CompaniesHouseValidator.CompaniesHouseStatusValid(companyDetails.CompanyNumber, companyDetails.Status))
                 {
                     return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
                 }
@@ -446,7 +483,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 var charityCommissionVerification = providerDetails.VerificationDetails.FirstOrDefault(x =>
                     x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority);
 
-                int charityNumber;
                 string verificationId = charityCommissionVerification.VerificationId;
                 if (verificationId.Contains("-"))
                 {
@@ -455,14 +491,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                 if (IsEnglandAndWalesCharityCommissionNumber(verificationId))
                 {
-                    bool isValidCharityNumber = int.TryParse(verificationId, out charityNumber);
+                    bool isValidCharityNumber = int.TryParse(verificationId, out var charityNumber);
                     if (!isValidCharityNumber)
                     {
                         return RedirectToAction("CharityNotFound", "RoatpShutterPages");
                     }
 
                     var charityApiResponse = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
-
                     if (!charityApiResponse.Success)
                     {
                         return RedirectToAction("CharityCommissionNotAvailable", "RoatpShutterPages");
@@ -491,13 +526,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
-
             if (ProviderEligibleToChangeRoute(roatpRegisterStatus))
             {
                 return RedirectToAction("ProviderAlreadyOnRegister");
             }
-
-            return RedirectToAction("SelectApplicationRoute");
+            else
+            {
+                return RedirectToAction("SelectApplicationRoute");
+            }
         }
 
         private async Task<IActionResult> StartRoatpApplication(SelectApplicationRouteViewModel model)
@@ -559,8 +595,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 return RedirectToAction("ChangeApplicationProviderRoute", new { applicationId = model.ApplicationId });
             }
-
-            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
+            else
+            {
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
+            }
         }
 
         [HttpGet]
@@ -598,7 +636,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     Value = model.ApplicationRouteId.ToString()
                 }
             };
-
 
             var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.ProviderRoute, providerRouteAnswer);
 
@@ -698,27 +735,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/ChosenToRemainOnRegister.cshtml", model);
         }
 
-        private bool ProviderEligibleToChangeRoute(OrganisationRegisterStatus roatpRegisterStatus)
+        private static bool ProviderEligibleToChangeRoute(OrganisationRegisterStatus roatpRegisterStatus)
         {
-            if (roatpRegisterStatus.UkprnOnRegister
-                && (roatpRegisterStatus.StatusId == OrganisationStatus.Active
-                || roatpRegisterStatus.StatusId == OrganisationStatus.ActiveNotTakingOnApprentices
-                || roatpRegisterStatus.StatusId == OrganisationStatus.Onboarding))
-            {
-                return true;
-            }
+            var eligibleStatusIds = new List<int?> { OrganisationStatus.Active, OrganisationStatus.ActiveNotTakingOnApprentices, OrganisationStatus.Onboarding };
 
-            return false;
+            return roatpRegisterStatus.UkprnOnRegister && eligibleStatusIds.Contains(roatpRegisterStatus.StatusId);
         }
 
-        private bool IsEnglandAndWalesCharityCommissionNumber(string charityNumber)
+        private static bool IsEnglandAndWalesCharityCommissionNumber(string charityNumber)
         {
-            if (String.IsNullOrWhiteSpace(charityNumber))
+            var excludedCharityCommissionPrefixes = new[] { "SC", "NI" };
+
+            if (string.IsNullOrWhiteSpace(charityNumber))
             {
                 return false;
             }
 
-            foreach (var prefix in ExcludedCharityCommissionPrefixes)
+            foreach (var prefix in excludedCharityCommissionPrefixes)
             {
                 if (charityNumber.ToUpper().StartsWith(prefix))
                 {
@@ -739,17 +772,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             ApplicationRoute existingRoute = null;
             var applicationRoutes = (await _roatpApiClient.GetApplicationRoutes()).ToList();
 
-            if (applicationId == null || applicationId == Guid.Empty)
+            if (applicationId == Guid.Empty)
             {
                 var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-                if (applicationDetails != null)
+
+                if (applicationDetails?.RoatpRegisterStatus != null
+                && applicationDetails.RoatpRegisterStatus.UkprnOnRegister
+                && applicationDetails.RoatpRegisterStatus.StatusId != OrganisationStatus.Removed)
                 {
-                    if (applicationDetails.RoatpRegisterStatus != null
-                    && applicationDetails.RoatpRegisterStatus.UkprnOnRegister
-                    && applicationDetails.RoatpRegisterStatus.StatusId != OrganisationStatus.Removed)
-                    {
-                        existingRoute = applicationRoutes.FirstOrDefault(x => x.Id == applicationDetails.RoatpRegisterStatus.ProviderTypeId);
-                    }
+                    existingRoute = applicationRoutes.FirstOrDefault(x => x.Id == applicationDetails.RoatpRegisterStatus.ProviderTypeId);
                 }
             }
             else
@@ -772,6 +803,5 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             return applicationRoutes;
         }
-
     }
 }

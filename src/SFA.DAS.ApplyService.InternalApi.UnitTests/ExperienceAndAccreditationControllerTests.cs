@@ -115,7 +115,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var actualResult = _controller.GetInitialTeacherTraining(_applicationId).Result;
 
             Assert.IsFalse(actualResult.DoesOrganisationOfferInitialTeacherTraining);
-            Assert.IsFalse(actualResult.IsPostGradOnlyApprenticeship);
+            Assert.IsNull(actualResult.IsPostGradOnlyApprenticeship);
             _qnaApiClient.Verify(x => x.GetAnswerValue(_applicationId,
                     RoatpWorkflowSequenceIds.YourOrganisation,
                     RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
