@@ -71,13 +71,14 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var gatewayReviewComment = "Some commment";
             var userName = "John Smith";
+            var userId = "user id 123";
            
-            _applyRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(applicationId, gatewayReviewStatus, gatewayReviewComment, userName)).ReturnsAsync(true); 
+            _applyRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(applicationId, gatewayReviewStatus, gatewayReviewComment, userId, userName)).ReturnsAsync(true); 
 
-            var request = new UpdateGatewayReviewStatusAndCommentRequest(applicationId, gatewayReviewStatus, gatewayReviewComment, userName);
+            var request = new UpdateGatewayReviewStatusAndCommentRequest(applicationId, gatewayReviewStatus, gatewayReviewComment, userId, userName);
             _controller.UpdateGatewayReviewStatusAndComment(request).GetAwaiter().GetResult();
 
-            _applyRepository.Verify(x => x.UpdateGatewayReviewStatusAndComment(applicationId, gatewayReviewStatus, gatewayReviewComment, userName), Times.Once);
+            _applyRepository.Verify(x => x.UpdateGatewayReviewStatusAndComment(applicationId, gatewayReviewStatus, gatewayReviewComment,  userId,userName), Times.Once);
         }
     }
 }

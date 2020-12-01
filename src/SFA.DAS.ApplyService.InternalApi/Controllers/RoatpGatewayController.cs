@@ -30,15 +30,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost]
          public async Task GatewayPageSubmit([FromBody] UpsertGatewayPageAnswerRequest request)
         {
-            await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.UserName,
+            await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.UserId, request.UserName,
                 request.Status, request.Comments);
-
         }
 
         [HttpPost("Gateway/UpdateGatewayReviewStatusAndComment")]
         public async Task<ActionResult<bool>> UpdateGatewayReviewStatusAndComment([FromBody] UpdateGatewayReviewStatusAndCommentRequest request)
         {
-            return await _applyRepository.UpdateGatewayReviewStatusAndComment(request.ApplicationId, request.GatewayReviewStatus, request.GatewayReviewComment, request.UserName);
+            return await _applyRepository.UpdateGatewayReviewStatusAndComment(request.ApplicationId, request.GatewayReviewStatus, request.GatewayReviewComment, request.UserId, request.UserName);
         }
 
         [Route("Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}")]
