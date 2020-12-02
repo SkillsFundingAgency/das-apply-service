@@ -814,10 +814,11 @@ namespace SFA.DAS.ApplyService.Data
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
-                          and GatewayReviewStatus  in (@gatewayReviewStatusPass, @gatewayReviewStatusFail, @gatewayReviewStatusReject)
+                          and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
-						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)
-						  and apply.OversightStatus NOT IN (@oversightReviewStatusPass,@oversightReviewStatusFail)
+						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
+                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
+                            and apply.OversightStatus NOT IN (@oversightReviewStatusPass,@oversightReviewStatusFail)
                             order by CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
                         {
                             gatewayReviewStatusPass = GatewayReviewStatus.Pass,
@@ -853,10 +854,12 @@ namespace SFA.DAS.ApplyService.Data
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
-                          and GatewayReviewStatus  in (@gatewayReviewStatusPass, @gatewayReviewStatusFail, @gatewayReviewStatusReject)
+                          and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
-						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)
-						  and apply.OversightStatus IN (@oversightReviewStatusPass,@oversightReviewStatusFail)  
+						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt))
+                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
+
+						  and apply.OversightStatus IN (@oversightReviewStatusPass,@oversightReviewStatusFail) 
                              order by cast(Apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
                     {
                         gatewayReviewStatusPass = GatewayReviewStatus.Pass,
