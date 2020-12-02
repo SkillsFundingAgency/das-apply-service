@@ -351,12 +351,13 @@ namespace SFA.DAS.ApplyService.Data
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-	                        AND apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusDeclined)",
+	                        AND apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusFailed, @gatewayReviewStatusRejected)",
                         new
                         {
                             applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
-                            gatewayReviewStatusDeclined = GatewayReviewStatus.Fail
+                            gatewayReviewStatusFailed = GatewayReviewStatus.Fail,
+                            GatewayReviewStatusRejected = GatewayReviewStatus.Reject
                         })).ToList();
             }
         }
@@ -471,14 +472,16 @@ namespace SFA.DAS.ApplyService.Data
                         ) s
                         WHERE s.SequenceNo = @financialHealthSequence
                         AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)",
+                        AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
+                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass)",
                         new
                         {
                             financialHealthSequence = 2,
                             applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             financialStatusDraft = FinancialReviewStatus.Draft,
                             financialStatusNew = FinancialReviewStatus.New,
-                            financialStatusInProgress = FinancialReviewStatus.InProgress
+                            financialStatusInProgress = FinancialReviewStatus.InProgress,
+                            gatewayStatusPass = GatewayReviewStatus.Pass
                         })).ToList();
             }
         }
@@ -520,11 +523,13 @@ namespace SFA.DAS.ApplyService.Data
                         ) s
                         WHERE s.SequenceNo = @financialHealthSequence AND s.NotRequired = 'false'
                         AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN ( @financialStatusClarificationSent )",
+                        AND apply.FinancialReviewStatus IN ( @financialStatusClarificationSent )
+                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass)",
                         new
                         {
                             financialHealthSequence = 2,
-                            financialStatusClarificationSent = FinancialReviewStatus.ClarificationSent
+                            financialStatusClarificationSent = FinancialReviewStatus.ClarificationSent,
+                            gatewayStatusPass = GatewayReviewStatus.Pass
                         })).ToList();
             }
         }
@@ -566,13 +571,15 @@ namespace SFA.DAS.ApplyService.Data
                         ) s
                         WHERE s.SequenceNo = @financialHealthSequence
                         AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN ( @financialStatusApproved, @financialStatusDeclined, @financialStatusExempt )",
+                        AND apply.FinancialReviewStatus IN ( @financialStatusApproved, @financialStatusDeclined, @financialStatusExempt )
+                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass)",
                        new
                        {
                            financialHealthSequence = 2,
                            financialStatusApproved = FinancialReviewStatus.Pass,
                            financialStatusDeclined = FinancialReviewStatus.Fail,
-                           financialStatusExempt = FinancialReviewStatus.Exempt
+                           financialStatusExempt = FinancialReviewStatus.Exempt,
+                           gatewayStatusPass = GatewayReviewStatus.Pass
                        })).ToList();
             }
         }
@@ -807,20 +814,22 @@ namespace SFA.DAS.ApplyService.Data
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
-                          and GatewayReviewStatus  in (@gatewayReviewStatusApproved)
+                          and GatewayReviewStatus  in (@gatewayReviewStatusPass, @gatewayReviewStatusFail, @gatewayReviewStatusReject)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
 						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)
 						  and apply.OversightStatus NOT IN (@oversightReviewStatusPass,@oversightReviewStatusFail)
                             order by CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
                         {
-                            gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Pass,
-                            assessorReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Approved,
-                            assessorReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Declined,
-                            financialReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Pass,
-                            financialReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Fail,
-                            financialReviewStatusExempt = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Exempt,
-                            oversightReviewStatusPass= SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Successful,
-                            oversightReviewStatusFail = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Unsuccessful
+                            gatewayReviewStatusPass = GatewayReviewStatus.Pass,
+                            gatewayReviewStatusFail = GatewayReviewStatus.Fail,
+                            GatewayReviewStatusReject = GatewayReviewStatus.Reject,
+                            assessorReviewStatusApproved = AssessorReviewStatus.Approved,
+                            assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
+                            financialReviewStatusApproved = FinancialReviewStatus.Pass,
+                            financialReviewStatusDeclined = FinancialReviewStatus.Fail,
+                            financialReviewStatusExempt = FinancialReviewStatus.Exempt,
+                            oversightReviewStatusPass= OversightReviewStatus.Successful,
+                            oversightReviewStatusFail = OversightReviewStatus.Unsuccessful
 
                         })).ToList();
             }
@@ -844,20 +853,22 @@ namespace SFA.DAS.ApplyService.Data
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
-                          and GatewayReviewStatus  in (@gatewayReviewStatusApproved)
+                          and GatewayReviewStatus  in (@gatewayReviewStatusPass, @gatewayReviewStatusFail, @gatewayReviewStatusReject)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
 						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)
 						  and apply.OversightStatus IN (@oversightReviewStatusPass,@oversightReviewStatusFail)  
                              order by cast(Apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
                     {
-                        gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Pass,
-                        assessorReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Approved,
-                        assessorReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Declined,
-                        financialReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Pass,
-                        financialReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Fail,
-                        financialReviewStatusExempt = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Exempt,
-                        oversightReviewStatusPass = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Successful,
-                        oversightReviewStatusFail = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Unsuccessful
+                        gatewayReviewStatusPass = GatewayReviewStatus.Pass,
+                        gatewayReviewStatusFail = GatewayReviewStatus.Fail,
+                        GatewayReviewStatusReject = GatewayReviewStatus.Reject,
+                        assessorReviewStatusApproved = AssessorReviewStatus.Approved,
+                        assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
+                        financialReviewStatusApproved = FinancialReviewStatus.Pass,
+                        financialReviewStatusDeclined = FinancialReviewStatus.Fail,
+                        financialReviewStatusExempt = FinancialReviewStatus.Exempt,
+                        oversightReviewStatusPass = OversightReviewStatus.Successful,
+                        oversightReviewStatusFail = OversightReviewStatus.Unsuccessful
 
                     })).ToList();
             }
