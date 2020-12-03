@@ -28,7 +28,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
                     .Sum(x => x.Count),
                 ClosedApplicationsCount = counts.Where(x =>
                         x.GatewayApplicationStatus == GatewayReviewStatus.Fail ||
-                        x.GatewayApplicationStatus == GatewayReviewStatus.Pass)
+                        x.GatewayApplicationStatus == GatewayReviewStatus.Pass || 
+                        x.GatewayApplicationStatus== GatewayReviewStatus.Reject)
                     .Sum(x => x.Count)
             };
 
