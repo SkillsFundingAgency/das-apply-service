@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
+using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.InternalApi.Types;
@@ -15,21 +17,43 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     [Authorize]
     public class RoatpGatewayController: Controller
     {
+        private const string TwoInTwelveMonthsPageId = "TwoInTwelveMonths";
+
         private readonly IApplyRepository _applyRepository;
         private readonly IGatewayApiChecksService _gatewayApiChecksService;
         private readonly ILogger<RoatpGatewayController> _logger;
+        private readonly IMediator _mediator;
 
-        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger,  IGatewayApiChecksService gatewayApiChecksService) 
+        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IMediator mediator, IGatewayApiChecksService gatewayApiChecksService) 
         {
             _applyRepository = applyRepository;
             _logger = logger;
             _gatewayApiChecksService = gatewayApiChecksService;
+            _mediator = mediator;
         }
 
         [Route("Gateway/Page/Submit")]
         [HttpPost]
          public async Task GatewayPageSubmit([FromBody] UpsertGatewayPageAnswerRequest request)
         {
+            if(request.PageId == TwoInTwelveMonthsPageId)
+            {
+                var application = await _mediator.Send(new GetApplicationRequest(request.ApplicationId));
+
+                if(application.GatewayReviewStatus == GatewayReviewStatus.New)
+                {
+                    _logger.LogInformation($"{TwoInTwelveMonthsPageId} - Starting Gateway Review for application {application.ApplicationId}");
+                    await _mediator.Send(new StartGatewayReviewRequest(application.ApplicationId, request.UserName));
+                }
+
+                if(request.Status == GatewayAnswerStatus.Pass && application.ApplyData.GatewayReviewDetails is null)
+                {
+                    _logger.LogInformation($"{TwoInTwelveMonthsPageId} - Getting external API checks data for application {application.ApplicationId}");
+                    application.ApplyData.GatewayReviewDetails = await _gatewayApiChecksService.GetExternalApiCheckDetails(application.ApplicationId, request.UserName);
+                    await _applyRepository.UpdateApplyData(application.ApplicationId, application.ApplyData, request.UserName);
+                }
+            }
+
             await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.UserId, request.UserName,
                 request.Status, request.Comments);
         }

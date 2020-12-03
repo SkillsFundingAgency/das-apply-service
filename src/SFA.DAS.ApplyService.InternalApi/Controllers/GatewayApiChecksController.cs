@@ -22,23 +22,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _applyRepository = applyRepository;
             _logger = logger;
             _gatewayApiChecksService = gatewayApiChecksService;
-        }
-
-        [HttpGet]
-        [Route("Gateway/ApiChecks/{applicationId}/{userRequestedChecks}")]
-        public async Task<IActionResult> ExternalApiChecks(Guid applicationId, string userRequestedChecks)
-        {
-            var applyData = await GetApplyData(applicationId);
-
-            if (applyData.GatewayReviewDetails == null)
-            {
-                _logger.LogInformation($"Getting external API checks data for application {applicationId}");
-                applyData.GatewayReviewDetails = await _gatewayApiChecksService.GetExternalApiCheckDetails(applicationId, userRequestedChecks);
-
-                await _applyRepository.UpdateApplyData(applicationId, applyData, userRequestedChecks);
-            }
-            return Ok(applyData.GatewayReviewDetails);
-        }             
+        }        
 
         [HttpGet]
         [Route("Gateway/UkrlpData/{applicationId}")]

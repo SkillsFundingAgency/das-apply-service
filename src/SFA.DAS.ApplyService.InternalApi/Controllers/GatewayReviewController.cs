@@ -51,17 +51,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             await _mediator.Send(new EvaluateGatewayRequest(applicationId, request.IsGatewayApproved, request.EvaluatedBy));
         }
-
-        [HttpPost("GatewayReview/{applicationId}/StartReview")]
-        public async Task StartGatewayReview(Guid applicationId, [FromBody] StartGatewayReviewApplicationRequest request)
-        {
-            await _mediator.Send(new StartGatewayReviewRequest(applicationId, request.Reviewer));
-        }
-    }
-
-    public class StartGatewayReviewApplicationRequest
-    {
-        public string Reviewer { get; set; }
     }
 
     public class EvaluateGatewayApplicationRequest
