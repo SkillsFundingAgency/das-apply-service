@@ -171,6 +171,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Resubmitted = "Re-submitted"; // TECH DEBT: Correct to "Resubmitted"
         public const string Fail = "Fail";
         public const string Pass = "Pass";
+        public const string Reject = "Reject";
     }
 
     public static class AssessorReviewStatus
@@ -197,6 +198,9 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Fail = "Fail";
         public const string Exempt = "Exempt";
     }
+
+   
+
 
     public static class SequenceReviewStatus
     {
