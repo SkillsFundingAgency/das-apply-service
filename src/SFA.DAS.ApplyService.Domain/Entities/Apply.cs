@@ -28,6 +28,9 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string Assessor2UserId { get; set; }
         public string Assessor2Name { get; set; }
         public string Assessor2ReviewStatus { get; set; }
+
+        public string GatewayUserId { get; set; }
+        public string GatewayUserName { get; set; }
     }
 
     public class ApplyData
@@ -59,6 +62,9 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public CharityCommissionSummary CharityCommissionDetails { get; set; }
         public OrganisationRegisterStatus RoatpRegisterDetails { get; set; }
         public DateTime? SourcesCheckedOn { get; set; }
+        public string Comments { get; set; }// TODO: redirect GatewayReviewComment to this
+        public DateTime? OutcomeDateTime { get; set; } // TODO: save this when another other outcome made
+        public DateTime? ClarificationRequestedOn { get; set; } // TODO: save this when clarification outcome made
     }
 
     public class ApplySequence
