@@ -34,7 +34,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         [Route("Gateway/Page/Submit")]
         [HttpPost]
-         public async Task GatewayPageSubmit([FromBody] UpsertGatewayPageAnswerRequest request)
+         public async Task GatewayPageSubmit([FromBody] Types.Requests.UpdateGatewayPageAnswerRequest request)
         {
             if(request.PageId == TwoInTwelveMonthsPageId)
             {
