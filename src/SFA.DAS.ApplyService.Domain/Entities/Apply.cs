@@ -59,6 +59,13 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public CharityCommissionSummary CharityCommissionDetails { get; set; }
         public OrganisationRegisterStatus RoatpRegisterDetails { get; set; }
         public DateTime? SourcesCheckedOn { get; set; }
+        public string Comments { get; set; }
+        public DateTime? OutcomeDateTime { get; set; }
+        public DateTime? ClarificationRequestedOn { get; set; }
+
+        public string ClarificationComments { get; set; }  //MFCMFC
+        public string ClarificationRequestedBy { get; set; } //MFCMFC
+
     }
 
     public class ApplySequence
