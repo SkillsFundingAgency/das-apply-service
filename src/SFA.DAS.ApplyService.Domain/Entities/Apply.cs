@@ -28,6 +28,9 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string Assessor2UserId { get; set; }
         public string Assessor2Name { get; set; }
         public string Assessor2ReviewStatus { get; set; }
+
+        public string GatewayUserId { get; set; }
+        public string GatewayUserName { get; set; }
     }
 
     public class ApplyData

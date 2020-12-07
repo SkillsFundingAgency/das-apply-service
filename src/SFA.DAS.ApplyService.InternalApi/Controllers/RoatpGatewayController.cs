@@ -61,7 +61,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Gateway/UpdateGatewayReviewStatusAndComment")]
         public async Task<ActionResult<bool>> UpdateGatewayReviewStatusAndComment([FromBody] UpdateGatewayReviewStatusAndCommentRequest request)
         {
-            return await _applyRepository.UpdateGatewayReviewStatusAndComment(request.ApplicationId, request.GatewayReviewStatus, request.GatewayReviewComment, request.UserId, request.UserName);
+            var application = await _mediator.Send(new GetApplicationRequest(request.ApplicationId));
+
+            if (application != null)
+            {
+                if(application.ApplyData.GatewayReviewDetails != null)
+                {
+                    application.ApplyData.GatewayReviewDetails.OutcomeDateTime = DateTime.UtcNow;
+                    application.ApplyData.GatewayReviewDetails.Comments = request.GatewayReviewComment;
+                }
+                return await _applyRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, request.GatewayReviewStatus, request.UserId, request.UserName);
+            }
+
+            return false;
         }
 
         [Route("Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}")]

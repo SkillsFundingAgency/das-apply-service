@@ -152,7 +152,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, string gatewayReviewStatus, string gatewayReviewComment, string userId, string userName)
+        public async Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, ApplyData applyData, string gatewayReviewStatus, string userId, string userName)
         {
             var applicationStatus = ApplicationStatus.GatewayAssessed;
             if(gatewayReviewStatus.Equals(GatewayReviewStatus.ClarificationSent))
@@ -163,13 +163,13 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(@"UPDATE [Apply]
                                                    SET [ApplicationStatus] = @applicationStatus
                                                       ,[GatewayReviewStatus] = @gatewayReviewStatus
-                                                      ,[GatewayReviewComment] = @gatewayReviewComment
+                                                      ,[ApplyData] = @applyData
                                                       ,[UpdatedAt] = GetUTCDATE()
                                                       ,[UpdatedBy] = @userName 
                                                       ,[GatewayUserId] = @userId
                                                       ,[GatewayUsername] = @userName
                                                  WHERE [ApplicationId] = @applicationId",
-                    new { applicationId, applicationStatus, gatewayReviewStatus, gatewayReviewComment, userId, userName });
+                    new { applicationId, applicationStatus, gatewayReviewStatus, applyData, userId, userName });
             }
 
             return await Task.FromResult(true);
