@@ -54,8 +54,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 }
             }
 
-            await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.UserId, request.UserName,
-                request.Status, request.Comments);
+            await _mediator.Send(new UpdateGatewayPageAnswerRequest(request.ApplicationId,
+                request.PageId,
+                request.Status,
+                request.Comments,
+                request.UserId,
+                request.UserName));
         }
 
         [HttpPost("Gateway/UpdateGatewayReviewStatusAndComment")]

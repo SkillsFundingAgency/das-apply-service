@@ -82,7 +82,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var gatewayReviewComment = "Some comment";
 
-            var request = new UpdateGatewayPageAnswerRequest
+            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
             {
                 ApplicationId = _applicationId,
                 Comments = gatewayReviewComment,
@@ -105,7 +105,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var gatewayReviewComment = "Some comment";
 
-            var request = new UpdateGatewayPageAnswerRequest
+            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
             {
                 ApplicationId = _applicationId,
                 Comments = gatewayReviewComment,
@@ -127,7 +127,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var gatewayReviewComment = "Some comment";
 
-            var request = new UpdateGatewayPageAnswerRequest
+            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
             {
                 ApplicationId = _applicationId,
                 Comments = gatewayReviewComment,
