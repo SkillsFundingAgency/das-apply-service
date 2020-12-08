@@ -122,33 +122,41 @@ namespace SFA.DAS.ApplyService.Data
                     new { applicationId, pageId }));
             }
         }
-        public async Task SubmitGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName)
+
+        public async Task InsertGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName)
         {
-            try
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                using (var connection = new SqlConnection(_config.SqlConnectionString))
-                {
-                    await connection.OpenAsync(default);
-                    await connection.ExecuteAsync(
-                        @"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
-	                                                    INSERT INTO GatewayAnswer ([Id],[ApplicationId],[PageId],[Status],[comments],[UpdatedAt],[UpdatedBy])
-														     values (@id, @applicationId, @pageId,@status,@comments,@updatedAt,@updatedBy)
-                                                    ELSE
-                                                     UPDATE GatewayAnswer
-                                                                SET  Status = @status, Comments =@comments, UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
-                                                                WHERE [Id] = @id",
-                        pageAnswer);
+                await connection.OpenAsync(default);
+                await connection.ExecuteAsync(
+                    @"INSERT INTO GatewayAnswer ([Id],[ApplicationId],[PageId],[Status],[comments],[UpdatedAt],[UpdatedBy])
+														values (@id, @applicationId, @pageId,@status,@comments,@updatedAt,@updatedBy)"
+                    ,pageAnswer);
 
-                    await connection.ExecuteAsync(
-                        "update [Apply] set [GatewayUserId]=@userId, [GatewayUserName]=@userName WHERE [ApplicationId] = @applicationId",
-                        new {pageAnswer.ApplicationId, userId, userName});
+                await connection.ExecuteAsync(
+                    "update [Apply] set [GatewayUserId]=@userId, [GatewayUserName]=@userName WHERE [ApplicationId] = @applicationId",
+                    new { pageAnswer.ApplicationId, userId, userName });
 
-                    connection.Close();
-                }
+                connection.Close();
             }
-            catch (Exception ex)
+        }
+
+        public async Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var m = ex.Message;
+                await connection.OpenAsync(default);
+                await connection.ExecuteAsync(
+                    @"UPDATE GatewayAnswer
+                        SET  Status = @status, Comments =@comments, UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
+                        WHERE [Id] = @id",
+                    pageAnswer);
+
+                await connection.ExecuteAsync(
+                    "update [Apply] set [GatewayUserId]=@userId, [GatewayUserName]=@userName WHERE [ApplicationId] = @applicationId",
+                    new { pageAnswer.ApplicationId, userId, userName });
+
+                connection.Close();
             }
         }
 

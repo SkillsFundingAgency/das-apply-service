@@ -25,6 +25,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 
             var answer = await _applyRepository.GetGatewayPageAnswer(request.ApplicationId, request.PageId);
 
+            var isNew = answer == null;
+
             if (answer == null)
             {
                 answer = new GatewayPageAnswer
@@ -46,10 +48,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             answer.UpdatedAt = DateTime.UtcNow;
             answer.UpdatedBy = request.UserName;
 
-
-            //todo: remove the original method in the repo
-            //todo: consider splitting into create/update methods:
-            await _applyRepository.SubmitGatewayPageAnswer(answer, request.UserId, request.UserName);
+            if (isNew)
+            {
+                await _applyRepository.InsertGatewayPageAnswer(answer, request.UserId, request.UserName);
+            }
+            else
+            {
+                await _applyRepository.UpdateGatewayPageAnswer(answer, request.UserId, request.UserName);
+            }
 
             await _auditService.Save();
 

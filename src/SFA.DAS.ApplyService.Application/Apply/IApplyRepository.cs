@@ -24,7 +24,9 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<string> GetGatewayPageStatus(Guid applicationId, string pageId);
         Task<string> GetGatewayPageComments(Guid applicationId, string pageId);
 
-        Task SubmitGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName);
+        Task InsertGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName);
+        Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName);
+
         Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, ApplyData applyData, string gatewayReviewStatus, string userId, string userName);
 
         Task<bool> CanSubmitApplication(Guid applicationId);
