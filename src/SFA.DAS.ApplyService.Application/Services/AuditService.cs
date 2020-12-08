@@ -15,7 +15,6 @@ namespace SFA.DAS.ApplyService.Application.Services
         private readonly IApplyRepository _applyRepository;
         private readonly List<TrackedItem> _trackedItems;
         private UserAction _userAction;
-        private Guid _correlationId;
         private string _userId;
         private string _userName;
 
@@ -29,7 +28,6 @@ namespace SFA.DAS.ApplyService.Application.Services
 
         public void StartTracking(UserAction userAction, string userId, string userName)
         {
-            _correlationId = Guid.NewGuid();
             _userAction = userAction;
             _userId = userId;
             _userName = userName;
@@ -84,7 +82,6 @@ namespace SFA.DAS.ApplyService.Application.Services
                 };
 
                 await _applyRepository.InsertAudit(audit);
-
             }
         }
     }
