@@ -127,17 +127,10 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.OpenAsync(default);
                 await connection.ExecuteAsync(
                     @"INSERT INTO GatewayAnswer ([Id],[ApplicationId],[PageId],[Status],[comments],[UpdatedAt],[UpdatedBy])
 														values (@id, @applicationId, @pageId,@status,@comments,@updatedAt,@updatedBy)"
                     ,pageAnswer);
-
-                await connection.ExecuteAsync(
-                    "update [Apply] set [GatewayUserId]=@userId, [GatewayUserName]=@userName WHERE [ApplicationId] = @applicationId",
-                    new { pageAnswer.ApplicationId, userId, userName });
-
-                connection.Close();
             }
         }
 
@@ -145,18 +138,40 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.OpenAsync(default);
                 await connection.ExecuteAsync(
                     @"UPDATE GatewayAnswer
                         SET  Status = @status, Comments =@comments, UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
                         WHERE [Id] = @id",
                     pageAnswer);
+            }
+        }
 
+        public async Task UpdateApplication(Apply application)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
                 await connection.ExecuteAsync(
-                    "update [Apply] set [GatewayUserId]=@userId, [GatewayUserName]=@userName WHERE [ApplicationId] = @applicationId",
-                    new { pageAnswer.ApplicationId, userId, userName });
-
-                connection.Close();
+                    @"UPDATE [Apply] SET
+                        ApplicationStatus = @ApplicationStatus,
+                        GatewayReviewStatus = @GatewayReviewStatus,
+                        GatewayReviewComment = @GatewayReviewComment,
+                        AssessorReviewStatus = @AssessorReviewStatus,
+                        FinancialReviewStatus = @FinancialReviewStatus,
+                        FinancialGrade = @FinancialGrade,
+                        Assessor1UserId = @Assessor1UserId,
+                        Assessor2UserId = @Assessor2UserId,
+                        Assessor1Name = @Assessor1Name,
+                        Assessor2Name = @Assessor2Name,
+                        Assessor1ReviewStatus = @Assessor1ReviewStatus,
+                        Assessor2ReviewStatus = @Assessor2ReviewStatus,
+                        ModerationStatus = @ModerationStatus,
+                        OversightStatus = @OversightStatus,
+                        GatewayUserId = @gatewayUserId,
+                        GatewayUserName = @gatewayUserName,
+                        UpdatedBy = @updatedBy,
+                        UpdatedAt = @updatedAt
+                        WHERE [Id] = @id",
+                    application);
             }
         }
 

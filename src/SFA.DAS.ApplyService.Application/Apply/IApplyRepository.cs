@@ -26,6 +26,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task InsertGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName);
         Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName);
+        Task UpdateApplication(Domain.Entities.Apply application);
 
         Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, ApplyData applyData, string gatewayReviewStatus, string userId, string userName);
 

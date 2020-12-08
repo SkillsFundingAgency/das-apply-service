@@ -21,6 +21,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway
         private Fixture _autoFixture;
         private Guid _applicationId;
         private GatewayPageAnswer _existingGatewayPageAnswer;
+        private Domain.Entities.Apply _existingApplication;
         private string _pageId;
         private string _userId;
         private string _userName;
@@ -43,7 +44,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway
             _comments = _autoFixture.Create<string>();
 
             _existingGatewayPageAnswer = _autoFixture.Create<GatewayPageAnswer>();
+            _existingApplication = _autoFixture.Create<Domain.Entities.Apply>();
 
+            _repository.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(_existingApplication);
+            _repository.Setup(x => x.UpdateApplication(It.IsAny<Domain.Entities.Apply>())).Returns(() => Task.CompletedTask);
             _repository.Setup(x => x.InsertGatewayPageAnswer(It.IsAny<GatewayPageAnswer>(), _userId, _userName)).Returns(() => Task.CompletedTask);
             _repository.Setup(x => x.UpdateGatewayPageAnswer(It.IsAny<GatewayPageAnswer>(), _userId, _userName)).Returns(() => Task.CompletedTask);
 
@@ -107,6 +111,36 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway
             _auditService.Verify(x => x.StartTracking(UserAction.UpdateGatewayPageOutcome, _userId, _userName));
             _auditService.Verify(x => x.AuditUpdate(It.Is<GatewayPageAnswer>(a => a == _existingGatewayPageAnswer)));
             _auditService.Verify(x => x.Save());
+        }
+
+        [Test]
+        public async Task Handle_Updates_Application_With_Gateway_User_Details()
+        {
+            _repository.Setup(x => x.GetGatewayPageAnswer(_applicationId, _pageId))
+                .ReturnsAsync(_existingGatewayPageAnswer);
+
+            await _handler.Handle(
+                new UpdateGatewayPageAnswerRequest(_applicationId, _pageId, _status, _comments, _userId, _userName),
+                CancellationToken.None);
+
+            _repository.Verify(x => x.UpdateApplication(It.Is<Domain.Entities.Apply>(a =>
+                a.Id == _existingApplication.Id
+                && a.GatewayUserId == _userId
+                && a.GatewayUserName == _userName
+            )));
+        }
+
+        [Test]
+        public async Task Handle_ApplicationUpdate_Is_Subject_To_Audit()
+        {
+            _repository.Setup(x => x.GetGatewayPageAnswer(_applicationId, _pageId))
+                .ReturnsAsync(_existingGatewayPageAnswer);
+
+            await _handler.Handle(
+                new UpdateGatewayPageAnswerRequest(_applicationId, _pageId, _status, _comments, _userId, _userName),
+                CancellationToken.None);
+
+            _auditService.Verify(x => x.AuditUpdate(It.Is<Domain.Entities.Apply>(a => a == _existingApplication)));
         }
     }
 }

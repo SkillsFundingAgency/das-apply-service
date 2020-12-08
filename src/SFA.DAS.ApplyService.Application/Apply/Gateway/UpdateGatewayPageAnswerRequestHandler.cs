@@ -23,6 +23,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
         {
             _auditService.StartTracking(UserAction.UpdateGatewayPageOutcome, request.UserId, request.UserName);
 
+            var application = await _applyRepository.GetApplication(request.ApplicationId);
             var answer = await _applyRepository.GetGatewayPageAnswer(request.ApplicationId, request.PageId);
             var isNew = answer == null;
 
@@ -36,10 +37,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 _auditService.AuditUpdate(answer);
             }
 
+            _auditService.AuditUpdate(application);
+
             answer.Status = request.Status;
             answer.Comments = request.Comments;
             answer.UpdatedAt = DateTime.UtcNow;
             answer.UpdatedBy = request.UserName;
+            application.GatewayUserId = request.UserId;
+            application.GatewayUserName = request.UserName;
+            application.UpdatedBy = request.UserName;
+            application.UpdatedAt = DateTime.UtcNow;
 
             if (isNew)
             {
@@ -50,6 +57,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 await _applyRepository.UpdateGatewayPageAnswer(answer, request.UserId, request.UserName);
             }
 
+            await _applyRepository.UpdateApplication(application);
             await _auditService.Save();
 
             return Unit.Value;
