@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply.Gateway;
+using SFA.DAS.ApplyService.Domain.Audit;
 
 namespace SFA.DAS.ApplyService.Application.Apply
 {
@@ -23,7 +24,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<string> GetGatewayPageStatus(Guid applicationId, string pageId);
         Task<string> GetGatewayPageComments(Guid applicationId, string pageId);
 
-        Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string userId, string userName, string status, string comments);
+        Task SubmitGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName);
         Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, ApplyData applyData, string gatewayReviewStatus, string userId, string userName);
 
         Task<bool> CanSubmitApplication(Guid applicationId);
@@ -75,5 +76,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, DateTime applicationDeterminedDate, string updatedBy);
         Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId);
         Task<IEnumerable<GatewayApplicationStatusCount>> GetGatewayApplicationStatusCounts();
+
+        Task InsertAudit(Audit audit);
     }
 }

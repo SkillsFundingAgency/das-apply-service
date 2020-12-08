@@ -10,9 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply.Gateway;
+using SFA.DAS.ApplyService.Domain.Audit;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -49,15 +49,9 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var application = await connection.QuerySingleOrDefaultAsync<Apply>(@"SELECT * FROM apply WHERE ApplicationId = @applicationId", new { applicationId });
-
-                //if (application != null)
-                //{
-                //    application.ApplyingOrganisation = await GetOrganisationForApplication(applicationId);
-                //    application.ApplyingContact = await GetContactForApplication(applicationId);
-                //}
-
-                return application;
+                return await connection.QuerySingleOrDefaultAsync<Apply>(
+                    @"SELECT * FROM apply WHERE ApplicationId = @applicationId",
+                    new { applicationId });
             }
         }
 
@@ -128,27 +122,33 @@ namespace SFA.DAS.ApplyService.Data
                     new { applicationId, pageId }));
             }
         }
-
-        public async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string userId, string userName, string status, string comments)
+        public async Task SubmitGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            try
             {
-                await connection.OpenAsync(default);
-                await connection.ExecuteAsync(
-                    @"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
-	                                                    INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[comments],[CreatedAt],[CreatedBy])
-														     values (@applicationId, @pageId,@status,@comments,GetUTCDATE(),@userName)
+                using (var connection = new SqlConnection(_config.SqlConnectionString))
+                {
+                    await connection.OpenAsync(default);
+                    await connection.ExecuteAsync(
+                        @"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
+	                                                    INSERT INTO GatewayAnswer ([Id],[ApplicationId],[PageId],[Status],[comments],[UpdatedAt],[UpdatedBy])
+														     values (@id, @applicationId, @pageId,@status,@comments,@updatedAt,@updatedBy)
                                                     ELSE
                                                      UPDATE GatewayAnswer
-                                                                SET  Status = @status, Comments =@comments, UpdatedBy = @userName, UpdatedAt = GETUTCDATE()
-                                                                WHERE  ApplicationId = @applicationId and pageId = @pageId",
-                    new { applicationId, pageId, status, comments, userName });
+                                                                SET  Status = @status, Comments =@comments, UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
+                                                                WHERE [Id] = @id",
+                        pageAnswer);
 
-                await connection.ExecuteAsync(
-                    "update [Apply] set [GatewayUserId]=@userId, [GatewayUserName]=@userName WHERE [ApplicationId] = @applicationId",
-                    new { applicationId, userId, userName });
+                    await connection.ExecuteAsync(
+                        "update [Apply] set [GatewayUserId]=@userId, [GatewayUserName]=@userName WHERE [ApplicationId] = @applicationId",
+                        new {pageAnswer.ApplicationId, userId, userName});
 
-                connection.Close();
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                var m = ex.Message;
             }
         }
 
@@ -1014,6 +1014,36 @@ namespace SFA.DAS.ApplyService.Data
             }
 
             return await Task.FromResult(true);
+        }
+
+        public async Task InsertAudit(Audit audit)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"INSERT INTO [dbo].[Audit]
+           ([EntityType]
+           ,[EntityId]
+           ,[UserId]
+           ,[UserName]
+           ,[UserAction]
+           ,[AuditDate]
+           ,[InitialState]
+           ,[UpdatedState]
+           ,[Diff]
+           ,[CorrelationId])
+            VALUES
+           (@EntityType
+           ,@EntityId
+           ,@UserId
+           ,@UserName
+           ,@UserAction
+           ,@AuditDate
+           ,@InitialState
+           ,@UpdatedState
+           ,@Diff
+           ,@CorrelationId)",
+                    audit);
+            }
         }
 
     }
