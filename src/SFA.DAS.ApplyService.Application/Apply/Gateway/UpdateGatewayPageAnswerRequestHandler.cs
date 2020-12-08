@@ -24,18 +24,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             _auditService.StartTracking(UserAction.UpdateGatewayPageOutcome, request.UserId, request.UserName);
 
             var answer = await _applyRepository.GetGatewayPageAnswer(request.ApplicationId, request.PageId);
-
             var isNew = answer == null;
 
             if (answer == null)
             {
-                answer = new GatewayPageAnswer
-                {
-                    Id = Guid.NewGuid(),
-                    ApplicationId = request.ApplicationId,
-                    PageId = request.PageId,
-                };
-
+                answer = CreateNewGatewayPageAnswer(request.ApplicationId, request.PageId);
                 _auditService.AuditInsert(answer);
             }
             else
@@ -60,6 +53,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             await _auditService.Save();
 
             return Unit.Value;
+        }
+
+        private GatewayPageAnswer CreateNewGatewayPageAnswer(Guid applicationId, string pageId)
+        {
+            return new GatewayPageAnswer
+            {
+                Id = Guid.NewGuid(),
+                ApplicationId = applicationId,
+                PageId = pageId,
+            };
         }
     }
 }
