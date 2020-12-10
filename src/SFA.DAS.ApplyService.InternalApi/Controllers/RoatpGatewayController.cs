@@ -65,15 +65,36 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             if (application != null)
             {
-                if(application.ApplyData.GatewayReviewDetails != null)
+                if (application.ApplyData.GatewayReviewDetails == null)
                 {
-                    application.ApplyData.GatewayReviewDetails.OutcomeDateTime = DateTime.UtcNow;
-                    application.ApplyData.GatewayReviewDetails.Comments = request.GatewayReviewComment;
+                    application.ApplyData.GatewayReviewDetails = new ApplyGatewayDetails();
                 }
+
+                application.ApplyData.GatewayReviewDetails.OutcomeDateTime = DateTime.UtcNow;
+                application.ApplyData.GatewayReviewDetails.Comments = request.GatewayReviewComment;
+                
                 return await _applyRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, request.GatewayReviewStatus, request.UserId, request.UserName);
             }
 
             return false;
+        }
+
+        [HttpPost("Gateway/UpdateGatewayClarification")]
+        public async Task<ActionResult<bool>> UpdateGatewayClarification([FromBody] UpdateGatewayReviewStatusAsClarification request)
+        {
+            var application = await _mediator.Send(new GetApplicationRequest(request.ApplicationId));
+
+            if (application == null) return false;
+
+            if (application.ApplyData.GatewayReviewDetails == null)
+            {
+                application.ApplyData.GatewayReviewDetails = new ApplyGatewayDetails();
+            }
+
+            application.ApplyData.GatewayReviewDetails.ClarificationRequestedOn = DateTime.UtcNow;
+            application.ApplyData.GatewayReviewDetails.ClarificationRequestedBy = request.UserId;
+                
+            return await _applyRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, GatewayReviewStatus.ClarificationSent, request.UserId, request.UserName);
         }
 
         [Route("Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}")]

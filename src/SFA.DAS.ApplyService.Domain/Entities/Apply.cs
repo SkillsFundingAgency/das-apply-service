@@ -65,9 +65,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string Comments { get; set; }
         public DateTime? OutcomeDateTime { get; set; }
         public DateTime? ClarificationRequestedOn { get; set; }
-
-        public string ClarificationComments { get; set; }  //MFCMFC
-        public string ClarificationRequestedBy { get; set; } //MFCMFC
+        public string ClarificationRequestedBy { get; set; } 
 
     }
 
