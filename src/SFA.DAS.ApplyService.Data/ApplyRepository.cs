@@ -209,7 +209,7 @@ namespace SFA.DAS.ApplyService.Data
             return canSubmit;
         }
 
-        public async Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy)
+        public async Task SubmitApplication(Guid applicationId, ApplyData applyData, FinancialData financialData, Guid submittedBy)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -229,6 +229,18 @@ namespace SFA.DAS.ApplyService.Data
                                                       GatewayReviewStatus = GatewayReviewStatus.New, 
                                                       FinancialReviewStatus = FinancialReviewStatus.New,
                                                       submittedBy });
+                
+                await connection.ExecuteAsync(@"insert into FinancialData ([ApplicationId]
+                   ,[TurnOver]
+                   ,[Depreciation]
+                   ,[ProfitLoss]
+                   ,[Dividends]
+                   ,[IntangibleAssets]
+                   ,[Assets]
+                   ,[Liabilities]
+                   ,[ShareholderFunds]
+                   ,[Borrowings]) values (@ApplicationId, @TurnOver,@Depreciation, @ProfitLoss,@Dividends,@IntangibleAssets
+                   ,@Assets,@Liabilities,@ShareholderFunds,@Borrowings)", financialData);
             }
         }
 
