@@ -1,14 +1,15 @@
 ﻿using System;
+using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 {
-    public class UpdateGatewayReviewStatusAsClarification
+    public class UpdateGatewayReviewStatusAsClarificationRequest:IRequest<bool>
     {
         public Guid ApplicationId { get; }
         public string UserId { get; }
         public string UserName { get; }
 
-        public UpdateGatewayReviewStatusAsClarification(Guid applicationId, string userId, string userName)
+        public UpdateGatewayReviewStatusAsClarificationRequest(Guid applicationId, string userId, string userName)
         {
             ApplicationId = applicationId;
             UserId = userId;
