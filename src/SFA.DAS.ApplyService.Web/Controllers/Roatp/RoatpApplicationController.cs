@@ -1256,6 +1256,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var organisationVerificationStatus = await organisationVerificationStatusTask;
             var applicationRoutes = await applicationRoutesTask;
 
+            var financialEvidence = allSections.Single(x => x.SequenceId== RoatpWorkflowSequenceIds.FinancialEvidence && x.SectionId == RoatpWorkflowSectionIds.FinancialEvidence.YourOrganisationsFinancialEvidence);
+            var financialsPage = await _qnaApiClient.GetPage(model.ApplicationId, financialEvidence.Id, RoatpWorkflowPageIds.FinancialEvidence.YourOrganisationsFinancialEvidence);
+
             await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
             var sequences = await _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
 
@@ -1289,7 +1292,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ProviderRoute = Convert.ToInt32(providerRoute.Value),
                 ProviderRouteName = selectedProviderRoute?.RouteName,
                 SubmittingContactId = User.GetUserId(),
-                ApplyData = application.ApplyData
+                ApplyData = application.ApplyData,
+                FinancialData = ExtractFinancialData(financialsPage)
             };
 
             var submitResult = await _apiClient.SubmitApplication(submitApplicationRequest);
@@ -1477,6 +1481,37 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return false;
+        }
+
+        private FinancialData ExtractFinancialData(Page financialsPage)
+        {
+            var answers = financialsPage.PageOfAnswers.First().Answers;
+
+            return new FinancialData
+            {
+                TurnOver = GetFinancialValue(answers, "FH-140"),
+                Depreciation = GetFinancialValue(answers, "FH-150"),
+                ProfitLoss = GetFinancialValue(answers, "FH-160"),
+                Dividends = GetFinancialValue(answers, "FH-170"),
+                Assets = GetFinancialValue(answers, "FH-180"),
+                Liabilities = GetFinancialValue(answers, "FH-190"),
+                Borrowings = GetFinancialValue(answers, "FH-200"),
+                ShareholderFunds = GetFinancialValue(answers, "FH-210"),
+                IntangibleAssets = GetFinancialValue(answers, "FH-220"),
+            };
+        }
+
+        private long GetFinancialValue(List<Answer> answers, string questionId)
+        {
+            var textValue = answers.SingleOrDefault(x => x.QuestionId == questionId)?.Value;
+
+            if (long.TryParse(textValue, out var parsedValue))
+            {
+                return parsedValue;
+            }
+
+            _logger.LogError($"Unable to get financial value for {questionId} - could not parse \"{textValue}\" to long");
+            return 0;
         }
     }
 }

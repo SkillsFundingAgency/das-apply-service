@@ -13,5 +13,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
         public string ProviderRouteName { get; set; }
 
         public ApplyData ApplyData { get; set; }
+        public FinancialData FinancialData { get; set; }
     }
 }

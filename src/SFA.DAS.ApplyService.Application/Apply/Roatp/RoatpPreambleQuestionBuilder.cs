@@ -255,6 +255,11 @@
             public static string SubcontractorContractFile = "360";
         }
 
+        public static class FinancialEvidence
+        {
+            public static string YourOrganisationsFinancialEvidence = "2131";
+        }
+
         public static class CriminalComplianceChecks
         {
             public static string CompositionCreditors = "3100";

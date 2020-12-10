@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Web.Orchestrators;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
@@ -372,6 +373,20 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.GetApplicationByUserId(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(application);
 
+            _qnaApiClient.Setup(x => x.GetSections(It.IsAny<Guid>())).ReturnsAsync(() => new List<ApplicationSection>
+            {
+                new ApplicationSection {SectionId = 2, SequenceId = 2,}
+            });
+
+            _qnaApiClient.Setup(x => x.GetPage(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>()))
+                .ReturnsAsync(() => new Page
+                {
+                    PageOfAnswers = new List<PageOfAnswers>
+                    {
+                        new PageOfAnswers{Answers = new List<Answer>()}
+                    }
+                });
+
             var providerRouteAnswer = new Answer
             {
                 QuestionId = "YO-1",
@@ -392,6 +407,97 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("ApplicationSubmitted");
 
             _submitApplicationEmailService.VerifyAll();
+        }
+
+        [Test]
+        public async Task Confirm_submit_application_submit_application_request_includes_financial_data()
+        {
+            var application = new Apply
+            {
+                ApplicationId = Guid.NewGuid(),
+                ApplicationStatus = ApplicationStatus.InProgress,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails(),
+                    Sequences = new List<ApplySequence>()
+                }
+            };
+
+            var model = new SubmitApplicationViewModel
+            {
+                ApplicationId = application.ApplicationId,
+                ConfirmSubmitApplication = true,
+                ConfirmFurtherInfoSubmitApplication = true,
+                ConfirmFurtherCommunicationSubmitApplication = true,
+                ErrorMessages = new List<ValidationErrorDetail>()
+            };
+
+            var organisationDetails = new Organisation
+            {
+                OrganisationUkprn = 10003000,
+                Name = "Organisation Name",
+                OrganisationDetails = new OrganisationDetails
+                {
+                    TradingName = "Trading name"
+                }
+            };
+
+            _apiClient.Setup(x => x.GetOrganisationByUserId(It.IsAny<Guid>())).ReturnsAsync(organisationDetails);
+
+            _apiClient.Setup(x => x.GetApplicationByUserId(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(application);
+
+            _qnaApiClient.Setup(x => x.GetSections(It.IsAny<Guid>())).ReturnsAsync(() => new List<ApplicationSection>
+            {
+                new ApplicationSection {SectionId = 2, SequenceId = 2,}
+            });
+
+            _qnaApiClient.Setup(x => x.GetPage(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>()))
+                .ReturnsAsync(() => new Page
+                {
+                    PageOfAnswers = new List<PageOfAnswers>
+                    {
+                        new PageOfAnswers{Answers = new List<Answer>
+                        {
+                            new Answer{ QuestionId = "FH-140", Value = "1"},
+                            new Answer{ QuestionId = "FH-150", Value = "2"},
+                            new Answer{ QuestionId = "FH-160", Value = "3"},
+                            new Answer{ QuestionId = "FH-170", Value = "4"},
+                            new Answer{ QuestionId = "FH-180", Value = "5"},
+                            new Answer{ QuestionId = "FH-190", Value = "6"},
+                            new Answer{ QuestionId = "FH-200", Value = "7"},
+                            new Answer{ QuestionId = "FH-210", Value = "8"},
+                            new Answer{ QuestionId = "FH-220", Value = "9"}
+                        }}
+                    }
+                });
+
+            var providerRouteAnswer = new Answer
+            {
+                QuestionId = "YO-1",
+                Value = ApplicationRoute.MainProviderApplicationRoute.ToString()
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>())).ReturnsAsync(providerRouteAnswer);
+
+            _apiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
+
+            _apiClient.Setup(x => x.SubmitApplication(It.IsAny<Application.Apply.Submit.SubmitApplicationRequest>())).ReturnsAsync(true);
+
+            _submitApplicationEmailService.Setup(x => x.SendGetHelpWithQuestionEmail(It.IsAny<ApplicationSubmitConfirmation>())).Returns(Task.FromResult(true));
+
+            await _controller.ConfirmSubmitApplication(model);
+
+            _apiClient.Verify(x =>
+                x.SubmitApplication(It.Is<SubmitApplicationRequest>(r =>
+                    r.FinancialData.TurnOver == 1
+                    && r.FinancialData.Depreciation == 2
+                    && r.FinancialData.ProfitLoss == 3
+                    && r.FinancialData.Dividends == 4
+                    && r.FinancialData.Assets == 5
+                    && r.FinancialData.Liabilities == 6
+                    && r.FinancialData.Borrowings == 7
+                    && r.FinancialData.ShareholderFunds == 8
+                    && r.FinancialData.IntangibleAssets == 9
+                    )));
         }
 
         [Test]
