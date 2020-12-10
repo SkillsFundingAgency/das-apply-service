@@ -81,11 +81,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<GatewayCommonDetails>> GetGatewayCommonDetails(Guid applicationId, string pageId)
         {
             var application = await _mediator.Send(new GetApplicationRequest(applicationId));
-            var gatewayPage = await _mediator.Send(new GetGatewayPageAnswerRequest(applicationId, pageId));
 
-            if (application?.ApplyData is null || gatewayPage is null)
+            if (application?.ApplyData is null)
             {
                 return NotFound();
+            }
+
+            var gatewayPage = await _mediator.Send(new GetGatewayPageAnswerRequest(application.ApplicationId, pageId));
+            if(gatewayPage is null)
+            {
+                gatewayPage = new GatewayPageAnswer
+                {
+                    ApplicationId = application.ApplicationId,
+                    PageId = pageId
+                };
             }
 
             return new GatewayCommonDetails
