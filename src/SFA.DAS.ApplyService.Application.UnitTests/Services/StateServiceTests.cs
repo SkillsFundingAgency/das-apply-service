@@ -25,11 +25,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Services
         }
 
         [Test]
-        public void PrivateInstancePropertiesAreCaptured()
+        public void PrivateInstancePropertiesAreNotCaptured()
         {
             var result = _fixture.GetState();
-            Assert.IsTrue(result.ContainsKey("TestPrivateProperty"));
-            Assert.AreEqual(_fixture.PrivatePropertyValue, result["TestPrivateProperty"]);
+            Assert.IsFalse(result.ContainsKey("TestPrivateProperty"));
         }
 
         [Test]

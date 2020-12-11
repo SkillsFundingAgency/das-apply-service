@@ -11,25 +11,40 @@ namespace SFA.DAS.ApplyService.Application.Services
         {
             var result = new List<DiffItem>();
 
+            if (initial == null && updated == null)
+            {
+                return new List<DiffItem>();
+            }
+
             if (initial == null)
             {
-                if (updated == null)
-                {
-                    return new List<DiffItem>();
-                }
-
-                foreach (var item in updated.Where(x => x.Value != null))
-                {
-                    result.Add(new DiffItem
-                    {
-                        PropertyName = item.Key,
-                        InitialValue = null,
-                        UpdatedValue = item.Value
-                    });
-                }
-
-                return result;
+                return GenerateDiffForInsert(updated);
             }
+
+            return GenerateDiffForUpdateOrDelete(initial, updated);
+        }
+
+        private IReadOnlyList<DiffItem> GenerateDiffForInsert(Dictionary<string, object> updated)
+        {
+            var result = new List<DiffItem>();
+
+            foreach (var item in updated.Where(x => x.Value != null))
+            {
+                result.Add(new DiffItem
+                {
+                    PropertyName = item.Key,
+                    InitialValue = null,
+                    UpdatedValue = item.Value
+                });
+            }
+
+            return result;
+        }
+
+        private IReadOnlyList<DiffItem> GenerateDiffForUpdateOrDelete(Dictionary<string, object> initial,
+            Dictionary<string, object> updated)
+        {
+            var result = new List<DiffItem>();
 
             foreach (var item in initial)
             {
