@@ -65,14 +65,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             if (application != null)
             {
-                if (application.ApplyData.GatewayReviewDetails == null)
+                if (application.ApplyData.GatewayReviewDetails != null)
                 {
-                    application.ApplyData.GatewayReviewDetails = new ApplyGatewayDetails();
+                    application.ApplyData.GatewayReviewDetails.OutcomeDateTime = DateTime.UtcNow;
+                    application.ApplyData.GatewayReviewDetails.Comments = request.GatewayReviewComment;
                 }
 
-                application.ApplyData.GatewayReviewDetails.OutcomeDateTime = DateTime.UtcNow;
-                application.ApplyData.GatewayReviewDetails.Comments = request.GatewayReviewComment;
-                
                 return await _applyRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, request.GatewayReviewStatus, request.UserId, request.UserName);
             }
 
@@ -82,9 +80,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Gateway/UpdateGatewayClarification")]
         public async Task<ActionResult<bool>> UpdateGatewayClarification([FromBody] UpdateGatewayReviewStatusAsClarificationRequest request)
         {
-
             return await _mediator.Send(new UpdateGatewayReviewStatusAsClarificationRequest(request.ApplicationId, request.UserId,request.UserName));
-
         }
 
         [Route("Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}")]

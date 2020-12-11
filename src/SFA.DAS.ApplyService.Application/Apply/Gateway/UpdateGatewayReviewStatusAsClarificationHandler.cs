@@ -22,6 +22,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 
         if (application == null) return false;
 
+        if (application.ApplyData == null)
+            application.ApplyData = new ApplyData();
+
         if (application.ApplyData.GatewayReviewDetails == null)
         {
             application.ApplyData.GatewayReviewDetails = new ApplyGatewayDetails();
@@ -30,7 +33,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
         application.ApplyData.GatewayReviewDetails.ClarificationRequestedOn = DateTime.UtcNow;
         application.ApplyData.GatewayReviewDetails.ClarificationRequestedBy = request.UserId;
 
-        return await _applyRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId,
+        return await _applyRepository.UpdateGatewayReviewStatusAndComment(request.ApplicationId,
             application.ApplyData, GatewayReviewStatus.ClarificationSent, request.UserId, request.UserName);
     }
 
