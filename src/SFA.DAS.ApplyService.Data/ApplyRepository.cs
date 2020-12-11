@@ -232,15 +232,9 @@ namespace SFA.DAS.ApplyService.Data
                                                       submittedBy });
 
                 await connection.ExecuteAsync(@"insert into FinancialData ([ApplicationId]
-               ,[TurnOver]
-               ,[Depreciation]
-               ,[ProfitLoss]
-               ,[Dividends]
-               ,[IntangibleAssets]
-               ,[Assets]
-               ,[Liabilities]
-               ,[ShareholderFunds]
-               ,[Borrowings]) values (@ApplicationId, @TurnOver,@Depreciation, @ProfitLoss,@Dividends,@IntangibleAssets
+               ,[TurnOver],[Depreciation],[ProfitLoss],[Dividends],[IntangibleAssets]
+               ,[Assets],[Liabilities],[ShareholderFunds],[Borrowings])
+                values (@ApplicationId, @TurnOver,@Depreciation, @ProfitLoss,@Dividends,@IntangibleAssets
                ,@Assets,@Liabilities,@ShareholderFunds,@Borrowings)",
                financialData);
 
