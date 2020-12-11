@@ -129,6 +129,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
     public class FinancialData
     {
+        public Guid ApplicationId { get; set; }
         public long TurnOver { get; set; }
         public long Depreciation { get; set; }
         public long ProfitLoss { get; set; }

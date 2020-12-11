@@ -1293,7 +1293,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ProviderRouteName = selectedProviderRoute?.RouteName,
                 SubmittingContactId = User.GetUserId(),
                 ApplyData = application.ApplyData,
-                FinancialData = ExtractFinancialData(financialsPage)
+                FinancialData = ExtractFinancialData(model.ApplicationId, financialsPage)
             };
 
             var submitResult = await _apiClient.SubmitApplication(submitApplicationRequest);
@@ -1483,12 +1483,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return false;
         }
 
-        private FinancialData ExtractFinancialData(Page financialsPage)
+        private FinancialData ExtractFinancialData(Guid applicationId, Page financialsPage)
         {
             var answers = financialsPage.PageOfAnswers.First().Answers;
 
             return new FinancialData
             {
+                ApplicationId = applicationId,
                 TurnOver = GetFinancialValue(answers, "FH-140"),
                 Depreciation = GetFinancialValue(answers, "FH-150"),
                 ProfitLoss = GetFinancialValue(answers, "FH-160"),

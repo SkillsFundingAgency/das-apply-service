@@ -213,6 +213,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                await connection.OpenAsync();
                 await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET ApplicationStatus = @ApplicationStatus, 
                                                     ApplyData = @applyData, 
@@ -229,18 +230,21 @@ namespace SFA.DAS.ApplyService.Data
                                                       GatewayReviewStatus = GatewayReviewStatus.New, 
                                                       FinancialReviewStatus = FinancialReviewStatus.New,
                                                       submittedBy });
-                
+
                 await connection.ExecuteAsync(@"insert into FinancialData ([ApplicationId]
-                   ,[TurnOver]
-                   ,[Depreciation]
-                   ,[ProfitLoss]
-                   ,[Dividends]
-                   ,[IntangibleAssets]
-                   ,[Assets]
-                   ,[Liabilities]
-                   ,[ShareholderFunds]
-                   ,[Borrowings]) values (@ApplicationId, @TurnOver,@Depreciation, @ProfitLoss,@Dividends,@IntangibleAssets
-                   ,@Assets,@Liabilities,@ShareholderFunds,@Borrowings)", financialData);
+               ,[TurnOver]
+               ,[Depreciation]
+               ,[ProfitLoss]
+               ,[Dividends]
+               ,[IntangibleAssets]
+               ,[Assets]
+               ,[Liabilities]
+               ,[ShareholderFunds]
+               ,[Borrowings]) values (@ApplicationId, @TurnOver,@Depreciation, @ProfitLoss,@Dividends,@IntangibleAssets
+               ,@Assets,@Liabilities,@ShareholderFunds,@Borrowings)",
+               financialData);
+
+                connection.Close();
             }
         }
 
