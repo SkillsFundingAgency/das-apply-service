@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply.Gateway;
 
@@ -107,6 +108,24 @@ namespace SFA.DAS.ApplyService.Data
                 return (await connection.QuerySingleOrDefaultAsync<GatewayPageAnswer>(@"SELECT * from GatewayAnswer
                                                     WHERE applicationId = @applicationId and pageid = @pageId",
                     new {applicationId, pageId}));
+            }
+        }
+
+        public async Task<string> GetGatewayPageStatus(Guid applicationId, string pageId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QuerySingleOrDefaultAsync<string>(@"SELECT Status from GatewayAnswer WHERE applicationId = @applicationId and pageid = @pageId",
+                    new { applicationId, pageId }));
+            }
+        }
+
+        public async Task<string> GetGatewayPageComments(Guid applicationId, string pageId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QuerySingleOrDefaultAsync<string>(@"SELECT Comments from GatewayAnswer WHERE applicationId = @applicationId and pageid = @pageId",
+                    new { applicationId, pageId }));
             }
         }
 
