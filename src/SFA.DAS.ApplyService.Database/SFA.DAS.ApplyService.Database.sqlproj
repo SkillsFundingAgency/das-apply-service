@@ -83,7 +83,4 @@
   <ItemGroup>
     <None Include="SFA.DAS.ApplyService.Database.publish.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <RefactorLog Include="SFA.DAS.ApplyService.Database.refactorlog" />
-  </ItemGroup>
 </Project>

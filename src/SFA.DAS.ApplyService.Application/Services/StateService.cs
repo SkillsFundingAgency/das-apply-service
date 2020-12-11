@@ -12,7 +12,7 @@ namespace SFA.DAS.ApplyService.Application.Services
             var result = new Dictionary<string, object>();
             var targetType = item.GetType();
 
-            foreach (var property in targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+            foreach (var property in targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
                 var propertyType = property.PropertyType;
 
