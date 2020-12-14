@@ -154,7 +154,6 @@ namespace SFA.DAS.ApplyService.Data
                     @"UPDATE [Apply] SET
                         ApplicationStatus = @ApplicationStatus,
                         GatewayReviewStatus = @GatewayReviewStatus,
-                        GatewayReviewComment = @GatewayReviewComment,
                         AssessorReviewStatus = @AssessorReviewStatus,
                         FinancialReviewStatus = @FinancialReviewStatus,
                         FinancialGrade = @FinancialGrade,
