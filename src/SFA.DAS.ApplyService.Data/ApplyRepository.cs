@@ -8,6 +8,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
@@ -493,6 +494,90 @@ namespace SFA.DAS.ApplyService.Data
                             financialStatusInProgress = FinancialReviewStatus.InProgress,
                             gatewayStatusPass = GatewayReviewStatus.Pass
                         })).ToList();
+            }
+        }
+
+        public async Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload()
+        {
+            var sql = @"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+                            apply.ApplicationStatus AS ApplicationStatus,
+                            apply.GatewayReviewStatus AS GatewayReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
+                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            apply.FinancialGrade AS FinancialReviewDetails,
+                            fd.ApplicationId,
+                            fd.TurnOver,
+                            fd.Depreciation,
+                            fd.ProfitLoss,
+                            fd.Dividends,
+                            fd.IntangibleAssets,
+                            fd.Assets,
+                            fd.Liabilities,
+                            fd.ShareholderFunds,
+                            fd.Borrowings,
+                            org.Name AS OrganisationName,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
+                            CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
+	                      FROM Apply apply
+                          LEFT JOIN FinancialData fd on fd.ApplicationId = apply.ApplicationId
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
+                        CROSS APPLY OPENJSON(apply.ApplyData)
+                        WITH (
+                            Sequences nvarchar(max) '$.Sequences' AS JSON
+                        ) AS i
+                        CROSS APPLY (
+                            SELECT *
+                            FROM OPENJSON(i.Sequences)
+                            WITH (
+                                [SequenceNo] nvarchar(max) '$.SequenceNo',
+                                [NotRequired] nvarchar(max) '$.NotRequired'
+                            )
+                        ) s
+                        WHERE s.SequenceNo = @financialHealthSequence
+                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
+                        AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
+                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass)";
+
+
+            var parameters = new
+            {
+                financialHealthSequence = 2,
+                applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
+                financialStatusDraft = FinancialReviewStatus.Draft,
+                financialStatusNew = FinancialReviewStatus.New,
+                financialStatusInProgress = FinancialReviewStatus.InProgress,
+                gatewayStatusPass = GatewayReviewStatus.Pass
+            };
+
+            try
+            {
+
+
+
+                using (var connection = new SqlConnection(_config.SqlConnectionString))
+                {
+                    var results = await connection
+                        .QueryAsync<RoatpFinancialSummaryDownloadItem, FinancialData, RoatpFinancialSummaryDownloadItem
+                        >(
+                            sql, ((item, data) =>
+                                {
+                                    item.FinancialData = data;
+                                    return item;
+                                }
+                            ), parameters, null, true, "ApplicationId");
+
+                    return results.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                var m = ex.Message;
+                throw;
             }
         }
 

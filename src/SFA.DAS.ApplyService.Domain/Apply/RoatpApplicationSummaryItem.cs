@@ -27,4 +27,9 @@ namespace SFA.DAS.ApplyService.Domain.Apply
 
         public FinancialReviewDetails FinancialReviewDetails { get; set; }
     }
+
+    public class RoatpFinancialSummaryDownloadItem: RoatpFinancialSummaryItem
+    {
+        public FinancialData FinancialData { get; set; }
+    }
  }
