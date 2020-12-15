@@ -301,11 +301,12 @@ namespace SFA.DAS.ApplyService.Data
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
-	                        AND apply.GatewayReviewStatus = @gatewayReviewStatusInProgress",
+	                        AND apply.GatewayReviewStatus in (@gatewayReviewStatusInProgress, @gatewayReviewStatusClarificationSent)",
                         new
                         {
                             applicationStatusSubmitted = ApplicationStatus.Submitted,
-                            gatewayReviewStatusInProgress = GatewayReviewStatus.InProgress
+                            gatewayReviewStatusInProgress = GatewayReviewStatus.InProgress,
+                            gatewayReviewStatusClarificationSent = GatewayReviewStatus.ClarificationSent
                         })).ToList();
             }
         }
