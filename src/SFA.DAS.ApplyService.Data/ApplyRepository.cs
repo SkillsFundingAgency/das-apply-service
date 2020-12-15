@@ -515,6 +515,8 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeDateTime,
+                            JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.CompaniesHouseDetails.CompanyNumber') AS CompanyNumber,
+                            JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.CharityCommissionDetails.CharityNumber') AS CharityNumber,
                             CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication,
                             fd.ApplicationId,
                             fd.TurnOver,
