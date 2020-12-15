@@ -507,6 +507,12 @@ namespace SFA.DAS.ApplyService.Data
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
                             apply.FinancialReviewStatus AS FinancialReviewStatus,
                             apply.FinancialGrade AS FinancialReviewDetails,
+                            org.Name AS OrganisationName,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
+                            CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication,
                             fd.ApplicationId,
                             fd.TurnOver,
                             fd.Depreciation,
@@ -516,13 +522,7 @@ namespace SFA.DAS.ApplyService.Data
                             fd.Assets,
                             fd.Liabilities,
                             fd.ShareholderFunds,
-                            fd.Borrowings,
-                            org.Name AS OrganisationName,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
-                            CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
+                            fd.Borrowings
 	                      FROM Apply apply
                           LEFT JOIN FinancialData fd on fd.ApplicationId = apply.ApplicationId
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
