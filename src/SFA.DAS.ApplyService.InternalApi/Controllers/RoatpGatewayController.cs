@@ -80,7 +80,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Gateway/UpdateGatewayClarification")]
         public async Task<ActionResult<bool>> UpdateGatewayClarification([FromBody] UpdateGatewayReviewStatusAsClarificationRequest request)
         {
-            return await _mediator.Send(new UpdateGatewayReviewStatusAsClarificationRequest(request.ApplicationId, request.UserId,request.UserName));
+            return await _mediator.Send(new UpdateGatewayReviewStatusAsClarificationRequest(request.ApplicationId, request.UserId, request.UserName));
         }
 
         [Route("Gateway/{applicationId}/Pages/{pageId}/CommonDetails")]
