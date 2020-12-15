@@ -14,5 +14,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
         public string OptionPassText { get; set; }
         public string OptionFailText { get; set; }
         public string OptionInProgressText { get; set; }
+        public string OptionClarificationText { get; set; }
     }
 }

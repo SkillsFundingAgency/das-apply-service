@@ -110,7 +110,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 GatewayReviewStatus = gatewayReviewStatus,
                 OptionPassText = status == GatewayAnswerStatus.Pass ? comments: null,
                 OptionInProgressText = status == GatewayAnswerStatus.InProgress ? comments:null,
-                OptionFailText =  status == GatewayAnswerStatus.Fail ? comments : null
+                OptionFailText =  status == GatewayAnswerStatus.Fail ? comments : null,
+                OptionClarificationText = status == GatewayAnswerStatus.Clarification ? comments: null
             };
 
             return details;
