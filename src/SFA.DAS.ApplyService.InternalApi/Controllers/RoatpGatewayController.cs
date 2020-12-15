@@ -83,48 +83,52 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new UpdateGatewayReviewStatusAsClarificationRequest(request.ApplicationId, request.UserId,request.UserName));
         }
 
-        [Route("Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}")]
-         [HttpGet]
-         public async Task<ActionResult<GatewayCommonDetails>> GetGatewayCommonDetails(Guid applicationId, string pageId,
-             string userName)
-         {
-            var applicationDetails = await _applyRepository.GetApplication(applicationId);
- 
-            var ukprn = applicationDetails.ApplyData.ApplyDetails.UKPRN;
-            var organisationName = applicationDetails.ApplyData.ApplyDetails.OrganisationName;
-            var providerRouteName = applicationDetails.ApplyData.ApplyDetails.ProviderRouteName;
-            var checkedOn = applicationDetails?.ApplyData?.GatewayReviewDetails?.SourcesCheckedOn;
-            var submittedOn = applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn;
-            var status = await _applyRepository.GetGatewayPageStatus(applicationId, pageId);
-            var comments = await _applyRepository.GetGatewayPageComments(applicationId, pageId);
-            var gatewayReviewStatus = applicationDetails.GatewayReviewStatus;
-
-            var details = new GatewayCommonDetails
-            {
-                Ukprn = ukprn,
-                ApplicationSubmittedOn = submittedOn,
-                CheckedOn = checkedOn,
-                LegalName = organisationName,
-                ProviderRouteName = providerRouteName,
-                Status = status,
-                GatewayReviewStatus = gatewayReviewStatus,
-                OptionPassText = status == GatewayAnswerStatus.Pass ? comments: null,
-                OptionInProgressText = status == GatewayAnswerStatus.InProgress ? comments:null,
-                OptionFailText =  status == GatewayAnswerStatus.Fail ? comments : null,
-                OptionClarificationText = status == GatewayAnswerStatus.Clarification ? comments: null
-            };
-
-            return details;
-         }
-
-
-        [Route("Gateway/Pages")]
-         [HttpGet]
-         public async Task<ActionResult<List<GatewayPageAnswerSummary>>> GetGatewayPages(Guid applicationId)
+        [Route("Gateway/{applicationId}/Pages/{pageId}/CommonDetails")]
+        [HttpGet]
+        public async Task<ActionResult<GatewayCommonDetails>> GetGatewayCommonDetails(Guid applicationId, string pageId)
         {
-            var gatewayRecord = await _applyRepository.GetGatewayPageAnswers(applicationId);
+            var application = await _mediator.Send(new GetApplicationRequest(applicationId));
 
-            return gatewayRecord;
+            if (application?.ApplyData is null)
+            {
+                return NotFound();
+            }
+
+            var gatewayPage = await _mediator.Send(new GetGatewayPageAnswerRequest(application.ApplicationId, pageId));
+            if(gatewayPage is null)
+            {
+                gatewayPage = new GatewayPageAnswer
+                {
+                    ApplicationId = application.ApplicationId,
+                    PageId = pageId
+                };
+            }
+
+            return new GatewayCommonDetails
+            {
+                ApplicationId = gatewayPage.ApplicationId,
+                Ukprn = application.ApplyData.ApplyDetails.UKPRN,
+                ApplicationSubmittedOn = application.ApplyData.ApplyDetails.ApplicationSubmittedOn,
+                GatewayOutcomeMadeOn = application.ApplyData.GatewayReviewDetails?.OutcomeDateTime,
+                GatewayOutcomeMadeBy = application.GatewayUserName,
+                SourcesCheckedOn = application.ApplyData.GatewayReviewDetails?.SourcesCheckedOn,
+                LegalName = application.ApplyData.ApplyDetails.OrganisationName,
+                ProviderRouteName = application.ApplyData.ApplyDetails.ProviderRouteName,
+                ApplicationStatus = application.ApplicationStatus,
+                GatewayReviewStatus = application.GatewayReviewStatus,
+                PageId = gatewayPage.PageId,
+                Status = gatewayPage.Status,
+                Comments = gatewayPage.Comments,
+                OutcomeMadeOn = gatewayPage.UpdatedAt.HasValue ? gatewayPage.UpdatedAt : gatewayPage.CreatedAt,
+                OutcomeMadeBy = !string.IsNullOrEmpty(gatewayPage.UpdatedBy) ? gatewayPage.UpdatedBy : gatewayPage.CreatedBy
+            };
+        }
+
+        [Route("Gateway/{applicationId}/Pages")]
+        [HttpGet]
+        public async Task<ActionResult<List<GatewayPageAnswerSummary>>> GetGatewayPages(Guid applicationId)
+        {
+            return await _mediator.Send(new GetGatewayPagesRequest(applicationId));
         }
     }
 }
