@@ -548,7 +548,6 @@ namespace SFA.DAS.ApplyService.Data
                         AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
                         AND apply.GatewayReviewStatus IN (@gatewayStatusPass)";
 
-
             var parameters = new
             {
                 financialHealthSequence = 2,
@@ -559,30 +558,18 @@ namespace SFA.DAS.ApplyService.Data
                 gatewayStatusPass = GatewayReviewStatus.Pass
             };
 
-            try
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                var results = await connection
+                    .QueryAsync<RoatpFinancialSummaryDownloadItem, FinancialData, RoatpFinancialSummaryDownloadItem>(
+                        sql, ((item, data) =>
+                            {
+                                item.FinancialData = data;
+                                return item;
+                            }
+                        ), parameters, null, true, "ApplicationId");
 
-
-
-                using (var connection = new SqlConnection(_config.SqlConnectionString))
-                {
-                    var results = await connection
-                        .QueryAsync<RoatpFinancialSummaryDownloadItem, FinancialData, RoatpFinancialSummaryDownloadItem
-                        >(
-                            sql, ((item, data) =>
-                                {
-                                    item.FinancialData = data;
-                                    return item;
-                                }
-                            ), parameters, null, true, "ApplicationId");
-
-                    return results.ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                var m = ex.Message;
-                throw;
+                return results.ToList();
             }
         }
 
