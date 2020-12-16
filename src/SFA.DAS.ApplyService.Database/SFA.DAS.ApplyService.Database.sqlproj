@@ -73,6 +73,7 @@
     <Build Include="Tables\AssessorPageReviewOutcome.sql" />
     <Build Include="Tables\ModeratorPageReviewOutcome.sql" />
     <Build Include="Tables\FinancialData.sql" />
+    <Build Include="Tables\Audit.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
