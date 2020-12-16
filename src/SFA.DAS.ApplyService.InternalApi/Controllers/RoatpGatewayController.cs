@@ -34,7 +34,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         [Route("Gateway/Page/Submit")]
         [HttpPost]
-         public async Task GatewayPageSubmit([FromBody] UpsertGatewayPageAnswerRequest request)
+         public async Task GatewayPageSubmit([FromBody] Types.Requests.UpdateGatewayPageAnswerRequest request)
         {
             if(request.PageId == TwoInTwelveMonthsPageId)
             {
@@ -54,8 +54,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 }
             }
 
-            await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.UserId, request.UserName,
-                request.Status, request.Comments);
+            await _mediator.Send(new UpdateGatewayPageAnswerRequest(request.ApplicationId,
+                request.PageId,
+                request.Status,
+                request.Comments,
+                request.UserId,
+                request.UserName));
         }
 
         [HttpPost("Gateway/UpdateGatewayReviewStatusAndComment")]
@@ -119,8 +123,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 PageId = gatewayPage.PageId,
                 Status = gatewayPage.Status,
                 Comments = gatewayPage.Comments,
-                OutcomeMadeOn = gatewayPage.UpdatedAt.HasValue ? gatewayPage.UpdatedAt : gatewayPage.CreatedAt,
-                OutcomeMadeBy = !string.IsNullOrEmpty(gatewayPage.UpdatedBy) ? gatewayPage.UpdatedBy : gatewayPage.CreatedBy
+                OutcomeMadeOn = gatewayPage.UpdatedAt,
+                OutcomeMadeBy = gatewayPage.UpdatedBy
             };
         }
 
