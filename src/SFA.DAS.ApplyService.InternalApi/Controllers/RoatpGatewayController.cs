@@ -54,8 +54,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 }
             }
 
-            await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.UserId, request.UserName,
-                request.Status, request.Comments);
+            if (string.IsNullOrEmpty(request.ClarificationAnswer))
+                await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.UserId, request.UserName,
+                        request.Status, request.Comments);
+            else
+                await _applyRepository.SubmitGatewayPageAnswerWithClarificationAnswer(request.ApplicationId, request.PageId, request.UserId, request.UserName,
+                    request.Status, request.Comments, request.ClarificationAnswer);
         }
 
         [HttpPost("Gateway/UpdateGatewayReviewStatusAndComment")]

@@ -133,6 +133,30 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task SubmitGatewayPageAnswerWithClarificationAnswer(Guid applicationId, string pageId, string userId, string userName,
+            string status, string comments, string clarificationAnswer)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.OpenAsync(default);
+                await connection.ExecuteAsync(
+                    @"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
+	                                                    INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[comments],[ClarificationAnswer],[CreatedAt],[CreatedBy])
+														     values (@applicationId, @pageId,@status,@comments,@clarificationAnswer, GetUTCDATE(),@userName)
+                                                    ELSE
+                                                     UPDATE GatewayAnswer
+                                                                SET  Status = @status, Comments =@comments, ClarificationAnswer = @clarificationAnswer, UpdatedBy = @userName, UpdatedAt = GETUTCDATE()
+                                                                WHERE  ApplicationId = @applicationId and pageId = @pageId",
+                    new { applicationId, pageId, status, comments, userName, clarificationAnswer });
+
+                await connection.ExecuteAsync(
+                    "update [Apply] set [GatewayUserId]=@userId, [GatewayUserName]=@userName WHERE [ApplicationId] = @applicationId",
+                    new { applicationId, userId, userName });
+
+                connection.Close();
+            }
+        }
+
         public async Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, ApplyData applyData, string gatewayReviewStatus, string userId, string userName)
         {
             var applicationStatus = ApplicationStatus.GatewayAssessed;
