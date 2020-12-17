@@ -17,27 +17,27 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             _logger = logger;
         }
 
-        public async Task<bool> Handle(RecordOversightOutcomeCommand command, CancellationToken cancellationToken)
+        public async Task<bool> Handle(RecordOversightOutcomeCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Recording Oversight review status of {command.OversightStatus} for application Id {command.ApplicationId}");
+            _logger.LogInformation($"Recording Oversight review status of {request.OversightStatus} for application Id {request.ApplicationId}");
 
-            var updateOversightStatusResult = await _applyRepository.UpdateOversightReviewStatus(command.ApplicationId, command.OversightStatus,
-                                                                                                 command.ApplicationDeterminedDate, command.UserName);
+            var updateOversightStatusResult = await _applyRepository.UpdateOversightReviewStatus(request.ApplicationId, request.OversightStatus,
+                                                                                          request.UserId, request.UserName);
 
             if (!updateOversightStatusResult)
             {
-                return await Task.FromResult(false);
+                return false;
             }
 
             var applicationStatus = ApplicationReviewStatus.Approved;
-            if (command.OversightStatus != OversightReviewStatus.Successful)
+            if (request.OversightStatus != OversightReviewStatus.Successful)
             {
                 applicationStatus = ApplicationReviewStatus.Declined;
             }
 
-            await _applyRepository.UpdateApplicationStatus(command.ApplicationId, applicationStatus);
+            await _applyRepository.UpdateApplicationStatus(request.ApplicationId, applicationStatus);
 
-            return await Task.FromResult(true);
+            return true;
         }
     }
 }

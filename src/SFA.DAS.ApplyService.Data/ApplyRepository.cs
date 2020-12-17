@@ -1016,23 +1016,24 @@ namespace SFA.DAS.ApplyService.Data
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, DateTime applicationDeterminedDate, string updatedBy)
+        public async Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, string userId, string userName)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE Apply 
                                                 SET OversightStatus = @oversightStatus, 
-                                                ApplicationDeterminedDate = @applicationDeterminedDate,
+                                                ApplicationDeterminedDate = GETUTCDATE(),
+                                                OversightUserId = @userId
+                                                OversightUserName = @userName
                                                 UpdatedBy = @updatedBy,
-                                                UpdatedAt = @updatedAt
+                                                UpdatedAt = GETUTCDATE()
                                                 WHERE ApplicationId = @applicationId",
                             new
                             {
                                 applicationId,
-                                updatedAt = DateTime.UtcNow,
-                                updatedBy,
                                 oversightStatus,
-                                applicationDeterminedDate
+                                userName,
+                                updatedBy = userName
                             });
             }
 

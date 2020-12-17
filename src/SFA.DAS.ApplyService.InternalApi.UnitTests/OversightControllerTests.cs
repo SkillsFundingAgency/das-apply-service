@@ -130,9 +130,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         {
             var command = new RecordOversightOutcomeCommand
             {
-                ApplicationDeterminedDate = DateTime.Now,
                 OversightStatus = oversightStatus,
                 ApplicationId = Guid.NewGuid(),
+                UserId = "User Id",
                 UserName = "Test user"
             };
 
