@@ -4,10 +4,11 @@ using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Domain.Ukrlp;
 using System;
 using System.Collections.Generic;
+using SFA.DAS.ApplyService.Application.Interfaces;
 
 namespace SFA.DAS.ApplyService.Domain.Entities
 {
-    public class Apply : EntityBase
+    public class Apply : EntityBase, IAuditable
     {
         public Guid ApplicationId { get; set; }
         public Guid OrganisationId { get; set; }

@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using MediatR;
-using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 {
-    public class UpsertGatewayPageAnswerRequest
+    public class UpdateGatewayPageAnswerRequest : IRequest
     {
         public Guid ApplicationId { get; }
         public string PageId { get; }
@@ -16,7 +13,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
         public string UserName { get; }
         public string ClarificationAnswer { get; }
 
-        public UpsertGatewayPageAnswerRequest(Guid applicationId, string pageId, string status, string comments, string userId, string username, string clarificationAnswer)
+        public UpdateGatewayPageAnswerRequest(Guid applicationId, string pageId, string status, string comments, string userId, string username, string clarificationAnswer)
         {
             ApplicationId = applicationId;
             PageId = pageId;

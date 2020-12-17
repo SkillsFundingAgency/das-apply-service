@@ -14,6 +14,7 @@ using SFA.DAS.ApplyService.InternalApi.Services;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.InternalApi.Types.Requests;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -81,7 +82,15 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var gatewayReviewComment = "Some comment";
 
-            var request = new UpsertGatewayPageAnswerRequest(_applicationId, _twoInTwelveMonthsPageId, gatewayReviewStatus, gatewayReviewComment, _userId, _userName);
+            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
+            {
+                ApplicationId = _applicationId,
+                Comments = gatewayReviewComment,
+                Status = gatewayReviewStatus,
+                UserId = _userId,
+                UserName = _userName,
+                PageId = _twoInTwelveMonthsPageId
+            };
             await _controller.GatewayPageSubmit(request);
 
             _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -96,7 +105,16 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var gatewayReviewComment = "Some comment";
 
-            var request = new UpsertGatewayPageAnswerRequest(_applicationId, _twoInTwelveMonthsPageId, gatewayReviewStatus, gatewayReviewComment, _userId, _userName);
+            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
+            {
+                ApplicationId = _applicationId,
+                Comments = gatewayReviewComment,
+                Status = gatewayReviewStatus,
+                UserId = _userId,
+                UserName = _userName,
+                PageId = _twoInTwelveMonthsPageId
+            };
+
             await _controller.GatewayPageSubmit(request);
 
             _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -109,7 +127,16 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var gatewayReviewComment = "Some comment";
 
-            var request = new UpsertGatewayPageAnswerRequest(_applicationId, _twoInTwelveMonthsPageId, gatewayReviewStatus, gatewayReviewComment, _userId, _userName);
+            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
+            {
+                ApplicationId = _applicationId,
+                Comments = gatewayReviewComment,
+                Status = gatewayReviewStatus,
+                UserId = _userId,
+                UserName = _userName,
+                PageId = _twoInTwelveMonthsPageId
+            };
+
             await _controller.GatewayPageSubmit(request);
 
             _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);

@@ -19,6 +19,7 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
@@ -260,6 +261,10 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IAssessorSectorDetailsService, AssessorSectorDetailsService>();
             services.AddTransient<IAssessorReviewCreationService, AssessorReviewCreationService>();
             services.AddTransient<IModeratorReviewCreationService, ModeratorReviewCreationService>();
+
+            services.AddTransient<IDiffService, DiffService>();
+            services.AddTransient<IStateService, StateService>();
+            services.AddTransient<IAuditService, AuditService>();
 
             services.AddTransient<IFileEncryptionService, FileEncryptionService>();
             services.AddTransient<IFileStorageService, FileStorageService>();
