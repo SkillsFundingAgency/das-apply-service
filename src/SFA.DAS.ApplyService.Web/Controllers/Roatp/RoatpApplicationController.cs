@@ -1485,6 +1485,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private FinancialData ExtractFinancialData(Guid applicationId, Page financialsPage)
         {
+            if (!financialsPage.Active)
+            {
+                return new FinancialData{ ApplicationId = applicationId };
+            }
+
             var answers = financialsPage.PageOfAnswers.First().Answers;
 
             return new FinancialData
