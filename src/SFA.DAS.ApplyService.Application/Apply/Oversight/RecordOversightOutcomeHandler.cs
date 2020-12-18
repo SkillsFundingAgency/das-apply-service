@@ -29,10 +29,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 return false;
             }
 
-            var applicationStatus = ApplicationReviewStatus.Approved;
+            var applicationStatus = ApplicationStatus.Approved;
             if (request.OversightStatus != OversightReviewStatus.Successful)
             {
-                applicationStatus = ApplicationReviewStatus.Declined;
+                applicationStatus = ApplicationStatus.Rejected;
             }
 
             await _applyRepository.UpdateApplicationStatus(request.ApplicationId, applicationStatus);

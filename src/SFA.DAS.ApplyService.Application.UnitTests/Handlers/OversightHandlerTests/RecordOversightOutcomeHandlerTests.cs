@@ -62,7 +62,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                                                                 command.UserId, command.UserName))
                                                                 .ReturnsAsync(false);
 
-            repository.Setup(x => x.UpdateApplicationStatus(command.ApplicationId, ApplicationReviewStatus.Approved)).Returns(Task.CompletedTask);
+            repository.Setup(x => x.UpdateApplicationStatus(command.ApplicationId, ApplicationStatus.Approved)).Returns(Task.CompletedTask);
 
             var logger = new Mock<ILogger<RecordOversightOutcomeHandler>>();
             var handler = new RecordOversightOutcomeHandler(repository.Object, logger.Object);
@@ -73,7 +73,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
 
             repository.Verify(x => x.UpdateOversightReviewStatus(command.ApplicationId, command.OversightStatus,
                                                                 command.UserId, command.UserName), Times.Once);
-            repository.Verify(x => x.UpdateApplicationStatus(command.ApplicationId, ApplicationReviewStatus.Approved), Times.Never);
+            repository.Verify(x => x.UpdateApplicationStatus(command.ApplicationId, ApplicationStatus.Approved), Times.Never);
         }
     }   
 }
