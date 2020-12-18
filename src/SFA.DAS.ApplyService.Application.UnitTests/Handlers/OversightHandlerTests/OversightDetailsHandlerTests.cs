@@ -37,7 +37,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 Ukprn = "12344321",
                 ProviderRoute = "Main",
                 ApplicationReferenceNumber = "APR000111",
+                ApplicationSubmittedDate = DateTime.Today.AddDays(-1),
                 OversightStatus = OversightReviewStatus.Successful,
+                ApplicationStatus = ApplicationStatus.Approved,
                 ApplicationDeterminedDate = DateTime.Today
             };
 

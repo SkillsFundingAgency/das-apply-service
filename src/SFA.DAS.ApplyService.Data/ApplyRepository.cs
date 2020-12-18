@@ -833,7 +833,8 @@ namespace SFA.DAS.ApplyService.Data
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
 							apply.OversightStatus,
-							Apply.ApplicationDeterminedDate
+                            apply.ApplicationStatus,
+							apply.ApplicationDeterminedDate
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
@@ -873,7 +874,8 @@ namespace SFA.DAS.ApplyService.Data
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
 							apply.OversightStatus,
-							Apply.ApplicationDeterminedDate
+                            apply.ApplicationStatus,
+							apply.ApplicationDeterminedDate
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
@@ -883,7 +885,7 @@ namespace SFA.DAS.ApplyService.Data
                             OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
 
 						  and apply.OversightStatus IN (@oversightReviewStatusPass,@oversightReviewStatusFail) 
-                             order by cast(Apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
+                             order by cast(apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
                     {
                         gatewayReviewStatusPass = GatewayReviewStatus.Pass,
                         gatewayReviewStatusFail = GatewayReviewStatus.Fail,
@@ -913,7 +915,8 @@ namespace SFA.DAS.ApplyService.Data
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
 							apply.OversightStatus,
-							Apply.ApplicationDeterminedDate
+                            apply.ApplicationStatus,
+							apply.ApplicationDeterminedDate
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                         WHERE apply.ApplicationId = @applicationId",

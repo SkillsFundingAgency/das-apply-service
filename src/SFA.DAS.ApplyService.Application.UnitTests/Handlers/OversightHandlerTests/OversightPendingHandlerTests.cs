@@ -40,6 +40,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                     Ukprn = "12344321",
                     ProviderRoute = "Main",
                     ApplicationReferenceNumber = "APR000111",
+                    ApplicationSubmittedDate = DateTime.Today.AddDays(-1),
                     OversightStatus = OversightReviewStatus.New
                 },
                 new ApplicationOversightDetails
@@ -50,6 +51,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                     Ukprn = "43211234",
                     ProviderRoute = "Employer",
                     ApplicationReferenceNumber = "APR000112",
+                    ApplicationSubmittedDate = DateTime.Today.AddDays(-1),
                     OversightStatus = OversightReviewStatus.New
                 }
             };

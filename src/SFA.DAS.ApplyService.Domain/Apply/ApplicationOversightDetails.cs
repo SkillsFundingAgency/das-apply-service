@@ -13,6 +13,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string ApplicationReferenceNumber { get; set; }
         public DateTime ApplicationSubmittedDate { get; set; }
         public string OversightStatus { get; set; }
+        public string ApplicationStatus { get; set; }
         public DateTime? ApplicationDeterminedDate { get; set; }
     }
 }
