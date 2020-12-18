@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                     Ukprn = "12344321",
                     ProviderRoute = "Main",
                     ApplicationReferenceNumber = "APR000111",
-                    OversightStatus = "New"
+                    OversightStatus = OversightReviewStatus.New
                 },
                 new ApplicationOversightDetails
                 {
@@ -53,7 +53,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                     Ukprn = "43211234",
                     ProviderRoute = "Employer",
                     ApplicationReferenceNumber = "APR000112",
-                    OversightStatus = "New"
+                    OversightStatus = OversightReviewStatus.New
                 }
             };
 
@@ -78,7 +78,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Ukprn = "12344321",
                 ProviderRoute = "Main",
                 ApplicationReferenceNumber = "APR000111",
-                OversightStatus = "New"
+                OversightStatus = OversightReviewStatus.New
             };
 
             var pendingOversights = new List<ApplicationOversightDetails>
@@ -110,7 +110,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Ukprn = "12344321",
                 ProviderRoute = "Main",
                 ApplicationReferenceNumber = "APR000111",
-                OversightStatus = "New"
+                OversightStatus = OversightReviewStatus.New
             };
 
             _mediator

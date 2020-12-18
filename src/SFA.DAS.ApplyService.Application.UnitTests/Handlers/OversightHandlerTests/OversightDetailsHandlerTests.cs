@@ -5,6 +5,7 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTests
 {
@@ -36,7 +37,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 Ukprn = "12344321",
                 ProviderRoute = "Main",
                 ApplicationReferenceNumber = "APR000111",
-                OversightStatus = "Successful",
+                OversightStatus = OversightReviewStatus.Successful,
                 ApplicationDeterminedDate = DateTime.Today
             };
 

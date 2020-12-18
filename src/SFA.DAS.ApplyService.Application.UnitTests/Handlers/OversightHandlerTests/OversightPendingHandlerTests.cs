@@ -7,6 +7,7 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTests
 {
@@ -39,7 +40,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                     Ukprn = "12344321",
                     ProviderRoute = "Main",
                     ApplicationReferenceNumber = "APR000111",
-                    OversightStatus = "New"
+                    OversightStatus = OversightReviewStatus.New
                 },
                 new ApplicationOversightDetails
                 {
@@ -49,7 +50,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                     Ukprn = "43211234",
                     ProviderRoute = "Employer",
                     ApplicationReferenceNumber = "APR000112",
-                    OversightStatus = "New"
+                    OversightStatus = OversightReviewStatus.New
                 }
             };
 

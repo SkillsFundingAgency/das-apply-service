@@ -40,8 +40,8 @@ namespace SFA.DAS.ApplyService.Data
                 return await connection.QuerySingleAsync<Guid>(
                     @"INSERT INTO Apply (ApplicationId, OrganisationId, ApplicationStatus, ApplyData, AssessorReviewStatus, GatewayReviewStatus, FinancialReviewStatus, CreatedBy, CreatedAt)
                                         OUTPUT INSERTED.[ApplicationId] 
-                                        VALUES (@applicationId, @organisationId, @applicationStatus, @applyData, @reviewStatus, @gatewayReviewStatus, @financialReviewStatus, @createdBy, GETUTCDATE())",
-                    new { applicationId, organisationId, applicationStatus = ApplicationStatus.InProgress, applyData, reviewStatus = ApplicationReviewStatus.Draft, gatewayReviewStatus = GatewayReviewStatus.Draft, financialReviewStatus = FinancialReviewStatus.Draft, createdBy });
+                                        VALUES (@applicationId, @organisationId, @applicationStatus, @applyData, @assessorReviewStatus, @gatewayReviewStatus, @financialReviewStatus, @createdBy, GETUTCDATE())",
+                    new { applicationId, organisationId, applicationStatus = ApplicationStatus.InProgress, applyData, assessorReviewStatus = AssessorReviewStatus.Draft, gatewayReviewStatus = GatewayReviewStatus.Draft, financialReviewStatus = FinancialReviewStatus.Draft, createdBy });
             }
         }
 
@@ -238,7 +238,7 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET ApplicationStatus = @ApplicationStatus, 
                                                     ApplyData = @applyData, 
-                                                    AssessorReviewStatus = @ReviewStatus, 
+                                                    AssessorReviewStatus = @AssessorReviewStatus, 
                                                     GatewayReviewStatus = @GatewayReviewStatus, 
                                                     FinancialReviewStatus = @FinancialReviewStatus,
                                                     UpdatedBy = @submittedBy, 
@@ -246,8 +246,8 @@ namespace SFA.DAS.ApplyService.Data
                                                 WHERE  (Apply.ApplicationId = @applicationId)",
                                                 new { applicationId, 
                                                       ApplicationStatus = ApplicationStatus.Submitted, 
-                                                      applyData, 
-                                                      ReviewStatus = ApplicationReviewStatus.New, 
+                                                      applyData,
+                                                      AssessorReviewStatus = AssessorReviewStatus.New, 
                                                       GatewayReviewStatus = GatewayReviewStatus.New, 
                                                       FinancialReviewStatus = FinancialReviewStatus.New,
                                                       submittedBy });
