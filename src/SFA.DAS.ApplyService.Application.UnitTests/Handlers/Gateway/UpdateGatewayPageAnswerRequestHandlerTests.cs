@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
+using ICSharpCode.SharpZipLib.Zip;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
@@ -54,11 +55,12 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway
             _handler = new UpdateGatewayPageAnswerRequestHandler(_repository.Object, _auditService.Object);
         }
 
-        [Test]
-        public async Task Handle_Inserts_New_GatewayPageAnswer()
+        [TestCase(null)]
+        [TestCase("clarification comments")]
+        public async Task Handle_Inserts_New_GatewayPageAnswer(string clarificationComments)
         {
             await _handler.Handle(
-                new UpdateGatewayPageAnswerRequest(_applicationId, _pageId, _status, _comments, _userId, _userName,null),
+                new UpdateGatewayPageAnswerRequest(_applicationId, _pageId, _status, _comments, _userId, _userName,clarificationComments),
                 CancellationToken.None);
 
             _repository.Verify(x => x.InsertGatewayPageAnswer(It.Is<GatewayPageAnswer>(a => 
@@ -68,14 +70,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway
                 && a.Comments == _comments), _userId, _userName));
         }
 
-        [Test]
-        public async Task Handle_Updates_Existing_GatewayPageAnswer()
+        [TestCase(null)]
+        [TestCase("clarification comments")]
+        public async Task Handle_Updates_Existing_GatewayPageAnswer(string clarificationComments)
         {
             _repository.Setup(x => x.GetGatewayPageAnswer(_applicationId, _pageId))
                 .ReturnsAsync(_existingGatewayPageAnswer);
 
             await _handler.Handle(
-                new UpdateGatewayPageAnswerRequest(_applicationId, _pageId, _status, _comments, _userId, _userName,null),
+                new UpdateGatewayPageAnswerRequest(_applicationId, _pageId, _status, _comments, _userId, _userName,clarificationComments),
                 CancellationToken.None);
 
             _repository.Verify(x => x.UpdateGatewayPageAnswer(It.Is<GatewayPageAnswer>(a => 
@@ -86,11 +89,12 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway
             ), _userId, _userName));
         }
 
-        [Test]
-        public async Task Handle_Insert_Is_Subject_To_Audit()
+        [TestCase(null)]
+        [TestCase("clarification comments")]
+        public async Task Handle_Insert_Is_Subject_To_Audit(string clarificationComments)
         {
             await _handler.Handle(
-                new UpdateGatewayPageAnswerRequest(_applicationId, _pageId, _status, _comments, _userId, _userName,null),
+                new UpdateGatewayPageAnswerRequest(_applicationId, _pageId, _status, _comments, _userId, _userName,clarificationComments),
                 CancellationToken.None);
 
             _auditService.Verify(x => x.StartTracking(UserAction.UpdateGatewayPageOutcome, _userId, _userName));
@@ -98,14 +102,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway
             _auditService.Verify(x => x.Save());
         }
 
-        [Test]
-        public async Task Handle_Update_Is_Subject_To_Audit()
+        [TestCase(null)]
+        [TestCase("clarification comments")]
+        public async Task Handle_Update_Is_Subject_To_Audit(string clarificationComments)
         {
             _repository.Setup(x => x.GetGatewayPageAnswer(_applicationId, _pageId))
                 .ReturnsAsync(_existingGatewayPageAnswer);
 
             await _handler.Handle(
-                new UpdateGatewayPageAnswerRequest(_applicationId, _pageId, _status, _comments, _userId, _userName,null),
+                new UpdateGatewayPageAnswerRequest(_applicationId, _pageId, _status, _comments, _userId, _userName,clarificationComments),
                 CancellationToken.None);
 
             _auditService.Verify(x => x.StartTracking(UserAction.UpdateGatewayPageOutcome, _userId, _userName));
@@ -113,14 +118,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway
             _auditService.Verify(x => x.Save());
         }
 
-        [Test]
-        public async Task Handle_Updates_Application_With_Gateway_User_Details()
+        [TestCase(null)]
+        [TestCase("clarification comments")]
+        public async Task Handle_Updates_Application_With_Gateway_User_Details(string clarificationComments)
         {
             _repository.Setup(x => x.GetGatewayPageAnswer(_applicationId, _pageId))
                 .ReturnsAsync(_existingGatewayPageAnswer);
 
             await _handler.Handle(
-                new UpdateGatewayPageAnswerRequest(_applicationId, _pageId, _status, _comments, _userId, _userName,null),
+                new UpdateGatewayPageAnswerRequest(_applicationId, _pageId, _status, _comments, _userId, _userName, clarificationComments),
                 CancellationToken.None);
 
             _repository.Verify(x => x.UpdateApplication(It.Is<Domain.Entities.Apply>(a =>
@@ -130,14 +136,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway
             )));
         }
 
-        [Test]
-        public async Task Handle_ApplicationUpdate_Is_Subject_To_Audit()
+        [TestCase(null)]
+        [TestCase("clarification comments")]
+        public async Task Handle_ApplicationUpdate_Is_Subject_To_Audit(string clarificationComments)
         {
             _repository.Setup(x => x.GetGatewayPageAnswer(_applicationId, _pageId))
                 .ReturnsAsync(_existingGatewayPageAnswer);
 
             await _handler.Handle(
-                new UpdateGatewayPageAnswerRequest(_applicationId, _pageId, _status, _comments, _userId, _userName,null),
+                new UpdateGatewayPageAnswerRequest(_applicationId, _pageId, _status, _comments, _userId, _userName,clarificationComments),
                 CancellationToken.None);
 
             _auditService.Verify(x => x.AuditUpdate(It.Is<Domain.Entities.Apply>(a => a == _existingApplication)));
