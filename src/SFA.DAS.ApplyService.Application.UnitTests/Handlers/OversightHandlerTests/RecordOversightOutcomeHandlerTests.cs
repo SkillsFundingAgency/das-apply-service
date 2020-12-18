@@ -22,14 +22,14 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             var command = new RecordOversightOutcomeCommand
             {
                 ApplicationId = Guid.NewGuid(),
-                ApplicationDeterminedDate = DateTime.Now,
                 OversightStatus = oversightReviewStatus,
-                UserName = "test user"
+                UserName = "test user",
+                UserId = "testUser"
             };
 
             var repository = new Mock<IApplyRepository>();
             repository.Setup(x => x.UpdateOversightReviewStatus(command.ApplicationId, command.OversightStatus, 
-                                                                command.ApplicationDeterminedDate, command.UserName))
+                                                                command.UserId, command.UserName))
                                                                 .ReturnsAsync(true);
 
             repository.Setup(x => x.UpdateApplicationStatus(command.ApplicationId, applicationStatus)).Returns(Task.CompletedTask);
@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             result.Should().BeTrue();
 
             repository.Verify(x => x.UpdateOversightReviewStatus(command.ApplicationId, command.OversightStatus,
-                                                                command.ApplicationDeterminedDate, command.UserName), Times.Once);
+                                                                command.UserId, command.UserName), Times.Once);
             repository.Verify(x => x.UpdateApplicationStatus(command.ApplicationId, applicationStatus), Times.Once);
         }
 
@@ -52,14 +52,14 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             var command = new RecordOversightOutcomeCommand
             {
                 ApplicationId = Guid.NewGuid(),
-                ApplicationDeterminedDate = DateTime.Now,
                 OversightStatus = OversightReviewStatus.Successful,
-                UserName = "test user"
+                UserName = "test user",
+                UserId = "testUser"
             };
 
             var repository = new Mock<IApplyRepository>();
             repository.Setup(x => x.UpdateOversightReviewStatus(command.ApplicationId, command.OversightStatus,
-                                                                command.ApplicationDeterminedDate, command.UserName))
+                                                                command.UserId, command.UserName))
                                                                 .ReturnsAsync(false);
 
             repository.Setup(x => x.UpdateApplicationStatus(command.ApplicationId, ApplicationReviewStatus.Approved)).Returns(Task.CompletedTask);
@@ -72,7 +72,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             result.Should().BeFalse();
 
             repository.Verify(x => x.UpdateOversightReviewStatus(command.ApplicationId, command.OversightStatus,
-                                                                command.ApplicationDeterminedDate, command.UserName), Times.Once);
+                                                                command.UserId, command.UserName), Times.Once);
             repository.Verify(x => x.UpdateApplicationStatus(command.ApplicationId, ApplicationReviewStatus.Approved), Times.Never);
         }
     }   
