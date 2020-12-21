@@ -46,10 +46,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     await _mediator.Send(new StartGatewayReviewRequest(application.ApplicationId, request.UserName));
                 }
 
-                if(request.Status == GatewayAnswerStatus.Pass && application.ApplyData.GatewayReviewDetails is null)
+                if(request.Status == GatewayAnswerStatus.Pass)
                 {
                     _logger.LogInformation($"{TwoInTwelveMonthsPageId} - Getting external API checks data for application {application.ApplicationId}");
+                    var gatewayDetails =  application.ApplyData.GatewayReviewDetails;
+                    var clarificationRequestedOn = gatewayDetails?.ClarificationRequestedOn;
+                    var clarificationRequestedBy = gatewayDetails?.ClarificationRequestedBy;
                     application.ApplyData.GatewayReviewDetails = await _gatewayApiChecksService.GetExternalApiCheckDetails(application.ApplicationId, request.UserName);
+                    application.ApplyData.GatewayReviewDetails.ClarificationRequestedBy = clarificationRequestedBy;
+                    application.ApplyData.GatewayReviewDetails.ClarificationRequestedOn = clarificationRequestedOn;
+
                     await _applyRepository.UpdateApplyData(application.ApplicationId, application.ApplyData, request.UserName);
                 }
             }
