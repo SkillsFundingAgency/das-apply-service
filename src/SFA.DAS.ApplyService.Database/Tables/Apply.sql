@@ -28,7 +28,8 @@
     [OversightStatus] NVARCHAR(20) NOT NULL DEFAULT 'New', 
     [ApplicationDeterminedDate] DATETIME2 NULL,
     [GatewayUserId] NVARCHAR(256) NULL,
-    [GatewayUserName] NVARCHAR(256) NULL
+    [GatewayUserName] NVARCHAR(256) NULL, 
+    [Comments] NVARCHAR(MAX) NULL
 )
 GO
 CREATE INDEX [IX_Apply_ApplicationId] ON [Apply] ([ApplicationId])
