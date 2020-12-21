@@ -373,15 +373,15 @@
         public static string UKRLPPrimaryVerificationSource = "UKRLPPrimaryVerificationSource";
         public static string UKRLPVerificationCompanyNumber = "UKRLPVerificationCompanyNumber";
         public static string UKRLPVerificationCharityRegNumber = "UKRLPVerificationCharityRegNumber";
-        public static string Turnover = "Turnover";
-        public static string Depreciation = "Depreciation";
-        public static string ProfitLoss = "ProfitLoss";
-        public static string Dividends = "Dividends";
-        public static string IntangibleAssets = "IntangibleAssets";
-        public static string Assets = "Assets";
-        public static string Liabilities = "Liabilities";
-        public static string ShareholderFunds = "ShareholderFunds";
-        public static string Borrowings = "Borrowings";
+        public static string Turnover = "FHATurnover";
+        public static string Depreciation = "FHADepreciation";
+        public static string ProfitLoss = "FHAProfitLoss";
+        public static string Dividends = "FHADividends";
+        public static string IntangibleAssets = "FHAIntangibleAssets";
+        public static string Assets = "FHAAssets";
+        public static string Liabilities = "FHALiabilities";
+        public static string ShareholderFunds = "FHAShareholderFunds";
+        public static string Borrowings = "FHABorrowings";
     }
 
     public static class RoatpClarificationUpload
