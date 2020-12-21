@@ -1246,6 +1246,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var roatpSequencesTask = _apiClient.GetRoatpSequences();
             var organisationVerificationStatusTask = _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
             var applicationRoutesTask = _roatpApiClient.GetApplicationRoutes();
+            var applicationDataTask = _qnaApiClient.GetApplicationData(model.ApplicationId);
 
             await Task.WhenAll(providerRouteTask, applicationTask, allSectionsTask, roatpSequencesTask, organisationVerificationStatusTask, applicationRoutesTask);
 
@@ -1255,9 +1256,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var roatpSequences = await roatpSequencesTask;
             var organisationVerificationStatus = await organisationVerificationStatusTask;
             var applicationRoutes = await applicationRoutesTask;
-
-            var financialEvidence = allSections.Single(x => x.SequenceId== RoatpWorkflowSequenceIds.FinancialEvidence && x.SectionId == RoatpWorkflowSectionIds.FinancialEvidence.YourOrganisationsFinancialEvidence);
-            var financialsPage = await _qnaApiClient.GetPage(model.ApplicationId, financialEvidence.Id, RoatpWorkflowPageIds.FinancialEvidence.YourOrganisationsFinancialEvidence);
+            var applicationData = (await applicationDataTask) as JObject;
 
             await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
             var sequences = await _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
@@ -1293,7 +1292,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ProviderRouteName = selectedProviderRoute?.RouteName,
                 SubmittingContactId = User.GetUserId(),
                 ApplyData = application.ApplyData,
-                FinancialData = ExtractFinancialData(model.ApplicationId, financialsPage)
+                FinancialData = ExtractFinancialData(model.ApplicationId, applicationData)
             };
 
             var submitResult = await _apiClient.SubmitApplication(submitApplicationRequest);
@@ -1483,27 +1482,25 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return false;
         }
 
-        private FinancialData ExtractFinancialData(Guid applicationId, Page financialsPage)
+        private FinancialData ExtractFinancialData(Guid applicationId, JObject applicationData)
         {
-            if (!financialsPage.Active)
+            if (applicationData == null)
             {
                 return new FinancialData{ ApplicationId = applicationId };
             }
 
-            var answers = financialsPage.PageOfAnswers.First().Answers;
-
             return new FinancialData
             {
                 ApplicationId = applicationId,
-                TurnOver = GetFinancialValue(answers, "FH-140"),
-                Depreciation = GetFinancialValue(answers, "FH-150"),
-                ProfitLoss = GetFinancialValue(answers, "FH-160"),
-                Dividends = GetFinancialValue(answers, "FH-170"),
-                Assets = GetFinancialValue(answers, "FH-180"),
-                Liabilities = GetFinancialValue(answers, "FH-190"),
-                Borrowings = GetFinancialValue(answers, "FH-200"),
-                ShareholderFunds = GetFinancialValue(answers, "FH-210"),
-                IntangibleAssets = GetFinancialValue(answers, "FH-220"),
+                TurnOver = applicationData.GetValue(RoatpWorkflowQuestionTags.Turnover).Value<long>(),
+                Depreciation = applicationData.GetValue(RoatpWorkflowQuestionTags.Depreciation).Value<long>(),
+                ProfitLoss = applicationData.GetValue(RoatpWorkflowQuestionTags.ProfitLoss).Value<long>(),
+                Dividends = applicationData.GetValue(RoatpWorkflowQuestionTags.Dividends).Value<long>(),
+                Assets = applicationData.GetValue(RoatpWorkflowQuestionTags.Assets).Value<long>(),
+                Liabilities = applicationData.GetValue(RoatpWorkflowQuestionTags.Liabilities).Value<long>(),
+                Borrowings = applicationData.GetValue(RoatpWorkflowQuestionTags.Borrowings).Value<long>(),
+                ShareholderFunds = applicationData.GetValue(RoatpWorkflowQuestionTags.ShareholderFunds).Value<long>(),
+                IntangibleAssets = applicationData.GetValue(RoatpWorkflowQuestionTags.IntangibleAssets).Value<long>()
             };
         }
 

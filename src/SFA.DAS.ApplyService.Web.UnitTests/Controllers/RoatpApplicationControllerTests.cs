@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Web.Orchestrators;
 
@@ -451,25 +452,18 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 new ApplicationSection {SectionId = 2, SequenceId = 2}
             });
 
-            _qnaApiClient.Setup(x => x.GetPage(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>()))
-                .ReturnsAsync(() => new Page
+            _qnaApiClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>()))
+                .ReturnsAsync(() => new JObject
                 {
-                    Active = true,
-                    PageOfAnswers = new List<PageOfAnswers>
-                    {
-                        new PageOfAnswers{Answers = new List<Answer>
-                        {
-                            new Answer{ QuestionId = "FH-140", Value = "1"},
-                            new Answer{ QuestionId = "FH-150", Value = "2"},
-                            new Answer{ QuestionId = "FH-160", Value = "3"},
-                            new Answer{ QuestionId = "FH-170", Value = "4"},
-                            new Answer{ QuestionId = "FH-180", Value = "5"},
-                            new Answer{ QuestionId = "FH-190", Value = "6"},
-                            new Answer{ QuestionId = "FH-200", Value = "7"},
-                            new Answer{ QuestionId = "FH-210", Value = "8"},
-                            new Answer{ QuestionId = "FH-220", Value = "9"}
-                        }}
-                    }
+                    new JProperty(RoatpWorkflowQuestionTags.Turnover, "1"),
+                    new JProperty(RoatpWorkflowQuestionTags.Depreciation, "2"),
+                    new JProperty(RoatpWorkflowQuestionTags.ProfitLoss, "3"),
+                    new JProperty(RoatpWorkflowQuestionTags.Dividends, "4"),
+                    new JProperty(RoatpWorkflowQuestionTags.Assets, "5"),
+                    new JProperty(RoatpWorkflowQuestionTags.Liabilities, "6"),
+                    new JProperty(RoatpWorkflowQuestionTags.Borrowings, "7"),
+                    new JProperty(RoatpWorkflowQuestionTags.ShareholderFunds, "8"),
+                    new JProperty(RoatpWorkflowQuestionTags.IntangibleAssets, "9")
                 });
 
             var providerRouteAnswer = new Answer
