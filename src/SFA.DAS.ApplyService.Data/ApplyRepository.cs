@@ -720,7 +720,9 @@ namespace SFA.DAS.ApplyService.Data
                                                 WHERE ApplicationId = @applicationId
                                                     AND OversightStatus NOT IN (@oversightReviewStatusSucessful, @oversightReviewStatusUnsuccessful)",
                                                 new { 
-                                                        applicationId, comments, userName,
+                                                        applicationId,
+                                                        comments,
+                                                        updatedBy = userName,
                                                         applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                                                         oversightReviewStatusSucessful = OversightReviewStatus.Successful,
                                                         oversightReviewStatusUnsuccessful = OversightReviewStatus.Unsuccessful,
