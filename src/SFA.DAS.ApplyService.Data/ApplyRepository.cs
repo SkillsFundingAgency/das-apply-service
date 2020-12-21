@@ -698,16 +698,35 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-
-
-        // NOTE: This is old stuff or things which are not migrated over yet
         public async Task UpdateApplicationStatus(Guid applicationId, string status)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE Apply
-                                                SET  ApplicationStatus = @status                                                
+                                                SET  ApplicationStatus = @status
                                                 WHERE ApplicationId = @ApplicationId", new {applicationId, status});
+            }
+        }
+
+        public async Task<bool> WithdrawApplication(Guid applicationId, string comments, string userId, string userName)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var rowsAffected = await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET  ApplicationStatus = @applicationStatusWithdrawn,
+                                                     Comments = @comments,
+                                                     UpdatedAt = GETUTCDATE(),
+                                                     UpdatedBy = @updatedBy
+                                                WHERE ApplicationId = @applicationId
+                                                    AND OversightStatus NOT IN (@oversightReviewStatusSucessful, @oversightReviewStatusUnsuccessful)",
+                                                new { 
+                                                        applicationId, comments, userName,
+                                                        applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
+                                                        oversightReviewStatusSucessful = OversightReviewStatus.Successful,
+                                                        oversightReviewStatusUnsuccessful = OversightReviewStatus.Unsuccessful,
+                                                });
+
+                return rowsAffected > 0;
             }
         }
 
