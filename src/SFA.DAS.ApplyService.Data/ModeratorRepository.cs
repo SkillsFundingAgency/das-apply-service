@@ -199,7 +199,7 @@ namespace SFA.DAS.ApplyService.Data
                                                                                WHEN @status = @moderationStatusPass THEN @assessorReviewStatusApproved
                                                                                WHEN @status = @moderationStatusFail THEN @assessorReviewStatusDeclined,
                                                                                ELSE AssessorReviewStatus
-                                                                           END
+                                                                           END,
                                                     ApplyData = ISNULL(@applyData, ApplyData),
                                                     UpdatedBy = @userId, 
                                                     UpdatedAt = GETUTCDATE() 
