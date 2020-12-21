@@ -36,6 +36,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string OversightUserId { get; set; }
         public string OversightUserName { get; set; }
         public DateTime? ApplicationDeterminedDate { get; set; }
+
+        public string Comments { get; set; }
     }
 
     public class ApplyData
