@@ -482,7 +482,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
-                            CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
+                            CASE seq.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
                         CROSS APPLY OPENJSON(apply.ApplyData)
@@ -496,19 +496,19 @@ namespace SFA.DAS.ApplyService.Data
                                 [SequenceNo] nvarchar(max) '$.SequenceNo',
                                 [NotRequired] nvarchar(max) '$.NotRequired'
                             )
-                        ) s
-                        WHERE s.SequenceNo = @financialHealthSequence
+                        ) seq
+                        WHERE seq.SequenceNo = @financialHealthSequence
+                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
                         AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
-                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass)",
+                        AND apply.FinancialReviewStatus IN (@financialStatusDraft, @financialStatusNew, @financialStatusInProgress)",
                         new
                         {
                             financialHealthSequence = 2,
+                            gatewayStatusPass = GatewayReviewStatus.Pass,
                             applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             financialStatusDraft = FinancialReviewStatus.Draft,
                             financialStatusNew = FinancialReviewStatus.New,
-                            financialStatusInProgress = FinancialReviewStatus.InProgress,
-                            gatewayStatusPass = GatewayReviewStatus.Pass
+                            financialStatusInProgress = FinancialReviewStatus.InProgress
                         })).ToList();
             }
         }
@@ -533,7 +533,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
                             JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS FeedbackAddedDate,
-                            CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
+                            CASE seq.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
                         CROSS APPLY OPENJSON(apply.ApplyData)
@@ -547,16 +547,17 @@ namespace SFA.DAS.ApplyService.Data
                                 [SequenceNo] nvarchar(max) '$.SequenceNo',
                                 [NotRequired] nvarchar(max) '$.NotRequired'
                             )
-                        ) s
-                        WHERE s.SequenceNo = @financialHealthSequence AND s.NotRequired = 'false'
-                        AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN ( @financialStatusClarificationSent )
-                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass)",
+                        ) seq
+                        WHERE seq.SequenceNo = @financialHealthSequence
+                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
+                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
+                        AND apply.FinancialReviewStatus IN (@financialStatusClarificationSent)",
                         new
                         {
                             financialHealthSequence = 2,
-                            financialStatusClarificationSent = FinancialReviewStatus.ClarificationSent,
-                            gatewayStatusPass = GatewayReviewStatus.Pass
+                            gatewayStatusPass = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
+                            financialStatusClarificationSent = FinancialReviewStatus.ClarificationSent
                         })).ToList();
             }
         }
@@ -581,7 +582,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
                             JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS ClosedDate,
-                            CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
+                            CASE seq.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	
                         CROSS APPLY OPENJSON(apply.ApplyData)
@@ -595,18 +596,22 @@ namespace SFA.DAS.ApplyService.Data
                                 [SequenceNo] nvarchar(max) '$.SequenceNo',
                                 [NotRequired] nvarchar(max) '$.NotRequired'
                             )
-                        ) s
-                        WHERE s.SequenceNo = @financialHealthSequence
+                        ) seq
+                        WHERE seq.SequenceNo = @financialHealthSequence
+                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
                         AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN ( @financialStatusApproved, @financialStatusDeclined, @financialStatusExempt )
-                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass)",
+                        AND (
+                             apply.ApplicationStatus IN (@applicationStatusWithdrawn)
+                             OR apply.FinancialReviewStatus IN (@financialStatusApproved, @financialStatusDeclined, @financialStatusExempt)
+                            )",
                        new
                        {
                            financialHealthSequence = 2,
+                           gatewayStatusPass = GatewayReviewStatus.Pass,
+                           applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                            financialStatusApproved = FinancialReviewStatus.Pass,
                            financialStatusDeclined = FinancialReviewStatus.Fail,
-                           financialStatusExempt = FinancialReviewStatus.Exempt,
-                           gatewayStatusPass = GatewayReviewStatus.Pass
+                           financialStatusExempt = FinancialReviewStatus.Exempt
                        })).ToList();
             }
         }
