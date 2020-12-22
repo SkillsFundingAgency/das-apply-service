@@ -136,13 +136,28 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            if (string.IsNullOrEmpty(pageAnswer.ClarificationAnswer))
+                using (var connection = new SqlConnection(_config.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(
+                        @"UPDATE GatewayAnswer
+                            SET  Status = @status, Comments =@comments, 
+                            UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
+                            WHERE [Id] = @id",
+                        pageAnswer);
+                }
+            else
             {
-                await connection.ExecuteAsync(
-                    @"UPDATE GatewayAnswer
-                        SET  Status = @status, Comments =@comments, UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
-                        WHERE [Id] = @id",
-                    pageAnswer);
+                using (var connection = new SqlConnection(_config.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(
+                        @"UPDATE GatewayAnswer
+                            SET  Status = @status, Comments =@comments, 
+                            ClarificationAnswer = @clarificationAnswer,
+                            UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
+                            WHERE [Id] = @id",
+                        pageAnswer);
+                }
             }
         }
 
