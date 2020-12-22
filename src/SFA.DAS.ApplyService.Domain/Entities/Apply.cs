@@ -169,6 +169,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Pass = "Pass";
         public const string Fail = "Fail";
         public const string InProgress = "In progress"; // TECH DEBT: Correct capitalization
+        public const string Clarification = "Clarification";
     }
 
     public static class GatewayReviewStatus

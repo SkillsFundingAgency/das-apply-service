@@ -10,5 +10,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.Requests
         public string Comments { get; set; }
         public string UserId { get; set; }
         public string UserName { get; set; }
+        public string ClarificationAnswer { get; set; }
     }
 }

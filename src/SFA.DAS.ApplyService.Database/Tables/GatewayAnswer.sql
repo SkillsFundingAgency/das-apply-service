@@ -4,6 +4,7 @@
 	[PageId] [nvarchar](50) NOT NULL,
 	[Status] [nvarchar](20) NULL,
 	Comments NVARCHAR(MAX) NULL,
+	ClarificationAnswer NVARCHAR(MAX) NULL,
 	[GatewayPageData] nvarchar(max) NULL,
     [UpdatedAt] DATETIME2 NULL, 
     [UpdatedBy] NVARCHAR(256) NULL, 
