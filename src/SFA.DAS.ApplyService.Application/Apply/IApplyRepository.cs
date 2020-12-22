@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task UpdateApplication(Domain.Entities.Apply application);
 
         Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, ApplyData applyData, string gatewayReviewStatus, string userId, string userName);
-
+        Task<bool> UpdateGatewayApplyData(Guid applicationId, ApplyData applyData, string userId, string userName);
         Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
 

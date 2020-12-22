@@ -373,7 +373,9 @@
     public static class RoatpClarificationUpload
     {
         public static string ClarificationFile = "ClarificationFile";
+        public static string SubcontractorDeclarationClarificationFile = "SubcontractorDeclarationClarificationFile";
     }
+
     public static class RoatpPreambleQuestionBuilder
     {
 

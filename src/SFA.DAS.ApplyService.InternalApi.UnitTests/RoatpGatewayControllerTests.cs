@@ -73,7 +73,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _gatewayApiChecksService = new Mock<IGatewayApiChecksService>();
             _gatewayApiChecksService.Setup(x => x.GetExternalApiCheckDetails(_applicationId, _userName)).ReturnsAsync(new ApplyGatewayDetails());
 
-            _controller = new RoatpGatewayController(_applyRepository.Object, _logger.Object, _mediator.Object, _gatewayApiChecksService.Object);
+            _controller = new RoatpGatewayController(_applyRepository.Object, _logger.Object, _mediator.Object, _gatewayApiChecksService.Object, null);
         }
 
         [Test]

@@ -22,5 +22,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
         public string Comments { get; set; }
         public DateTime? OutcomeMadeOn { get; set; }
         public string OutcomeMadeBy { get; set; }
+
+        public string GatewaySubcontractorDeclarationClarificationUpload { get; set; }
     }
 }
