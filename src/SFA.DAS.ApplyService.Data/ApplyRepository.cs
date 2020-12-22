@@ -373,11 +373,14 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                      WHERE apply.ApplicationStatus in (@applicationStatusWithdrawn)
-                            OR ( 
-                                apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-	                            AND apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusFailed, @gatewayReviewStatusRejected)
-                               )",
+	                      WHERE apply.DeletedAt IS NULL
+                            AND (
+                                    apply.ApplicationStatus in (@applicationStatusWithdrawn)
+                                    OR ( 
+                                        apply.ApplicationStatus = @applicationStatusGatewayAssessed
+	                                    AND apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusFailed, @gatewayReviewStatusRejected)
+                                       )
+                                )",
                         new
                         {
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
