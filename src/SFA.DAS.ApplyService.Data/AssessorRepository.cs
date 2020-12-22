@@ -66,7 +66,7 @@ namespace SFA.DAS.ApplyService.Data
                             AND ( apply.ApplicationStatus IN (@applicationStatusWithdrawn)
                                   OR (
                                       Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus
-                                      ModerationStatus IN (@passModerationStatus, @failModerationStatus)
+                                      AND ModerationStatus IN (@passModerationStatus, @failModerationStatus)
                                      )
                                 )";
 
