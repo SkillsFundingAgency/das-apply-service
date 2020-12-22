@@ -34,6 +34,7 @@ namespace SFA.DAS.ApplyService.Data
 
         private const string NewApplicationsWhereClause = @"
                             apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved
+                            AND apply.ApplicationStatus = @applicationStatusGatewayAssessed
                             -- Not assigned to current user
                             AND ISNULL(apply.Assessor1UserId, '') <> @userId AND ISNULL(apply.Assessor2UserId, '') <> @userId
                             -- Can be assigned to at least one assessor
@@ -42,6 +43,7 @@ namespace SFA.DAS.ApplyService.Data
 
         private const string InProgressApplicationsWhereClause = @"
                             apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved
+                            AND apply.ApplicationStatus = @applicationStatusGatewayAssessed
                             AND
                             (
                                 -- Assigned to the current user and in progress
@@ -53,11 +55,13 @@ namespace SFA.DAS.ApplyService.Data
 
         private const string InModerationApplicationsWhereClause = @"
                             apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved
+                            AND apply.ApplicationStatus = @applicationStatusGatewayAssessed
                             AND Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus
                             AND ModerationStatus IN (@newModerationStatus, @inProgressModerationStatus)";
 
         private const string InClarificationApplicationsWhereClause = @"
                             apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved
+                            AND apply.ApplicationStatus = @applicationStatusGatewayAssessed
                             AND Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus
                             AND ModerationStatus = @clarificationSentModerationStatus";
 
@@ -91,6 +95,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             userId = userId
                         })).ToList();
             }
@@ -108,6 +113,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             userId = userId
                         }));
             }
@@ -196,6 +202,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             inProgressReviewStatus = AssessorReviewStatus.InProgress,
                             userId = userId
                         })).ToList();
@@ -214,6 +221,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             inProgressReviewStatus = AssessorReviewStatus.InProgress,
                             userId = userId
                         }));
@@ -237,6 +245,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             newModerationStatus = ModerationStatus.New,
                             inProgressModerationStatus = ModerationStatus.InProgress
@@ -256,6 +265,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             newModerationStatus = ModerationStatus.New,
                             inProgressModerationStatus = ModerationStatus.InProgress
@@ -280,6 +290,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             newModerationStatus = ModerationStatus.New,
                             clarificationSentModerationStatus = ModerationStatus.ClarificationSent
@@ -299,6 +310,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             newModerationStatus = ModerationStatus.New,
                             clarificationSentModerationStatus = ModerationStatus.ClarificationSent
