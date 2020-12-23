@@ -1492,29 +1492,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return new FinancialData
             {
                 ApplicationId = applicationId,
-                TurnOver = applicationData.GetValue(RoatpWorkflowQuestionTags.Turnover).Value<long>(),
-                Depreciation = applicationData.GetValue(RoatpWorkflowQuestionTags.Depreciation).Value<long>(),
-                ProfitLoss = applicationData.GetValue(RoatpWorkflowQuestionTags.ProfitLoss).Value<long>(),
-                Dividends = applicationData.GetValue(RoatpWorkflowQuestionTags.Dividends).Value<long>(),
-                Assets = applicationData.GetValue(RoatpWorkflowQuestionTags.Assets).Value<long>(),
-                Liabilities = applicationData.GetValue(RoatpWorkflowQuestionTags.Liabilities).Value<long>(),
-                Borrowings = applicationData.GetValue(RoatpWorkflowQuestionTags.Borrowings).Value<long>(),
-                ShareholderFunds = applicationData.GetValue(RoatpWorkflowQuestionTags.ShareholderFunds).Value<long>(),
-                IntangibleAssets = applicationData.GetValue(RoatpWorkflowQuestionTags.IntangibleAssets).Value<long>()
+                TurnOver = applicationData.GetValue(RoatpWorkflowQuestionTags.Turnover).Value<long?>(),
+                Depreciation = applicationData.GetValue(RoatpWorkflowQuestionTags.Depreciation).Value<long?>(),
+                ProfitLoss = applicationData.GetValue(RoatpWorkflowQuestionTags.ProfitLoss).Value<long?>(),
+                Dividends = applicationData.GetValue(RoatpWorkflowQuestionTags.Dividends).Value<long?>(),
+                Assets = applicationData.GetValue(RoatpWorkflowQuestionTags.Assets).Value<long?>(),
+                Liabilities = applicationData.GetValue(RoatpWorkflowQuestionTags.Liabilities).Value<long?>(),
+                Borrowings = applicationData.GetValue(RoatpWorkflowQuestionTags.Borrowings).Value<long?>(),
+                ShareholderFunds = applicationData.GetValue(RoatpWorkflowQuestionTags.ShareholderFunds).Value<long?>(),
+                IntangibleAssets = applicationData.GetValue(RoatpWorkflowQuestionTags.IntangibleAssets).Value<long?>()
             };
-        }
-
-        private long GetFinancialValue(List<Answer> answers, string questionId)
-        {
-            var textValue = answers.SingleOrDefault(x => x.QuestionId == questionId)?.Value;
-
-            if (long.TryParse(textValue, out var parsedValue))
-            {
-                return parsedValue;
-            }
-
-            _logger.LogError($"Unable to get financial value for {questionId} - could not parse \"{textValue}\" to long");
-            return 0;
         }
     }
 }
