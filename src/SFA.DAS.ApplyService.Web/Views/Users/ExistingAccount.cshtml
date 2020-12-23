@@ -35,7 +35,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="post" asp-action="ConfirmExistingAccount">
+            <form method="post" asp-action="ConfirmExistingAccount" novalidate>
 
                 <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="FirstTimeSignin">
                     @if (showErrors)

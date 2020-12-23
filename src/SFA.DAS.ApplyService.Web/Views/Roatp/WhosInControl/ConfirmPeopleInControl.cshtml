@@ -12,7 +12,7 @@
 <partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
 @*
-<form asp-controller="RoatpWhosInControlApplication" asp-action="AddPeopleInControl" method="get" name="backForm">
+<form asp-controller="RoatpWhosInControlApplication" asp-action="AddPeopleInControl" method="get" name="backForm" novalidate>
     <input type="hidden" asp-for="ApplicationId" />
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
 </form>
@@ -70,7 +70,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="post" asp-action="CompletePeopleInControlSection">
+            <form method="post" asp-action="CompletePeopleInControlSection" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="GetHelpAction" />
 

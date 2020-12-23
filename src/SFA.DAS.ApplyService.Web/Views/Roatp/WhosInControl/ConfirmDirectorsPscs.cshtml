@@ -13,7 +13,7 @@
             <h1 class="govuk-heading-xl">Confirm who's in control</h1>
             <p class="govuk-body">These are the details we found on Companies House</p>
 
-            <form method="post" asp-action="DirectorsPscsConfirmed" novalidate enctype="multipart/form-data">
+            <form method="post" asp-action="DirectorsPscsConfirmed" enctype="multipart/form-data" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="GetHelpAction" />
 
