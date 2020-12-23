@@ -724,9 +724,18 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                var applyData = await GetApplyData(applicationId);
+
+                if(applyData?.ApplyDetails != null)
+                {
+                    applyData.ApplyDetails.ApplicationWithdrawnOn = DateTime.UtcNow;
+                    applyData.ApplyDetails.ApplicationWithdrawnBy = userName;
+                }
+
                 var rowsAffected = await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET  ApplicationStatus = @applicationStatusWithdrawn,
                                                      Comments = @comments,
+                                                     ApplyData = @applyData,
                                                      UpdatedAt = GETUTCDATE(),
                                                      UpdatedBy = @updatedBy
                                                 WHERE ApplicationId = @applicationId
@@ -734,6 +743,7 @@ namespace SFA.DAS.ApplyService.Data
                                                 new { 
                                                         applicationId,
                                                         comments,
+                                                        applyData,
                                                         updatedBy = userName,
                                                         applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                                                         oversightReviewStatusSucessful = OversightReviewStatus.Successful,
@@ -1026,10 +1036,8 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var applyDataResults = await connection.QueryAsync<ApplyData>(@"SELECT ApplyData FROM Apply WHERE ApplicationId = @applicationId",
+                return await connection.QueryFirstOrDefaultAsync<ApplyData>(@"SELECT ApplyData FROM Apply WHERE ApplicationId = @applicationId",
                     new { applicationId });
-
-                return applyDataResults.FirstOrDefault();
             }
         }
 
