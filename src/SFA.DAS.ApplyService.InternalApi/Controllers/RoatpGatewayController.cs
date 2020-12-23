@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.Financial;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
@@ -173,18 +172,25 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<IActionResult> RemoveClarificationFile(Guid applicationId, [FromBody] SubcontractorDeclarationClarificationFileCommand command)
         {
            
-                var clarificationFileName = command.FileName;
-                var uploadedSuccessfully = await _fileStorageService.DeleteFile(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, RoatpClarificationUpload.SubcontractorDeclarationClarificationFile, clarificationFileName, ContainerType.Gateway, new CancellationToken());
+            var clarificationFileName = command.FileName;
+            var uploadedSuccessfully = await _fileStorageService.DeleteFile(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, RoatpClarificationUpload.SubcontractorDeclarationClarificationFile, clarificationFileName, ContainerType.Gateway, new CancellationToken());
 
-                if (!uploadedSuccessfully)
-                {
-                    _logger.LogError($"Unable to upload subcontractor declaration clarification for application: {applicationId} || File name {clarificationFileName}");
-                    return BadRequest();
-                }
-                await _mediator.Send(new RemoveSubcontractorDeclarationFileRequest(applicationId, clarificationFileName, command.UserId, command.UserName));
+            if (!uploadedSuccessfully)
+            {
+                _logger.LogError($"Unable to upload subcontractor declaration clarification for application: {applicationId} || File name {clarificationFileName}");
+                return BadRequest();
+            }
+            await _mediator.Send(new RemoveSubcontractorDeclarationFileRequest(applicationId, clarificationFileName, command.UserId, command.UserName));
             
-
             return Ok();
+        }
+
+
+        public class SubcontractorDeclarationClarificationFileCommand
+        {
+            public string UserId { get; set; }
+            public string UserName { get; set; }
+            public string FileName { get; set; }
         }
     }
 }

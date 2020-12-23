@@ -58,12 +58,4 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public bool IsGatewayApproved { get; set; }
         public string EvaluatedBy { get; set; }
     }
-
-
-    public class SubcontractorDeclarationClarificationFileCommand
-    {
-        public string UserId { get; set; }
-        public string UserName { get; set; }
-        public string FileName { get; set; }
-    }
 }

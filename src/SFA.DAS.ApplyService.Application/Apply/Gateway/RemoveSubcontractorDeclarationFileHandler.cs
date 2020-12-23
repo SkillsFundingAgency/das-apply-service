@@ -10,9 +10,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
     {
         private readonly IApplyRepository _applyRepository;
 
-        private readonly ILogger<AddSubcontractorDeclarationFileUploadHandler> _logger;
+        private readonly ILogger<RemoveSubcontractorDeclarationFileHandler> _logger;
 
-        public RemoveSubcontractorDeclarationFileHandler(IApplyRepository applyRepository, ILogger<AddSubcontractorDeclarationFileUploadHandler> logger)
+        public RemoveSubcontractorDeclarationFileHandler(IApplyRepository applyRepository, ILogger<RemoveSubcontractorDeclarationFileHandler> logger)
         {
             _applyRepository = applyRepository;
             _logger = logger;
