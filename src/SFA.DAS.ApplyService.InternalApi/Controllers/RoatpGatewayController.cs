@@ -151,7 +151,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
 
         [HttpPost("/Gateway/SubcontractorDeclarationClarification/{applicationId}/Upload")]
-        public async Task<IActionResult> UploadClarificationFile(Guid applicationId, [FromForm] UploadSubcontractorDeclarationClarificationFileCommand command)
+        public async Task<IActionResult> UploadClarificationFile(Guid applicationId, [FromForm] SubcontractorDeclarationClarificationFileCommand command)
         {
             if (Request.Form.Files != null && Request.Form.Files.Any())
             {
@@ -165,6 +165,24 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 }
                 await _mediator.Send(new AddSubcontractorDeclarationFileUploadRequest(applicationId, clarificationFileName, command.UserId, command.UserName));
             }
+
+            return Ok();
+        }
+
+        [HttpPost("/Gateway/SubcontractorDeclarationClarification/{applicationId}/Remove")]
+        public async Task<IActionResult> RemoveClarificationFile(Guid applicationId, [FromBody] SubcontractorDeclarationClarificationFileCommand command)
+        {
+           
+                var clarificationFileName = command.FileName;
+                var uploadedSuccessfully = await _fileStorageService.DeleteFile(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, RoatpClarificationUpload.SubcontractorDeclarationClarificationFile, clarificationFileName, ContainerType.Gateway, new CancellationToken());
+
+                if (!uploadedSuccessfully)
+                {
+                    _logger.LogError($"Unable to upload subcontractor declaration clarification for application: {applicationId} || File name {clarificationFileName}");
+                    return BadRequest();
+                }
+                await _mediator.Send(new RemoveSubcontractorDeclarationFileRequest(applicationId, clarificationFileName, command.UserId, command.UserName));
+            
 
             return Ok();
         }

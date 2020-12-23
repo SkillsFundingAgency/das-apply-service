@@ -60,9 +60,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     }
 
 
-    public class UploadSubcontractorDeclarationClarificationFileCommand
+    public class SubcontractorDeclarationClarificationFileCommand
     {
         public string UserId { get; set; }
         public string UserName { get; set; }
+        public string FileName { get; set; }
     }
 }
