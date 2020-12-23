@@ -1484,24 +1484,26 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private FinancialData ExtractFinancialData(Guid applicationId, JObject applicationData)
         {
-            if (applicationData == null)
+            try
             {
-                return new FinancialData{ ApplicationId = applicationId };
+                return new FinancialData
+                {
+                    ApplicationId = applicationId,
+                    TurnOver = applicationData.GetValue(RoatpWorkflowQuestionTags.Turnover).Value<long>(),
+                    Depreciation = applicationData.GetValue(RoatpWorkflowQuestionTags.Depreciation).Value<long>(),
+                    ProfitLoss = applicationData.GetValue(RoatpWorkflowQuestionTags.ProfitLoss).Value<long>(),
+                    Dividends = applicationData.GetValue(RoatpWorkflowQuestionTags.Dividends).Value<long>(),
+                    Assets = applicationData.GetValue(RoatpWorkflowQuestionTags.Assets).Value<long>(),
+                    Liabilities = applicationData.GetValue(RoatpWorkflowQuestionTags.Liabilities).Value<long>(),
+                    Borrowings = applicationData.GetValue(RoatpWorkflowQuestionTags.Borrowings).Value<long>(),
+                    ShareholderFunds = applicationData.GetValue(RoatpWorkflowQuestionTags.ShareholderFunds).Value<long>(),
+                    IntangibleAssets = applicationData.GetValue(RoatpWorkflowQuestionTags.IntangibleAssets).Value<long>()
+                };
             }
-
-            return new FinancialData
+            catch
             {
-                ApplicationId = applicationId,
-                TurnOver = applicationData.GetValue(RoatpWorkflowQuestionTags.Turnover).Value<long?>(),
-                Depreciation = applicationData.GetValue(RoatpWorkflowQuestionTags.Depreciation).Value<long?>(),
-                ProfitLoss = applicationData.GetValue(RoatpWorkflowQuestionTags.ProfitLoss).Value<long?>(),
-                Dividends = applicationData.GetValue(RoatpWorkflowQuestionTags.Dividends).Value<long?>(),
-                Assets = applicationData.GetValue(RoatpWorkflowQuestionTags.Assets).Value<long?>(),
-                Liabilities = applicationData.GetValue(RoatpWorkflowQuestionTags.Liabilities).Value<long?>(),
-                Borrowings = applicationData.GetValue(RoatpWorkflowQuestionTags.Borrowings).Value<long?>(),
-                ShareholderFunds = applicationData.GetValue(RoatpWorkflowQuestionTags.ShareholderFunds).Value<long?>(),
-                IntangibleAssets = applicationData.GetValue(RoatpWorkflowQuestionTags.IntangibleAssets).Value<long?>()
-            };
+                return new FinancialData { ApplicationId = applicationId };
+            }            
         }
     }
 }
