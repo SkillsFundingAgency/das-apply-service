@@ -255,6 +255,11 @@
             public static string SubcontractorContractFile = "360";
         }
 
+        public static class FinancialEvidence
+        {
+            public static string YourOrganisationsFinancialEvidence = "2131";
+        }
+
         public static class CriminalComplianceChecks
         {
             public static string CompositionCreditors = "3100";
@@ -368,6 +373,15 @@
         public static string UKRLPPrimaryVerificationSource = "UKRLPPrimaryVerificationSource";
         public static string UKRLPVerificationCompanyNumber = "UKRLPVerificationCompanyNumber";
         public static string UKRLPVerificationCharityRegNumber = "UKRLPVerificationCharityRegNumber";
+        public static string Turnover = "FHATurnover";
+        public static string Depreciation = "FHADepreciation";
+        public static string ProfitLoss = "FHAProfitLoss";
+        public static string Dividends = "FHADividends";
+        public static string IntangibleAssets = "FHAIntangibleAssets";
+        public static string Assets = "FHAAssets";
+        public static string Liabilities = "FHALiabilities";
+        public static string ShareholderFunds = "FHAShareholderFunds";
+        public static string Borrowings = "FHABorrowings";
     }
 
     public static class RoatpClarificationUpload
