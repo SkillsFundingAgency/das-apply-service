@@ -289,12 +289,12 @@ namespace SFA.DAS.ApplyService.Data
             return Guid.Empty;
         }
 
-        public async Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications()
+        public async Task<List<RoatpGatewaySummaryItem>> GetNewGatewayApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<RoatpApplicationSummaryItem>(
+                    .QueryAsync<RoatpGatewaySummaryItem>(
                         @"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
@@ -319,12 +319,12 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<RoatpApplicationSummaryItem>> GetInProgressGatewayApplications()
+        public async Task<List<RoatpGatewaySummaryItem>> GetInProgressGatewayApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<RoatpApplicationSummaryItem>(
+                    .QueryAsync<RoatpGatewaySummaryItem>(
                         @"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
@@ -352,12 +352,12 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications()
+        public async Task<List<RoatpGatewaySummaryItem>> GetClosedGatewayApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<RoatpApplicationSummaryItem>(
+                    .QueryAsync<RoatpGatewaySummaryItem>(
                         @"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
