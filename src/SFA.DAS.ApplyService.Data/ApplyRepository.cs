@@ -378,7 +378,7 @@ namespace SFA.DAS.ApplyService.Data
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
                                 ELSE apply.GatewayUserName
-                            END AS OutcomeMadeBy,
+                            END AS OutcomeMadeBy
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
