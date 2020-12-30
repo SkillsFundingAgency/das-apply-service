@@ -1129,8 +1129,8 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(@"UPDATE Apply 
                                                 SET OversightStatus = @oversightStatus, 
                                                 ApplicationDeterminedDate = GETUTCDATE(),
-                                                OversightUserId = @userId
-                                                OversightUserName = @userName
+                                                OversightUserId = @userId,
+                                                OversightUserName = @userName,
                                                 UpdatedBy = @updatedBy,
                                                 UpdatedAt = GETUTCDATE()
                                                 WHERE ApplicationId = @applicationId",
@@ -1138,6 +1138,7 @@ namespace SFA.DAS.ApplyService.Data
                             {
                                 applicationId,
                                 oversightStatus,
+                                userId,
                                 userName,
                                 updatedBy = userName
                             });
