@@ -197,7 +197,7 @@ namespace SFA.DAS.ApplyService.Data
                                                 SET ModerationStatus = ISNULL(@status, ModerationStatus),
                                                     AssessorReviewStatus = CASE
                                                                                WHEN @status = @moderationStatusPass THEN @assessorReviewStatusApproved
-                                                                               WHEN @status = @moderationStatusFail THEN @assessorReviewStatusDeclined,
+                                                                               WHEN @status = @moderationStatusFail THEN @assessorReviewStatusDeclined
                                                                                ELSE AssessorReviewStatus
                                                                            END,
                                                     ApplyData = ISNULL(@applyData, ApplyData),
