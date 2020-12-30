@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string GatewayReviewStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
-        
+
     }
 
     public class RoatpFinancialSummaryItem : RoatpApplicationSummaryItem
@@ -26,7 +26,16 @@ namespace SFA.DAS.ApplyService.Domain.Apply
 
         public string DeclaredInApplication { get; set; }
 
+        public DateTime GatewayOutcomeDateTime { get; set; }
+
         public FinancialReviewDetails FinancialReviewDetails { get; set; }
+    }
+
+    public class RoatpFinancialSummaryDownloadItem : RoatpFinancialSummaryItem
+    {
+        public FinancialData FinancialData { get; set; }
+        public string CompanyNumber { get; set; }
+        public string CharityNumber { get; set; }
     }
 
     public class RoatpGatewaySummaryItem : RoatpApplicationSummaryItem
@@ -36,4 +45,4 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public DateTime? OutcomeMadeDate { get; set; }
         public string OutcomeMadeBy { get; set; }
     }
-}
+ }

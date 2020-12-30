@@ -1248,6 +1248,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var roatpSequencesTask = _apiClient.GetRoatpSequences();
             var organisationVerificationStatusTask = _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
             var applicationRoutesTask = _roatpApiClient.GetApplicationRoutes();
+            var applicationDataTask = _qnaApiClient.GetApplicationData(model.ApplicationId);
 
             await Task.WhenAll(providerRouteTask, applicationTask, allSectionsTask, roatpSequencesTask, organisationVerificationStatusTask, applicationRoutesTask);
 
@@ -1257,6 +1258,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var roatpSequences = await roatpSequencesTask;
             var organisationVerificationStatus = await organisationVerificationStatusTask;
             var applicationRoutes = await applicationRoutesTask;
+            var applicationData = (await applicationDataTask) as JObject;
 
             await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
             var sequences = await _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
@@ -1291,7 +1293,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ProviderRoute = Convert.ToInt32(providerRoute.Value),
                 ProviderRouteName = selectedProviderRoute?.RouteName,
                 SubmittingContactId = User.GetUserId(),
-                ApplyData = application.ApplyData
+                ApplyData = application.ApplyData,
+                FinancialData = ExtractFinancialData(model.ApplicationId, applicationData)
             };
 
             var submitResult = await _apiClient.SubmitApplication(submitApplicationRequest);
@@ -1479,6 +1482,30 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return false;
+        }
+
+        private FinancialData ExtractFinancialData(Guid applicationId, JObject applicationData)
+        {
+            try
+            {
+                return new FinancialData
+                {
+                    ApplicationId = applicationId,
+                    TurnOver = applicationData.GetValue(RoatpWorkflowQuestionTags.Turnover).Value<long>(),
+                    Depreciation = applicationData.GetValue(RoatpWorkflowQuestionTags.Depreciation).Value<long>(),
+                    ProfitLoss = applicationData.GetValue(RoatpWorkflowQuestionTags.ProfitLoss).Value<long>(),
+                    Dividends = applicationData.GetValue(RoatpWorkflowQuestionTags.Dividends).Value<long>(),
+                    Assets = applicationData.GetValue(RoatpWorkflowQuestionTags.Assets).Value<long>(),
+                    Liabilities = applicationData.GetValue(RoatpWorkflowQuestionTags.Liabilities).Value<long>(),
+                    Borrowings = applicationData.GetValue(RoatpWorkflowQuestionTags.Borrowings).Value<long>(),
+                    ShareholderFunds = applicationData.GetValue(RoatpWorkflowQuestionTags.ShareholderFunds).Value<long>(),
+                    IntangibleAssets = applicationData.GetValue(RoatpWorkflowQuestionTags.IntangibleAssets).Value<long>()
+                };
+            }
+            catch
+            {
+                return new FinancialData { ApplicationId = applicationId };
+            }            
         }
     }
 }

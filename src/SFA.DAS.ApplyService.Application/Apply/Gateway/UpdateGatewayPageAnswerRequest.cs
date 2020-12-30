@@ -11,8 +11,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
         public string Comments { get; }
         public string UserId { get; }
         public string UserName { get; }
+        public string ClarificationAnswer { get; }
 
-        public UpdateGatewayPageAnswerRequest(Guid applicationId, string pageId, string status, string comments, string userId, string username)
+        public UpdateGatewayPageAnswerRequest(Guid applicationId, string pageId, string status, string comments, string userId, string username, string clarificationAnswer)
         {
             ApplicationId = applicationId;
             PageId = pageId;
@@ -20,6 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             Comments = comments;
             UserId = userId;
             UserName = username;
+            ClarificationAnswer = clarificationAnswer;
         }
     }
 }

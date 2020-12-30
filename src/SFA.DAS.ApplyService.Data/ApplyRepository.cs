@@ -8,6 +8,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -139,8 +140,10 @@ namespace SFA.DAS.ApplyService.Data
             {
                 await connection.ExecuteAsync(
                     @"UPDATE GatewayAnswer
-                        SET  Status = @status, Comments =@comments, UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
-                        WHERE [Id] = @id",
+                            SET  Status = @status, Comments = @comments, 
+                            ClarificationAnswer = ISNULL(@clarificationAnswer, ClarificationAnswer),
+                            UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
+                            WHERE [Id] = @id",
                     pageAnswer);
             }
         }
@@ -230,10 +233,11 @@ namespace SFA.DAS.ApplyService.Data
             return canSubmit;
         }
 
-        public async Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy)
+        public async Task SubmitApplication(Guid applicationId, ApplyData applyData, FinancialData financialData, Guid submittedBy)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                await connection.OpenAsync();
                 await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET ApplicationStatus = @ApplicationStatus, 
                                                     ApplyData = @applyData, 
@@ -250,6 +254,15 @@ namespace SFA.DAS.ApplyService.Data
                                                       GatewayReviewStatus = GatewayReviewStatus.New, 
                                                       FinancialReviewStatus = FinancialReviewStatus.New,
                                                       submittedBy });
+
+                await connection.ExecuteAsync(@"insert into FinancialData ([ApplicationId]
+               ,[TurnOver],[Depreciation],[ProfitLoss],[Dividends],[IntangibleAssets]
+               ,[Assets],[Liabilities],[ShareholderFunds],[Borrowings])
+                values (@ApplicationId, @TurnOver,@Depreciation, @ProfitLoss,@Dividends,@IntangibleAssets
+               ,@Assets,@Liabilities,@ShareholderFunds,@Borrowings)",
+               financialData);
+
+                connection.Close();
             }
         }
 
@@ -493,7 +506,8 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
-                            CASE seq.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
+                            JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeDateTime,
+                            CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
                         CROSS APPLY OPENJSON(apply.ApplyData)
@@ -524,6 +538,80 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload()
+        {
+            var sql = @"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+                            apply.ApplicationStatus AS ApplicationStatus,
+                            apply.GatewayReviewStatus AS GatewayReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
+                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            apply.FinancialGrade AS FinancialReviewDetails,
+                            org.Name AS OrganisationName,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
+                            JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeDateTime,
+                            JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.CompaniesHouseDetails.CompanyNumber') AS CompanyNumber,
+                            JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.CharityCommissionDetails.CharityNumber') AS CharityNumber,
+                            CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication,
+                            fd.ApplicationId,
+                            fd.TurnOver,
+                            fd.Depreciation,
+                            fd.ProfitLoss,
+                            fd.Dividends,
+                            fd.IntangibleAssets,
+                            fd.Assets,
+                            fd.Liabilities,
+                            fd.ShareholderFunds,
+                            fd.Borrowings
+	                      FROM Apply apply
+                          LEFT JOIN FinancialData fd on fd.ApplicationId = apply.ApplicationId
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
+                        CROSS APPLY OPENJSON(apply.ApplyData)
+                        WITH (
+                            Sequences nvarchar(max) '$.Sequences' AS JSON
+                        ) AS i
+                        CROSS APPLY (
+                            SELECT *
+                            FROM OPENJSON(i.Sequences)
+                            WITH (
+                                [SequenceNo] nvarchar(max) '$.SequenceNo',
+                                [NotRequired] nvarchar(max) '$.NotRequired'
+                            )
+                        ) s
+                        WHERE s.SequenceNo = @financialHealthSequence
+                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
+                        AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
+                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass)";
+
+            var parameters = new
+            {
+                financialHealthSequence = 2,
+                applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
+                financialStatusDraft = FinancialReviewStatus.Draft,
+                financialStatusNew = FinancialReviewStatus.New,
+                financialStatusInProgress = FinancialReviewStatus.InProgress,
+                gatewayStatusPass = GatewayReviewStatus.Pass
+            };
+
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var results = await connection
+                    .QueryAsync<RoatpFinancialSummaryDownloadItem, FinancialData, RoatpFinancialSummaryDownloadItem>(
+                        sql, ((item, data) =>
+                            {
+                                item.FinancialData = data;
+                                return item;
+                            }
+                        ), parameters, null, true, "ApplicationId");
+
+                return results.ToList();
+            }
+        }
+
         public async Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -544,7 +632,8 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
                             JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS FeedbackAddedDate,
-                            CASE seq.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
+                            JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeDateTime,
+                            CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
                         CROSS APPLY OPENJSON(apply.ApplyData)
@@ -593,7 +682,8 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
                             JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS ClosedDate,
-                            CASE seq.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
+                            JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeDateTime,
+                            CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	
                         CROSS APPLY OPENJSON(apply.ApplyData)
@@ -723,7 +813,7 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE Apply
-                                                SET  ApplicationStatus = @status
+                                                SET  ApplicationStatus = @status                                                
                                                 WHERE ApplicationId = @ApplicationId", new {applicationId, status});
             }
         }
@@ -1075,8 +1165,8 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(@"UPDATE Apply 
                                                 SET OversightStatus = @oversightStatus, 
                                                 ApplicationDeterminedDate = GETUTCDATE(),
-                                                OversightUserId = @userId
-                                                OversightUserName = @userName
+                                                OversightUserId = @userId,
+                                                OversightUserName = @userName,
                                                 UpdatedBy = @updatedBy,
                                                 UpdatedAt = GETUTCDATE()
                                                 WHERE ApplicationId = @applicationId",
@@ -1084,6 +1174,7 @@ namespace SFA.DAS.ApplyService.Data
                             {
                                 applicationId,
                                 oversightStatus,
+                                userId,
                                 userName,
                                 updatedBy = userName
                             });

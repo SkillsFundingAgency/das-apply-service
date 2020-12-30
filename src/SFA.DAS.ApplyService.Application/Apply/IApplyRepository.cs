@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<string> GetGatewayPageStatus(Guid applicationId, string pageId);
         Task<string> GetGatewayPageComments(Guid applicationId, string pageId);
-
+       
         Task InsertGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName);
         Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName);
         Task UpdateApplication(Domain.Entities.Apply application);
@@ -31,7 +31,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, ApplyData applyData, string gatewayReviewStatus, string userId, string userName);
 
         Task<bool> CanSubmitApplication(Guid applicationId);
-        Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
+        Task SubmitApplication(Guid applicationId, ApplyData applyData, FinancialData financialData, Guid submittedBy);
 
         Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<ApplySequence> newSequences);
 
@@ -46,6 +46,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<RoatpApplicationSummaryItem>> GetClosedApplications();
 
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
+        Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload();
         Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications();
         Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications();
         Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts();

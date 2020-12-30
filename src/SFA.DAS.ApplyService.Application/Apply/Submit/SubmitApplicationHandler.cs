@@ -48,7 +48,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                         }
                     }
                     
-                    await _applyRepository.SubmitApplication(application.ApplicationId, application.ApplyData, submittingContact.Id);
+                    await _applyRepository.SubmitApplication(application.ApplicationId, application.ApplyData, request.FinancialData, submittingContact.Id);
 
                     return true;
                 }
