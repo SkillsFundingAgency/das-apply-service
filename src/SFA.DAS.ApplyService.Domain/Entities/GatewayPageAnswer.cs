@@ -12,5 +12,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string Comments { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public string ClarificationAnswer { get; set; }
     }
 }

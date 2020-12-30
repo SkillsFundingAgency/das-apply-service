@@ -17,6 +17,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
 
         // The below properties are related to the requested page
         public string PageId { get; set; }
+        public string OptionClarificationText { get; set; }
         public string Status { get; set; }
         public string Comments { get; set; }
         public DateTime? OutcomeMadeOn { get; set; }
