@@ -41,10 +41,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task StartGatewayReview(Guid applicationId, string reviewer);
         Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
 
-        Task<List<RoatpApplicationSummaryItem>> GetOpenApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetClosedApplications();
-
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
         Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload();
         Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications();
