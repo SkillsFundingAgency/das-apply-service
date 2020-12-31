@@ -507,7 +507,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeDateTime,
-                            CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
+                            CASE seq.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
                         CROSS APPLY OPENJSON(apply.ApplyData)
@@ -556,7 +556,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeDateTime,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.CompaniesHouseDetails.CompanyNumber') AS CompanyNumber,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.CharityCommissionDetails.CharityNumber') AS CharityNumber,
-                            CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication,
+                            CASE seq.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication,
                             fd.ApplicationId,
                             fd.TurnOver,
                             fd.Depreciation,
@@ -581,8 +581,8 @@ namespace SFA.DAS.ApplyService.Data
                                 [SequenceNo] nvarchar(max) '$.SequenceNo',
                                 [NotRequired] nvarchar(max) '$.NotRequired'
                             )
-                        ) s
-                        WHERE s.SequenceNo = @financialHealthSequence
+                        ) seq
+                        WHERE seq.SequenceNo = @financialHealthSequence
                         AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
                         AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
                         AND apply.GatewayReviewStatus IN (@gatewayStatusPass)";
@@ -633,7 +633,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
                             JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS FeedbackAddedDate,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeDateTime,
-                            CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
+                            CASE seq.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
                         CROSS APPLY OPENJSON(apply.ApplyData)
@@ -683,7 +683,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
                             JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS ClosedDate,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeDateTime,
-                            CASE s.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
+                            CASE seq.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	
                         CROSS APPLY OPENJSON(apply.ApplyData)
