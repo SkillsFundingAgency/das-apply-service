@@ -404,7 +404,7 @@ namespace SFA.DAS.ApplyService.Data
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
                             gatewayReviewStatusFailed = GatewayReviewStatus.Fail,
-                            GatewayReviewStatusRejected = GatewayReviewStatus.Reject
+                            gatewayReviewStatusRejected = GatewayReviewStatus.Reject
                         })).ToList();
             }
         }
