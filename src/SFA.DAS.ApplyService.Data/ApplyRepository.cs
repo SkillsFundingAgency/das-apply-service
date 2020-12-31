@@ -397,15 +397,11 @@ namespace SFA.DAS.ApplyService.Data
 	                      WHERE apply.DeletedAt IS NULL
                             AND (
                                     apply.ApplicationStatus in (@applicationStatusWithdrawn)
-                                    OR ( 
-                                        apply.ApplicationStatus = @applicationStatusGatewayAssessed
-	                                    AND apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusFailed, @gatewayReviewStatusRejected)
-                                       )
+                                    OR apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusFailed, @gatewayReviewStatusRejected)
                                 )",
                         new
                         {
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
-                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
                             gatewayReviewStatusFailed = GatewayReviewStatus.Fail,
                             GatewayReviewStatusRejected = GatewayReviewStatus.Reject
