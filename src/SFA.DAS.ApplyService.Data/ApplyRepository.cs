@@ -1072,12 +1072,13 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var applicationStatuses = await connection.QueryAsync<GatewayApplicationStatusCount>(
-                    @"select
-                        a.GatewayReviewStatus as GatewayApplicationStatus,
-                        count(1) as 'Count'
-                        from Apply a
-                        where a.DeletedAt is null
-                        group by a.GatewayReviewStatus
+                    @"SELECT
+                        GatewayReviewStatus,
+                        ApplicationStatus,
+                        COUNT(1) as 'Count'
+                        FROM Apply
+                        WHERE DeletedAt IS NULL
+                        GROUP BY GatewayReviewStatus, ApplicationStatus
                         ");
 
                 return applicationStatuses;
