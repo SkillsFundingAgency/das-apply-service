@@ -326,9 +326,15 @@ namespace SFA.DAS.ApplyService.Data
                     .QueryAsync<ClosedApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
-                            , JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratorName
-                            , ModerationStatus As OutcomeStatus
-                            , JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS OutcomeDate
+                            , ModerationStatus
+                            , CASE
+                                WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
+                                ELSE JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime')
+                              END AS OutcomeMadeDate
+                            , CASE
+                                WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
+                                ELSE JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName')
+                              END AS OutcomeMadeBy                            
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                        WHERE {ClosedApplicationsWhereClause}
