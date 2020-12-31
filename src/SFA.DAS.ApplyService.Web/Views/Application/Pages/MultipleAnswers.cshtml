@@ -106,7 +106,7 @@
                             </div>
                         }
 
-                        <form asp-action="DeleteAnswer" asp-controller="Application">
+                        <form asp-action="DeleteAnswer" asp-controller="Application" novalidate>
                             <input type="hidden" id="AnswerId" name="AnswerId" value="@answerPage.Id" />
                             <input type="hidden" asp-for="ApplicationId" />
                             <input type="hidden" asp-for="SectionId" />
@@ -127,7 +127,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
-            <form method="post" novalidate enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" novalidate>
                 <input type="hidden" asp-for="RedirectAction" />
 
                 @if (Model.Questions.Count() == 1)

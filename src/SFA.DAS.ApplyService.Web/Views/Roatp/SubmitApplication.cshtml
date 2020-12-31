@@ -56,7 +56,7 @@
                 <li>general and post application queries</li>
             </ul>
 
-            <form class="js-disable-on-submit" method="post" asp-action="ConfirmSubmitApplication" asp-controller="RoatpApplication">
+            <form class="js-disable-on-submit" method="post" asp-action="ConfirmSubmitApplication" asp-controller="RoatpApplication" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="OrganisationName" />
                 <input type="hidden" asp-for="EmailAddress" />
