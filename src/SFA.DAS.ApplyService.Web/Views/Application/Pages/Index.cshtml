@@ -94,8 +94,8 @@
                 }
 
                 @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
-                <form method="post" novalidate enctype="multipart/form-data" asp-action="SaveAnswers" asp-route-applicationId="@Model.ApplicationId"
-                      asp-route-sectionId="@Model.SectionId" asp-route-sequenceId="@Model.SequenceId" asp-route-pageId="@Model.PageId">
+                <form method="post" enctype="multipart/form-data" asp-action="SaveAnswers" asp-route-applicationId="@Model.ApplicationId"
+                      asp-route-sectionId="@Model.SectionId" asp-route-sequenceId="@Model.SequenceId" asp-route-pageId="@Model.PageId" novalidate>
                     <input type="hidden" asp-for="ApplicationId" />
                     <input type="hidden" asp-for="RedirectAction" />
 

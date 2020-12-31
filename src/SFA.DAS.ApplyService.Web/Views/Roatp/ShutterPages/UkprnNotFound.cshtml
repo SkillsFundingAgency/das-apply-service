@@ -8,7 +8,7 @@
 <partial name="~/Views/Roatp/PreambleHeader.cshtml" />
 
 @*
-<form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm">
+<form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm" novalidate>
     <input type="hidden" asp-for="UKPRN" />
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
 </form>
@@ -17,7 +17,7 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="post" asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn">
+            <form method="post" asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" novalidate>
                 <h1 class="govuk-heading-xl">UKPRN @Model.UKPRN not found</h1>
                 <p class="govuk-body">This is because it either:</p>
                 <ul class="govuk-list govuk-list--bullet">

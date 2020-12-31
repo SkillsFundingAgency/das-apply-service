@@ -69,7 +69,7 @@
 
                 @if (Model.Status != ApplicationSequenceStatus.Submitted)
                 {
-                    <form asp-action="Submit" asp-controller="Application">
+                    <form asp-action="Submit" asp-controller="Application" novalidate>
                         <input type="hidden" asp-for="ApplicationId" />
                         <input type="hidden" asp-for="SequenceId" />
                         <div class="govuk-form-group">

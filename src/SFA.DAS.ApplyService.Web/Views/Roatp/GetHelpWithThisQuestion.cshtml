@@ -36,7 +36,7 @@ else
             <div id="gethelp_content">
                 <p class="govuk-body">Do not include any personal or financial information.</p>
                
-                <form method="post" asp-controller="GetHelp" asp-action="Index">
+                <form method="post" asp-controller="GetHelp" asp-action="Index" novalidate>
                     <input type="hidden" asp-for="ApplicationId" id="@($"help_ApplicationId")" />
                     <input type="hidden" asp-for="SequenceId" id="@($"help_SequenceId")" />
                     <input type="hidden" asp-for="SectionId" id="@($"help_SectionId")" />
