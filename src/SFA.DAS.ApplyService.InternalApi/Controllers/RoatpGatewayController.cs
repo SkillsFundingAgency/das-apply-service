@@ -136,7 +136,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 Comments = gatewayPage.Comments,
                 OutcomeMadeOn = gatewayPage.UpdatedAt,
                 OutcomeMadeBy = gatewayPage.UpdatedBy,
-                GatewaySubcontractorDeclarationClarificationUpload = application.ApplyData.GatewayReviewDetails?.GatewaySubcontractorDeclarationClarificationUpload
+                GatewaySubcontractorDeclarationClarificationUpload = application.ApplyData.GatewayReviewDetails?.GatewaySubcontractorDeclarationClarificationUpload,
+                ClarificationComments = gatewayPage.ClarificationComments,
+                ClarificationBy = gatewayPage.ClarificationBy,
+                ClarificationDate = gatewayPage.ClarificationDate,
+                ClarificationAnswer = gatewayPage.ClarificationAnswer
             };
         }
 
