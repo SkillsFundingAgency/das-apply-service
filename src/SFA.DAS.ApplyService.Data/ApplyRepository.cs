@@ -41,8 +41,8 @@ namespace SFA.DAS.ApplyService.Data
                 return await connection.QuerySingleAsync<Guid>(
                     @"INSERT INTO Apply (ApplicationId, OrganisationId, ApplicationStatus, ApplyData, AssessorReviewStatus, GatewayReviewStatus, FinancialReviewStatus, CreatedBy, CreatedAt)
                                         OUTPUT INSERTED.[ApplicationId] 
-                                        VALUES (@applicationId, @organisationId, @applicationStatus, @applyData, @reviewStatus, @gatewayReviewStatus, @financialReviewStatus, @createdBy, GETUTCDATE())",
-                    new { applicationId, organisationId, applicationStatus = ApplicationStatus.InProgress, applyData, reviewStatus = ApplicationReviewStatus.Draft, gatewayReviewStatus = GatewayReviewStatus.Draft, financialReviewStatus = FinancialReviewStatus.Draft, createdBy });
+                                        VALUES (@applicationId, @organisationId, @applicationStatus, @applyData, @assessorReviewStatus, @gatewayReviewStatus, @financialReviewStatus, @createdBy, GETUTCDATE())",
+                    new { applicationId, organisationId, applicationStatus = ApplicationStatus.InProgress, applyData, assessorReviewStatus = AssessorReviewStatus.Draft, gatewayReviewStatus = GatewayReviewStatus.Draft, financialReviewStatus = FinancialReviewStatus.Draft, createdBy });
             }
         }
 
@@ -273,7 +273,7 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET ApplicationStatus = @ApplicationStatus, 
                                                     ApplyData = @applyData, 
-                                                    AssessorReviewStatus = @ReviewStatus, 
+                                                    AssessorReviewStatus = @AssessorReviewStatus, 
                                                     GatewayReviewStatus = @GatewayReviewStatus, 
                                                     FinancialReviewStatus = @FinancialReviewStatus,
                                                     UpdatedBy = @submittedBy, 
@@ -281,8 +281,8 @@ namespace SFA.DAS.ApplyService.Data
                                                 WHERE  (Apply.ApplicationId = @applicationId)",
                                                 new { applicationId, 
                                                       ApplicationStatus = ApplicationStatus.Submitted, 
-                                                      applyData, 
-                                                      ReviewStatus = ApplicationReviewStatus.New, 
+                                                      applyData,
+                                                      AssessorReviewStatus = AssessorReviewStatus.New, 
                                                       GatewayReviewStatus = GatewayReviewStatus.New, 
                                                       FinancialReviewStatus = FinancialReviewStatus.New,
                                                       submittedBy });
@@ -954,7 +954,8 @@ namespace SFA.DAS.ApplyService.Data
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
 							apply.OversightStatus,
-							Apply.ApplicationDeterminedDate
+                            apply.ApplicationStatus,
+							apply.ApplicationDeterminedDate
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
@@ -994,7 +995,8 @@ namespace SFA.DAS.ApplyService.Data
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
 							apply.OversightStatus,
-							Apply.ApplicationDeterminedDate
+                            apply.ApplicationStatus,
+							apply.ApplicationDeterminedDate
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
@@ -1004,7 +1006,7 @@ namespace SFA.DAS.ApplyService.Data
                             OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
 
 						  and apply.OversightStatus IN (@oversightReviewStatusPass,@oversightReviewStatusFail) 
-                             order by cast(Apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
+                             order by cast(apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
                     {
                         gatewayReviewStatusPass = GatewayReviewStatus.Pass,
                         gatewayReviewStatusFail = GatewayReviewStatus.Fail,
@@ -1034,7 +1036,8 @@ namespace SFA.DAS.ApplyService.Data
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
 							apply.OversightStatus,
-							Apply.ApplicationDeterminedDate
+                            apply.ApplicationStatus,
+							apply.ApplicationDeterminedDate
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                         WHERE apply.ApplicationId = @applicationId",
@@ -1137,23 +1140,25 @@ namespace SFA.DAS.ApplyService.Data
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, DateTime applicationDeterminedDate, string updatedBy)
+        public async Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, string userId, string userName)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE Apply 
                                                 SET OversightStatus = @oversightStatus, 
-                                                ApplicationDeterminedDate = @applicationDeterminedDate,
+                                                ApplicationDeterminedDate = GETUTCDATE(),
+                                                OversightUserId = @userId,
+                                                OversightUserName = @userName,
                                                 UpdatedBy = @updatedBy,
-                                                UpdatedAt = @updatedAt
+                                                UpdatedAt = GETUTCDATE()
                                                 WHERE ApplicationId = @applicationId",
                             new
                             {
                                 applicationId,
-                                updatedAt = DateTime.UtcNow,
-                                updatedBy,
                                 oversightStatus,
-                                applicationDeterminedDate
+                                userId,
+                                userName,
+                                updatedBy = userName
                             });
             }
 

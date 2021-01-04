@@ -26,7 +26,7 @@
                 </h3>
             </p>
             
-            <form method="post" asp-action="ChangeUkprn" asp-controller="RoatpApplication">
+            <form method="post" asp-action="ChangeUkprn" asp-controller="RoatpApplication" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
 
                 <div class="govuk-form-group @(!ViewContext.ModelState.IsValid ? "govuk-form-group--error" : "")" sfa-validation-for="Confirmed" sfa-validationerror-class="form-group-error">

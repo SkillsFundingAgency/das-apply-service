@@ -32,6 +32,10 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
         public string GatewayUserId { get; set; }
         public string GatewayUserName { get; set; }
+
+        public string OversightUserId { get; set; }
+        public string OversightUserName { get; set; }
+        public DateTime? ApplicationDeterminedDate { get; set; }
     }
 
     public class ApplyData
@@ -169,16 +173,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         // InAssessment
     }
 
-    public static class ApplicationReviewStatus
-    {
-        public const string Draft = "Draft";
-        public const string New = "New";
-        public const string InProgress = "In Progress";
-        public const string HasFeedback = "Has Feedback";
-        public const string Approved = "Approved";
-        public const string Declined = "Declined";
-    }
-
     public class GatewayAnswerStatus
     {
         public const string Pass = "Pass";
@@ -237,6 +231,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     public static class OversightReviewStatus
     {
         public const string New = "New";
+        public const string InProgress = "In Progress";
         public const string Successful = "Successful";
         public const string Unsuccessful = "Unsuccessful";
     }
