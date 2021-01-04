@@ -33,9 +33,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
                                                     inProgressGatewayStatuses.Contains(x.GatewayReviewStatus))
                                         .Sum(x => x.Count),
 
-                ClosedApplicationsCount = counts.Where(x => x.ApplicationStatus == ApplicationStatus.Withdrawn
-                        || (x.ApplicationStatus == ApplicationStatus.GatewayAssessed && closedGatewayStatuses.Contains(x.GatewayReviewStatus)))
-                    .Sum(x => x.Count)
+                ClosedApplicationsCount = counts.Where(x => x.ApplicationStatus == ApplicationStatus.Withdrawn ||
+                                                    closedGatewayStatuses.Contains(x.GatewayReviewStatus))
+                                        .Sum(x => x.Count)
             };
 
             return response;
