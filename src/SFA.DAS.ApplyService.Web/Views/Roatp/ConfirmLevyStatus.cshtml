@@ -17,7 +17,7 @@ else
 }
 
 @*
-<form asp-controller="RoatpApplicationPreamble" asp-action="SelectApplicationRoute" method="get" name="backForm">
+<form asp-controller="RoatpApplicationPreamble" asp-action="SelectApplicationRoute" method="get" name="backForm" novalidate>
     <input type="hidden" asp-for="ApplicationRouteId" />
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
 </form>
@@ -46,7 +46,7 @@ else
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="post" asp-action="SubmitLevyStatus" asp-controller="RoatpApplicationPreamble">
+            <form method="post" asp-action="SubmitLevyStatus" asp-controller="RoatpApplicationPreamble" novalidate>
                 <input type="hidden" asp-for="ApplicationRouteId" />
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="SequenceId" />
