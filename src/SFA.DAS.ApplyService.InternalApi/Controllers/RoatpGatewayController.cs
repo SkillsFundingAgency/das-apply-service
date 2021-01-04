@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -8,8 +10,10 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Services.Files;
 using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -23,12 +27,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly IGatewayApiChecksService _gatewayApiChecksService;
         private readonly ILogger<RoatpGatewayController> _logger;
         private readonly IMediator _mediator;
-
-        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IMediator mediator, IGatewayApiChecksService gatewayApiChecksService) 
+        private readonly IFileStorageService _fileStorageService;
+        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IMediator mediator, IGatewayApiChecksService gatewayApiChecksService, IFileStorageService fileStorageService) 
         {
             _applyRepository = applyRepository;
             _logger = logger;
             _gatewayApiChecksService = gatewayApiChecksService;
+            _fileStorageService = fileStorageService;
             _mediator = mediator;
         }
 
@@ -130,7 +135,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 Status = gatewayPage.Status,
                 Comments = gatewayPage.Comments,
                 OutcomeMadeOn = gatewayPage.UpdatedAt,
-                OutcomeMadeBy = gatewayPage.UpdatedBy
+                OutcomeMadeBy = gatewayPage.UpdatedBy,
+                GatewaySubcontractorDeclarationClarificationUpload = application.ApplyData.GatewayReviewDetails?.GatewaySubcontractorDeclarationClarificationUpload
             };
         }
 
@@ -139,6 +145,52 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<List<GatewayPageAnswerSummary>>> GetGatewayPages(Guid applicationId)
         {
             return await _mediator.Send(new GetGatewayPagesRequest(applicationId));
+        }
+
+
+
+        [HttpPost("/Gateway/SubcontractorDeclarationClarification/{applicationId}/Upload")]
+        public async Task<IActionResult> UploadClarificationFile(Guid applicationId, [FromForm] SubcontractorDeclarationClarificationFileCommand command)
+        {
+            if (Request.Form.Files != null && Request.Form.Files.Any())
+            {
+                var clarificationFileName = Request.Form.Files.First().FileName;
+                var uploadedSuccessfully = await _fileStorageService.UploadFiles(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, RoatpClarificationUpload.SubcontractorDeclarationClarificationFile, Request.Form.Files, ContainerType.Gateway, new CancellationToken());
+
+                if (!uploadedSuccessfully)
+                {
+                    _logger.LogError($"Unable to upload subcontractor declaration clarification for application: {applicationId} || File name {clarificationFileName}");
+                    return BadRequest();
+                }
+                await _mediator.Send(new AddSubcontractorDeclarationFileUploadRequest(applicationId, clarificationFileName, command.UserId, command.UserName));
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("/Gateway/SubcontractorDeclarationClarification/{applicationId}/Remove")]
+        public async Task<IActionResult> RemoveClarificationFile(Guid applicationId, [FromBody] SubcontractorDeclarationClarificationFileCommand command)
+        {
+           
+            var clarificationFileName = command.FileName;
+            var uploadedSuccessfully = await _fileStorageService.DeleteFile(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, RoatpClarificationUpload.SubcontractorDeclarationClarificationFile, clarificationFileName, ContainerType.Gateway, new CancellationToken());
+
+            if (!uploadedSuccessfully)
+            {
+                _logger.LogError($"Unable to upload subcontractor declaration clarification for application: {applicationId} || File name {clarificationFileName}");
+                return BadRequest();
+            }
+            await _mediator.Send(new RemoveSubcontractorDeclarationFileRequest(applicationId, clarificationFileName, command.UserId, command.UserName));
+            
+            return Ok();
+        }
+
+
+        public class SubcontractorDeclarationClarificationFileCommand
+        {
+            public string UserId { get; set; }
+            public string UserName { get; set; }
+            public string FileName { get; set; }
         }
     }
 }

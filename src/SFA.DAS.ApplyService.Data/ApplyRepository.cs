@@ -199,6 +199,24 @@ namespace SFA.DAS.ApplyService.Data
             return await Task.FromResult(true);
         }
 
+        public async Task<bool> UpdateGatewayApplyData(Guid applicationId, ApplyData applyData, string userId, string userName)
+        {
+           
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE [Apply]
+                                                   SET [ApplyData] = @applyData
+                                                      ,[UpdatedAt] = GetUTCDATE()
+                                                      ,[UpdatedBy] = @userName 
+                                                      ,[GatewayUserId] = @userId
+                                                      ,[GatewayUsername] = @userName
+                                                 WHERE [ApplicationId] = @applicationId",
+                    new { applicationId, applyData, userId, userName });
+            }
+
+            return await Task.FromResult(true);
+        }
+
         public async Task<bool> CanSubmitApplication(Guid applicationId)
         {
             var canSubmit = false;
