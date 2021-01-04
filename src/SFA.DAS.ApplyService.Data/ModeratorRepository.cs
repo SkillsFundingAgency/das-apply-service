@@ -194,7 +194,12 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var rowsAffected = await connection.ExecuteAsync(@"UPDATE Apply
-                                                SET ModerationStatus = ISNULL(@status, ModerationStatus), 
+                                                SET ModerationStatus = ISNULL(@status, ModerationStatus),
+                                                    AssessorReviewStatus = CASE
+                                                                               WHEN @status = @moderationStatusPass THEN @assessorReviewStatusApproved
+                                                                               WHEN @status = @moderationStatusFail THEN @assessorReviewStatusDeclined
+                                                                               ELSE AssessorReviewStatus
+                                                                           END,
                                                     ApplyData = ISNULL(@applyData, ApplyData),
                                                     UpdatedBy = @userId, 
                                                     UpdatedAt = GETUTCDATE() 
@@ -204,7 +209,11 @@ namespace SFA.DAS.ApplyService.Data
                         applicationId,
                         status,
                         applyData,
-                        userId
+                        userId,
+                        moderationStatusPass = ModerationStatus.Pass,
+                        moderationStatusFail = ModerationStatus.Fail,
+                        assessorReviewStatusApproved = AssessorReviewStatus.Approved,
+                        assessorReviewStatusDeclined = AssessorReviewStatus.Declined
                     });
 
                 return rowsAffected > 0;
