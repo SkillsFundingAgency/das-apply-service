@@ -17,18 +17,19 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string AssessorReviewStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
 
+        public DateTime? ClarificationRequestedDate { get; set; }
+        public DateTime? OutcomeMadeDate { get; set; }
+        public string OutcomeMadeBy { get; set; }
+
     }
 
     public class RoatpFinancialSummaryItem : RoatpApplicationSummaryItem
     {
-        public DateTime? FeedbackAddedDate { get; set; }
-        public DateTime? ClosedDate { get; set; }
-
         public string DeclaredInApplication { get; set; }
 
-        public DateTime GatewayOutcomeDateTime { get; set; }
+        public DateTime GatewayOutcomeDate { get; set; }
 
-        public FinancialReviewDetails FinancialReviewDetails { get; set; }
+        public string SelectedGrade { get; set; }
     }
 
     public class RoatpFinancialSummaryDownloadItem : RoatpFinancialSummaryItem
@@ -41,8 +42,5 @@ namespace SFA.DAS.ApplyService.Domain.Apply
     public class RoatpGatewaySummaryItem : RoatpApplicationSummaryItem
     {
         public string LastCheckedBy { get; set; }
-        public DateTime? ClarificationRequestedDate { get; set; }
-        public DateTime? OutcomeMadeDate { get; set; }
-        public string OutcomeMadeBy { get; set; }
     }
  }
