@@ -692,8 +692,14 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
-                            JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS OutcomeMadeDate,
-                            JSON_VALUE(apply.FinancialGrade, '$.GradedBy') AS OutcomeMadeBy,
+                            CASE 
+                                WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
+                                ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime')
+                            END AS OutcomeMadeDate,
+                            CASE 
+                                WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
+                                ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedBy')
+                            END AS OutcomeMadeBy,
                             JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') AS SelectedGrade,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeDate,
                             CASE seq.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
