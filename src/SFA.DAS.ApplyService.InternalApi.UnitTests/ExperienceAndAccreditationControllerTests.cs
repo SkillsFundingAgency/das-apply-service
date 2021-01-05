@@ -8,6 +8,7 @@ using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.InternalApi.Services.Files;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -15,7 +16,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
    public class ExperienceAndAccreditationControllerTests
    {
         private Mock<IInternalQnaApiClient> _qnaApiClient;
-        
+        private Mock<IFileStorageService> _fileStorageService;
         private ExperienceAndAccreditationController _controller;
 
         private const string ValueOfQuestion = "swordfish";
@@ -24,7 +25,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void Before_each_test()
         {
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
-            _controller = new ExperienceAndAccreditationController(_qnaApiClient.Object);
+            _fileStorageService = new Mock<IFileStorageService>();
+            _controller = new ExperienceAndAccreditationController(_qnaApiClient.Object, _fileStorageService.Object);
         }
 
         [Test]
