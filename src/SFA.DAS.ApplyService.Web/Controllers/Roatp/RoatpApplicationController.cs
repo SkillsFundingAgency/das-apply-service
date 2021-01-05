@@ -193,7 +193,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var allQnaSequences = await allQnaSequencesTask;
                 var allQnaSections = await allQnaSectionsTask;
 
-                var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, allQnaSequences, allQnaSections);
+                var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, applicationDetails.RoatpRegisterStatus.ProviderTypeId, allQnaSequences, allQnaSections);
 
                 var applicationId = await _apiClient.StartApplication(startApplicationRequest);
                 _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{applicationId}]");
@@ -224,27 +224,33 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return Guid.Empty;
         }
 
-        private StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
+        private string GetRouteName(int? routeId)
         {
-            string selectedProviderRoute;
-            switch (providerRoute)
+            switch (routeId)
             {
-                case 1: selectedProviderRoute = "Main provider";
-                    break;
-                case 2: selectedProviderRoute = "Employer provider";
-                    break;
-                case 3: selectedProviderRoute = "Supporting provider";
-                    break;
+                case null:
+                    return string.Empty;
+                case 1:
+                    return "Main provider";
+                case 2:
+                    return "Employer provider";
+                case 3:
+                    return "Supporting provider";
                 default:
-                    throw new ArgumentException(nameof(providerRoute));
+                    throw new ArgumentException(nameof(routeId));
             }
+        }
 
+        private StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, int? providerRouteOnRegister, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
+        {
             return new StartApplicationRequest
             {
                 ApplicationId = qnaApplicationId,
                 CreatingContactId = creatingContactId,
                 ProviderRoute = providerRoute,
-                ProviderRouteName = selectedProviderRoute,
+                ProviderRouteName = GetRouteName(providerRoute),
+                ProviderRouteOnRegister = providerRouteOnRegister,
+                ProviderRouteNameOnRegister = GetRouteName(providerRouteOnRegister),
                 ApplySequences = qnaSequences.Select(sequence => new ApplySequence
                 {
                     SequenceId = sequence.Id,

@@ -56,6 +56,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ProviderRouteName { get; set; }
         public DateTime? ApplicationSubmittedOn { get; set; }
         public Guid? ApplicationSubmittedBy { get; set; }
+        public int? ProviderRouteOnRegister { get; set; }
+        public string ProviderRouteNameOnRegister { get; set; }
     }
 
 
