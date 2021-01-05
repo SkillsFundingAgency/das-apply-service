@@ -1298,6 +1298,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ProviderRouteName = selectedProviderRoute?.RouteName,
                 SubmittingContactId = User.GetUserId(),
                 ApplyData = application.ApplyData,
+                OrganisationType = ExtractOrganisationType(applicationData),
                 FinancialData = ExtractFinancialData(model.ApplicationId, applicationData)
             };
 
@@ -1486,6 +1487,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return false;
+        }
+
+        private string ExtractOrganisationType(JObject applicationData)
+        {
+            return applicationData.GetValue("OrganisationEducationInstitute")?.Value<string>()
+                   ?? applicationData.GetValue("OrganisationPublicBody")?.Value<string>()
+                   ?? applicationData.GetValue("OrganisationTypeMainSupporting")?.Value<string>()
+                   ?? applicationData.GetValue("OrganisationTypeEmployer")?.Value<string>();
         }
 
         private FinancialData ExtractFinancialData(Guid applicationId, JObject applicationData)

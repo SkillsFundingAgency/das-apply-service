@@ -39,8 +39,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                     
                     application.ApplyData.ApplyDetails.ApplicationSubmittedOn = DateTime.UtcNow;
                     application.ApplyData.ApplyDetails.ApplicationSubmittedBy = submittingContact.Id;
+                    application.ApplyData.ApplyDetails.OrganisationType = request.OrganisationType;
 
-                    foreach(var sequence in application.ApplyData.Sequences)
+                    foreach (var sequence in application.ApplyData.Sequences)
                     {
                         if (!sequence.NotRequired)
                         {
