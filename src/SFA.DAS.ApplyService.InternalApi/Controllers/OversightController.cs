@@ -36,6 +36,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetOversightsCompletedRequest());
         }
 
+        [HttpGet]
+        [Route("Oversights/Download")]
+        public async Task<ActionResult<List<ApplicationOversightDownloadDetails>>> OversightDownload()
+        {
+            return await _mediator.Send(new GetOversightDownloadRequest());
+        }
+
+
         [HttpPost]
         [Route("Oversight/Outcome")]
         public async Task<ActionResult<bool>> RecordOversightOutcome([FromBody] RecordOversightOutcomeCommand command)

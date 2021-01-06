@@ -1047,6 +1047,49 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<ApplicationOversightDownloadDetails>(@"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+							 org.Name AS OrganisationName,
+					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteNameOnRegister'),' provider','') AS ProviderRouteNameOnRegister,
+							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.OrganisationType') AS OrganisationType,
+                            apply.OversightStatus,
+                            apply.ApplicationStatus,
+							apply.ApplicationDeterminedDate
+                              FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                      WHERE apply.DeletedAt IS NULL
+                          and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
+						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
+						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt))
+                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
+
+						  and apply.OversightStatus IN (@oversightReviewStatusPass,@oversightReviewStatusFail) 
+                             order by cast(apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
+                {
+                    gatewayReviewStatusPass = GatewayReviewStatus.Pass,
+                    gatewayReviewStatusFail = GatewayReviewStatus.Fail,
+                    GatewayReviewStatusReject = GatewayReviewStatus.Reject,
+                    assessorReviewStatusApproved = AssessorReviewStatus.Approved,
+                    assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
+                    financialReviewStatusApproved = FinancialReviewStatus.Pass,
+                    financialReviewStatusDeclined = FinancialReviewStatus.Fail,
+                    financialReviewStatusExempt = FinancialReviewStatus.Exempt,
+                    oversightReviewStatusPass = OversightReviewStatus.Successful,
+                    oversightReviewStatusFail = OversightReviewStatus.Unsuccessful
+
+                })).ToList();
+            }
+        }
+
         public async Task<IEnumerable<GatewayApplicationStatusCount>> GetGatewayApplicationStatusCounts()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
