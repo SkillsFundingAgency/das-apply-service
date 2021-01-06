@@ -1063,8 +1063,12 @@ namespace SFA.DAS.ApplyService.Data
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.OrganisationType') AS OrganisationType,
                             apply.OversightStatus,
                             apply.ApplicationStatus,
-							apply.ApplicationDeterminedDate
-                              FROM Apply apply
+							apply.ApplicationDeterminedDate,
+                            apply.GatewayReviewStatus as GatewayOutcome,
+                            apply.AssessorReviewStatus  as AssessorOutcome,
+                            CASE JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') WHEN @financialGradeInadequate THEN 'Fail' ELSE 'Pass' END as FHCOutcome,
+                            CASE WHEN apply.GatewayReviewStatus = @gatewayReviewStatusPass AND apply.AssessorReviewStatus = @assessorReviewStatusApproved AND JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') <> @financialGradeInadequate THEN 'Pass' ELSE 'Fail' END as OverallOutcome
+                            FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
                           and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
@@ -1084,7 +1088,8 @@ namespace SFA.DAS.ApplyService.Data
                     financialReviewStatusDeclined = FinancialReviewStatus.Fail,
                     financialReviewStatusExempt = FinancialReviewStatus.Exempt,
                     oversightReviewStatusPass = OversightReviewStatus.Successful,
-                    oversightReviewStatusFail = OversightReviewStatus.Unsuccessful
+                    oversightReviewStatusFail = OversightReviewStatus.Unsuccessful,
+                    financialGradeInadequate = Domain.Roatp.FinancialApplicationSelectedGrade.Inadequate
 
                 })).ToList();
             }
