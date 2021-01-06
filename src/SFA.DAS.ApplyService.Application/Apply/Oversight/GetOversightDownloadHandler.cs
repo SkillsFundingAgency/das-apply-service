@@ -17,7 +17,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
         public async Task<List<ApplicationOversightDownloadDetails>> Handle(GetOversightDownloadRequest request, CancellationToken cancellationToken)
         {
-            return await _applyRepository.GetOversightsForDownload();
+            return await _applyRepository.GetOversightsForDownload(request.DateFrom, request.DateTo);
         }
     }
 }

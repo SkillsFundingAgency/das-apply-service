@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -1253,8 +1254,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var organisationVerificationStatusTask = _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
             var applicationRoutesTask = _roatpApiClient.GetApplicationRoutes();
             var applicationDataTask = _qnaApiClient.GetApplicationData(model.ApplicationId);
+            var addressTask = _qnaApiClient.GetPageBySectionNo(model.ApplicationId, 6, 7, "6700");
 
-            await Task.WhenAll(providerRouteTask, applicationTask, allSectionsTask, roatpSequencesTask, organisationVerificationStatusTask, applicationRoutesTask);
+            await Task.WhenAll(providerRouteTask, applicationTask, allSectionsTask, roatpSequencesTask, organisationVerificationStatusTask, applicationRoutesTask, addressTask);
 
             var providerRoute = await providerRouteTask;
             var application = await applicationTask;
@@ -1263,6 +1265,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var organisationVerificationStatus = await organisationVerificationStatusTask;
             var applicationRoutes = await applicationRoutesTask;
             var applicationData = (await applicationDataTask) as JObject;
+            var address = await addressTask;
 
             await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
             var sequences = await _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
@@ -1299,7 +1302,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 SubmittingContactId = User.GetUserId(),
                 ApplyData = application.ApplyData,
                 OrganisationType = ExtractOrganisationType(applicationData),
-                FinancialData = ExtractFinancialData(model.ApplicationId, applicationData)
+                FinancialData = ExtractFinancialData(model.ApplicationId, applicationData),
+                Address = ExtractAddress(address)
             };
 
             var submitResult = await _apiClient.SubmitApplication(submitApplicationRequest);
@@ -1495,6 +1499,25 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                    ?? applicationData.GetValue("OrganisationPublicBody")?.Value<string>()
                    ?? applicationData.GetValue("OrganisationTypeMainSupporting")?.Value<string>()
                    ?? applicationData.GetValue("OrganisationTypeEmployer")?.Value<string>();
+        }
+
+        private string ExtractAddress(Page page)
+        {
+            if (page == null || page.NotRequired) return string.Empty;
+
+            var result = new StringBuilder();
+
+            var answers = page.PageOfAnswers.First().Answers;
+            var i = 0;
+
+            foreach (var answer in answers)
+            {
+                if (i > 0) result.Append(", ");
+                result.Append(answer.Value);
+                i++;
+            }
+
+            return result.ToString();
         }
 
         private FinancialData ExtractFinancialData(Guid applicationId, JObject applicationData)

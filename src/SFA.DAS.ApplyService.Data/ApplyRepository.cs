@@ -1047,7 +1047,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload()
+        public async Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload(DateTime dateFrom, DateTime dateTo)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -1061,6 +1061,8 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteNameOnRegister'),' provider','') AS ProviderRouteNameOnRegister,
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.OrganisationType') AS OrganisationType,
+                            JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.CompaniesHouseDetails.CompanyNumber') AS CompanyNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.Address') AS Address,
                             apply.OversightStatus,
                             apply.ApplicationStatus,
 							apply.ApplicationDeterminedDate,
@@ -1071,6 +1073,7 @@ namespace SFA.DAS.ApplyService.Data
                             FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
+                          AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') BETWEEN @dateFrom AND @dateTo
                           and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
 						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt))
@@ -1089,8 +1092,8 @@ namespace SFA.DAS.ApplyService.Data
                     financialReviewStatusExempt = FinancialReviewStatus.Exempt,
                     oversightReviewStatusPass = OversightReviewStatus.Successful,
                     oversightReviewStatusFail = OversightReviewStatus.Unsuccessful,
-                    financialGradeInadequate = Domain.Roatp.FinancialApplicationSelectedGrade.Inadequate
-
+                    financialGradeInadequate = Domain.Roatp.FinancialApplicationSelectedGrade.Inadequate,
+                    dateFrom = dateFrom.ToString("yyyy-MM-dd"), dateTo = dateTo.AddDays(1).Date.ToString("yyyy-MM-dd")
                 })).ToList();
             }
         }

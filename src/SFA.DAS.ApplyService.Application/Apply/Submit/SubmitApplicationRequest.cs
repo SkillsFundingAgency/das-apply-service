@@ -14,5 +14,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
         public ApplyData ApplyData { get; set; }
         public FinancialData FinancialData { get; set; }
         public string OrganisationType { get; set; }
+        public string Address { get; set; }
     }
 }
