@@ -1254,7 +1254,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var organisationVerificationStatusTask = _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
             var applicationRoutesTask = _roatpApiClient.GetApplicationRoutes();
             var applicationDataTask = _qnaApiClient.GetApplicationData(model.ApplicationId);
-            var addressTask = _qnaApiClient.GetPageBySectionNo(model.ApplicationId, 6, 7, "6700");
+            var addressTask = _qnaApiClient.GetPageBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining, RoatpWorkflowSectionIds.PlanningApprenticeshipTraining.WhereWillYourApprenticesBeTrained, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.AddressWhereApprenticesWillBeTrained);
 
             await Task.WhenAll(providerRouteTask, applicationTask, allSectionsTask, roatpSequencesTask, organisationVerificationStatusTask, applicationRoutesTask, addressTask);
 
