@@ -21,6 +21,7 @@ namespace SFA.DAS.ApplyService.Data
 
         private const string ApplicationSummaryFields = @"ApplicationId,
                             org.Name AS OrganisationName,
+                            ApplicationStatus,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ProviderRoute,
@@ -33,6 +34,7 @@ namespace SFA.DAS.ApplyService.Data
 
         private const string NewApplicationsWhereClause = @"
                             apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved
+                            AND apply.ApplicationStatus = @applicationStatusGatewayAssessed
                             -- Not assigned to current user
                             AND ISNULL(apply.Assessor1UserId, '') <> @userId AND ISNULL(apply.Assessor2UserId, '') <> @userId
                             -- Can be assigned to at least one assessor
@@ -41,6 +43,7 @@ namespace SFA.DAS.ApplyService.Data
 
         private const string InProgressApplicationsWhereClause = @"
                             apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved
+                            AND apply.ApplicationStatus = @applicationStatusGatewayAssessed
                             AND
                             (
                                 -- Assigned to the current user and in progress
@@ -51,19 +54,25 @@ namespace SFA.DAS.ApplyService.Data
                             )";
 
         private const string InModerationApplicationsWhereClause = @"
-                            apply.DeletedAt IS NULL
+                            apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved
+                            AND apply.ApplicationStatus = @applicationStatusGatewayAssessed
                             AND Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus
                             AND ModerationStatus IN (@newModerationStatus, @inProgressModerationStatus)";
 
         private const string InClarificationApplicationsWhereClause = @"
-                            apply.DeletedAt IS NULL
+                            apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved
+                            AND apply.ApplicationStatus = @applicationStatusGatewayAssessed
                             AND Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus
                             AND ModerationStatus = @clarificationSentModerationStatus";
 
         private const string ClosedApplicationsWhereClause = @"
                             apply.DeletedAt IS NULL
-                            AND Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus
-                            AND ModerationStatus IN (@passModerationStatus, @failModerationStatus)";
+                            AND ( apply.ApplicationStatus IN (@applicationStatusWithdrawn)
+                                  OR (
+                                      Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus
+                                      AND ModerationStatus IN (@passModerationStatus, @failModerationStatus)
+                                     )
+                                )";
 
         public AssessorRepository(IConfigurationService configurationService, ILogger<AssessorRepository> logger)
         {
@@ -86,6 +95,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             userId = userId
                         })).ToList();
             }
@@ -103,6 +113,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             userId = userId
                         }));
             }
@@ -191,6 +202,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             inProgressReviewStatus = AssessorReviewStatus.InProgress,
                             userId = userId
                         })).ToList();
@@ -209,6 +221,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             inProgressReviewStatus = AssessorReviewStatus.InProgress,
                             userId = userId
                         }));
@@ -231,6 +244,8 @@ namespace SFA.DAS.ApplyService.Data
 	                        ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')) ASC, org.Name ASC",
                         new
                         {
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             newModerationStatus = ModerationStatus.New,
                             inProgressModerationStatus = ModerationStatus.InProgress
@@ -249,6 +264,8 @@ namespace SFA.DAS.ApplyService.Data
 	                      WHERE {InModerationApplicationsWhereClause}",
                         new
                         {
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             newModerationStatus = ModerationStatus.New,
                             inProgressModerationStatus = ModerationStatus.InProgress
@@ -272,6 +289,8 @@ namespace SFA.DAS.ApplyService.Data
                             ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ClarificationRequestedOn')) ASC, org.Name ASC",
                         new
                         {
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             newModerationStatus = ModerationStatus.New,
                             clarificationSentModerationStatus = ModerationStatus.ClarificationSent
@@ -290,6 +309,8 @@ namespace SFA.DAS.ApplyService.Data
 	                      WHERE {InClarificationApplicationsWhereClause}",
                         new
                         {
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             newModerationStatus = ModerationStatus.New,
                             clarificationSentModerationStatus = ModerationStatus.ClarificationSent
@@ -305,15 +326,22 @@ namespace SFA.DAS.ApplyService.Data
                     .QueryAsync<ClosedApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
-                            , JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratorName
-                            , ModerationStatus As OutcomeStatus
-                            , JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS OutcomeDate
+                            , ModerationStatus
+                            , CASE
+                                WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
+                                ELSE JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime')
+                              END AS OutcomeMadeDate
+                            , CASE
+                                WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
+                                ELSE JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName')
+                              END AS OutcomeMadeBy                            
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                        WHERE {ClosedApplicationsWhereClause}
                             ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime')) ASC, org.Name ASC",
                         new
                         {
+                            applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             passModerationStatus = ModerationStatus.Pass,
                             failModerationStatus = ModerationStatus.Fail
@@ -332,6 +360,7 @@ namespace SFA.DAS.ApplyService.Data
 	                      WHERE {ClosedApplicationsWhereClause}",
                         new
                         {
+                            applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             passModerationStatus = ModerationStatus.Pass,
                             failModerationStatus = ModerationStatus.Fail

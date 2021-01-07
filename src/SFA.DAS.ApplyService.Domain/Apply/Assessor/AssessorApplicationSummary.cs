@@ -10,6 +10,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply.Assessor
         public string ApplicationReferenceNumber { get; set; }
         public string ProviderRoute { get; set; }
         public DateTime SubmittedDate { get; set; }
+        public string ApplicationStatus { get; set; }
         public string Assessor1UserId { get; set; }
         public string Assessor2UserId { get; set; }
         public string Assessor1Name { get; set; }

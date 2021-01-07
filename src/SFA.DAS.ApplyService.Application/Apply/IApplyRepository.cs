@@ -35,15 +35,11 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<ApplySequence> newSequences);
 
-        Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetInProgressGatewayApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications();
+        Task<List<RoatpGatewaySummaryItem>> GetNewGatewayApplications();
+        Task<List<RoatpGatewaySummaryItem>> GetInProgressGatewayApplications();
+        Task<List<RoatpGatewaySummaryItem>> GetClosedGatewayApplications();
         Task StartGatewayReview(Guid applicationId, string reviewer);
         Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
-
-        Task<List<RoatpApplicationSummaryItem>> GetOpenApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetClosedApplications();
 
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
         Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload();
@@ -70,6 +66,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> IsUkprnWhitelisted(int ukprn);
 
         Task UpdateApplicationStatus(Guid applicationId, string status);
+
+        Task<bool> WithdrawApplication(Guid applicationId, string comments, string userId, string userName);
 
         Task<Contact> GetContactForApplication(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);

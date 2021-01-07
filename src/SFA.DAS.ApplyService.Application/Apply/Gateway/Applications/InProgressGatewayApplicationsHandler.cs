@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
 {
-    public class InProgressGatewayApplicationsHandler : IRequestHandler<InProgressGatewayApplicationsRequest, List<RoatpApplicationSummaryItem>>
+    public class InProgressGatewayApplicationsHandler : IRequestHandler<InProgressGatewayApplicationsRequest, List<RoatpGatewaySummaryItem>>
     {
         private readonly IApplyRepository _repository;
 
@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
             _repository = repository;
         }
 
-        public async Task<List<RoatpApplicationSummaryItem>> Handle(InProgressGatewayApplicationsRequest request, CancellationToken cancellationToken)
+        public async Task<List<RoatpGatewaySummaryItem>> Handle(InProgressGatewayApplicationsRequest request, CancellationToken cancellationToken)
         {
             return await _repository.GetInProgressGatewayApplications();
         }
