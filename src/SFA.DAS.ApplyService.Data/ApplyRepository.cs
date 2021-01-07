@@ -896,8 +896,7 @@ namespace SFA.DAS.ApplyService.Data
                                                      ApplyData = @applyData,
                                                      UpdatedAt = GETUTCDATE(),
                                                      UpdatedBy = @updatedBy
-                                                WHERE ApplicationId = @applicationId
-                                                    AND OversightStatus NOT IN (@oversightReviewStatusSucessful, @oversightReviewStatusUnsuccessful)",
+                                                WHERE ApplicationId = @applicationId",
                                                 new
                                                 {
                                                     applicationId,
@@ -905,9 +904,7 @@ namespace SFA.DAS.ApplyService.Data
                                                     externalComments,
                                                     applyData,
                                                     updatedBy = userName,
-                                                    applicationStatusRemoved = ApplicationStatus.Removed,
-                                                    oversightReviewStatusSucessful = OversightReviewStatus.Successful,
-                                                    oversightReviewStatusUnsuccessful = OversightReviewStatus.Unsuccessful,
+                                                    applicationStatusRemoved = ApplicationStatus.Removed
                                                 });
 
                 return rowsAffected > 0;
