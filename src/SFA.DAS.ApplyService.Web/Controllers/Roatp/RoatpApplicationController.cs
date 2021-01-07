@@ -106,7 +106,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var signinId = await _userService.GetSignInId();
             var applications = await _apiClient.GetApplications(signinId, false);
 
-            var statusFilter = new[] { ApplicationStatus.Rejected, ApplicationStatus.Cancelled, ApplicationStatus.Withdrawn };
+            var statusFilter = new[] { ApplicationStatus.Rejected, ApplicationStatus.Cancelled, ApplicationStatus.Withdrawn, ApplicationStatus.Removed };
             applications = applications.Where(app => !statusFilter.Contains(app.ApplicationStatus)).ToList();
 
             var application = new Apply();

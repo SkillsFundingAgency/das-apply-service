@@ -68,6 +68,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task UpdateApplicationStatus(Guid applicationId, string status);
 
         Task<bool> WithdrawApplication(Guid applicationId, string comments, string userId, string userName);
+        Task<bool> RemoveApplication(Guid applicationId, string comments, string externalComments, string userId, string userName);
 
         Task<Contact> GetContactForApplication(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);

@@ -34,6 +34,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
                                         .Sum(x => x.Count),
 
                 ClosedApplicationsCount = counts.Where(x => x.ApplicationStatus == ApplicationStatus.Withdrawn ||
+                                                    x.ApplicationStatus == ApplicationStatus.Removed ||
                                                     closedGatewayStatuses.Contains(x.GatewayReviewStatus))
                                         .Sum(x => x.Count)
             };
