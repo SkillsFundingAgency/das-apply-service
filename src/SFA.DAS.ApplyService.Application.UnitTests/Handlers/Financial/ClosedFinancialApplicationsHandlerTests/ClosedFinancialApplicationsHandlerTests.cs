@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Financial.ClosedFi
         [SetUp]
         public void Setup()
         {
-            var closedFinancialApplication = new RoatpFinancialSummaryItem { ApplicationStatus = ApplicationStatus.GatewayAssessed, FinancialReviewStatus = FinancialReviewStatus.Pass, SubmittedDate = DateTime.Now, ClosedDate = DateTime.Now };
+            var closedFinancialApplication = new RoatpFinancialSummaryItem { ApplicationStatus = ApplicationStatus.GatewayAssessed, FinancialReviewStatus = FinancialReviewStatus.Pass, SubmittedDate = DateTime.Now, OutcomeMadeDate = DateTime.Now };
 
             _closedApplications = new List<RoatpFinancialSummaryItem> { closedFinancialApplication };
 

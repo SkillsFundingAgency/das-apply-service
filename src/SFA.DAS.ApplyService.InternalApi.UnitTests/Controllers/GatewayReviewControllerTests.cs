@@ -1,8 +1,10 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions;
 using SFA.DAS.ApplyService.Application.Apply.Gateway.Applications;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 
@@ -37,6 +39,23 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             Assert.AreEqual(1, result.NewApplicationsCount);
             Assert.AreEqual(2, result.InProgressApplicationsCount);
             Assert.AreEqual(3, result.ClosedApplicationsCount);
+        }
+
+        [Test]
+        public async Task WithdrawApplication_calls_mediator()
+        {
+            var applicationId = Guid.NewGuid();
+
+            var request = new GatewayWithdrawApplicationRequest
+            {
+                UserId = "userId",
+                UserName = "userName",
+                Comments = "comments"
+            };
+
+            await _controller.WithdrawApplication(applicationId, request);
+
+            _mediator.Verify(x => x.Send(It.Is<WithdrawApplicationRequest>(y => y.ApplicationId == applicationId), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

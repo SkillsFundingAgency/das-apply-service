@@ -28,8 +28,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Financial.Financia
         {
             var openFinancialApplication = new RoatpFinancialSummaryItem { ApplicationStatus = ApplicationStatus.GatewayAssessed, FinancialReviewStatus = FinancialReviewStatus.New, DeclaredInApplication = "Not exempt",  SubmittedDate = DateTime.Now };
             var openExemptFinancialApplication = new RoatpFinancialSummaryItem { ApplicationStatus = ApplicationStatus.GatewayAssessed, FinancialReviewStatus = FinancialReviewStatus.New, DeclaredInApplication = "Exempt", SubmittedDate = DateTime.Now };
-            var clarificationFinancialApplication = new RoatpFinancialSummaryItem { ApplicationStatus = ApplicationStatus.GatewayAssessed, FinancialReviewStatus = FinancialReviewStatus.ClarificationSent, SubmittedDate = DateTime.Now, FeedbackAddedDate = DateTime.Now };
-            var closedFinancialApplication = new RoatpFinancialSummaryItem { ApplicationStatus = ApplicationStatus.GatewayAssessed, FinancialReviewStatus = FinancialReviewStatus.Pass, SubmittedDate = DateTime.Now, ClosedDate = DateTime.Now };
+            var clarificationFinancialApplication = new RoatpFinancialSummaryItem { ApplicationStatus = ApplicationStatus.GatewayAssessed, FinancialReviewStatus = FinancialReviewStatus.ClarificationSent, SubmittedDate = DateTime.Now, ClarificationRequestedDate = DateTime.Now };
+            var closedFinancialApplication = new RoatpFinancialSummaryItem { ApplicationStatus = ApplicationStatus.GatewayAssessed, FinancialReviewStatus = FinancialReviewStatus.Pass, SubmittedDate = DateTime.Now, OutcomeMadeDate = DateTime.Now };
 
             _openApplications = new List<RoatpFinancialSummaryItem> { openFinancialApplication, openExemptFinancialApplication };
             _clarificationApplications = new List<RoatpFinancialSummaryItem> { clarificationFinancialApplication };
