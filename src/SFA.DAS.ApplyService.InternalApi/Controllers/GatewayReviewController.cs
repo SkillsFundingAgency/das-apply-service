@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.Application.Apply.Gateway.Applications;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
+using SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -51,11 +52,24 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             await _mediator.Send(new EvaluateGatewayRequest(applicationId, request.IsGatewayApproved, request.EvaluatedBy));
         }
+
+        [HttpPost("GatewayReview/{applicationId}/Withdraw")]
+        public async Task<bool> WithdrawApplication(Guid applicationId, [FromBody] GatewayWithdrawApplicationRequest request)
+        {
+            return await _mediator.Send(new WithdrawApplicationRequest(applicationId, request.Comments, request.UserId, request.UserName));
+        }
     }
 
     public class EvaluateGatewayApplicationRequest
     {
         public bool IsGatewayApproved { get; set; }
         public string EvaluatedBy { get; set; }
+    }
+
+    public class GatewayWithdrawApplicationRequest
+    {
+        public string Comments { get; set; }
+        public string UserId { get; set; }
+        public string UserName { get; set; }
     }
 }

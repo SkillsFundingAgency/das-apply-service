@@ -22,15 +22,17 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetGatewayApplicat
             var data = new List<GatewayApplicationStatusCount>
             {
                 new GatewayApplicationStatusCount
-                    {GatewayApplicationStatus = GatewayReviewStatus.New, Count = 1},
+                    {GatewayReviewStatus = GatewayReviewStatus.New, ApplicationStatus = ApplicationStatus.Submitted, Count = 1},
                 new GatewayApplicationStatusCount
-                    {GatewayApplicationStatus = GatewayReviewStatus.InProgress, Count = 2},
+                    {GatewayReviewStatus = GatewayReviewStatus.InProgress, ApplicationStatus = ApplicationStatus.Submitted, Count = 2},
                 new GatewayApplicationStatusCount
-                    {GatewayApplicationStatus = GatewayReviewStatus.ClarificationSent, Count = 4},
+                    {GatewayReviewStatus = GatewayReviewStatus.ClarificationSent, ApplicationStatus = ApplicationStatus.Submitted, Count = 4},
                 new GatewayApplicationStatusCount
-                    {GatewayApplicationStatus = GatewayReviewStatus.Fail, Count = 8},
+                    {GatewayReviewStatus = GatewayReviewStatus.Fail, ApplicationStatus = ApplicationStatus.GatewayAssessed, Count = 8},
                 new GatewayApplicationStatusCount
-                    {GatewayApplicationStatus = GatewayReviewStatus.Pass, Count = 16}
+                    {GatewayReviewStatus = GatewayReviewStatus.Pass, ApplicationStatus = ApplicationStatus.GatewayAssessed, Count = 16},
+                new GatewayApplicationStatusCount
+                    {GatewayReviewStatus = GatewayReviewStatus.Reject, ApplicationStatus = ApplicationStatus.GatewayAssessed, Count = 32}
             };
 
             _repository = new Mock<IApplyRepository>();
@@ -46,7 +48,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetGatewayApplicat
 
             Assert.AreEqual(1, result.NewApplicationsCount);
             Assert.AreEqual(6, result.InProgressApplicationsCount);
-            Assert.AreEqual(24, result.ClosedApplicationsCount);
+            Assert.AreEqual(56, result.ClosedApplicationsCount);
         }
     }
 }

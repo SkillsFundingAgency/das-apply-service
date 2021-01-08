@@ -36,6 +36,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string OversightUserId { get; set; }
         public string OversightUserName { get; set; }
         public DateTime? ApplicationDeterminedDate { get; set; }
+
+        public string Comments { get; set; }
     }
 
     public class ApplyData
@@ -56,6 +58,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ProviderRouteName { get; set; }
         public DateTime? ApplicationSubmittedOn { get; set; }
         public Guid? ApplicationSubmittedBy { get; set; }
+        public DateTime? ApplicationWithdrawnOn { get; set; }
+        public string ApplicationWithdrawnBy { get; set; }
         public int? ProviderRouteOnRegister { get; set; }
         public string ProviderRouteNameOnRegister { get; set; }
         public string OrganisationType { get; set; }
@@ -116,6 +120,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public List<FinancialEvidence> FinancialEvidences { get; set; }
         public List<ClarificationFile> ClarificationFiles { get; set; }
         public DateTime? ClarificationRequestedOn { get; set; }
+        public string ClarificationRequestedBy { get; set; }
         public string ClarificationResponse { get; set; }
     }
 
@@ -164,6 +169,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Rejected = "Rejected";	
         public const string Approved = "Approved";	
         public const string Cancelled = "Cancelled";
+        public const string Withdrawn = "Withdrawn";
 
         // Below are other statuses mentioned in the most recent status documentation
         // Please check the flow in RoatpApplicationController, under the line ' switch (application.ApplicationStatus)' if you add new statuses

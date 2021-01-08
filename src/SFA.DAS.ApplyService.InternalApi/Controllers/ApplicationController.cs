@@ -91,24 +91,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(request);
         }
 
-        [HttpGet("/Applications/Open")]
-        public async Task<IEnumerable<RoatpApplicationSummaryItem>> GetOpenApplications()
-        {
-            return await _mediator.Send(new GetOpenApplicationsRequest());
-        }
-
-        [HttpGet("/Applications/Closed")]
-        public async Task<IEnumerable<RoatpApplicationSummaryItem>> GetClosedApplications()
-        {
-            return await _mediator.Send(new GetClosedApplicationsRequest());
-        }
-
-        [HttpGet("/Applications/FeedbackAdded")]
-        public async Task<IEnumerable<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications()
-        {
-            return await _mediator.Send(new GetFeedbackAddedApplicationsRequest());
-        }
-
         [HttpPost("/Application/{applicationId}/StartAssessorReview")]
         public async Task<bool> StartAssessorReview(Guid applicationId,
             [FromBody] StartAssessorReviewApplicationRequest request)
