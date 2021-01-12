@@ -28,10 +28,11 @@ namespace SFA.DAS.ApplyService.Domain.Apply
 
         public string FinancialReviewStatus { get; set; }
         public string FinancialGradeAwarded { get; set; }
-        
+
         public DateTime? FinancialHealthAssessedOn { get; set; }
         public string FinancialHealthAssessedBy { get; set; }
 
+        public string FinancialHealthComments { get; set; }
         public string ModerationReviewStatus { get; set; }
 
         public DateTime? ModerationOutcomeMadeOn { get; set; }
