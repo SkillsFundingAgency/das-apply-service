@@ -6,94 +6,94 @@
     using Domain.Apply;
     using Domain.Roatp;
     using Newtonsoft.Json;
-    using SFA.DAS.ApplyService.Domain.Ukrlp;
+    using Domain.Ukrlp;
 
     public static class RoatpPreambleQuestionIdConstants
     {
-        public static string TwoInTwelveMonths = "PRE-1";
-        public static string UKPRN = "PRE-10";
-        public static string UkrlpLegalName = "PRE-20";
-        public static string UkrlpWebsite = "PRE-30";
-        public static string UKrlpNoWebsite = "PRE-31";
-        public static string UkrlpLegalAddressLine1 = "PRE-40";
-        public static string UkrlpLegalAddressLine2 = "PRE-41";
-        public static string UkrlpLegalAddressLine3 = "PRE-42";
-        public static string UkrlpLegalAddressLine4 = "PRE-43";
-        public static string UkrlpLegalAddressTown = "PRE-44";
-        public static string UkrlpLegalAddressPostcode = "PRE-45";
-        public static string UkrlpTradingName = "PRE-46";
-        public static string CompaniesHouseManualEntryRequired = "PRE-50";
-        public static string UkrlpVerificationCompanyNumber = "PRE-51";
-        public static string CompaniesHouseCompanyName = "PRE-52";
-        public static string CompaniesHouseCompanyType = "PRE-53";
-        public static string CompaniesHouseCompanyStatus = "PRE-54";
-        public static string CompaniesHouseIncorporationDate = "PRE-55";
-        public static string UkrlpVerificationCompany = "PRE-56";
-        public static string CharityCommissionTrusteeManualEntry = "PRE-60";
-        public static string UkrlpVerificationCharityRegNumber = "PRE-61";
-        public static string CharityCommissionCharityName = "PRE-62";
-        public static string CharityCommissionRegistrationDate = "PRE-64";
-        public static string UkrlpVerificationCharity = "PRE-65";
-        public static string UkrlpVerificationSoleTraderPartnership = "PRE-70";
-        public static string UkrlpPrimaryVerificationSource = "PRE-80";
-        public static string OnRoatp = "PRE-90";
-        public static string RoatpCurrentStatus = "PRE-91";
-        public static string RoatpRemovedReason = "PRE-92";
-        public static string RoatpStatusDate = "PRE-93";
-        public static string RoatpProviderRoute = "PRE-94";
-        public static string LevyPayingEmployer = "PRE-95";
-        public static string ApplyProviderRoute = "YO-1";
+        public const string TwoInTwelveMonths = "PRE-1";
+        public const string UKPRN = "PRE-10";
+        public const string UkrlpLegalName = "PRE-20";
+        public const string UkrlpWebsite = "PRE-30";
+        public const string UKrlpNoWebsite = "PRE-31";
+        public const string UkrlpLegalAddressLine1 = "PRE-40";
+        public const string UkrlpLegalAddressLine2 = "PRE-41";
+        public const string UkrlpLegalAddressLine3 = "PRE-42";
+        public const string UkrlpLegalAddressLine4 = "PRE-43";
+        public const string UkrlpLegalAddressTown = "PRE-44";
+        public const string UkrlpLegalAddressPostcode = "PRE-45";
+        public const string UkrlpTradingName = "PRE-46";
+        public const string CompaniesHouseManualEntryRequired = "PRE-50";
+        public const string UkrlpVerificationCompanyNumber = "PRE-51";
+        public const string CompaniesHouseCompanyName = "PRE-52";
+        public const string CompaniesHouseCompanyType = "PRE-53";
+        public const string CompaniesHouseCompanyStatus = "PRE-54";
+        public const string CompaniesHouseIncorporationDate = "PRE-55";
+        public const string UkrlpVerificationCompany = "PRE-56";
+        public const string CharityCommissionTrusteeManualEntry = "PRE-60";
+        public const string UkrlpVerificationCharityRegNumber = "PRE-61";
+        public const string CharityCommissionCharityName = "PRE-62";
+        public const string CharityCommissionRegistrationDate = "PRE-64";
+        public const string UkrlpVerificationCharity = "PRE-65";
+        public const string UkrlpVerificationSoleTraderPartnership = "PRE-70";
+        public const string UkrlpPrimaryVerificationSource = "PRE-80";
+        public const string OnRoatp = "PRE-90";
+        public const string RoatpCurrentStatus = "PRE-91";
+        public const string RoatpRemovedReason = "PRE-92";
+        public const string RoatpStatusDate = "PRE-93";
+        public const string RoatpProviderRoute = "PRE-94";
+        public const string LevyPayingEmployer = "PRE-95";
+        public const string ApplyProviderRoute = "YO-1";
        
-        public static string COAStage1Application = "COA-1";                  
+        public const string COAStage1Application = "COA-1";                  
     }
 
     public static class RoatpYourOrganisationQuestionIdConstants
     {
-        public static string WebsiteManuallyEntered = "YO-41";
-        public static string IcoNumber = "YO-30";
-        public static string CompaniesHouseDirectors = "YO-70";
-        public static string CompaniesHousePSCs = "YO-71";
-        public static string CompaniesHouseDetailsConfirmed = "YO-75";
-        public static string CharityCommissionTrustees = "YO-80";
-        public static string CharityCommissionDetailsConfirmed = "YO-85";
-        public static string SoleTradeOrPartnership = "YO-100";
-        public static string PartnershipType = "YO-101";
-        public static string AddPartners = "YO-110";
-        public static string AddSoleTradeDob = "YO-120";
-        public static string AddPeopleInControl = "YO-130";
-        public static string OrganisationTypeMainSupporting = "YO-140";
-        public static string OrganisationTypeEmployer = "YO-150";
-        public static string EducationalInstituteType = "YO-160";
-        public static string PublicBodyType = "YO-170";
-        public static string SchoolType = "YO-180";
-        public static string RegisteredESFA = "YO-200";
-        public static string FundedESFA = "YO-210";
-        public static string SupportedByOFS = "YO-220";
-        public static string OrganisationDescription = "YO-230";
-        public static string OfficeForStudents = "YO-235";
-        public static string InitialTeacherTraining = "YO-240";
-        public static string HasHadFullInspection = "YO-260";
-        public static string ReceivedFullInspectionGradeForApprenticeships = "YO-270";
-        public static string FullInspectionOverallEffectivenessGrade = "YO-280";
-        public static string HasHadMonitoringVisit = "YO-290";
-        public static string HasMaintainedFundingSinceInspection = "YO-320";
-        public static string HasHadShortInspectionWithinLast3Years = "YO-330";
-        public static string HasMaintainedFullGradeInShortInspection = "YO-340";
-        public static string FullInspectionApprenticeshipGradeOfsFunded = "YO-300";
-        public static string FullInspectionApprenticeshipGradeNonOfsFunded = "YO-301";
-        public static string GradeWithinLast3YearsOfsFunded = "YO-310";
-        public static string GradeWithinLast3YearsNonOfsFunded = "YO-311";
+        public const string WebsiteManuallyEntered = "YO-41";
+        public const string IcoNumber = "YO-30";
+        public const string CompaniesHouseDirectors = "YO-70";
+        public const string CompaniesHousePSCs = "YO-71";
+        public const string CompaniesHouseDetailsConfirmed = "YO-75";
+        public const string CharityCommissionTrustees = "YO-80";
+        public const string CharityCommissionDetailsConfirmed = "YO-85";
+        public const string SoleTradeOrPartnership = "YO-100";
+        public const string PartnershipType = "YO-101";
+        public const string AddPartners = "YO-110";
+        public const string AddSoleTradeDob = "YO-120";
+        public const string AddPeopleInControl = "YO-130";
+        public const string OrganisationTypeMainSupporting = "YO-140";
+        public const string OrganisationTypeEmployer = "YO-150";
+        public const string EducationalInstituteType = "YO-160";
+        public const string PublicBodyType = "YO-170";
+        public const string SchoolType = "YO-180";
+        public const string RegisteredESFA = "YO-200";
+        public const string FundedESFA = "YO-210";
+        public const string SupportedByOFS = "YO-220";
+        public const string OrganisationDescription = "YO-230";
+        public const string OfficeForStudents = "YO-235";
+        public const string InitialTeacherTraining = "YO-240";
+        public const string HasHadFullInspection = "YO-260";
+        public const string ReceivedFullInspectionGradeForApprenticeships = "YO-270";
+        public const string FullInspectionOverallEffectivenessGrade = "YO-280";
+        public const string HasHadMonitoringVisit = "YO-290";
+        public const string HasMaintainedFundingSinceInspection = "YO-320";
+        public const string HasHadShortInspectionWithinLast3Years = "YO-330";
+        public const string HasMaintainedFullGradeInShortInspection = "YO-340";
+        public const string FullInspectionApprenticeshipGradeOfsFunded = "YO-300";
+        public const string FullInspectionApprenticeshipGradeNonOfsFunded = "YO-301";
+        public const string GradeWithinLast3YearsOfsFunded = "YO-310";
+        public const string GradeWithinLast3YearsNonOfsFunded = "YO-311";
 
-        public static string IsPostGradTrainingOnlyApprenticeship = "YO-250";
-		public static string HasDeliveredTrainingAsSubcontractor = "YO-350";
-        public static string ContractFileName = "YO-360";
+        public const string IsPostGradTrainingOnlyApprenticeship = "YO-250";
+		public const string HasDeliveredTrainingAsSubcontractor = "YO-350";
+        public const string ContractFileName = "YO-360";
     }
 
     public static class RoatpCriminalComplianceChecksQuestionIdConstants
     {
-        public static string CompositionCreditors = "CC-20";
-        public static string OrganisationFailedToRepayFunds = "CC-21";
-        public static string OrganisationContractTermination = "CC-22";
+        public const string CompositionCreditors = "CC-20";
+        public const string OrganisationFailedToRepayFunds = "CC-21";
+        public const string OrganisationContractTermination = "CC-22";
     }
 
     public static class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
@@ -193,78 +193,78 @@
 
     public static partial class RoatpWorkflowPageIds
     {
-        public static string Preamble = "1";
-        public static string ProviderRoute = "2";
-        public static string YourOrganisationIntroductionMain = "10";
-        public static string YourOrganisationIntroductionEmployer = "11";
-        public static string YourOrganisationIntroductionSupporting = "12";
-        public static string YourOrganisationParentCompanyCheck = "20";
-        public static string YourOrganisationParentCompanyDetails = "21";
-        public static string WebsiteManuallyEntered = "40";
-        public static string YourOrganisationIcoNumber = "30";
-        public static string ConditionsOfAcceptance = "999999";
+        public const string Preamble = "1";
+        public const string ProviderRoute = "2";
+        public const string YourOrganisationIntroductionMain = "10";
+        public const string YourOrganisationIntroductionEmployer = "11";
+        public const string YourOrganisationIntroductionSupporting = "12";
+        public const string YourOrganisationParentCompanyCheck = "20";
+        public const string YourOrganisationParentCompanyDetails = "21";
+        public const string WebsiteManuallyEntered = "40";
+        public const string YourOrganisationIcoNumber = "30";
+        public const string ConditionsOfAcceptance = "999999";
 
         public static class WhosInControl
         {
-            public static string CompaniesHouseStartPage = "70";
-            public static string CharityCommissionStartPage = "80";
-            public static string CharityCommissionConfirmTrustees = "80";
-            public static string CharityCommissionNoTrustees = "90";
-            public static string SoleTraderPartnership = "100";
-            public static string PartnershipType = "101";
-            public static string AddPartners = "110";
-            public static string AddSoleTraderDob = "120";
-            public static string AddPeopleInControl = "130";
+            public const string CompaniesHouseStartPage = "70";
+            public const string CharityCommissionStartPage = "80";
+            public const string CharityCommissionConfirmTrustees = "80";
+            public const string CharityCommissionNoTrustees = "90";
+            public const string SoleTraderPartnership = "100";
+            public const string PartnershipType = "101";
+            public const string AddPartners = "110";
+            public const string AddSoleTraderDob = "120";
+            public const string AddPeopleInControl = "130";
         }
 
         public static class ManagementHierarchy
         {
-              public static string AddManagementHierarchy = "7200";
+              public const string AddManagementHierarchy = "7200";
         }
 
         public static class DescribeYourOrganisation
         {
-            public static string MainSupportingStartPage = "140";
-            public static string EmployerStartPage = "150";
-            public static string EducationalInstituteType = "160";
-            public static string PublicBodyType = "170";
-            public static string SchoolType = "180";
-            public static string RegisteredESFA = "200";
-            public static string FundedESFA = "210";
-            public static string SupportedByOFS = "220";
-            public static string OrganisationDescription = "230";
+            public const string MainSupportingStartPage = "140";
+            public const string EmployerStartPage = "150";
+            public const string EducationalInstituteType = "160";
+            public const string PublicBodyType = "170";
+            public const string SchoolType = "180";
+            public const string RegisteredESFA = "200";
+            public const string FundedESFA = "210";
+            public const string SupportedByOFS = "220";
+            public const string OrganisationDescription = "230";
         }
 
         public static class ExperienceAndAccreditations
         { 
-            public static string OfficeForStudents = "235";
-            public static string InitialTeacherTraining = "240";
-            public static string HasHadFullInspection = "260";
-            public static string ReceivedFullInspectionGradeForApprenticeships = "270";
-            public static string FullInspectionOverallEffectivenessGrade = "280";
-            public static string HasHadMonitoringVisit = "290";
-            public static string HasMaintainedFundingSinceInspection = "320";
-            public static string HasHadShortInspectionWithinLast3Years = "330";
-            public static string HasMaintainedFullGradeInShortInspection = "340";
-            public static string FullInspectionApprenticeshipGradeNonOfsFunded = "300";
-            public static string FullInspectionApprenticeshipGradeOfsFunded = "301";
-            public static string GradeWithinLast3YearsOfsFunded = "310";
-            public static string GradeWithinLast3YearsNonOfsFunded = "311";
-            public static string IsPostGradTrainingOnlyApprenticeship = "250";
-			public static string SubcontractorDeclaration = "350";
-            public static string SubcontractorContractFile = "360";
+            public const string OfficeForStudents = "235";
+            public const string InitialTeacherTraining = "240";
+            public const string HasHadFullInspection = "260";
+            public const string ReceivedFullInspectionGradeForApprenticeships = "270";
+            public const string FullInspectionOverallEffectivenessGrade = "280";
+            public const string HasHadMonitoringVisit = "290";
+            public const string HasMaintainedFundingSinceInspection = "320";
+            public const string HasHadShortInspectionWithinLast3Years = "330";
+            public const string HasMaintainedFullGradeInShortInspection = "340";
+            public const string FullInspectionApprenticeshipGradeNonOfsFunded = "300";
+            public const string FullInspectionApprenticeshipGradeOfsFunded = "301";
+            public const string GradeWithinLast3YearsOfsFunded = "310";
+            public const string GradeWithinLast3YearsNonOfsFunded = "311";
+            public const string IsPostGradTrainingOnlyApprenticeship = "250";
+			public const string SubcontractorDeclaration = "350";
+            public const string SubcontractorContractFile = "360";
         }
 
         public static class FinancialEvidence
         {
-            public static string YourOrganisationsFinancialEvidence = "2131";
+            public const string YourOrganisationsFinancialEvidence = "2131";
         }
 
         public static class CriminalComplianceChecks
         {
-            public static string CompositionCreditors = "3100";
-            public static string OrganisationFailedToRepayFunds = "3110";
-            public static string OrganisationContractTermination = "3120";
+            public const string CompositionCreditors = "3100";
+            public const string OrganisationFailedToRepayFunds = "3110";
+            public const string OrganisationContractTermination = "3120";
         }
 
         public static class ProtectingYourApprentices
@@ -337,57 +337,56 @@
 
         public static class Finish
         {
-            public static string ApplicationPermissionsChecksShutterPage = "10005";
-            public static string TermsConditionsCOAPart2ShutterPage = "10006";
-            public static string TermsConditionsCOAPart3ShutterPage = "10007";
+            public const string ApplicationPermissionsChecksShutterPage = "10005";
+            public const string TermsConditionsCOAPart2ShutterPage = "10006";
+            public const string TermsConditionsCOAPart3ShutterPage = "10007";
         }
     }
-
     public static class RoatpWorkflowQuestionTags
     {
-        public static string ProviderRoute = "ApplyProviderRoute";
-        public static string UKPRN = "UKPRN";
-        public static string UkrlpLegalName = "UKRLPLegalName";
-        public static string UkrlpVerificationCompany = "UKRLPVerificationCompany";
-        public static string CompaniesHouseDirectors = "CompaniesHouseDirectors";
-        public static string CompaniesHousePscs = "CompaniesHousePSCs";
-        public static string ManualEntryRequiredCompaniesHouse = "CHManualEntryRequired";
-        public static string UkrlpVerificationCharity = "UKRLPVerificationCharity";
-        public static string CharityCommissionTrustees = "CharityTrustees";
-        public static string ManualEntryRequiredCharityCommission = "CCTrusteeManualEntry";
-        public static string UkrlpVerificationSoleTraderPartnership = "UKRLPVerificationSoleTraderPartnership";
-        public static string SoleTraderOrPartnership = "SoleTradeOrPartnership";
-        public static string PartnershipType = "PartnershipType";
-        public static string AddPartners = "AddPartners";
-        public static string SoleTradeDob = "AddSoleTradeDOB";
-        public static string AddPeopleInControl = "AddPeopleInControl";
-        public static string FinishPermissionPersonalDetails = "FinishPermissionPersonalDetails";
-        public static string FinishAccuratePersonalDetails = "FinishAccuratePersonalDetails";
-        public static string FinishPermissionSubmitApplication = "FinishPermissionSubmitApp";
-        public static string FinishCommercialInConfidence = "FinishCommercialConfidence";
-        public static string FinishCOA2MainEmployer = "COAPart2MainEmployer";
-        public static string FinishCOA2Supporting = "COAPart2Supporting";
-        public static string FinishCOA3MainEmployer = "COAPart3MainEmployer";
-        public static string FinishCOA3Supporting = "COAPart3Supporting";
-        public static string AddManagementHierarchy = "AddManagementHierarchy";
-        public static string UKRLPPrimaryVerificationSource = "UKRLPPrimaryVerificationSource";
-        public static string UKRLPVerificationCompanyNumber = "UKRLPVerificationCompanyNumber";
-        public static string UKRLPVerificationCharityRegNumber = "UKRLPVerificationCharityRegNumber";
-        public static string Turnover = "FHATurnover";
-        public static string Depreciation = "FHADepreciation";
-        public static string ProfitLoss = "FHAProfitLoss";
-        public static string Dividends = "FHADividends";
-        public static string IntangibleAssets = "FHAIntangibleAssets";
-        public static string Assets = "FHAAssets";
-        public static string Liabilities = "FHALiabilities";
-        public static string ShareholderFunds = "FHAShareholderFunds";
-        public static string Borrowings = "FHABorrowings";
+        public const string ProviderRoute = "ApplyProviderRoute";
+        public const string UKPRN = "UKPRN";
+        public const string UkrlpLegalName = "UKRLPLegalName";
+        public const string UkrlpVerificationCompany = "UKRLPVerificationCompany";
+        public const string CompaniesHouseDirectors = "CompaniesHouseDirectors";
+        public const string CompaniesHousePscs = "CompaniesHousePSCs";
+        public const string ManualEntryRequiredCompaniesHouse = "CHManualEntryRequired";
+        public const string UkrlpVerificationCharity = "UKRLPVerificationCharity";
+        public const string CharityCommissionTrustees = "CharityTrustees";
+        public const string ManualEntryRequiredCharityCommission = "CCTrusteeManualEntry";
+        public const string UkrlpVerificationSoleTraderPartnership = "UKRLPVerificationSoleTraderPartnership";
+        public const string SoleTraderOrPartnership = "SoleTradeOrPartnership";
+        public const string PartnershipType = "PartnershipType";
+        public const string AddPartners = "AddPartners";
+        public const string SoleTradeDob = "AddSoleTradeDOB";
+        public const string AddPeopleInControl = "AddPeopleInControl";
+        public const string FinishPermissionPersonalDetails = "FinishPermissionPersonalDetails";
+        public const string FinishAccuratePersonalDetails = "FinishAccuratePersonalDetails";
+        public const string FinishPermissionSubmitApplication = "FinishPermissionSubmitApp";
+        public const string FinishCommercialInConfidence = "FinishCommercialConfidence";
+        public const string FinishCOA2MainEmployer = "COAPart2MainEmployer";
+        public const string FinishCOA2Supporting = "COAPart2Supporting";
+        public const string FinishCOA3MainEmployer = "COAPart3MainEmployer";
+        public const string FinishCOA3Supporting = "COAPart3Supporting";
+        public const string AddManagementHierarchy = "AddManagementHierarchy";
+        public const string UKRLPPrimaryVerificationSource = "UKRLPPrimaryVerificationSource";
+        public const string UKRLPVerificationCompanyNumber = "UKRLPVerificationCompanyNumber";
+        public const string UKRLPVerificationCharityRegNumber = "UKRLPVerificationCharityRegNumber";
+        public const string Turnover = "FHATurnover";
+        public const string Depreciation = "FHADepreciation";
+        public const string ProfitLoss = "FHAProfitLoss";
+        public const string Dividends = "FHADividends";
+        public const string IntangibleAssets = "FHAIntangibleAssets";
+        public const string Assets = "FHAAssets";
+        public const string Liabilities = "FHALiabilities";
+        public const string ShareholderFunds = "FHAShareholderFunds";
+        public const string Borrowings = "FHABorrowings";
     }
 
     public static class RoatpClarificationUpload
     {
-        public static string ClarificationFile = "ClarificationFile";
-        public static string SubcontractorDeclarationClarificationFile = "SubcontractorDeclarationClarificationFile";
+        public const string ClarificationFile = "ClarificationFile";
+        public const string SubcontractorDeclarationClarificationFile = "SubcontractorDeclarationClarificationFile";
     }
 
     public static class RoatpPreambleQuestionBuilder
