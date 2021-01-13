@@ -14,6 +14,9 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public DateTime ApplicationSubmittedDate { get; set; }
         public string OversightStatus { get; set; }
         public string ApplicationStatus { get; set; }
+        public string GatewayReviewStatus { get; set; }
+        public string ModerationStatus { get; set; }
+        public string FinancialReviewStatus { get; set; }
         public DateTime? ApplicationDeterminedDate { get; set; }
     }
 }

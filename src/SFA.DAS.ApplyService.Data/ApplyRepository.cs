@@ -906,6 +906,9 @@ namespace SFA.DAS.ApplyService.Data
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
 							apply.OversightStatus,
+                            apply.GatewayReviewStatus,
+                            apply.ModerationStatus,
+                            apply.FinancialReviewStatus,
                             apply.ApplicationStatus,
 							apply.ApplicationDeterminedDate
                               FROM Apply apply
