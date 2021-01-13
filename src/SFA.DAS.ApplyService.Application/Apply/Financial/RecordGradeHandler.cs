@@ -27,7 +27,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
             var financialReviewStatus = GetApplicableFinancialReviewStatus(request.FinancialReviewDetails.SelectedGrade);
             var financialReviewDetails = request.FinancialReviewDetails;
             if (financialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification)
+            {
                 financialReviewDetails.ClarificationRequestedOn = financialReviewDetails.GradedDateTime;
+                financialReviewDetails.ClarificationRequestedBy = financialReviewDetails.GradedBy;
+            }
 
             return await _applyRepository.RecordFinancialGrade(request.ApplicationId, financialReviewDetails, financialReviewStatus);
         }

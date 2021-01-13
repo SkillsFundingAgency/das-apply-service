@@ -2,7 +2,8 @@
 {
     public class GatewayApplicationStatusCount
     {
-        public string GatewayApplicationStatus { get; set; }
+        public string GatewayReviewStatus { get; set; }
+        public string ApplicationStatus { get; set; }
         public int Count { get; set; }
     }
 }

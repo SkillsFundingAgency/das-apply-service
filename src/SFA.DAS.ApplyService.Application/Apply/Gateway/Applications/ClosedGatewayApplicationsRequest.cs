@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
 {
-    public class ClosedGatewayApplicationsRequest : IRequest<List<RoatpApplicationSummaryItem>>
+    public class ClosedGatewayApplicationsRequest : IRequest<List<RoatpGatewaySummaryItem>>
     {
     }
 }
