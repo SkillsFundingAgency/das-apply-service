@@ -9,7 +9,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
         {
             RuleFor(x => x.HasTwoInTwelveMonths)
                 .Cascade(CascadeMode.StopOnFirstFailure)
-                .NotEmpty().WithMessage("Tell us if you've had 2 unsuccessful applications in the last 12 months");
+                .NotEmpty().WithMessage("Tell us if you've submitted 2 applications to join the RoATP in the last 12 months");
         }
     }
 }
