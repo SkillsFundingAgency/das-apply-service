@@ -1,7 +1,7 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.TwoInTwelveMonthsViewModel
 
 @{
-    ViewBag.Title = "Have you had 2 unsuccessful applications in the last 12 months?";
+    ViewBag.Title = Model.Title;
     Layout = "_Layout";
 }
 
@@ -12,8 +12,8 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <partial name="_ValidationSummaryPartial" />
-            <h1 class="govuk-heading-xl">Have you had 2 unsuccessful applications in the last 12 months?</h1>
-            <p class="govuk-body">This means that in the last 12 months, you've made other applications to join the register of apprenticeship training providers and 2 were unsuccessful. </p>
+            <h1 class="govuk-heading-xl">@Model.Title</h1>
+            <p class="govuk-body">Do not include any applications that were rejected or withdrawn.</p>
         </div>
     </div>
 
