@@ -8,7 +8,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     {
         public bool? HasTwoInTwelveMonths { get; set; }
 
-        public string Title { get { return "Have you had 2 unsuccessful applications in the last 12 months?"; } set { } }
+        public string Title { get { return "Have you submitted 2 applications to join the RoATP in the last 12 months?"; } set { } }
 
         public Guid ApplicationId { get; set; }
 
