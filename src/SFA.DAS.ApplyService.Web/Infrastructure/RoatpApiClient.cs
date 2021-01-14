@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await Get<List<ApplicationRoute>>($"/all-roatp-routes");
         }
 
-        public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(long ukprn)
+        public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(int ukprn)
         {
             return await Get<OrganisationRegisterStatus>($"/ukprn-on-register?ukprn={ukprn}");
         }

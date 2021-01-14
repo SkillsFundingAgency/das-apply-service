@@ -50,7 +50,7 @@
 
         [Route("ukprn-on-register")]
         [HttpGet]
-        public async Task<IActionResult> UkprnOnRegister(long ukprn)
+        public async Task<IActionResult> UkprnOnRegister(int ukprn)
         {
             var registerStatus = await _retryPolicy.ExecuteAsync(
                 context => _apiClient.GetOrganisationRegisterStatus(ukprn.ToString()),
