@@ -1,11 +1,8 @@
-﻿
-using SFA.DAS.ApplyService.Web.Validators;
-
-namespace SFA.DAS.ApplyService.Web.UnitTests
+﻿namespace SFA.DAS.ApplyService.Web.UnitTests
 {
     using FluentAssertions;
     using NUnit.Framework;
-    using Validators;
+    using SFA.DAS.ApplyService.Web.Validators;
 
     [TestFixture]
     public class UkprnValidatorTests
@@ -14,8 +11,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [TestCase(null)]
         public void Validator_returns_false_for_missing_ukprn(string ukprn)
         {
-            long ukprnValue;
-            bool isValid = UkprnValidator.IsValidUkprn(ukprn, out ukprnValue);
+            bool isValid = UkprnValidator.IsValidUkprn(ukprn, out var ukprnValue);
 
             isValid.Should().BeFalse();
             ukprnValue.Should().Be(0);
@@ -27,8 +23,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [TestCase("1000123A")]
         public void Validator_returns_false_for_invalid_ukprn(string ukprn)
         {
-            long ukprnValue;
-            bool isValid = UkprnValidator.IsValidUkprn(ukprn, out ukprnValue);
+            bool isValid = UkprnValidator.IsValidUkprn(ukprn, out _);
 
             isValid.Should().BeFalse();
         }
@@ -38,8 +33,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         {
             string ukprn = "10002000";
 
-            long ukprnValue;
-            bool isValid = UkprnValidator.IsValidUkprn(ukprn, out ukprnValue);
+            bool isValid = UkprnValidator.IsValidUkprn(ukprn, out var ukprnValue);
 
             isValid.Should().BeTrue();
             ukprnValue.Should().Be(10002000);

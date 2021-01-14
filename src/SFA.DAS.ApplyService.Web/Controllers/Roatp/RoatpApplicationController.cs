@@ -28,6 +28,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     using SFA.DAS.ApplyService.Web.Controllers.Roatp;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
+    using SFA.DAS.ApplyService.Web.Validators;
     using ViewModels.Roatp;
 
     [Authorize]
@@ -566,7 +567,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View("~/Views/Roatp/EnterNewUkprn.cshtml", model);
             }
 
-            var ukprn = long.Parse(model.Ukprn);
+            UkprnValidator.IsValidUkprn(model.Ukprn, out var ukprn);
             var ukrlpLookupResults = await _ukrlpApiClient.GetTrainingProviderByUkprn(ukprn);
 
             if (ukrlpLookupResults?.Results is null || !ukrlpLookupResults.Success)
