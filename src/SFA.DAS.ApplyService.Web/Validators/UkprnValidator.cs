@@ -1,18 +1,10 @@
 ﻿namespace SFA.DAS.ApplyService.Web.Validators
-{
-    using System;
-    
-    public class UkprnValidator
+{    
+    public static class UkprnValidator
     {
-        public static bool IsValidUkprn(string stringToCheck, out long ukprn)
+        public static bool IsValidUkprn(string stringToCheck, out int ukprn)
         {
-            if (String.IsNullOrWhiteSpace(stringToCheck))
-            {
-                ukprn = 0;
-                return false;
-            }
-
-            if (!long.TryParse(stringToCheck, out ukprn))
+            if (!int.TryParse(stringToCheck, out ukprn))
             {
                 return false;
             }
