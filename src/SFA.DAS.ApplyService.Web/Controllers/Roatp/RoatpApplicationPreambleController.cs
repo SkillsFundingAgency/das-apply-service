@@ -181,7 +181,7 @@
         [HttpPost]
         public async Task<IActionResult> SearchByUkprn(SearchByUkprnViewModel model)
         {
-            long ukprn = 0;
+            int ukprn = 0;
             string validationMessage = string.Empty;
 
             if (string.IsNullOrWhiteSpace(model.UKPRN))
@@ -786,7 +786,7 @@
             else
             {
                 var ukprn = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UKPRN);
-                var roatpRegisterStatus = await _roatpApiClient.GetOrganisationRegisterStatus(Convert.ToInt64(ukprn.Value));
+                var roatpRegisterStatus = await _roatpApiClient.GetOrganisationRegisterStatus(Convert.ToInt32(ukprn.Value));
 
                 if (roatpRegisterStatus != null
                     && roatpRegisterStatus.UkprnOnRegister

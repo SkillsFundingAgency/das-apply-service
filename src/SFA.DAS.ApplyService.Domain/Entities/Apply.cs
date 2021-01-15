@@ -60,6 +60,10 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public Guid? ApplicationSubmittedBy { get; set; }
         public DateTime? ApplicationWithdrawnOn { get; set; }
         public string ApplicationWithdrawnBy { get; set; }
+        public int? ProviderRouteOnRegister { get; set; }
+        public string ProviderRouteNameOnRegister { get; set; }
+        public string OrganisationType { get; set; }
+        public string Address { get; set; }
     }
 
 
@@ -72,6 +76,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public OrganisationRegisterStatus RoatpRegisterDetails { get; set; }
         public DateTime? SourcesCheckedOn { get; set; }
         public string Comments { get; set; }
+        public string ExternalComments { get; set; }
         public DateTime? OutcomeDateTime { get; set; }
         public DateTime? ClarificationRequestedOn { get; set; }
         public string ClarificationRequestedBy { get; set; }
@@ -113,6 +118,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string GradedBy { get; set; }
         public DateTime? GradedDateTime { get; set; }
         public string Comments { get; set; }
+        public string ExternalComments { get; set; }
         public List<FinancialEvidence> FinancialEvidences { get; set; }
         public List<ClarificationFile> ClarificationFiles { get; set; }
         public DateTime? ClarificationRequestedOn { get; set; }

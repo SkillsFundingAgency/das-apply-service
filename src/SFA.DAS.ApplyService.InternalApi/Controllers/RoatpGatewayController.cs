@@ -84,6 +84,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 {
                     application.ApplyData.GatewayReviewDetails.OutcomeDateTime = DateTime.UtcNow;
                     application.ApplyData.GatewayReviewDetails.Comments = request.GatewayReviewComment;
+                    application.ApplyData.GatewayReviewDetails.ExternalComments = request.GatewayReviewExternalComment;
                 }
 
                 return await _applyRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, request.GatewayReviewStatus, request.UserId, request.UserName);

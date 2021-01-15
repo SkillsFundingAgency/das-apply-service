@@ -14,7 +14,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 
-        public async Task<UkrlpLookupResults> GetTrainingProviderByUkprn(long ukprn)
+        public async Task<UkrlpLookupResults> GetTrainingProviderByUkprn(int ukprn)
         {
             return await Get<UkrlpLookupResults>($"/ukrlp-lookup?ukprn={ukprn}");
         }
