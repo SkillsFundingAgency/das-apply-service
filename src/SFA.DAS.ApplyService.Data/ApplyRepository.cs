@@ -989,9 +989,26 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
 							apply.OversightStatus,
                             apply.ApplicationStatus,
-							apply.ApplicationDeterminedDate
+							apply.ApplicationDeterminedDate,
+							apply.AssessorReviewStatus,
+							contacts.Email as ApplicationEmailAddress,
+							apply.GatewayReviewStatus,
+							JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeMadeDate,
+							apply.GatewayUserName as GatewayOutcomeMadeBy,
+							JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.Comments') AS GatewayComments,
+							apply.FinancialReviewStatus,
+							JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') AS FinancialGradeAwarded,
+							JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS FinancialHealthAssessedOn,
+							JSON_VALUE(apply.FinancialGrade, '$.GradedBy') AS FinancialHealthAssessedBy,
+                            JSON_VALUE(apply.FinancialGrade, '$.Comments') AS FinancialHealthComments,
+
+							apply.ModerationStatus as ModerationReviewStatus,
+							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS ModerationOutcomeMadeOn,
+							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratedBy,
+							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorComments') AS ModerationComments                       
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+						  LEFT OUTER JOIN contacts on contacts.ApplyOrganisationId = org.Id
                         WHERE apply.ApplicationId = @applicationId",
                     new { applicationId });
 
