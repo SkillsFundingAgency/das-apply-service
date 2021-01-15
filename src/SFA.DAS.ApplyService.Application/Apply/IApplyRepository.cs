@@ -78,6 +78,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, string userId, string userName);
         Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId);
+        Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload(DateTime dateFrom, DateTime dateTo);
+        
         Task<IEnumerable<GatewayApplicationStatusCount>> GetGatewayApplicationStatusCounts();
 
         Task InsertAudit(Audit audit);

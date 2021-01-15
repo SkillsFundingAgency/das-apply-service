@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -196,7 +197,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var allQnaSequences = await allQnaSequencesTask;
                 var allQnaSections = await allQnaSectionsTask;
 
-                var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, allQnaSequences, allQnaSections);
+                var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, applicationDetails.RoatpRegisterStatus.ProviderTypeId, allQnaSequences, allQnaSections);
 
                 var applicationId = await _apiClient.StartApplication(startApplicationRequest);
                 _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{applicationId}]");
@@ -227,27 +228,33 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return Guid.Empty;
         }
 
-        private StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
+        private string GetRouteName(int? routeId)
         {
-            string selectedProviderRoute;
-            switch (providerRoute)
+            switch (routeId)
             {
-                case 1: selectedProviderRoute = "Main provider";
-                    break;
-                case 2: selectedProviderRoute = "Employer provider";
-                    break;
-                case 3: selectedProviderRoute = "Supporting provider";
-                    break;
+                case null:
+                    return string.Empty;
+                case 1:
+                    return "Main provider";
+                case 2:
+                    return "Employer provider";
+                case 3:
+                    return "Supporting provider";
                 default:
-                    throw new ArgumentException(nameof(providerRoute));
+                    throw new ArgumentException(nameof(routeId));
             }
+        }
 
+        private StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, int? providerRouteOnRegister, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
+        {
             return new StartApplicationRequest
             {
                 ApplicationId = qnaApplicationId,
                 CreatingContactId = creatingContactId,
                 ProviderRoute = providerRoute,
-                ProviderRouteName = selectedProviderRoute,
+                ProviderRouteName = GetRouteName(providerRoute),
+                ProviderRouteOnRegister = providerRouteOnRegister,
+                ProviderRouteNameOnRegister = GetRouteName(providerRouteOnRegister),
                 ApplySequences = qnaSequences.Select(sequence => new ApplySequence
                 {
                     SequenceId = sequence.Id,
@@ -1250,8 +1257,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var organisationVerificationStatusTask = _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
             var applicationRoutesTask = _roatpApiClient.GetApplicationRoutes();
             var applicationDataTask = _qnaApiClient.GetApplicationData(model.ApplicationId);
+            var addressTask = _qnaApiClient.GetPageBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining, RoatpWorkflowSectionIds.PlanningApprenticeshipTraining.WhereWillYourApprenticesBeTrained, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.AddressWhereApprenticesWillBeTrained);
 
-            await Task.WhenAll(providerRouteTask, applicationTask, allSectionsTask, roatpSequencesTask, organisationVerificationStatusTask, applicationRoutesTask);
+            await Task.WhenAll(providerRouteTask, applicationTask, allSectionsTask, roatpSequencesTask, organisationVerificationStatusTask, applicationRoutesTask, addressTask);
 
             var providerRoute = await providerRouteTask;
             var application = await applicationTask;
@@ -1260,6 +1268,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var organisationVerificationStatus = await organisationVerificationStatusTask;
             var applicationRoutes = await applicationRoutesTask;
             var applicationData = (await applicationDataTask) as JObject;
+            var address = await addressTask;
 
             await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
             var sequences = await _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
@@ -1295,7 +1304,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ProviderRouteName = selectedProviderRoute?.RouteName,
                 SubmittingContactId = User.GetUserId(),
                 ApplyData = application.ApplyData,
-                FinancialData = ExtractFinancialData(model.ApplicationId, applicationData)
+                OrganisationType = ExtractOrganisationType(applicationData),
+                FinancialData = ExtractFinancialData(model.ApplicationId, applicationData),
+                Address = ExtractAddress(address)
             };
 
             var submitResult = await _apiClient.SubmitApplication(submitApplicationRequest);
@@ -1483,6 +1494,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return false;
+        }
+
+        private string ExtractOrganisationType(JObject applicationData)
+        {
+            return applicationData.GetValue("OrganisationEducationInstitute")?.Value<string>()
+                   ?? applicationData.GetValue("OrganisationPublicBody")?.Value<string>()
+                   ?? applicationData.GetValue("OrganisationTypeMainSupporting")?.Value<string>()
+                   ?? applicationData.GetValue("OrganisationTypeEmployer")?.Value<string>();
+        }
+
+        private string ExtractAddress(Page page)
+        {
+            if (page == null || page.NotRequired) return string.Empty;
+            return string.Join(", ", page.PageOfAnswers.First().Answers);
         }
 
         private FinancialData ExtractFinancialData(Guid applicationId, JObject applicationData)
