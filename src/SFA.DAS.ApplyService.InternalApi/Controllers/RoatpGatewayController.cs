@@ -119,7 +119,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 };
             }
 
-            return new GatewayCommonDetails
+            var newDetails = new GatewayCommonDetails
             {
                 ApplicationId = gatewayPage.ApplicationId,
                 Ukprn = application.ApplyData.ApplyDetails.UKPRN,
@@ -142,6 +142,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 ClarificationDate = gatewayPage.ClarificationDate,
                 ClarificationAnswer = gatewayPage.ClarificationAnswer
             };
+
+            var logging =
+                $"Getting common page details for applcationId [{applicationId}] for PageId [{pageId}]: {Newtonsoft.Json.JsonConvert.SerializeObject(newDetails)}";
+            _logger.LogInformation(logging);
+
+            return newDetails;
         }
 
         [Route("Gateway/{applicationId}/Pages")]
