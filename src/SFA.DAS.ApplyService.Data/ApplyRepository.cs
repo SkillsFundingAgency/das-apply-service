@@ -1016,6 +1016,56 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload(DateTime dateFrom, DateTime dateTo)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<ApplicationOversightDownloadDetails>(@"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+							 org.Name AS OrganisationName,
+					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteNameOnRegister'),' provider','') AS ProviderRouteNameOnRegister,
+							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.OrganisationType') AS OrganisationType,
+                            JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.CompaniesHouseDetails.CompanyNumber') AS CompanyNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.Address') AS Address,
+                            apply.OversightStatus,
+                            apply.ApplicationStatus,
+							apply.ApplicationDeterminedDate,
+                            apply.GatewayReviewStatus as GatewayOutcome,
+                            apply.AssessorReviewStatus  as AssessorOutcome,
+                            CASE JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') WHEN @financialGradeInadequate THEN 'Fail' ELSE 'Pass' END as FHCOutcome,
+                            CASE WHEN apply.GatewayReviewStatus = @gatewayReviewStatusPass AND apply.AssessorReviewStatus = @assessorReviewStatusApproved AND JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') <> @financialGradeInadequate THEN 'Pass' ELSE 'Fail' END as OverallOutcome
+                            FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                      WHERE apply.DeletedAt IS NULL
+                          AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') BETWEEN @dateFrom AND @dateTo
+                          and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
+						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
+						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt))
+                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
+						  and apply.OversightStatus NOT IN (@oversightReviewStatusPass,@oversightReviewStatusFail)
+                             order by cast(apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
+                {
+                    gatewayReviewStatusPass = GatewayReviewStatus.Pass,
+                    gatewayReviewStatusFail = GatewayReviewStatus.Fail,
+                    GatewayReviewStatusReject = GatewayReviewStatus.Reject,
+                    assessorReviewStatusApproved = AssessorReviewStatus.Approved,
+                    assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
+                    financialReviewStatusApproved = FinancialReviewStatus.Pass,
+                    financialReviewStatusDeclined = FinancialReviewStatus.Fail,
+                    financialReviewStatusExempt = FinancialReviewStatus.Exempt,
+                    oversightReviewStatusPass = OversightReviewStatus.Successful,
+                    oversightReviewStatusFail = OversightReviewStatus.Unsuccessful,
+                    financialGradeInadequate = Domain.Roatp.FinancialApplicationSelectedGrade.Inadequate,
+                    dateFrom = dateFrom.ToString("yyyy-MM-dd"), dateTo = dateTo.AddDays(1).Date.ToString("yyyy-MM-dd")
+                })).ToList();
+            }
+        }
+
         public async Task<IEnumerable<GatewayApplicationStatusCount>> GetGatewayApplicationStatusCounts()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

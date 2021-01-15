@@ -12,5 +12,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Start
         public Guid CreatingContactId { get; set; }
         public int ProviderRoute { get; set; }
         public string ProviderRouteName { get; set; }
+        public int? ProviderRouteOnRegister { get; set; }
+        public string ProviderRouteNameOnRegister { get; set; }
     }
 }

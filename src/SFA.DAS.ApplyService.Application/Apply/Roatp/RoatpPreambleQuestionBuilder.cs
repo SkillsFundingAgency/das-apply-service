@@ -168,6 +168,7 @@
         {
             public const int WhatYouWillNeed = 1;
             public const int TypeOfApprenticeshipTraining = 2;
+            public const int WhereWillYourApprenticesBeTrained = 7;
         }
 
         public static class DeliveringApprenticeshipTraining
