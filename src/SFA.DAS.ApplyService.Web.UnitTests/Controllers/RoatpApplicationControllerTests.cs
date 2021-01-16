@@ -220,6 +220,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationRoute = new ApplicationRoute
                 {
                     Id = 1
+                },
+                RoatpRegisterStatus = new OrganisationRegisterStatus
+                {
+                    ProviderTypeId = 1
                 }
             };
 
