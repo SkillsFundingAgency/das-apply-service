@@ -140,8 +140,7 @@ namespace SFA.DAS.ApplyService.Data
             _logger.LogInformation($"updating Gateway answer for page answer: {Newtonsoft.Json.JsonConvert.SerializeObject(pageAnswer)}");
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                if (string.IsNullOrEmpty(pageAnswer.ClarificationAnswer))
-                {
+                
                     if (pageAnswer.Status == GatewayAnswerStatus.Clarification)
                     {
                         _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for clarification");
@@ -159,22 +158,11 @@ namespace SFA.DAS.ApplyService.Data
                         await connection.ExecuteAsync(
                     @"UPDATE GatewayAnswer
                             SET  Status = @status, Comments = @comments, 
+                                ClarificationAnswer = isnull(@clarificationAnswer, ClarificationAnswer),
                                 UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
                                 WHERE [Id] = @id",
                             pageAnswer);
                     }
-                }
-                else
-                {
-                    _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for Clarification Answer");
-                    await connection.ExecuteAsync(
-                        @"UPDATE GatewayAnswer
-                            SET  Status = @status, Comments =@comments, 
-                            ClarificationAnswer = @clarificationAnswer,
-                            UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
-                            WHERE [Id] = @id",
-                        pageAnswer);
-                }
             }
         }
 
