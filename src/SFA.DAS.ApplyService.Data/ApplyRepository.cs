@@ -136,26 +136,27 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName)
         {
-
+            _logger.LogInformation($"updating Gateway answer for page answer: {Newtonsoft.Json.JsonConvert.SerializeObject(pageAnswer)}");
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 if (string.IsNullOrEmpty(pageAnswer.ClarificationAnswer))
                 {
                     if (pageAnswer.Status == GatewayAnswerStatus.Clarification)
                     {
-
+                        _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for clarification");
                         await connection.ExecuteAsync(
                             @"UPDATE GatewayAnswer
                             SET  Status = @status, ClarificationComments =@comments, 
+                            comments = @comments,
                             UpdatedBy = @updatedBy, UpdatedAt = @updatedAt, 
                             ClarificationDate=@updatedAt, ClarificationBy = @updatedBy
                             WHERE [Id] = @id",
                             pageAnswer);
-
                     }
                     else
                     {
-                await connection.ExecuteAsync(
+                        _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for non-clarification responses");
+                        await connection.ExecuteAsync(
                     @"UPDATE GatewayAnswer
                             SET  Status = @status, Comments = @comments, 
                                 UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
@@ -163,13 +164,17 @@ namespace SFA.DAS.ApplyService.Data
                             pageAnswer);
                     }
                 }
+                else
+                {
+                    _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for Clarification Answer");
                     await connection.ExecuteAsync(
-                            @"UPDATE GatewayAnswer
+                        @"UPDATE GatewayAnswer
                             SET  Status = @status, Comments =@comments, 
                             ClarificationAnswer = @clarificationAnswer,
                             UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
                             WHERE [Id] = @id",
-                            pageAnswer);
+                        pageAnswer);
+                }
             }
         }
 
