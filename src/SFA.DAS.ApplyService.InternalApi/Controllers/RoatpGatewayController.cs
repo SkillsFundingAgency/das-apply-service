@@ -65,6 +65,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 }
             }
 
+            _logger.LogInformation($"Submitting Gateway page submit for ApplicationId '{request.ApplicationId}' for PageId '{request.PageId}', Status '{request.Status}', " +
+                                   $"Comments '{request.Comments}', Clarification answer '{request.ClarificationAnswer}'");
+
             await _mediator.Send(new UpdateGatewayPageAnswerRequest(request.ApplicationId,
                 request.PageId,
                 request.Status,
