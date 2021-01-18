@@ -136,6 +136,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName)
         {
+            _logger.LogInformation($"updating Gateway answer for applicationID [{pageAnswer.ApplicationId}], Status: {pageAnswer.Status}, Clarification answer '{pageAnswer.ClarificationAnswer}'");
             _logger.LogInformation($"updating Gateway answer for page answer: {Newtonsoft.Json.JsonConvert.SerializeObject(pageAnswer)}");
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -147,7 +148,6 @@ namespace SFA.DAS.ApplyService.Data
                         await connection.ExecuteAsync(
                             @"UPDATE GatewayAnswer
                             SET  Status = @status, ClarificationComments =@comments, 
-                            comments = @comments,
                             UpdatedBy = @updatedBy, UpdatedAt = @updatedAt, 
                             ClarificationDate=@updatedAt, ClarificationBy = @updatedBy
                             WHERE [Id] = @id",
