@@ -1508,7 +1508,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var address = string.Empty;
 
-            if (page != null && !page.NotRequired && !page.PageOfAnswers.Any())
+            if (page != null && !page.NotRequired && page.PageOfAnswers.Any())
             {
                 address = string.Join(", ", page.PageOfAnswers.First().Answers);
             }
