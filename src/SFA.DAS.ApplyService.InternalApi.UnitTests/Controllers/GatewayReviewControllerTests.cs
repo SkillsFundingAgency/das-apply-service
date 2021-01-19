@@ -57,5 +57,23 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 
             _mediator.Verify(x => x.Send(It.Is<WithdrawApplicationRequest>(y => y.ApplicationId == applicationId), It.IsAny<CancellationToken>()), Times.Once);
         }
+
+        [Test]
+        public async Task RemoveApplication_calls_mediator()
+        {
+            var applicationId = Guid.NewGuid();
+
+            var request = new GatewayRemoveApplicationRequest
+            {
+                UserId = "userId",
+                UserName = "userName",
+                Comments = "comments",
+                ExternalComments = "external comments"
+            };
+
+            await _controller.RemoveApplication(applicationId, request);
+
+            _mediator.Verify(x => x.Send(It.Is<RemoveApplicationRequest>(y => y.ApplicationId == applicationId), It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

@@ -29,7 +29,8 @@
     [ApplicationDeterminedDate] DATETIME2 NULL,
     [GatewayUserId] NVARCHAR(256) NULL,
     [GatewayUserName] NVARCHAR(256) NULL, 
-    [Comments] NVARCHAR(MAX) NULL
+    [Comments] NVARCHAR(MAX) NULL,
+    [ExternalComments] NVARCHAR(MAX) NULL
 )
 GO
 CREATE INDEX [IX_Apply_ApplicationId] ON [Apply] ([ApplicationId])

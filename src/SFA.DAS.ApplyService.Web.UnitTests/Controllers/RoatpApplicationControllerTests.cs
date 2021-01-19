@@ -179,6 +179,73 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+        public async Task Applications_starts_a_new_application_if_no_active_applications_for_that_user()
+        {
+            var applications = new List<Domain.Entities.Apply>
+            {
+                new Apply { ApplicationStatus = ApplicationStatus.Cancelled },
+                new Apply { ApplicationStatus = ApplicationStatus.Withdrawn },
+                new Apply { ApplicationStatus = ApplicationStatus.Removed }
+            };
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10002000,
+                UkrlpLookupDetails = new ProviderDetails
+                {
+                    ProviderName = "Provider name",
+                    ContactDetails = new List<ProviderContact>
+                    {
+                        new ProviderContact
+                        {
+                            ContactType = "L",
+                            ContactAddress = new ContactAddress
+                            {
+                                Address1 = "Address line 1",
+                                PostCode = "PS1 1ST"
+                            }
+                        }
+                    },
+                    VerificationDetails = new List<VerificationDetails>
+                    {
+                        new VerificationDetails
+                        {
+                            VerificationAuthority = VerificationAuthorities.SoleTraderPartnershipAuthority,
+                            PrimaryVerificationSource = true
+                        }
+                    }
+                },
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = 1
+                },
+                RoatpRegisterStatus = new OrganisationRegisterStatus
+                {
+                    ProviderTypeId = 1
+                }
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var applicationId = Guid.NewGuid();
+            var qnaResponse = new StartQnaApplicationResponse
+            {
+                ApplicationId = applicationId
+            };
+
+            _qnaApiClient.Setup(x => x.StartApplication(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(qnaResponse).Verifiable();
+
+            _apiClient.Setup(x => x.StartApplication(It.IsAny<StartApplicationRequest>())).ReturnsAsync(applicationId).Verifiable();
+
+            await _controller.Applications();
+
+            _qnaApiClient.VerifyAll();
+            _apiClient.VerifyAll();
+        }
+
+        [Test]
         public void Applications_shows_task_list_if_an_application_in_progress()
         {
             var inProgressApp = new Domain.Entities.Apply

@@ -70,7 +70,7 @@ namespace SFA.DAS.ApplyService.Data
 
         private const string ClosedApplicationsWhereClause = @"
                             apply.DeletedAt IS NULL
-                            AND ( apply.ApplicationStatus IN (@applicationStatusWithdrawn)
+                            AND ( apply.ApplicationStatus IN (@applicationStatusWithdrawn, @applicationStatusRemoved)
                                   OR (
                                       Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus
                                       AND ModerationStatus IN (@passModerationStatus, @failModerationStatus)
@@ -332,10 +332,12 @@ namespace SFA.DAS.ApplyService.Data
                             , ModerationStatus
                             , CASE
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
+                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
                                 ELSE JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime')
                               END AS OutcomeMadeDate
                             , CASE
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
+                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
                                 ELSE JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName')
                               END AS OutcomeMadeBy                            
 	                        FROM Apply apply
@@ -345,6 +347,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
+                            applicationStatusRemoved = ApplicationStatus.Removed,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             passModerationStatus = ModerationStatus.Pass,
                             failModerationStatus = ModerationStatus.Fail
@@ -364,6 +367,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
+                            applicationStatusRemoved = ApplicationStatus.Removed,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             passModerationStatus = ModerationStatus.Pass,
                             failModerationStatus = ModerationStatus.Fail
