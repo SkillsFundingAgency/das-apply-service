@@ -1506,8 +1506,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private string ExtractAddress(Page page)
         {
-            if (page == null || page.NotRequired) return string.Empty;
-            return string.Join(", ", page.PageOfAnswers.First().Answers);
+            var address = string.Empty;
+
+            if (page != null && !page.NotRequired && !page.PageOfAnswers.Any())
+            {
+                address = string.Join(", ", page.PageOfAnswers.First().Answers);
+            }
+
+            return address;
         }
 
         private FinancialData ExtractFinancialData(Guid applicationId, JObject applicationData)
