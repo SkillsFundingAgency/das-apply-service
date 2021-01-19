@@ -46,10 +46,13 @@ namespace SFA.DAS.ApplyService.Data
                             AND apply.ApplicationStatus = @applicationStatusGatewayAssessed
                             AND
                             (
-                                -- Assigned to the current user and in progress
-                                (apply.Assessor1ReviewStatus = @inProgressReviewStatus AND apply.Assessor1UserId = @userId) OR (apply.Assessor2ReviewStatus = @inProgressReviewStatus AND apply.Assessor2UserId = @userId)
+                                -- Current user is Assessor 1 and in progress (or hasn't been picked up by Assessor 2)
+                                (apply.Assessor1UserId = @userId AND (apply.Assessor1ReviewStatus = @inProgressReviewStatus OR apply.Assessor2UserId IS NULL))
+                                OR 
+                                -- Current user is Assessor 2 and in progress (or hasn't been picked up by Assessor 1)
+                                (apply.Assessor2UserId = @userId AND (apply.Assessor2ReviewStatus = @inProgressReviewStatus OR apply.Assessor1UserId IS NULL))
                                 OR
-                                -- Assigned to any two other assessors and in progress
+                                -- Both Assessors assigned but at least one is still in progress
                                 (apply.Assessor1UserId IS NOT NULL AND apply.Assessor2UserId IS NOT NULL AND (apply.Assessor1ReviewStatus = @inProgressReviewStatus OR Assessor2ReviewStatus = @inProgressReviewStatus))
                             )";
 
