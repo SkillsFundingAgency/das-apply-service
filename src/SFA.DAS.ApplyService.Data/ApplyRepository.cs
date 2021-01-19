@@ -404,22 +404,25 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
+                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
                                 ELSE JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime')
                             END AS OutcomeMadeDate,
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
+                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
                                 ELSE apply.GatewayUserName
                             END AS OutcomeMadeBy
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
                             AND (
-                                    apply.ApplicationStatus in (@applicationStatusWithdrawn)
+                                    apply.ApplicationStatus in (@applicationStatusWithdrawn, @applicationStatusRemoved)
                                     OR apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusFailed, @gatewayReviewStatusRejected)
                                 )",
                         new
                         {
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
+                            applicationStatusRemoved = ApplicationStatus.Removed,
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
                             gatewayReviewStatusFailed = GatewayReviewStatus.Fail,
                             gatewayReviewStatusRejected = GatewayReviewStatus.Reject
@@ -694,10 +697,12 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
+                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
                                 ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime')
                             END AS OutcomeMadeDate,
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
+                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
                                 ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedBy')
                             END AS OutcomeMadeBy,
                             JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') AS SelectedGrade,
@@ -721,7 +726,7 @@ namespace SFA.DAS.ApplyService.Data
                         AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
                         AND apply.DeletedAt IS NULL
                         AND (
-                             apply.ApplicationStatus IN (@applicationStatusWithdrawn)
+                             apply.ApplicationStatus IN (@applicationStatusWithdrawn, @applicationStatusRemoved)
                              OR apply.FinancialReviewStatus IN (@financialStatusApproved, @financialStatusDeclined, @financialStatusExempt)
                             )",
                        new
@@ -729,6 +734,7 @@ namespace SFA.DAS.ApplyService.Data
                            financialHealthSequence = 2,
                            gatewayStatusPass = GatewayReviewStatus.Pass,
                            applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
+                           applicationStatusRemoved = ApplicationStatus.Removed,
                            financialStatusApproved = FinancialReviewStatus.Pass,
                            financialStatusDeclined = FinancialReviewStatus.Fail,
                            financialStatusExempt = FinancialReviewStatus.Exempt
@@ -865,6 +871,40 @@ namespace SFA.DAS.ApplyService.Data
                                                         applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                                                         oversightReviewStatusSucessful = OversightReviewStatus.Successful,
                                                         oversightReviewStatusUnsuccessful = OversightReviewStatus.Unsuccessful,
+                                                });
+
+                return rowsAffected > 0;
+            }
+        }
+
+        public async Task<bool> RemoveApplication(Guid applicationId, string comments, string externalComments, string userId, string userName)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applyData = await GetApplyData(applicationId);
+
+                if (applyData?.ApplyDetails != null)
+                {
+                    applyData.ApplyDetails.ApplicationRemovedOn = DateTime.UtcNow;
+                    applyData.ApplyDetails.ApplicationRemovedBy = userName;
+                }
+
+                var rowsAffected = await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET  ApplicationStatus = @applicationStatusRemoved,
+                                                     Comments = @comments,
+                                                     ExternalComments = @externalComments,
+                                                     ApplyData = @applyData,
+                                                     UpdatedAt = GETUTCDATE(),
+                                                     UpdatedBy = @updatedBy
+                                                WHERE ApplicationId = @applicationId",
+                                                new
+                                                {
+                                                    applicationId,
+                                                    comments,
+                                                    externalComments,
+                                                    applyData,
+                                                    updatedBy = userName,
+                                                    applicationStatusRemoved = ApplicationStatus.Removed
                                                 });
 
                 return rowsAffected > 0;

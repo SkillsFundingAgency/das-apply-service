@@ -58,6 +58,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new WithdrawApplicationRequest(applicationId, request.Comments, request.UserId, request.UserName));
         }
+
+        [HttpPost("GatewayReview/{applicationId}/Remove")]
+        public async Task<bool> RemoveApplication(Guid applicationId, [FromBody] GatewayRemoveApplicationRequest request)
+        {
+            return await _mediator.Send(new RemoveApplicationRequest(applicationId, request.Comments, request.ExternalComments, request.UserId, request.UserName));
+        }
     }
 
     public class EvaluateGatewayApplicationRequest
@@ -69,6 +75,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     public class GatewayWithdrawApplicationRequest
     {
         public string Comments { get; set; }
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+    }
+
+    public class GatewayRemoveApplicationRequest
+    {
+        public string Comments { get; set; }
+        public string ExternalComments { get; set; }
         public string UserId { get; set; }
         public string UserName { get; set; }
     }
