@@ -250,6 +250,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string InProgress = "In Progress";
         public const string Successful = "Successful";
         public const string Unsuccessful = "Unsuccessful";
+        public const string SuccessfulAlreadyActive = "SuccessfulAlreadyActive";
+        public const string SuccessfulFitnessForFunding = "SuccessfulFitnessForFunding";
     }
 
     

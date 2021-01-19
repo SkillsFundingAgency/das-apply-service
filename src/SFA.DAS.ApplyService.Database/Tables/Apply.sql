@@ -25,7 +25,7 @@
     [ModerationStatus] NVARCHAR(20) NOT NULL DEFAULT 'New',
     [OversightUserId] NVARCHAR(256) NULL,
     [OversightUserName] NVARCHAR(256) NULL,
-    [OversightStatus] NVARCHAR(20) NOT NULL DEFAULT 'New', 
+    [OversightStatus] NVARCHAR(30) NOT NULL DEFAULT 'New', 
     [ApplicationDeterminedDate] DATETIME2 NULL,
     [GatewayUserId] NVARCHAR(256) NULL,
     [GatewayUserName] NVARCHAR(256) NULL, 
