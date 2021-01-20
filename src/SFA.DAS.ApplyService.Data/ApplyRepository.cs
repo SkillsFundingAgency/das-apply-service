@@ -1201,7 +1201,7 @@ namespace SFA.DAS.ApplyService.Data
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, string userId, string userName)
+        public async Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, string userId, string userName, string internalComments, string externalComments)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -1210,6 +1210,8 @@ namespace SFA.DAS.ApplyService.Data
                                                 ApplicationDeterminedDate = GETUTCDATE(),
                                                 OversightUserId = @userId,
                                                 OversightUserName = @userName,
+                                                OversightInternalComments = @internalComments,
+                                                OversightExternalComments = @externalComments,
                                                 UpdatedBy = @updatedBy,
                                                 UpdatedAt = GETUTCDATE()
                                                 WHERE ApplicationId = @applicationId",
@@ -1219,6 +1221,8 @@ namespace SFA.DAS.ApplyService.Data
                                 oversightStatus,
                                 userId,
                                 userName,
+                                internalComments,
+                                externalComments,
                                 updatedBy = userName
                             });
             }

@@ -21,8 +21,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
         {
             _logger.LogInformation($"Recording Oversight review status of {request.OversightStatus} for application Id {request.ApplicationId}");
 
-            var updateOversightStatusResult = await _applyRepository.UpdateOversightReviewStatus(request.ApplicationId, request.OversightStatus,
-                                                                                          request.UserId, request.UserName);
+            var updateOversightStatusResult = await _applyRepository.UpdateOversightReviewStatus(request.ApplicationId,
+                request.OversightStatus,
+                request.UserId,
+                request.UserName,
+                request.InternalComments,
+                request.ExternalComments);
 
             if (!updateOversightStatusResult)
             {

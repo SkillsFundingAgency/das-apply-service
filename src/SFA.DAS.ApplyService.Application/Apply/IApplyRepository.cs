@@ -76,7 +76,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<ApplicationOversightDetails>> GetOversightsPending();
         Task<List<ApplicationOversightDetails>> GetOversightsCompleted();
 
-        Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, string userId, string userName);
+        Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, string userId, string userName, string internalComments, string externalComments);
         Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId);
         Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload(DateTime dateFrom, DateTime dateTo);
         
