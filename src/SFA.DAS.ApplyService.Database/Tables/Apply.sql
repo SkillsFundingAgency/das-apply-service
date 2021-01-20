@@ -39,6 +39,6 @@ CREATE INDEX [IX_Apply_OrganisationId] ON [Apply] ([OrganisationId])
 GO
 CREATE INDEX [IX_Apply_CreatedBy] ON [Apply] ([CreatedBy])
 GO
-CREATE INDEX [IX_Apply_ApplicationStatus] ON [Apply] ([ApplicationStatus])
+CREATE INDEX [IX_Apply_ApplicationStatus] ON [Apply] ([ApplicationStatus], [GatewayReviewStatus])
 GO
 CREATE INDEX [IX_Apply_UKPRN] ON [Apply] ([UKPRN])
