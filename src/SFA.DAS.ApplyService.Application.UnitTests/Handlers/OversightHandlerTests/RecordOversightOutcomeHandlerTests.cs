@@ -24,12 +24,14 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 ApplicationId = Guid.NewGuid(),
                 OversightStatus = oversightReviewStatus,
                 UserName = "test user",
-                UserId = "testUser"
+                UserId = "testUser",
+                InternalComments = "testInternalComments",
+                ExternalComments = "testExternalComments"
             };
 
             var repository = new Mock<IApplyRepository>();
             repository.Setup(x => x.UpdateOversightReviewStatus(command.ApplicationId, command.OversightStatus, 
-                                                                command.UserId, command.UserName))
+                                                                command.UserId, command.UserName, command.InternalComments, command.ExternalComments))
                                                                 .ReturnsAsync(true);
 
             repository.Setup(x => x.UpdateApplicationStatus(command.ApplicationId, applicationStatus)).Returns(Task.CompletedTask);
@@ -42,7 +44,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             result.Should().BeTrue();
 
             repository.Verify(x => x.UpdateOversightReviewStatus(command.ApplicationId, command.OversightStatus,
-                                                                command.UserId, command.UserName), Times.Once);
+                                                                command.UserId, command.UserName, command.InternalComments, command.ExternalComments), Times.Once);
             repository.Verify(x => x.UpdateApplicationStatus(command.ApplicationId, applicationStatus), Times.Once);
         }
 
@@ -54,12 +56,14 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 ApplicationId = Guid.NewGuid(),
                 OversightStatus = OversightReviewStatus.Successful,
                 UserName = "test user",
-                UserId = "testUser"
+                UserId = "testUser",
+                InternalComments = "testInternalComments",
+                ExternalComments = "testExternalComments"
             };
 
             var repository = new Mock<IApplyRepository>();
             repository.Setup(x => x.UpdateOversightReviewStatus(command.ApplicationId, command.OversightStatus,
-                                                                command.UserId, command.UserName))
+                                                                command.UserId, command.UserName, command.InternalComments, command.ExternalComments))
                                                                 .ReturnsAsync(false);
 
             repository.Setup(x => x.UpdateApplicationStatus(command.ApplicationId, ApplicationStatus.Approved)).Returns(Task.CompletedTask);
@@ -72,7 +76,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             result.Should().BeFalse();
 
             repository.Verify(x => x.UpdateOversightReviewStatus(command.ApplicationId, command.OversightStatus,
-                                                                command.UserId, command.UserName), Times.Once);
+                                                                command.UserId, command.UserName, command.InternalComments, command.ExternalComments), Times.Once);
             repository.Verify(x => x.UpdateApplicationStatus(command.ApplicationId, ApplicationStatus.Approved), Times.Never);
         }
     }   
