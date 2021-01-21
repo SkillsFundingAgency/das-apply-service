@@ -46,10 +46,13 @@ namespace SFA.DAS.ApplyService.Data
                             AND apply.ApplicationStatus = @applicationStatusGatewayAssessed
                             AND
                             (
-                                -- Assigned to the current user and in progress
-                                (apply.Assessor1ReviewStatus = @inProgressReviewStatus AND apply.Assessor1UserId = @userId) OR (apply.Assessor2ReviewStatus = @inProgressReviewStatus AND apply.Assessor2UserId = @userId)
+                                -- Current user is Assessor 1 and in progress (or hasn't been picked up by Assessor 2)
+                                (apply.Assessor1UserId = @userId AND (apply.Assessor1ReviewStatus = @inProgressReviewStatus OR apply.Assessor2UserId IS NULL))
+                                OR 
+                                -- Current user is Assessor 2 and in progress (or hasn't been picked up by Assessor 1)
+                                (apply.Assessor2UserId = @userId AND (apply.Assessor2ReviewStatus = @inProgressReviewStatus OR apply.Assessor1UserId IS NULL))
                                 OR
-                                -- Assigned to any two other assessors and in progress
+                                -- Both Assessors assigned but at least one is still in progress
                                 (apply.Assessor1UserId IS NOT NULL AND apply.Assessor2UserId IS NOT NULL AND (apply.Assessor1ReviewStatus = @inProgressReviewStatus OR Assessor2ReviewStatus = @inProgressReviewStatus))
                             )";
 
@@ -67,7 +70,7 @@ namespace SFA.DAS.ApplyService.Data
 
         private const string ClosedApplicationsWhereClause = @"
                             apply.DeletedAt IS NULL
-                            AND ( apply.ApplicationStatus IN (@applicationStatusWithdrawn)
+                            AND ( apply.ApplicationStatus IN (@applicationStatusWithdrawn, @applicationStatusRemoved)
                                   OR (
                                       Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus
                                       AND ModerationStatus IN (@passModerationStatus, @failModerationStatus)
@@ -329,10 +332,12 @@ namespace SFA.DAS.ApplyService.Data
                             , ModerationStatus
                             , CASE
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
+                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
                                 ELSE JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime')
                               END AS OutcomeMadeDate
                             , CASE
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
+                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
                                 ELSE JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName')
                               END AS OutcomeMadeBy                            
 	                        FROM Apply apply
@@ -342,6 +347,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
+                            applicationStatusRemoved = ApplicationStatus.Removed,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             passModerationStatus = ModerationStatus.Pass,
                             failModerationStatus = ModerationStatus.Fail
@@ -361,6 +367,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
+                            applicationStatusRemoved = ApplicationStatus.Removed,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             passModerationStatus = ModerationStatus.Pass,
                             failModerationStatus = ModerationStatus.Fail
