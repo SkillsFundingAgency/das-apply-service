@@ -23,19 +23,14 @@
     [Assessor1ReviewStatus] NVARCHAR(20) NULL, 
     [Assessor2ReviewStatus] NVARCHAR(20) NULL,
     [ModerationStatus] NVARCHAR(20) NOT NULL DEFAULT 'New',
-    [OversightUserId] NVARCHAR(256) NULL,
-    [OversightUserName] NVARCHAR(256) NULL,
-    [OversightStatus] NVARCHAR(30) NOT NULL DEFAULT 'New', 
     [ApplicationDeterminedDate] DATETIME2 NULL,
     [GatewayUserId] NVARCHAR(256) NULL,
     [GatewayUserName] NVARCHAR(256) NULL, 
     [Comments] NVARCHAR(MAX) NULL,
-    [ExternalComments] NVARCHAR(MAX) NULL,
-    [OversightInternalComments] NVARCHAR(MAX) NULL,
-    [OversightExternalComments] NVARCHAR(MAX) NULL
+    [ExternalComments] NVARCHAR(MAX) NULL
 )
 GO
-CREATE INDEX [IX_Apply_ApplicationId] ON [Apply] ([ApplicationId])
+CREATE UNIQUE INDEX [IX_Apply_ApplicationId] ON [Apply] ([ApplicationId])
 GO
 CREATE INDEX [IX_Apply_OrganisationId] ON [Apply] ([OrganisationId])
 GO
@@ -44,3 +39,4 @@ GO
 CREATE INDEX [IX_Apply_ApplicationStatus] ON [Apply] ([ApplicationStatus], [GatewayReviewStatus])
 GO
 CREATE INDEX [IX_Apply_UKPRN] ON [Apply] ([UKPRN])
+GO
