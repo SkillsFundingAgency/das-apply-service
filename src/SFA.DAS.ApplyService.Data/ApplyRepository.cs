@@ -136,33 +136,58 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName)
         {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for non-clarification responses");
+                        await connection.ExecuteAsync(
+                    @"UPDATE GatewayAnswer
+                            SET  Status = @status, Comments = @comments, 
+                                ClarificationDate = 
+								CASE WHEN ClarificationAnswer IS NULL THEN NULL ELSE ClarificationDate END,
+                                ClarificationBy = 
+								CASE WHEN ClarificationAnswer IS NULL THEN NULL ELSE ClarificationBy END,
+                                ClarificationComments = 
+								CASE WHEN ClarificationAnswer IS NULL THEN NULL ELSE ClarificationComments END,
+                                UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
+                                WHERE [Id] = @id",
+                            pageAnswer);
+                    
+            }
+        }
+
+        public async Task UpdateGatewayPageAnswerPostClarification(GatewayPageAnswer pageAnswer, string userId, string userName)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+
+
+                _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for non-clarification responses");
+                await connection.ExecuteAsync(
+                    @"UPDATE GatewayAnswer
+                            SET  Status = @status, Comments = @comments, 
+                                ClarificationAnswer = @clarificationAnswer,
+                                UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
+                                WHERE [Id] = @id",
+                    pageAnswer);
+
+            }
+        }
+
+        public async Task UpdateGatewayPageAnswerClarification(GatewayPageAnswer pageAnswer, string userId, string userName)
+        {
             _logger.LogInformation($"updating Gateway answer for applicationID [{pageAnswer.ApplicationId}], Status: {pageAnswer.Status}, Clarification answer '{pageAnswer.ClarificationAnswer}'");
             _logger.LogInformation($"updating Gateway answer for page answer: {Newtonsoft.Json.JsonConvert.SerializeObject(pageAnswer)}");
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                
-                    if (pageAnswer.Status == GatewayAnswerStatus.Clarification)
-                    {
-                        _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for clarification");
-                        await connection.ExecuteAsync(
-                            @"UPDATE GatewayAnswer
-                            SET  Status = @status, ClarificationComments =@comments, 
+
+                    _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for clarification");
+                    await connection.ExecuteAsync(
+                        @"UPDATE GatewayAnswer
+                            SET  Status = @status, comments = @clarificationComments, ClarificationComments =@clarificationComments, 
                             UpdatedBy = @updatedBy, UpdatedAt = @updatedAt, 
                             ClarificationDate=@updatedAt, ClarificationBy = @updatedBy
                             WHERE [Id] = @id",
-                            pageAnswer);
-                    }
-                    else
-                    {
-                        _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for non-clarification responses");
-                        await connection.ExecuteAsync(
-                    @"UPDATE GatewayAnswer
-                            SET  Status = @status, Comments = @comments, 
-                                ClarificationAnswer = isnull(@clarificationAnswer, ClarificationAnswer),
-                                UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
-                                WHERE [Id] = @id",
-                            pageAnswer);
-                    }
+                        pageAnswer);
             }
         }
 

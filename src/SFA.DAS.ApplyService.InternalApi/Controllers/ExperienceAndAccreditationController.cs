@@ -41,7 +41,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
                 RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining);
 
-            if (initialTeacherTraining.ToUpper() == "YES")
+            if (initialTeacherTraining?.ToUpper() == "YES")
             {
                 var isPostGradTrainingOnlyApprenticeship = await _qnaApiClient.GetAnswerValue(applicationId,
                     RoatpWorkflowSequenceIds.YourOrganisation,
