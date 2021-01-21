@@ -26,6 +26,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
        
         Task InsertGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName);
         Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName);
+        Task InsertGatewayPageAnswerClarification(GatewayPageAnswer pageAnswer, string userId, string userName);
+
         Task UpdateGatewayPageAnswerClarification(GatewayPageAnswer pageAnswer, string userId, string userName);
         Task UpdateGatewayPageAnswerPostClarification(GatewayPageAnswer pageAnswer, string userId, string userName);
         

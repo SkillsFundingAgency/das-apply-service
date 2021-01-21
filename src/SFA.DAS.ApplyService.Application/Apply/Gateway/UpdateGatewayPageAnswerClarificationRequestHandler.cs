@@ -43,14 +43,17 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             {
                 answer.Status = request.Status;
                 answer.ClarificationComments = request.Comments;
+                answer.Comments = request.Comments;
                 answer.UpdatedAt = DateTime.UtcNow;
                 answer.UpdatedBy = request.UserName;
+                answer.ClarificationBy = request.UserName;
+                answer.ClarificationDate = answer.UpdatedAt;
                 answer.ClarificationAnswer = request.ClarificationAnswer;
             }
 
             if (isNew)
             {
-                await _applyRepository.InsertGatewayPageAnswer(answer, request.UserId, request.UserName);
+                await _applyRepository.InsertGatewayPageAnswerClarification(answer, request.UserId, request.UserName);
             }
             else
             {

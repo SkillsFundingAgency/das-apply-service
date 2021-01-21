@@ -67,7 +67,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                  await UpdateTwoInTwelveMonthApplyData(request);
              }
 
-             _logger.LogInformation($"Submitting Gateway page submit post clarification for ApplicationId '{request.ApplicationId}' for PageId '{request.PageId}', Status '{request.Status}', " +
+             _logger.LogInformation($"Submitting Gateway page submit clarification for ApplicationId '{request.ApplicationId}' for PageId '{request.PageId}', Status '{request.Status}', " +
                                     $"Comments '{request.Comments}'");
 
              await _mediator.Send(new UpdateGatewayPageAnswerClarificationRequest(request.ApplicationId,

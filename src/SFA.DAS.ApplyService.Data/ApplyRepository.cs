@@ -134,6 +134,18 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task InsertGatewayPageAnswerClarification(GatewayPageAnswer pageAnswer, string userId, string userName)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(
+                    @"INSERT INTO GatewayAnswer ([Id],[ApplicationId],[PageId],[Status],[comments],[UpdatedAt],[UpdatedBy], ClarificationComments, ClarificationDate, ClarificationBy)
+														values (@id, @applicationId, @pageId,@status,@comments,@updatedAt,@updatedBy, @ClarificationComments, @ClarificationDate, @ClarificationBy)"
+                    , pageAnswer);
+            }
+        }
+
+
         public async Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -154,6 +166,8 @@ namespace SFA.DAS.ApplyService.Data
                     
             }
         }
+
+        
 
         public async Task UpdateGatewayPageAnswerPostClarification(GatewayPageAnswer pageAnswer, string userId, string userName)
         {

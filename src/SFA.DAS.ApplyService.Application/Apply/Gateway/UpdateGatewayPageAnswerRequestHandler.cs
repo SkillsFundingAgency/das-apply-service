@@ -44,6 +44,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 answer.UpdatedAt = DateTime.UtcNow;
                 answer.UpdatedBy = request.UserName;
                 answer.ClarificationAnswer = request.ClarificationAnswer;
+                if (string.IsNullOrEmpty(answer.ClarificationAnswer))
+                {
+                    answer.ClarificationComments = null;
+                    answer.ClarificationBy = null;
+                    answer.ClarificationDate = null;
+                }
             }
 
             if (isNew)
