@@ -27,6 +27,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             var answer = await _applyRepository.GetGatewayPageAnswer(request.ApplicationId, request.PageId);
             var isNew = answer == null;
 
+            
+
             if (isNew)
             {
                 answer = CreateNewGatewayPageAnswer(request.ApplicationId, request.PageId);
@@ -37,11 +39,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 _auditService.AuditUpdate(answer);
             }
 
-            answer.Status = request.Status;
-            answer.ClarificationComments = request.Comments;
-            answer.UpdatedAt = DateTime.UtcNow;
-            answer.UpdatedBy = request.UserName;
-            answer.ClarificationAnswer = request.ClarificationAnswer;
+            if (answer != null)
+            {
+                answer.Status = request.Status;
+                answer.ClarificationComments = request.Comments;
+                answer.UpdatedAt = DateTime.UtcNow;
+                answer.UpdatedBy = request.UserName;
+                answer.ClarificationAnswer = request.ClarificationAnswer;
+            }
 
             if (isNew)
             {

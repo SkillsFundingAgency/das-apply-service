@@ -37,11 +37,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 _auditService.AuditUpdate(answer);
             }
 
-            answer.Status = request.Status;
-            answer.Comments = request.Comments;
-            answer.UpdatedAt = DateTime.UtcNow;
-            answer.UpdatedBy = request.UserName;
-            answer.ClarificationAnswer = request.ClarificationAnswer;
+            if (answer != null)
+            {
+                answer.Status = request.Status;
+                answer.Comments = request.Comments;
+                answer.UpdatedAt = DateTime.UtcNow;
+                answer.UpdatedBy = request.UserName;
+                answer.ClarificationAnswer = request.ClarificationAnswer;
+            }
+
 
             if (isNew)
             {
