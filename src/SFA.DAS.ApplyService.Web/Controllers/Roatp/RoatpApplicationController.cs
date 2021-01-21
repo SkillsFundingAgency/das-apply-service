@@ -1496,7 +1496,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return false;
         }
 
-        private string ExtractOrganisationType(JObject applicationData)
+        private static string ExtractOrganisationType(JObject applicationData)
         {
             return applicationData.GetValue("OrganisationEducationInstitute")?.Value<string>()
                    ?? applicationData.GetValue("OrganisationPublicBody")?.Value<string>()
@@ -1504,13 +1504,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                    ?? applicationData.GetValue("OrganisationTypeEmployer")?.Value<string>();
         }
 
-        private string ExtractAddress(Page page)
+        private static string ExtractAddress(Page page)
         {
-            if (page == null || page.NotRequired) return string.Empty;
-            return string.Join(", ", page.PageOfAnswers.First().Answers);
+            var address = string.Empty;
+
+            if (page != null && !page.NotRequired && page.PageOfAnswers.Any())
+            {
+                address = string.Join(", ", page.PageOfAnswers.First().Answers);
+            }
+
+            return address;
         }
 
-        private FinancialData ExtractFinancialData(Guid applicationId, JObject applicationData)
+        private static FinancialData ExtractFinancialData(Guid applicationId, JObject applicationData)
         {
             try
             {
