@@ -41,21 +41,25 @@ namespace SFA.DAS.ApplyService.Data
             {
                 await connection.ExecuteAsync(
                     @"INSERT INTO [OversightReview]
-                        ([ApplicationId],
+                        ([Id],
+                        [ApplicationId],
                         [Status],
                         [ApplicationDeterminedDate],
                         [InternalComments],
                         [ExternalComments],
                         [UserId],
-                        [UserName])
+                        [UserName],
+                        [CreatedOn])
                         VALUES (
+                        @Id,
                         @ApplicationId,
                         @Status,
                         @ApplicationDeterminedDate,
                         @InternalComments,
                         @ExternalComments,
                         @UserId,
-                        @UserName)",
+                        @UserName,
+                        @CreatedOn)",
                     entity);
             }
         }

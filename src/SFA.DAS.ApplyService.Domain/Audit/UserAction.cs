@@ -2,6 +2,7 @@
 {
     public enum UserAction
     {
-        UpdateGatewayPageOutcome
+        UpdateGatewayPageOutcome,
+        RecordOversightOutcome
     }
 }

@@ -37,7 +37,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             repository.Setup(x => x.UpdateApplicationStatus(command.ApplicationId, applicationStatus)).Returns(Task.CompletedTask);
 
             var logger = new Mock<ILogger<RecordOversightOutcomeHandler>>();
-            var handler = new RecordOversightOutcomeHandler(logger.Object, oversightReviewRepository.Object, repository.Object);
+            var handler = new RecordOversightOutcomeHandler(logger.Object, oversightReviewRepository.Object, repository.Object, Mock.Of<IAuditService>());
 
             var result = await handler.Handle(command, new CancellationToken());
 

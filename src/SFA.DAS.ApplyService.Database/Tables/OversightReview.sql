@@ -1,14 +1,14 @@
 ﻿CREATE TABLE [dbo].[OversightReview]
 (
-	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWID(), 
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
 	[ApplicationId] UNIQUEIDENTIFIER NOT NULL,
-    [Status] NVARCHAR(30) NOT NULL DEFAULT 'New', 
+    [Status] NVARCHAR(30) NOT NULL, 
     [ApplicationDeterminedDate] DATETIME2 NULL,
     [InternalComments] NVARCHAR(MAX) NULL,
     [ExternalComments] NVARCHAR(MAX) NULL,
     [UserId] NVARCHAR(256) NULL,
     [UserName] NVARCHAR(256) NULL,
-    [CreatedOn] DATETIME2 NOT NULL DEFAULT GETUTCDATE()
+    [CreatedOn] DATETIME2 NOT NULL
 )
 GO
 
