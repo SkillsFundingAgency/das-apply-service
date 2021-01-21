@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -28,15 +29,12 @@ namespace SFA.DAS.ApplyService.Data.Queries
             using (var connection = GetConnection())
             {
                 var reviews = (await connection.QueryAsync<PendingOversightReview>(@"SELECT 
-                            apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
 							 org.Name AS OrganisationName,
 					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
-                            apply.ApplicationStatus,
-							apply.ApplicationDeterminedDate
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                          LEFT JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
@@ -84,7 +82,6 @@ namespace SFA.DAS.ApplyService.Data.Queries
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                           INNER JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
-                          and r.Status is null
                           and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
 						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
@@ -107,5 +104,48 @@ namespace SFA.DAS.ApplyService.Data.Queries
                 };
             }
         }
+
+
+        public async Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applyDataResults = await connection.QueryAsync<ApplicationOversightDetails>(@"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+							 org.Name AS OrganisationName,
+					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+							r.Status as OversightStatus,
+                            apply.ApplicationStatus,
+							r.ApplicationDeterminedDate,
+							apply.AssessorReviewStatus,
+							contacts.Email as ApplicationEmailAddress,
+							apply.GatewayReviewStatus,
+							JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeMadeDate,
+							apply.GatewayUserName as GatewayOutcomeMadeBy,
+							JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.Comments') AS GatewayComments,
+							apply.FinancialReviewStatus,
+							JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') AS FinancialGradeAwarded,
+							JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS FinancialHealthAssessedOn,
+							JSON_VALUE(apply.FinancialGrade, '$.GradedBy') AS FinancialHealthAssessedBy,
+                            JSON_VALUE(apply.FinancialGrade, '$.Comments') AS FinancialHealthComments,
+							apply.ModerationStatus as ModerationReviewStatus,
+							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS ModerationOutcomeMadeOn,
+							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratedBy,
+							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorComments') AS ModerationComments                       
+                              FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+                          LEFT JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
+						  LEFT OUTER JOIN contacts on contacts.ApplyOrganisationId = org.Id
+                        WHERE apply.ApplicationId = @applicationId",
+                    new { applicationId });
+
+                return applyDataResults.FirstOrDefault();
+            }
+        }
+
     }
 }

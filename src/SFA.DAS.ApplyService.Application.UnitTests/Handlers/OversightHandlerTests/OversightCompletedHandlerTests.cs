@@ -4,37 +4,36 @@ using System.Linq;
 using System.Threading;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
-using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTests
 {
-
     [TestFixture]
     public class OversightCompletedHandlerTests
     {
-        protected Mock<IApplyRepository> ApplyRepository;
+        protected Mock<IOversightReviewQueries> OversightReviewQueries;
         protected GetOversightsCompletedHandler CompletedHandler;
         protected string FirstOrganisationName = "XXX Limited";
         protected string SecondOrganisationName = "ZZZ Limited";
         [SetUp]
         public void Setup()
         {
-            ApplyRepository = new Mock<IApplyRepository>();
-            ApplyRepository.Setup(r => r.GetOversightsCompleted()).ReturnsAsync(new List<ApplicationOversightDetails>());
-            CompletedHandler = new GetOversightsCompletedHandler(ApplyRepository.Object);
+            OversightReviewQueries = new Mock<IOversightReviewQueries>();
+            OversightReviewQueries.Setup(r => r.GetCompletedOversightReviews()).ReturnsAsync(new CompletedOversightReviews());
+            CompletedHandler = new GetOversightsCompletedHandler(OversightReviewQueries.Object);
           }
 
         [Test]
         public void Check_pending_results_are_as_expected()
         {
-            var completedApplications = new List<ApplicationOversightDetails>
+            var completedApplications = new CompletedOversightReviews
             {
-                new ApplicationOversightDetails
+                Reviews = new List<CompletedOversightReview> { 
+                new CompletedOversightReview
                 {
-                    Id = Guid.NewGuid(),
                     ApplicationId = Guid.NewGuid(),
                     OrganisationName =FirstOrganisationName,
                     Ukprn = "12344321",
@@ -42,12 +41,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                     ApplicationReferenceNumber = "APR000111",
                     ApplicationSubmittedDate = DateTime.Today.AddDays(-1),
                     OversightStatus = OversightReviewStatus.Successful,
-                    ApplicationStatus = ApplicationStatus.Approved,
                     ApplicationDeterminedDate = DateTime.Today
                 },
-                new ApplicationOversightDetails
+                new CompletedOversightReview
                 {
-                    Id = Guid.NewGuid(),
                     ApplicationId = Guid.NewGuid(),
                     OrganisationName = SecondOrganisationName,
                     Ukprn = "43211234",
@@ -55,19 +52,18 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                     ApplicationReferenceNumber = "APR000112",
                     ApplicationSubmittedDate = DateTime.Today.AddDays(-1),
                     OversightStatus = OversightReviewStatus.Unsuccessful,
-                    ApplicationStatus = ApplicationStatus.Rejected,
                     ApplicationDeterminedDate = DateTime.Today
                 }
-            };
+            }};
 
-            ApplyRepository.Setup(r => r.GetOversightsCompleted()).ReturnsAsync(completedApplications);
+            OversightReviewQueries.Setup(r => r.GetCompletedOversightReviews()).ReturnsAsync(completedApplications);
 
             var result = CompletedHandler.Handle(new GetOversightsCompletedRequest(), new CancellationToken()).GetAwaiter().GetResult();
 
-            Assert.AreEqual(2,result.Count);
-            Assert.AreEqual(1,result.Count(x=> x.Id == completedApplications.First().Id));
-            Assert.AreEqual(1, result.Count(x => x.OrganisationName==FirstOrganisationName));
-            Assert.AreEqual(1, result.Count(x => x.OrganisationName == SecondOrganisationName));
+            Assert.AreEqual(2,result.Reviews.Count);
+            Assert.AreEqual(1,result.Reviews.Count(x=> x.ApplicationId == completedApplications.Reviews.First().ApplicationId));
+            Assert.AreEqual(1, result.Reviews.Count(x => x.OrganisationName==FirstOrganisationName));
+            Assert.AreEqual(1, result.Reviews.Count(x => x.OrganisationName == SecondOrganisationName));
         }
     }
 }

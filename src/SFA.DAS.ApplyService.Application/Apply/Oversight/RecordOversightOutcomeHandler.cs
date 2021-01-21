@@ -38,9 +38,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
             await _oversightReviewRepository.Add(oversightReview);
 
-            //todo: review this...
             var applicationStatus = ApplicationStatus.Approved;
-            if (request.OversightStatus != OversightReviewStatus.Successful)
+            if (request.OversightStatus == OversightReviewStatus.Unsuccessful)
             {
                 applicationStatus = ApplicationStatus.Rejected;
             }
