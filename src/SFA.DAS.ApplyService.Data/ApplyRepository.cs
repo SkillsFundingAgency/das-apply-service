@@ -404,22 +404,25 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
+                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
                                 ELSE JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime')
                             END AS OutcomeMadeDate,
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
+                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
                                 ELSE apply.GatewayUserName
                             END AS OutcomeMadeBy
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
                             AND (
-                                    apply.ApplicationStatus in (@applicationStatusWithdrawn)
+                                    apply.ApplicationStatus in (@applicationStatusWithdrawn, @applicationStatusRemoved)
                                     OR apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusFailed, @gatewayReviewStatusRejected)
                                 )",
                         new
                         {
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
+                            applicationStatusRemoved = ApplicationStatus.Removed,
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
                             gatewayReviewStatusFailed = GatewayReviewStatus.Fail,
                             gatewayReviewStatusRejected = GatewayReviewStatus.Reject
@@ -694,10 +697,12 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
+                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
                                 ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime')
                             END AS OutcomeMadeDate,
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
+                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
                                 ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedBy')
                             END AS OutcomeMadeBy,
                             JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') AS SelectedGrade,
@@ -721,7 +726,7 @@ namespace SFA.DAS.ApplyService.Data
                         AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
                         AND apply.DeletedAt IS NULL
                         AND (
-                             apply.ApplicationStatus IN (@applicationStatusWithdrawn)
+                             apply.ApplicationStatus IN (@applicationStatusWithdrawn, @applicationStatusRemoved)
                              OR apply.FinancialReviewStatus IN (@financialStatusApproved, @financialStatusDeclined, @financialStatusExempt)
                             )",
                        new
@@ -729,6 +734,7 @@ namespace SFA.DAS.ApplyService.Data
                            financialHealthSequence = 2,
                            gatewayStatusPass = GatewayReviewStatus.Pass,
                            applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
+                           applicationStatusRemoved = ApplicationStatus.Removed,
                            financialStatusApproved = FinancialReviewStatus.Pass,
                            financialStatusDeclined = FinancialReviewStatus.Fail,
                            financialStatusExempt = FinancialReviewStatus.Exempt
@@ -871,6 +877,40 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<bool> RemoveApplication(Guid applicationId, string comments, string externalComments, string userId, string userName)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applyData = await GetApplyData(applicationId);
+
+                if (applyData?.ApplyDetails != null)
+                {
+                    applyData.ApplyDetails.ApplicationRemovedOn = DateTime.UtcNow;
+                    applyData.ApplyDetails.ApplicationRemovedBy = userName;
+                }
+
+                var rowsAffected = await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET  ApplicationStatus = @applicationStatusRemoved,
+                                                     Comments = @comments,
+                                                     ExternalComments = @externalComments,
+                                                     ApplyData = @applyData,
+                                                     UpdatedAt = GETUTCDATE(),
+                                                     UpdatedBy = @updatedBy
+                                                WHERE ApplicationId = @applicationId",
+                                                new
+                                                {
+                                                    applicationId,
+                                                    comments,
+                                                    externalComments,
+                                                    applyData,
+                                                    updatedBy = userName,
+                                                    applicationStatusRemoved = ApplicationStatus.Removed
+                                                });
+
+                return rowsAffected > 0;
+            }
+        }
+
         public async Task<Contact> GetContactForApplication(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -992,13 +1032,80 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
 							apply.OversightStatus,
                             apply.ApplicationStatus,
-							apply.ApplicationDeterminedDate
+							apply.ApplicationDeterminedDate,
+							apply.AssessorReviewStatus,
+							contacts.Email as ApplicationEmailAddress,
+							apply.GatewayReviewStatus,
+							JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeMadeDate,
+							apply.GatewayUserName as GatewayOutcomeMadeBy,
+							JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.Comments') AS GatewayComments,
+							apply.FinancialReviewStatus,
+							JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') AS FinancialGradeAwarded,
+							JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS FinancialHealthAssessedOn,
+							JSON_VALUE(apply.FinancialGrade, '$.GradedBy') AS FinancialHealthAssessedBy,
+                            JSON_VALUE(apply.FinancialGrade, '$.Comments') AS FinancialHealthComments,
+
+							apply.ModerationStatus as ModerationReviewStatus,
+							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS ModerationOutcomeMadeOn,
+							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratedBy,
+							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorComments') AS ModerationComments                       
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+						  LEFT OUTER JOIN contacts on contacts.ApplyOrganisationId = org.Id
                         WHERE apply.ApplicationId = @applicationId",
                     new { applicationId });
 
                 return applyDataResults.FirstOrDefault();
+            }
+        }
+
+        public async Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload(DateTime dateFrom, DateTime dateTo)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<ApplicationOversightDownloadDetails>(@"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+							 org.Name AS OrganisationName,
+					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteNameOnRegister'),' provider','') AS ProviderRouteNameOnRegister,
+							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.OrganisationType') AS OrganisationType,
+                            JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.CompaniesHouseDetails.CompanyNumber') AS CompanyNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.Address') AS Address,
+                            apply.OversightStatus,
+                            apply.ApplicationStatus,
+							apply.ApplicationDeterminedDate,
+                            apply.GatewayReviewStatus as GatewayOutcome,
+                            apply.AssessorReviewStatus  as AssessorOutcome,
+                            CASE JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') WHEN @financialGradeInadequate THEN 'Fail' ELSE 'Pass' END as FHCOutcome,
+                            CASE WHEN apply.GatewayReviewStatus = @gatewayReviewStatusPass AND apply.AssessorReviewStatus = @assessorReviewStatusApproved AND JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') <> @financialGradeInadequate THEN 'Pass' ELSE 'Fail' END as OverallOutcome
+                            FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                      WHERE apply.DeletedAt IS NULL
+                          AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') BETWEEN @dateFrom AND @dateTo
+                          and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
+						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
+						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt))
+                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
+						  and apply.OversightStatus NOT IN (@oversightReviewStatusPass,@oversightReviewStatusFail)
+                             order by cast(apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
+                {
+                    gatewayReviewStatusPass = GatewayReviewStatus.Pass,
+                    gatewayReviewStatusFail = GatewayReviewStatus.Fail,
+                    GatewayReviewStatusReject = GatewayReviewStatus.Reject,
+                    assessorReviewStatusApproved = AssessorReviewStatus.Approved,
+                    assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
+                    financialReviewStatusApproved = FinancialReviewStatus.Pass,
+                    financialReviewStatusDeclined = FinancialReviewStatus.Fail,
+                    financialReviewStatusExempt = FinancialReviewStatus.Exempt,
+                    oversightReviewStatusPass = OversightReviewStatus.Successful,
+                    oversightReviewStatusFail = OversightReviewStatus.Unsuccessful,
+                    financialGradeInadequate = Domain.Roatp.FinancialApplicationSelectedGrade.Inadequate,
+                    dateFrom = dateFrom.ToString("yyyy-MM-dd"), dateTo = dateTo.AddDays(1).Date.ToString("yyyy-MM-dd")
+                })).ToList();
             }
         }
 

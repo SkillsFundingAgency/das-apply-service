@@ -179,7 +179,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _applicationApiClient.Setup(x => x.GetExistingApplicationStatus(It.IsAny<string>())).ReturnsAsync(new List<RoatpApplicationStatus>());
 
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(_applicationDetails.RoatpRegisterStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(_applicationDetails.RoatpRegisterStatus);
 
             var applicationRoutes = new List<ApplicationRoute>
             {
@@ -300,11 +300,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase(12345678, true)]
         [TestCase(87654321, true)]
         [TestCase(99999999, false)]
-        public void Validation_error_is_triggered_if_UKPRN_is_not_in_whitelisted(long ukprn, bool isUkprnWhitelisted)
+        public void Validation_error_is_triggered_if_UKPRN_is_not_in_whitelisted(int ukprn, bool isUkprnWhitelisted)
         {
             var noResults = new UkrlpLookupResults { Success = true, Results = new List<ProviderDetails> { new ProviderDetails() } };
 
-            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(noResults);
+            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<int>())).ReturnsAsync(noResults);
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
@@ -343,7 +343,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var noResults = new UkrlpLookupResults {Success = true, Results = new List<ProviderDetails>()};
 
-            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(noResults);
+            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<int>())).ReturnsAsync(noResults);
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
@@ -379,7 +379,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     }
                 }
             };
-            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(matchingResult);
+            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<int>())).ReturnsAsync(matchingResult);
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
@@ -1213,7 +1213,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 UkprnOnRegister = true
             };
 
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(registerStatus);
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             var redirectResult = result as RedirectToActionResult;
@@ -1266,7 +1266,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 UkprnOnRegister = true
             };
 
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(registerStatus);
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             var redirectResult = result as RedirectToActionResult;
@@ -1410,7 +1410,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 UkprnOnRegister = true
             };
 
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(registerStatus);
 
             var applicationDetails = new ApplicationDetails
             {
@@ -1443,7 +1443,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 UkprnOnRegister = true
             };
 
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(registerStatus);
 
             var applicationDetails = new ApplicationDetails
             {
@@ -1552,7 +1552,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 UkprnOnRegister = false
             };
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(notOnRegisterStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(notOnRegisterStatus);
 
             var result =_controller.ChangeApplicationProviderRoute(applicationId).GetAwaiter().GetResult();
 
@@ -1589,7 +1589,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 UkprnOnRegister = true,
                 ProviderTypeId = ApplicationRoute.EmployerProviderApplicationRoute
             };
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(existingProviderStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(existingProviderStatus);
 
             var result = _controller.ChangeApplicationProviderRoute(applicationId).GetAwaiter().GetResult();
 
@@ -1627,7 +1627,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 StatusId = OrganisationStatus.Removed,
                 RemovedReasonId = RemovedReason.Merger
             };
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(notOnRegisterStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(notOnRegisterStatus);
 
             var result = _controller.ChangeApplicationProviderRoute(applicationId).GetAwaiter().GetResult();
 

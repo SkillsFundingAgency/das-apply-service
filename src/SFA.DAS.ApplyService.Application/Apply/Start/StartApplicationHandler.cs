@@ -43,7 +43,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Start
                         OrganisationName = org.Name,
                         TradingName = org.OrganisationDetails?.TradingName,
                         ProviderRoute = request.ProviderRoute,
-                        ProviderRouteName = request.ProviderRouteName
+                        ProviderRouteName = request.ProviderRouteName,
+                        ProviderRouteOnRegister = request.ProviderRouteOnRegister,
+                        ProviderRouteNameOnRegister = request.ProviderRouteNameOnRegister
                     }
                 };
                 foreach (var sequence in applyData.Sequences)
