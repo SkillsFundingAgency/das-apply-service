@@ -33,15 +33,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
             var oversightReview = new OversightReview
             {
-                Id = Guid.NewGuid(),
                 ApplicationId = request.ApplicationId,
                 Status = request.OversightStatus,
-                ApplicationDeterminedDate = DateTime.UtcNow.Date,
                 InternalComments = request.InternalComments,
                 ExternalComments = request.ExternalComments,
                 UserId = request.UserId,
                 UserName = request.UserName,
-                CreatedOn = DateTime.UtcNow
             };
 
             _auditService.StartTracking(UserAction.RecordOversightOutcome, request.UserId, request.UserName);

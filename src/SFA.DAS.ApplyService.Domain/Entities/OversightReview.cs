@@ -14,5 +14,12 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string UserId { get; set; }
         public string UserName { get; set; }
         public DateTime CreatedOn { get; set; }
-    }
+
+        public OversightReview()
+        {
+            Id = Guid.NewGuid();
+            CreatedOn = DateTime.UtcNow;
+            ApplicationDeterminedDate = DateTime.UtcNow.Date;
+        }
+    };
 }
