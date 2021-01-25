@@ -16,5 +16,10 @@
         /// Requires tokens: { ApplicantFullName }
         /// </summary>
         public const string ROATP_APPLICATION_SUBMITTED_MAIN = "RoATPApplicationSubmittedMain";
+
+        /// <summary>
+        /// Requires tokens: { ApplicantFullName, LoginLink }
+        /// </summary>
+        public const string ROATP_APPLICATION_WITHDRAWN = "RoATPApplicationWithdrawn";
     }
 }
