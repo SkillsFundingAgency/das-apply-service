@@ -1321,7 +1321,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     EmailAddress = User.GetEmail()
                 };
 
-                await _submitApplicationEmailService.SendGetHelpWithQuestionEmail(applicationSubmitConfirmation);
+                await _submitApplicationEmailService.SendSubmitConfirmationEmail(applicationSubmitConfirmation);
                 return RedirectToAction("ApplicationSubmitted", new { model.ApplicationId });
             }
             else

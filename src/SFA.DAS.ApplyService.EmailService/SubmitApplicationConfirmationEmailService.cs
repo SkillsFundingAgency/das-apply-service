@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.EmailService
                                                          INotificationsApi notificationsApi)
             : base(logger, emailTemplateClient, notificationsApi) { }
 
-        public async Task SendGetHelpWithQuestionEmail(ApplicationSubmitConfirmation applicationSubmitConfirmation)
+        public async Task SendSubmitConfirmationEmail(ApplicationSubmitConfirmation applicationSubmitConfirmation)
         {
             var templateName = EmailTemplateName.ROATP_APPLICATION_SUBMITTED;
             if (applicationSubmitConfirmation.ApplicationRouteId == ApplicationRoute.MainProviderApplicationRoute.ToString())

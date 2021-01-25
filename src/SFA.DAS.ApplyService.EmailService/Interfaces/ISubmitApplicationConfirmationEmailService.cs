@@ -5,6 +5,6 @@ namespace SFA.DAS.ApplyService.EmailService.Interfaces
 {
     public interface ISubmitApplicationConfirmationEmailService
     {
-        Task SendGetHelpWithQuestionEmail(ApplicationSubmitConfirmation applicationSubmitConfirmation);
+        Task SendSubmitConfirmationEmail(ApplicationSubmitConfirmation applicationSubmitConfirmation);
     }
 }

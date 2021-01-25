@@ -473,7 +473,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.SubmitApplication(It.IsAny<Application.Apply.Submit.SubmitApplicationRequest>())).ReturnsAsync(true);
 
-            _submitApplicationEmailService.Setup(x => x.SendGetHelpWithQuestionEmail(It.IsAny<ApplicationSubmitConfirmation>())).Returns(Task.FromResult(true));
+            _submitApplicationEmailService.Setup(x => x.SendSubmitConfirmationEmail(It.IsAny<ApplicationSubmitConfirmation>())).Returns(Task.FromResult(true));
 
             var result = await _controller.ConfirmSubmitApplication(model);
 
@@ -551,7 +551,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.SubmitApplication(It.IsAny<Application.Apply.Submit.SubmitApplicationRequest>())).ReturnsAsync(true);
 
-            _submitApplicationEmailService.Setup(x => x.SendGetHelpWithQuestionEmail(It.IsAny<ApplicationSubmitConfirmation>())).Returns(Task.FromResult(true));
+            _submitApplicationEmailService.Setup(x => x.SendSubmitConfirmationEmail(It.IsAny<ApplicationSubmitConfirmation>())).Returns(Task.FromResult(true));
 
             await _controller.ConfirmSubmitApplication(model);
 
@@ -648,7 +648,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.SubmitApplication(It.IsAny<Application.Apply.Submit.SubmitApplicationRequest>())).ReturnsAsync(true);
 
-            _submitApplicationEmailService.Setup(x => x.SendGetHelpWithQuestionEmail(It.IsAny<ApplicationSubmitConfirmation>())).Returns(Task.FromResult(true));
+            _submitApplicationEmailService.Setup(x => x.SendSubmitConfirmationEmail(It.IsAny<ApplicationSubmitConfirmation>())).Returns(Task.FromResult(true));
 
             await _controller.ConfirmSubmitApplication(model);
 
@@ -745,7 +745,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.SubmitApplication(It.IsAny<Application.Apply.Submit.SubmitApplicationRequest>())).ReturnsAsync(true);
 
-            _submitApplicationEmailService.Setup(x => x.SendGetHelpWithQuestionEmail(It.IsAny<ApplicationSubmitConfirmation>())).Returns(Task.FromResult(true));
+            _submitApplicationEmailService.Setup(x => x.SendSubmitConfirmationEmail(It.IsAny<ApplicationSubmitConfirmation>())).Returns(Task.FromResult(true));
 
             await _controller.ConfirmSubmitApplication(model);
 
