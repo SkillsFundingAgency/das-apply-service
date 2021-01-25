@@ -2,6 +2,8 @@
 (
 	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
 	[ApplicationId] UNIQUEIDENTIFIER NOT NULL,
+    [GatewayApproved] BIT NULL,
+    [ModerationApproved] BIT NULL,
     [Status] NVARCHAR(30) NOT NULL, 
     [ApplicationDeterminedDate] DATETIME2 NULL,
     [InternalComments] NVARCHAR(MAX) NULL,

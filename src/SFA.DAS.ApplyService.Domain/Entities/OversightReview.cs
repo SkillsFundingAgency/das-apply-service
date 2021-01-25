@@ -7,6 +7,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }   
+        public bool? GatewayApproved { get; set; }
+        public bool? ModerationApproved { get; set; }
         public string Status { get; set; }
         public DateTime ApplicationDeterminedDate { get; set; }
         public string InternalComments { get; set; }

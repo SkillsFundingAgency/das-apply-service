@@ -34,6 +34,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             var oversightReview = new OversightReview
             {
                 ApplicationId = request.ApplicationId,
+                GatewayApproved = request.ApproveGateway,
+                ModerationApproved = request.ApproveModeration,
                 Status = request.OversightStatus,
                 InternalComments = request.InternalComments,
                 ExternalComments = request.ExternalComments,
