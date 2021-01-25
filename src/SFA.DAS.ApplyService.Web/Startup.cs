@@ -244,7 +244,9 @@ namespace SFA.DAS.ApplyService.Web
                 var apiConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
                 {
                     ApiBaseUrl = _configService.NotificationsApiClientConfiguration.ApiBaseUrl,
+#pragma warning disable 618
                     ClientToken = _configService.NotificationsApiClientConfiguration.ClientToken,
+#pragma warning restore 618
                     ClientId = _configService.NotificationsApiClientConfiguration.ClientId,
                     ClientSecret = _configService.NotificationsApiClientConfiguration.ClientSecret,
                     IdentifierUri = _configService.NotificationsApiClientConfiguration.IdentifierUri,
