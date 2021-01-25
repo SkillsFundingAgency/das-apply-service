@@ -40,6 +40,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 {
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.EmailService;
+    using SFA.DAS.ApplyService.EmailService.Infrastructure;
     using SFA.DAS.ApplyService.EmailService.Interfaces;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Services;
@@ -224,6 +225,13 @@ namespace SFA.DAS.ApplyService.InternalApi
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IEmailTemplateClient, EmailTemplateClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.InternalApi.Uri);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
         }
 
         private void ConfigureDependencyInjection(IServiceCollection services)
@@ -302,6 +310,7 @@ namespace SFA.DAS.ApplyService.InternalApi
                 return new NotificationsApi(httpClient, apiConfiguration);
             });
 
+            services.AddTransient<IEmailTokenService, EmailTokenService>();
             services.AddTransient<IWithdrawApplicationConfirmationEmailService, WithdrawApplicationConfirmationEmailService>();
         }
     }
