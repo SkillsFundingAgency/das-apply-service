@@ -11,7 +11,6 @@ namespace SFA.DAS.ApplyService.EmailService
     public class SubmitApplicationConfirmationEmailService : NotificationApiEmailService, ISubmitApplicationConfirmationEmailService
     {
         protected override string SUBJECT => "Application submitted – RoATP service team";
-        protected override string REPLY_TO_ADDRESS => "the.apprenticeship.service@notifications.service.gov.uk";
 
         public SubmitApplicationConfirmationEmailService(ILogger<NotificationApiEmailService> logger, IEmailTemplateClient emailTemplateClient,
                                                          INotificationsApi notificationsApi)

@@ -13,7 +13,7 @@ namespace SFA.DAS.ApplyService.EmailService
     {
         private const string SYSTEM_ID = "RoatpApplyService";
         protected virtual string REPLY_TO_ADDRESS => "the.apprenticeship.service@notifications.service.gov.uk";
-        protected virtual string SUBJECT => "Update on your RoATP application";
+        protected virtual string SUBJECT => "Update to your application - RoATP service team";
 
         protected readonly ILogger<NotificationApiEmailService> _logger;
         protected readonly IEmailTemplateClient _emailTemplateClient;
