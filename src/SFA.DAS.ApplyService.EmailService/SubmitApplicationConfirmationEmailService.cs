@@ -1,25 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.EmailService.Consts;
 using SFA.DAS.Notifications.Api.Client;
 
 namespace SFA.DAS.ApplyService.EmailService
 {
     public class SubmitApplicationConfirmationEmailService : NotificationApiEmailService, ISubmitApplicationConfirmationEmailService
     {
-        private const string EmailSubject = "Application submitted – RoATP service team";
-        private const string ReplyToAddress = "the.apprenticeship.service@notifications.service.gov.uk";
-
-        private readonly IEmailTemplateClient _emailTemplateClient;
+        protected override string SUBJECT => "Application submitted – RoATP service team";
+        protected override string REPLY_TO_ADDRESS => "the.apprenticeship.service@notifications.service.gov.uk";
 
         public SubmitApplicationConfirmationEmailService(ILogger<NotificationApiEmailService> logger, IEmailTemplateClient emailTemplateClient,
                                                          INotificationsApi notificationsApi)
-            : base(logger, notificationsApi)
-        {
-            _emailTemplateClient = emailTemplateClient;
-        }
+            : base(logger, emailTemplateClient, notificationsApi) { }
 
         public async Task SendGetHelpWithQuestionEmail(ApplicationSubmitConfirmation applicationSubmitConfirmation)
         {
@@ -29,15 +24,12 @@ namespace SFA.DAS.ApplyService.EmailService
                 templateName = EmailTemplateName.ROATP_APPLICATION_SUBMITTED_MAIN;
             }
             
-            var emailTemplate = await _emailTemplateClient.GetEmailTemplate(templateName);
-
             var personalisationTokens = GetPersonalisationTokens(applicationSubmitConfirmation);
 
-            await SendEmailViaNotificationsApi(applicationSubmitConfirmation.EmailAddress, emailTemplate.TemplateId, emailTemplate.TemplateName,
-                                               ReplyToAddress, EmailSubject, personalisationTokens);
+            await SendEmail(templateName, applicationSubmitConfirmation.EmailAddress, REPLY_TO_ADDRESS, SUBJECT, personalisationTokens);
         }
 
-        private Dictionary<string, string> GetPersonalisationTokens(ApplicationSubmitConfirmation applicationSubmitConfirmation)
+        private static Dictionary<string, string> GetPersonalisationTokens(ApplicationSubmitConfirmation applicationSubmitConfirmation)
         {
             var personalisationTokens = new Dictionary<string, string>
             {

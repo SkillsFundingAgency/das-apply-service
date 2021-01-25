@@ -1,27 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.EmailService.Consts;
 using SFA.DAS.Notifications.Api.Client;
 
 namespace SFA.DAS.ApplyService.EmailService
 {
     public class GetHelpWithQuestionEmailService : NotificationApiEmailService, IGetHelpWithQuestionEmailService
     {
-        private readonly IConfigurationService _configurationService;
-        private readonly IEmailTemplateClient _emailTemplateClient;
-                
-        private const string EmailSubject = "RoATP – Get help with this question";
+        protected override string SUBJECT => "RoATP – Get help with this question";
 
         public GetHelpWithQuestionEmailService(ILogger<NotificationApiEmailService> logger, IConfigurationService configurationService,
                                                IEmailTemplateClient emailTemplateClient, INotificationsApi notificationsApi)
-            : base (logger, notificationsApi)
-        {
-            _configurationService = configurationService;
-            _emailTemplateClient = emailTemplateClient;
-        }
+            : base(logger, emailTemplateClient, notificationsApi) { }
 
         public async Task SendGetHelpWithQuestionEmail(GetHelpWithQuestion getHelpWithQuestion)
         {
@@ -29,8 +22,7 @@ namespace SFA.DAS.ApplyService.EmailService
 
             var personalisationTokens = GetPersonalisationTokens(getHelpWithQuestion);
 
-            await SendEmailViaNotificationsApi(emailTemplate.Recipients, emailTemplate.TemplateId, emailTemplate.TemplateName,
-                                               getHelpWithQuestion.EmailAddress, EmailSubject, personalisationTokens);
+            await SendEmail(emailTemplate.TemplateName, emailTemplate.Recipients, getHelpWithQuestion.EmailAddress, SUBJECT, personalisationTokens);
         }
 
         private Dictionary<string, string> GetPersonalisationTokens(GetHelpWithQuestion getHelpWithQuestion)
