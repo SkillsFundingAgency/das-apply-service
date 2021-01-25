@@ -16,20 +16,17 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string OversightStatus { get; set; }
         public string ApplicationStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
-        public string ModerationStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
         public DateTime? ApplicationDeterminedDate { get; set; }
 
         public string ApplicationEmailAddress { get; set; }
         public string AssessorReviewStatus { get; set; } 
 
-        public string GatewayReviewStatus { get; set; }
         public DateTime? GatewayOutcomeMadeDate { get; set; }
 
         public string GatewayOutcomeMadeBy { get; set; }
         public string GatewayComments { get; set; }
 
-        public string FinancialReviewStatus { get; set; }
         public string FinancialGradeAwarded { get; set; }
 
         public DateTime? FinancialHealthAssessedOn { get; set; }

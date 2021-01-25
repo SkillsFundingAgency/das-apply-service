@@ -947,7 +947,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
 							apply.OversightStatus,
                             apply.GatewayReviewStatus,
-                            apply.ModerationStatus,
+                            apply.ModerationStatus AS ModerationReviewStatus,
                             apply.FinancialReviewStatus,
                             apply.ApplicationStatus,
 							apply.ApplicationDeterminedDate
