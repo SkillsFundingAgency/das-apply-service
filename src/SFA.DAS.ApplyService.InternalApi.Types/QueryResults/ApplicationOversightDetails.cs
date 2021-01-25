@@ -32,6 +32,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
         public string FinancialHealthAssessedBy { get; set; }
 
         public string FinancialHealthComments { get; set; }
+        public string FinancialHealthExternalComments { get; set; }
         public string ModerationReviewStatus { get; set; }
 
         public DateTime? ModerationOutcomeMadeOn { get; set; }

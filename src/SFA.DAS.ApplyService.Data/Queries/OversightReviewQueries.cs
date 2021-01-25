@@ -132,6 +132,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 							JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS FinancialHealthAssessedOn,
 							JSON_VALUE(apply.FinancialGrade, '$.GradedBy') AS FinancialHealthAssessedBy,
                             JSON_VALUE(apply.FinancialGrade, '$.Comments') AS FinancialHealthComments,
+                            JSON_VALUE(apply.FinancialGrade, '$.ExternalComments') AS FinancialHealthExternalComments,
 							apply.ModerationStatus as ModerationReviewStatus,
 							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS ModerationOutcomeMadeOn,
 							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratedBy,
