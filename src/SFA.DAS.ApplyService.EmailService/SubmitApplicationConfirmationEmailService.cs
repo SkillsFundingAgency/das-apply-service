@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.EmailService.Consts;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
 using SFA.DAS.Notifications.Api.Client;
 
 namespace SFA.DAS.ApplyService.EmailService

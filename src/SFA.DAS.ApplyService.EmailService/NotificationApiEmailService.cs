@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
 using SFA.DAS.Notifications.Api.Client;
 using System;
 using System.Collections.Generic;

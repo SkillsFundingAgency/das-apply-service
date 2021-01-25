@@ -31,8 +31,8 @@ namespace SFA.DAS.ApplyService.Web
 {
     using Controllers;
     using SFA.DAS.ApplyService.Application.Apply;
-    using SFA.DAS.ApplyService.Application.Email;
     using SFA.DAS.ApplyService.EmailService;
+    using SFA.DAS.ApplyService.EmailService.Interfaces;
     using SFA.DAS.ApplyService.Web.Configuration;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
