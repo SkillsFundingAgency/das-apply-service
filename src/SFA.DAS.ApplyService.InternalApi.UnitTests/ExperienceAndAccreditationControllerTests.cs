@@ -218,6 +218,21 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                     RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMaintainedFullGradeInShortInspection,
                     RoatpYourOrganisationQuestionIdConstants.HasMaintainedFullGradeInShortInspection)).ReturnsAsync("No");
 
+
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValueFromActiveQuestion(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.Has2MonitoringVisitsGradedInadequate,
+                    RoatpYourOrganisationQuestionIdConstants.Has2MonitoringVisitsGradedInadequate)).ReturnsAsync("No");
+
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValueFromActiveQuestion(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMonitoringVisitGradedInadequateInLast18Months,
+                    RoatpYourOrganisationQuestionIdConstants.HasMonitoringVisitGradedInadequateInLast18Months)).ReturnsAsync("Yes");
+
             var expectedApprenticeshipGrade = "Good";
             _qnaApiClient
                 .Setup(x => x.GetAnswerValueFromActiveQuestion(_applicationId,
@@ -248,6 +263,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.IsFalse(actualResult.HasMaintainedFullGradeInShortInspection);
             Assert.AreEqual(expectedApprenticeshipGrade, actualResult.FullInspectionApprenticeshipGrade);
             Assert.IsTrue(actualResult.GradeWithinTheLast3Years);
+            Assert.IsFalse(actualResult.Has2MonitoringVisitsGradedInadequate);
+            Assert.IsTrue(actualResult.HasMonitoringVisitGradedInadequateInLast18Months);
         }
 
         [Test]
