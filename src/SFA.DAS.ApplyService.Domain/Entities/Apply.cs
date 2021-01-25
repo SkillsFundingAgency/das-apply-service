@@ -33,10 +33,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string GatewayUserId { get; set; }
         public string GatewayUserName { get; set; }
 
-        public string OversightUserId { get; set; }
-        public string OversightUserName { get; set; }
-        public DateTime? ApplicationDeterminedDate { get; set; }
-
         public string Comments { get; set; }
         public string ExternalComments { get; set; }
     }
