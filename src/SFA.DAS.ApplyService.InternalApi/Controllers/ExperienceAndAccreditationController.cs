@@ -170,7 +170,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             await Task.WhenAll(hasHadFullInspectionTask, receivedFullInspectionGradeForApprenticeshipsTask,
                 fullInspectionOverallEffectivenessGradeTask, hasMaintainedFundingSinceInspectionTask,
                 hasHadShortInspectionWithinLast3YearsTask, hasMaintainedFullGradeInShortInspectionTask,
-                hasHadMonitoringVisitTask, fullInspectionApprenticeshipGradeTask, gradeWithinLast3YearsTask);
+                hasHadMonitoringVisitTask, fullInspectionApprenticeshipGradeTask, gradeWithinLast3YearsTask,
+                has2MonitoringVisitsGradedInadequateTask,hasMonitoringVisitGradedInadequateInLast18MonthsTask);
 
             return new OfstedDetails
             {
