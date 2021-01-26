@@ -12,4 +12,8 @@
       </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SFA.DAS.ApplyService.Types\SFA.DAS.ApplyService.Types.csproj" />
+    </ItemGroup>
+
 </Project>

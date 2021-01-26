@@ -1,4 +1,5 @@
 ﻿using System;
+using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
 {
@@ -12,7 +13,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
         public string ProviderRoute { get; set; }
         public string ApplicationReferenceNumber { get; set; }
         public DateTime ApplicationSubmittedDate { get; set; }
-        public string OversightStatus { get; set; }
+        public OversightReviewStatus OversightStatus { get; set; }
         public string ApplicationStatus { get; set; }
         public DateTime? ApplicationDeterminedDate { get; set; }
 

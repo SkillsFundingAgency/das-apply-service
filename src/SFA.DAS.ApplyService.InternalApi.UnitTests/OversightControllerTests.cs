@@ -12,6 +12,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
+using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -104,7 +105,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Ukprn = "12344321",
                 ProviderRoute = "Main",
                 ApplicationReferenceNumber = "APR000111",
-                OversightStatus = OversightReviewStatus.New
+                OversightStatus = OversightReviewStatus.InProgress
             };
 
             _mediator
@@ -120,7 +121,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
         [TestCase(OversightReviewStatus.Successful)]
         [TestCase(OversightReviewStatus.Unsuccessful)]
-        public async Task Record_oversight_outcome_updates_oversight_status_and_determined_date(string oversightStatus)
+        public async Task Record_oversight_outcome_updates_oversight_status_and_determined_date(OversightReviewStatus oversightStatus)
         {
             var command = new RecordOversightOutcomeCommand
             {
