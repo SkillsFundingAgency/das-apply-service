@@ -1,23 +1,23 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 {
-    public class GetOversightsPendingHandler : IRequestHandler<GetOversightsPendingRequest, List<ApplicationOversightDetails>>
+    public class GetOversightsPendingHandler : IRequestHandler<GetOversightsPendingRequest, PendingOversightReviews>
     {
-        private readonly IApplyRepository _applyRepository;
+        private readonly IOversightReviewQueries _oversightReviewQueries;
 
-        public GetOversightsPendingHandler(IApplyRepository applyRepository)
+        public GetOversightsPendingHandler(IOversightReviewQueries oversightReviewQueries)
         {
-            _applyRepository = applyRepository;
+            _oversightReviewQueries = oversightReviewQueries;
         }
 
-        public async Task<List<ApplicationOversightDetails>> Handle(GetOversightsPendingRequest request, CancellationToken cancellationToken)
+        public async Task<PendingOversightReviews> Handle(GetOversightsPendingRequest request, CancellationToken cancellationToken)
         {
-            return await _applyRepository.GetOversightsPending();
+            return await _oversightReviewQueries.GetPendingOversightReviews();
         }
     }
 }

@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply.Gateway;
 using SFA.DAS.ApplyService.Domain.Audit;
+using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -990,129 +991,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<ApplicationOversightDetails>> GetOversightsPending()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync<ApplicationOversightDetails>(@"SELECT 
-                            apply.Id AS Id,
-                            apply.ApplicationId AS ApplicationId,
-							 org.Name AS OrganisationName,
-					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
-                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
-							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
-							apply.OversightStatus,
-                            apply.ApplicationStatus,
-							apply.ApplicationDeterminedDate
-                              FROM Apply apply
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                      WHERE apply.DeletedAt IS NULL
-                          and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
-						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
-						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
-                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
-                            and apply.OversightStatus NOT IN (@oversightReviewStatusPass,@oversightReviewStatusFail)
-                            order by CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
-                        {
-                            gatewayReviewStatusPass = GatewayReviewStatus.Pass,
-                            gatewayReviewStatusFail = GatewayReviewStatus.Fail,
-                            GatewayReviewStatusReject = GatewayReviewStatus.Reject,
-                            assessorReviewStatusApproved = AssessorReviewStatus.Approved,
-                            assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
-                            financialReviewStatusApproved = FinancialReviewStatus.Pass,
-                            financialReviewStatusDeclined = FinancialReviewStatus.Fail,
-                            financialReviewStatusExempt = FinancialReviewStatus.Exempt,
-                            oversightReviewStatusPass= OversightReviewStatus.Successful,
-                            oversightReviewStatusFail = OversightReviewStatus.Unsuccessful
-
-                        })).ToList();
-            }
-        }
-
-
-        public async Task<List<ApplicationOversightDetails>> GetOversightsCompleted()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync<ApplicationOversightDetails>(@"SELECT 
-                            apply.Id AS Id,
-                            apply.ApplicationId AS ApplicationId,
-							 org.Name AS OrganisationName,
-					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
-                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
-							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
-							apply.OversightStatus,
-                            apply.ApplicationStatus,
-							apply.ApplicationDeterminedDate
-                              FROM Apply apply
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                      WHERE apply.DeletedAt IS NULL
-                          and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
-						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
-						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt))
-                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
-
-						  and apply.OversightStatus IN (@oversightReviewStatusPass,@oversightReviewStatusFail) 
-                             order by cast(apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
-                    {
-                        gatewayReviewStatusPass = GatewayReviewStatus.Pass,
-                        gatewayReviewStatusFail = GatewayReviewStatus.Fail,
-                        GatewayReviewStatusReject = GatewayReviewStatus.Reject,
-                        assessorReviewStatusApproved = AssessorReviewStatus.Approved,
-                        assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
-                        financialReviewStatusApproved = FinancialReviewStatus.Pass,
-                        financialReviewStatusDeclined = FinancialReviewStatus.Fail,
-                        financialReviewStatusExempt = FinancialReviewStatus.Exempt,
-                        oversightReviewStatusPass = OversightReviewStatus.Successful,
-                        oversightReviewStatusFail = OversightReviewStatus.Unsuccessful
-
-                    })).ToList();
-            }
-        }
-
-        public async Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var applyDataResults = await connection.QueryAsync<ApplicationOversightDetails>(@"SELECT 
-                            apply.Id AS Id,
-                            apply.ApplicationId AS ApplicationId,
-							 org.Name AS OrganisationName,
-					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
-                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
-							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
-							apply.OversightStatus,
-                            apply.ApplicationStatus,
-							apply.ApplicationDeterminedDate,
-							apply.AssessorReviewStatus,
-							contacts.Email as ApplicationEmailAddress,
-							apply.GatewayReviewStatus,
-							JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeMadeDate,
-							apply.GatewayUserName as GatewayOutcomeMadeBy,
-							JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.Comments') AS GatewayComments,
-							apply.FinancialReviewStatus,
-							JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') AS FinancialGradeAwarded,
-							JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS FinancialHealthAssessedOn,
-							JSON_VALUE(apply.FinancialGrade, '$.GradedBy') AS FinancialHealthAssessedBy,
-                            JSON_VALUE(apply.FinancialGrade, '$.Comments') AS FinancialHealthComments,
-
-							apply.ModerationStatus as ModerationReviewStatus,
-							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS ModerationOutcomeMadeOn,
-							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratedBy,
-							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorComments') AS ModerationComments                       
-                              FROM Apply apply
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-						  LEFT OUTER JOIN contacts on contacts.ApplyOrganisationId = org.Id
-                        WHERE apply.ApplicationId = @applicationId",
-                    new { applicationId });
-
-                return applyDataResults.FirstOrDefault();
-            }
-        }
-
         public async Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload(DateTime dateFrom, DateTime dateTo)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -1129,7 +1007,7 @@ namespace SFA.DAS.ApplyService.Data
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.OrganisationType') AS OrganisationType,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.CompaniesHouseDetails.CompanyNumber') AS CompanyNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.Address') AS Address,
-                            apply.OversightStatus,
+                            COALESCE(r.[Status], 'New') as OversightStatus,
                             apply.ApplicationStatus,
 							apply.ApplicationDeterminedDate,
                             apply.GatewayReviewStatus as GatewayOutcome,
@@ -1137,14 +1015,15 @@ namespace SFA.DAS.ApplyService.Data
                             CASE JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') WHEN @financialGradeInadequate THEN 'Fail' ELSE 'Pass' END as FHCOutcome,
                             CASE WHEN apply.GatewayReviewStatus = @gatewayReviewStatusPass AND apply.AssessorReviewStatus = @assessorReviewStatusApproved AND JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') <> @financialGradeInadequate THEN 'Pass' ELSE 'Fail' END as OverallOutcome
                             FROM Apply apply
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+                            LEFT JOIN OversightReview r on r.ApplicationId = apply.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
                           AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') BETWEEN @dateFrom AND @dateTo
                           and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
 						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt))
                             OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
-						  and apply.OversightStatus NOT IN (@oversightReviewStatusPass,@oversightReviewStatusFail)
+						  and r.[Status] is null
                              order by cast(apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
                 {
                     gatewayReviewStatusPass = GatewayReviewStatus.Pass,
@@ -1255,7 +1134,7 @@ namespace SFA.DAS.ApplyService.Data
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, string userId, string userName)
+        public async Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, string userId, string userName, string internalComments, string externalComments)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -1264,6 +1143,8 @@ namespace SFA.DAS.ApplyService.Data
                                                 ApplicationDeterminedDate = GETUTCDATE(),
                                                 OversightUserId = @userId,
                                                 OversightUserName = @userName,
+                                                OversightInternalComments = @internalComments,
+                                                OversightExternalComments = @externalComments,
                                                 UpdatedBy = @updatedBy,
                                                 UpdatedAt = GETUTCDATE()
                                                 WHERE ApplicationId = @applicationId",
@@ -1273,6 +1154,8 @@ namespace SFA.DAS.ApplyService.Data
                                 oversightStatus,
                                 userId,
                                 userName,
+                                internalComments,
+                                externalComments,
                                 updatedBy = userName
                             });
             }

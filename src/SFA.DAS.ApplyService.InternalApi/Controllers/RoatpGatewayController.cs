@@ -11,6 +11,8 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
@@ -28,12 +30,17 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly ILogger<RoatpGatewayController> _logger;
         private readonly IMediator _mediator;
         private readonly IFileStorageService _fileStorageService;
-        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IMediator mediator, IGatewayApiChecksService gatewayApiChecksService, IFileStorageService fileStorageService) 
+        private readonly IOversightReviewRepository _oversightReviewRepository;
+        private readonly IAuditService _auditService;
+
+        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IMediator mediator, IGatewayApiChecksService gatewayApiChecksService, IFileStorageService fileStorageService, IOversightReviewRepository oversightReviewRepository, IAuditService auditService) 
         {
             _applyRepository = applyRepository;
             _logger = logger;
             _gatewayApiChecksService = gatewayApiChecksService;
             _fileStorageService = fileStorageService;
+            _oversightReviewRepository = oversightReviewRepository;
+            _auditService = auditService;
             _mediator = mediator;
         }
 
@@ -114,7 +121,25 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     application.ApplyData.GatewayReviewDetails.ExternalComments = request.GatewayReviewExternalComment;
                 }
 
-                return await _applyRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, request.GatewayReviewStatus, request.UserId, request.UserName);
+                var result = await _applyRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, request.GatewayReviewStatus, request.UserId, request.UserName);
+
+                if (result && request.GatewayReviewStatus == GatewayReviewStatus.Reject)
+                {
+                    var oversightReview = new OversightReview
+                    {
+                        ApplicationId = request.ApplicationId,
+                        Status = OversightReviewStatus.Rejected,
+                        UserId = request.UserId,
+                        UserName = request.UserName
+                    };
+
+                    _auditService.StartTracking(UserAction.UpdateGatewayReviewStatus, request.UserId, request.UserName);
+                    _auditService.AuditInsert(oversightReview);
+                    await _oversightReviewRepository.Add(oversightReview);
+                    await _auditService.Save();
+                }
+
+                return result;
             }
 
             return false;

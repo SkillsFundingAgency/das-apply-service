@@ -4,6 +4,8 @@
     {
         UpdateGatewayPageOutcome,
         UpdateGatewayPageClarificationOutcome,
-        UpdateGatewayPagePostClarification
+        UpdateGatewayPagePostClarification,
+		RecordOversightOutcome,
+        UpdateGatewayReviewStatus
     }
 }
