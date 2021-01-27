@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
 
         public string GatewayOutcomeMadeBy { get; set; }
         public string GatewayComments { get; set; }
-
+        public string GatewayExternalComments { get; set; }
         public string FinancialReviewStatus { get; set; }
         public string FinancialGradeAwarded { get; set; }
 
