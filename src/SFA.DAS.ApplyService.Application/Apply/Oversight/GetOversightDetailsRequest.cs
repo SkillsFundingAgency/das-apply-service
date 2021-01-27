@@ -1,6 +1,7 @@
 ﻿using System;
 using MediatR;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 {

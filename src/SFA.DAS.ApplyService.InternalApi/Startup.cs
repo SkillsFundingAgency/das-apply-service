@@ -24,6 +24,7 @@ using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
+using SFA.DAS.ApplyService.Data.Queries;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Services.Moderator;
@@ -252,6 +253,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IModeratorRepository, ModeratorRepository>();
             services.AddTransient<IClarificationRepository, ClarificationRepository>();
             services.AddTransient<IDfeSignInService, DfeSignInService>();
+            services.AddTransient<IOversightReviewRepository, OversightReviewRepository>();
+            services.AddTransient<IOversightReviewQueries, OversightReviewQueries>();
 
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();

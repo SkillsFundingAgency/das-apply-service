@@ -4,10 +4,9 @@ using System.Linq;
 using System.Threading;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
-using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTests
 {
@@ -15,55 +14,52 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
     [TestFixture]
     public class OversightPendingHandlerTests
     {
-        protected Mock<IApplyRepository> ApplyRepository;
+        protected Mock<IOversightReviewQueries> OversightReviewQueries;
         protected GetOversightsPendingHandler PendingHandler;
         protected string FirstOrganisationName = "XXX Limited";
         protected string SecondOrganisationName = "ZZZ Limited";
         [SetUp]
         public void Setup()
         {
-            ApplyRepository = new Mock<IApplyRepository>();
-            ApplyRepository.Setup(r => r.GetOversightsPending()).ReturnsAsync(new List<ApplicationOversightDetails>());
-            PendingHandler = new GetOversightsPendingHandler(ApplyRepository.Object);
+            OversightReviewQueries = new Mock<IOversightReviewQueries>();
+            OversightReviewQueries.Setup(r => r.GetPendingOversightReviews()).ReturnsAsync(() => new PendingOversightReviews());
+            PendingHandler = new GetOversightsPendingHandler(OversightReviewQueries.Object);
           }
 
         [Test]
         public void Check_pending_results_are_as_expected()
         {
-            var completedApplications = new List<ApplicationOversightDetails>
+            var completedApplications = new PendingOversightReviews
             {
-                new ApplicationOversightDetails
+                Reviews = new List<PendingOversightReview> { 
+                new PendingOversightReview
                 {
-                    Id = Guid.NewGuid(),
                     ApplicationId = Guid.NewGuid(),
                     OrganisationName =FirstOrganisationName,
                     Ukprn = "12344321",
                     ProviderRoute = "Main",
                     ApplicationReferenceNumber = "APR000111",
-                    ApplicationSubmittedDate = DateTime.Today.AddDays(-1),
-                    OversightStatus = OversightReviewStatus.New
+                    ApplicationSubmittedDate = DateTime.Today.AddDays(-1)
                 },
-                new ApplicationOversightDetails
+                new PendingOversightReview
                 {
-                    Id = Guid.NewGuid(),
                     ApplicationId = Guid.NewGuid(),
                     OrganisationName = SecondOrganisationName,
                     Ukprn = "43211234",
                     ProviderRoute = "Employer",
                     ApplicationReferenceNumber = "APR000112",
-                    ApplicationSubmittedDate = DateTime.Today.AddDays(-1),
-                    OversightStatus = OversightReviewStatus.New
+                    ApplicationSubmittedDate = DateTime.Today.AddDays(-1)
                 }
-            };
+            }};
 
-            ApplyRepository.Setup(r => r.GetOversightsPending()).ReturnsAsync(completedApplications);
+            OversightReviewQueries.Setup(r => r.GetPendingOversightReviews()).ReturnsAsync(completedApplications);
 
             var result = PendingHandler.Handle(new GetOversightsPendingRequest(), new CancellationToken()).GetAwaiter().GetResult();
 
-            Assert.AreEqual(2,result.Count);
-            Assert.AreEqual(1,result.Count(x=> x.Id == completedApplications.First().Id));
-            Assert.AreEqual(1, result.Count(x => x.OrganisationName==FirstOrganisationName));
-            Assert.AreEqual(1, result.Count(x => x.OrganisationName == SecondOrganisationName));
+            Assert.AreEqual(2,result.Reviews.Count);
+            Assert.AreEqual(1,result.Reviews.Count(x=> x.ApplicationId == completedApplications.Reviews.First().ApplicationId));
+            Assert.AreEqual(1, result.Reviews.Count(x => x.OrganisationName==FirstOrganisationName));
+            Assert.AreEqual(1, result.Reviews.Count(x => x.OrganisationName == SecondOrganisationName));
         }
     }
 }

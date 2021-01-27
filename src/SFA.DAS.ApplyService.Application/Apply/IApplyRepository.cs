@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply.Gateway;
 using SFA.DAS.ApplyService.Domain.Audit;
+using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
 
 namespace SFA.DAS.ApplyService.Application.Apply
 {
@@ -26,6 +27,11 @@ namespace SFA.DAS.ApplyService.Application.Apply
        
         Task InsertGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName);
         Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName);
+        Task InsertGatewayPageAnswerClarification(GatewayPageAnswer pageAnswer, string userId, string userName);
+
+        Task UpdateGatewayPageAnswerClarification(GatewayPageAnswer pageAnswer, string userId, string userName);
+        Task UpdateGatewayPageAnswerPostClarification(GatewayPageAnswer pageAnswer, string userId, string userName);
+        
         Task UpdateApplication(Domain.Entities.Apply application);
 
         Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, ApplyData applyData, string gatewayReviewStatus, string userId, string userName);
@@ -72,12 +78,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<Contact> GetContactForApplication(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
-
-        Task<List<ApplicationOversightDetails>> GetOversightsPending();
-        Task<List<ApplicationOversightDetails>> GetOversightsCompleted();
-
-        Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, string userId, string userName);
-        Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId);
+        Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, string userId, string userName, string internalComments, string externalComments);
         Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload(DateTime dateFrom, DateTime dateTo);
         
         Task<IEnumerable<GatewayApplicationStatusCount>> GetGatewayApplicationStatusCounts();
