@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using SFA.DAS.ApplyService.InternalApi.Services.Files;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -12,10 +14,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     public class ExperienceAndAccreditationController : Controller
     {
         private readonly IInternalQnaApiClient _qnaApiClient;
-
-        public ExperienceAndAccreditationController(IInternalQnaApiClient qnaApiClient)
+        private readonly IFileStorageService _fileStorageService;
+        public ExperienceAndAccreditationController(IInternalQnaApiClient qnaApiClient, IFileStorageService fileStorageService)
         {
             _qnaApiClient = qnaApiClient;
+            _fileStorageService = fileStorageService;
         }
 
         [HttpGet("/Accreditation/{applicationId}/OfficeForStudents")]
@@ -38,7 +41,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
                 RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining);
 
-            if (initialTeacherTraining.ToUpper() == "YES")
+            if (initialTeacherTraining?.ToUpper() == "YES")
             {
                 var isPostGradTrainingOnlyApprenticeship = await _qnaApiClient.GetAnswerValue(applicationId,
                     RoatpWorkflowSequenceIds.YourOrganisation,
@@ -96,6 +99,23 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorContractFile,
                 RoatpYourOrganisationQuestionIdConstants.ContractFileName);
+        }
+
+        [HttpGet("/Accreditation/{applicationId}/SubcontractDeclaration/ContractFileClarification/{fileName}")]
+        public async Task<IActionResult> GetSubcontractorDeclarationContractFileClarification(Guid applicationId, string fileName)
+        {
+            var file= await _fileStorageService.DownloadFile(applicationId,
+                RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                RoatpClarificationUpload.SubcontractorDeclarationClarificationFile, fileName,
+                ContainerType.Gateway, new CancellationToken());
+
+            if (file is null)
+            {
+                return NotFound();
+            }
+
+            return File(file.Stream, file.ContentType, file.FileName);
         }
 
         [HttpGet("/Accreditation/{applicationId}/OfstedDetails")]
