@@ -1,31 +1,33 @@
 ﻿using System;
-using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 {
-    public class UpdateGatewayPageAnswerRequestHandler : IRequestHandler<UpdateGatewayPageAnswerRequest>
+    public class UpdateGatewayPageAnswerClarificationRequestHandler : IRequestHandler<UpdateGatewayPageAnswerClarificationRequest>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IAuditService _auditService;
 
-        public UpdateGatewayPageAnswerRequestHandler(IApplyRepository applyRepository, IAuditService auditService)
+        public UpdateGatewayPageAnswerClarificationRequestHandler(IApplyRepository applyRepository, IAuditService auditService)
         {
             _applyRepository = applyRepository;
             _auditService = auditService;
         }
 
-        public async Task<Unit> Handle(UpdateGatewayPageAnswerRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateGatewayPageAnswerClarificationRequest request, CancellationToken cancellationToken)
         {
-            _auditService.StartTracking(UserAction.UpdateGatewayPageOutcome, request.UserId, request.UserName);
+            _auditService.StartTracking(UserAction.UpdateGatewayPageClarificationOutcome, request.UserId, request.UserName);
 
             var application = await _applyRepository.GetApplication(request.ApplicationId);
             var answer = await _applyRepository.GetGatewayPageAnswer(request.ApplicationId, request.PageId);
             var isNew = answer == null;
+
+            
 
             if (isNew)
             {
@@ -40,25 +42,22 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             if (answer != null)
             {
                 answer.Status = request.Status;
+                answer.ClarificationComments = request.Comments;
                 answer.Comments = request.Comments;
                 answer.UpdatedAt = DateTime.UtcNow;
                 answer.UpdatedBy = request.UserName;
+                answer.ClarificationBy = request.UserName;
+                answer.ClarificationDate = answer.UpdatedAt;
                 answer.ClarificationAnswer = request.ClarificationAnswer;
-                if (string.IsNullOrEmpty(answer.ClarificationAnswer))
-                {
-                    answer.ClarificationComments = null;
-                    answer.ClarificationBy = null;
-                    answer.ClarificationDate = null;
-                }
             }
 
             if (isNew)
             {
-                await _applyRepository.InsertGatewayPageAnswer(answer, request.UserId, request.UserName);
+                await _applyRepository.InsertGatewayPageAnswerClarification(answer, request.UserId, request.UserName);
             }
             else
             {
-                await _applyRepository.UpdateGatewayPageAnswer(answer, request.UserId, request.UserName);
+                await _applyRepository.UpdateGatewayPageAnswerClarification(answer, request.UserId, request.UserName);
             }
 
             if (application.GatewayUserId != request.UserId || application.GatewayUserName != request.UserName)
@@ -70,7 +69,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 application.UpdatedAt = DateTime.UtcNow;
                 await _applyRepository.UpdateApplication(application);
             }
-           
+
             await _auditService.Save();
 
             return Unit.Value;

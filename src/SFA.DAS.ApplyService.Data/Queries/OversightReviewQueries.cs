@@ -77,7 +77,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
 							r.Status as OversightStatus,
                             apply.ApplicationStatus,
-							apply.ApplicationDeterminedDate
+							r.ApplicationDeterminedDate
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                           INNER JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId

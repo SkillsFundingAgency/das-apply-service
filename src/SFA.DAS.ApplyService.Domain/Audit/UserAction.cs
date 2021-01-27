@@ -3,7 +3,9 @@
     public enum UserAction
     {
         UpdateGatewayPageOutcome,
-        RecordOversightOutcome,
+        UpdateGatewayPageClarificationOutcome,
+        UpdateGatewayPagePostClarification,
+		RecordOversightOutcome,
         UpdateGatewayReviewStatus
     }
 }
