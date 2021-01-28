@@ -68,7 +68,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return await ConfirmPeopleInControl(applicationId);
             }
 
-            return AddPeopleInControl(applicationId);
+            return await AddPeopleInControl(applicationId);
         }
 
         [Route("confirm-directors-pscs")]
@@ -604,9 +604,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
-        public IActionResult AddPeopleInControl(Guid applicationId)
+        public async Task<IActionResult> AddPeopleInControl(Guid applicationId)
         {
-            var model = new AddEditPeopleInControlViewModel { ApplicationId = applicationId, GetHelpAction = "AddPeopleInControl" };
+            var organisationType = await _applicationApiClient.GetOrganisationTypeFromApplication(applicationId);
+            var model = new AddEditPeopleInControlViewModel { ApplicationId = applicationId, OrganisationType = organisationType, GetHelpAction = "AddPeopleInControl" };
             PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl);
 
             return View("~/Views/Roatp/WhosInControl/AddPeopleInControl.cshtml", model);

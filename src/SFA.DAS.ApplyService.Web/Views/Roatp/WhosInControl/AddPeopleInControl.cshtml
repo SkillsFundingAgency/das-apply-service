@@ -1,4 +1,5 @@
 ﻿@using MoreLinq;
+@using SFA.DAS.ApplyService.InternalApi.Types;
 @model SFA.DAS.ApplyService.Web.ViewModels.Roatp.AddEditPeopleInControlViewModel
 
 @{
@@ -47,8 +48,11 @@
                     <li>person with decision making powers</li>
                     <li>head of organisation</li>
                     <li>trustee</li>
+                    @if (Model.OrganisationType != RoatpOrganisationTypes.StatutoryInstitute)
+                    {
                     <li>sole trader</li>
                     <li>partner</li>
+                    }
                 </ul>
             </p>
             <p class="govuk-body">
@@ -60,6 +64,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="post" asp-action="AddPeopleInControlDetails" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="OrganisationType" />
                 <input type="hidden" asp-for="Identifier" />
                 <input type="hidden" asp-for="DateOfBirthOptional" />
                 <input type="hidden" asp-for="GetHelpAction" />
