@@ -1,5 +1,3 @@
-using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
@@ -9,6 +7,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     {
         public IActionResult Index()
         {
+            throw new System.Exception();
             return View();
         }
 
@@ -41,8 +40,31 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
         }
-        
+
         public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
+        public IActionResult SessionTimeout()
+        {
+            return View();
+        }
+
+        [Route("{controller}/404")]
+        public IActionResult PageNotFound()
+        {
+            return View();
+        }
+
+        [Route("{controller}/500")]
+        public IActionResult ServiceError()
+        {
+            return View();
+        }
+
+        [Route("{controller}/503")]
+        public IActionResult ServiceUnavailable()
         {
             return View();
         }
