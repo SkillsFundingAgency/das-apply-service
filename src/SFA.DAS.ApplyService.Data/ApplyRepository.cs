@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply.Gateway;
 using SFA.DAS.ApplyService.Domain.Audit;
+using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -134,17 +135,74 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName)
+        public async Task InsertGatewayPageAnswerClarification(GatewayPageAnswer pageAnswer, string userId, string userName)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(
+                    @"INSERT INTO GatewayAnswer ([Id],[ApplicationId],[PageId],[Status],[comments],[UpdatedAt],[UpdatedBy], ClarificationComments, ClarificationDate, ClarificationBy)
+														values (@id, @applicationId, @pageId,@status,@comments,@updatedAt,@updatedBy, @ClarificationComments, @ClarificationDate, @ClarificationBy)"
+                    , pageAnswer);
+            }
+        }
+
+
+        public async Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for non-clarification responses");
+                        await connection.ExecuteAsync(
                     @"UPDATE GatewayAnswer
                             SET  Status = @status, Comments = @comments, 
-                            ClarificationAnswer = ISNULL(@clarificationAnswer, ClarificationAnswer),
-                            UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
-                            WHERE [Id] = @id",
+                                ClarificationDate = 
+								CASE WHEN ClarificationAnswer IS NULL THEN NULL ELSE ClarificationDate END,
+                                ClarificationBy = 
+								CASE WHEN ClarificationAnswer IS NULL THEN NULL ELSE ClarificationBy END,
+                                ClarificationComments = 
+								CASE WHEN ClarificationAnswer IS NULL THEN NULL ELSE ClarificationComments END,
+                                UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
+                                WHERE [Id] = @id",
+                            pageAnswer);
+                    
+            }
+        }
+
+        
+
+        public async Task UpdateGatewayPageAnswerPostClarification(GatewayPageAnswer pageAnswer, string userId, string userName)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+
+
+                _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for non-clarification responses");
+                await connection.ExecuteAsync(
+                    @"UPDATE GatewayAnswer
+                            SET  Status = @status, Comments = @comments, 
+                                ClarificationAnswer = @clarificationAnswer,
+                                UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
+                                WHERE [Id] = @id",
                     pageAnswer);
+
+            }
+        }
+
+        public async Task UpdateGatewayPageAnswerClarification(GatewayPageAnswer pageAnswer, string userId, string userName)
+        {
+            _logger.LogInformation($"updating Gateway answer for applicationID [{pageAnswer.ApplicationId}], Status: {pageAnswer.Status}, Clarification answer '{pageAnswer.ClarificationAnswer}'");
+            _logger.LogInformation($"updating Gateway answer for page answer: {Newtonsoft.Json.JsonConvert.SerializeObject(pageAnswer)}");
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+
+                    _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for clarification");
+                    await connection.ExecuteAsync(
+                        @"UPDATE GatewayAnswer
+                            SET  Status = @status, comments = @clarificationComments, ClarificationComments =@clarificationComments, 
+                            UpdatedBy = @updatedBy, UpdatedAt = @updatedAt, 
+                            ClarificationDate=@updatedAt, ClarificationBy = @updatedBy
+                            WHERE [Id] = @id",
+                        pageAnswer);
             }
         }
 
@@ -1075,7 +1133,7 @@ namespace SFA.DAS.ApplyService.Data
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.OrganisationType') AS OrganisationType,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.CompaniesHouseDetails.CompanyNumber') AS CompanyNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.Address') AS Address,
-                            apply.OversightStatus,
+                            COALESCE(r.[Status], 'New') as OversightStatus,
                             apply.ApplicationStatus,
 							apply.ApplicationDeterminedDate,
                             apply.GatewayReviewStatus as GatewayOutcome,
@@ -1083,14 +1141,15 @@ namespace SFA.DAS.ApplyService.Data
                             CASE JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') WHEN @financialGradeInadequate THEN 'Fail' ELSE 'Pass' END as FHCOutcome,
                             CASE WHEN apply.GatewayReviewStatus = @gatewayReviewStatusPass AND apply.AssessorReviewStatus = @assessorReviewStatusApproved AND JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') <> @financialGradeInadequate THEN 'Pass' ELSE 'Fail' END as OverallOutcome
                             FROM Apply apply
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+                            LEFT JOIN OversightReview r on r.ApplicationId = apply.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
                           AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') BETWEEN @dateFrom AND @dateTo
                           and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
 						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt))
                             OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
-						  and apply.OversightStatus NOT IN (@oversightReviewStatusPass,@oversightReviewStatusFail)
+						  and r.[Status] is null
                              order by cast(apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
                 {
                     gatewayReviewStatusPass = GatewayReviewStatus.Pass,
@@ -1201,7 +1260,7 @@ namespace SFA.DAS.ApplyService.Data
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, string userId, string userName)
+        public async Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, string userId, string userName, string internalComments, string externalComments)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -1210,6 +1269,8 @@ namespace SFA.DAS.ApplyService.Data
                                                 ApplicationDeterminedDate = GETUTCDATE(),
                                                 OversightUserId = @userId,
                                                 OversightUserName = @userName,
+                                                OversightInternalComments = @internalComments,
+                                                OversightExternalComments = @externalComments,
                                                 UpdatedBy = @updatedBy,
                                                 UpdatedAt = GETUTCDATE()
                                                 WHERE ApplicationId = @applicationId",
@@ -1219,6 +1280,8 @@ namespace SFA.DAS.ApplyService.Data
                                 oversightStatus,
                                 userId,
                                 userName,
+                                internalComments,
+                                externalComments,
                                 updatedBy = userName
                             });
             }

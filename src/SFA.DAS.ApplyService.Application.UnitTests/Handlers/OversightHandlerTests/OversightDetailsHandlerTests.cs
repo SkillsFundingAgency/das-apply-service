@@ -4,8 +4,10 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
+using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTests
 {
@@ -13,7 +15,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
     public class OversightDetailsHandlerTests
 
     {
-        protected Mock<IApplyRepository> ApplyRepository;
+        protected Mock<IOversightReviewQueries> OversightReviewQueries;
         protected GetOversightDetailsHandler _handler;
 
         protected Guid applicationId = Guid.NewGuid();
@@ -21,9 +23,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
         [SetUp]
         public void Setup()
         {
-            ApplyRepository = new Mock<IApplyRepository>();
-            ApplyRepository.Setup(r => r.GetOversightDetails(It.IsAny<Guid>())).ReturnsAsync(new ApplicationOversightDetails());
-            _handler = new GetOversightDetailsHandler(ApplyRepository.Object);
+            OversightReviewQueries = new Mock<IOversightReviewQueries>();
+            OversightReviewQueries.Setup(r => r.GetOversightDetails(It.IsAny<Guid>())).ReturnsAsync(new ApplicationOversightDetails());
+            _handler = new GetOversightDetailsHandler(OversightReviewQueries.Object);
         }
 
         [Test]
@@ -43,7 +45,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 ApplicationDeterminedDate = DateTime.Today
             };
 
-            ApplyRepository.Setup(r => r.GetOversightDetails(applicationId)).ReturnsAsync(applicationDetails);
+            OversightReviewQueries.Setup(r => r.GetOversightDetails(applicationId)).ReturnsAsync(applicationDetails);
 
             var result = _handler.Handle(new GetOversightDetailsRequest(applicationId), new CancellationToken()).GetAwaiter().GetResult();
             Assert.That(applicationDetails, Is.SameAs(result));

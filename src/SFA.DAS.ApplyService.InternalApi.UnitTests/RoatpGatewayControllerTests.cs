@@ -14,7 +14,6 @@ using SFA.DAS.ApplyService.InternalApi.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -22,8 +21,8 @@ using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
-using SFA.DAS.ApplyService.InternalApi.Types.Requests;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -35,6 +34,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<IMediator> _mediator;
         private Mock<IGatewayApiChecksService> _gatewayApiChecksService;
         private Mock<IFileStorageService> _fileStorage;
+        private Mock<IOversightReviewRepository> _oversightReviewRepository;
         private const string _twoInTwelveMonthsPageId = "TwoInTwelveMonths";
         private const string _userName = "John Smith";
         private const string _userId = "user id 123";
@@ -82,7 +82,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _gatewayApiChecksService = new Mock<IGatewayApiChecksService>();
             _gatewayApiChecksService.Setup(x => x.GetExternalApiCheckDetails(_applicationId, _userName)).ReturnsAsync(new ApplyGatewayDetails());
 
-            _controller = new RoatpGatewayController(_applyRepository.Object, _logger.Object, _mediator.Object, _gatewayApiChecksService.Object, _fileStorage.Object)
+            _oversightReviewRepository = new Mock<IOversightReviewRepository>();
+            _oversightReviewRepository.Setup(x => x.Add(It.IsAny<OversightReview>())).Returns(() => Task.CompletedTask);
+
+            _controller = new RoatpGatewayController(_applyRepository.Object, _logger.Object, _mediator.Object, _gatewayApiChecksService.Object, _fileStorage.Object, _oversightReviewRepository.Object, Mock.Of<IAuditService>())
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -172,6 +175,21 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             await _controller.UpdateGatewayReviewStatusAndComment(request);
 
             _applyRepository.Verify(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName), Times.Once);
+        }
+
+        [Test]
+        public async Task UpdateGatewayReviewStatusAndComment_when_rejected_creates_oversight_review()
+        {
+            var gatewayReviewStatus = GatewayReviewStatus.Reject;
+            var gatewayReviewComment = "Some comment";
+            var gatewayReviewExternalComment = "Some external comment";
+
+            _applyRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
+
+            var request = new UpdateGatewayReviewStatusAndCommentRequest(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, _userId, _userName);
+            await _controller.UpdateGatewayReviewStatusAndComment(request);
+
+            _oversightReviewRepository.Verify(x => x.Add(It.Is<OversightReview>(r => r.ApplicationId == _applicationId && r.Status == OversightReviewStatus.Rejected)));
         }
 
         [Test]
@@ -299,5 +317,79 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.AreEqual(expectedResult.ToString(), result.ToString());
             _mediator.Verify(x => x.Send(It.IsAny<RemoveSubcontractorDeclarationFileRequest>(), It.IsAny<CancellationToken>()), Times.Never);
         }
+
+
+        [Test]
+        public async Task GatewayPageSubmitClarification_When_GatewayReviewStatus_New_Starts_GatewayReview()
+        {
+            var gatewayReviewStatus = GatewayReviewStatus.Pass;
+            var gatewayReviewComment = "Some comment";
+
+            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
+            {
+                ApplicationId = _applicationId,
+                Comments = gatewayReviewComment,
+                Status = gatewayReviewStatus,
+                UserId = _userId,
+                UserName = _userName,
+                PageId = _twoInTwelveMonthsPageId
+            };
+            await _controller.GatewayPageSubmitClarification(request);
+
+            _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mediator.Verify(x => x.Send(It.IsAny<StartGatewayReviewRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+
+        [Test]
+        public async Task GatewayPageSubmitClarification_When_GatewayReviewStatus_InProgress_Does_Not_Start_GatewayReview()
+        {
+            _application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
+
+            var gatewayReviewStatus = GatewayReviewStatus.Pass;
+            var gatewayReviewComment = "Some comment";
+
+            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
+            {
+                ApplicationId = _applicationId,
+                Comments = gatewayReviewComment,
+                Status = gatewayReviewStatus,
+                UserId = _userId,
+                UserName = _userName,
+                PageId = _twoInTwelveMonthsPageId
+            };
+
+            await _controller.GatewayPageSubmitClarification(request);
+
+            _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mediator.Verify(x => x.Send(It.IsAny<StartGatewayReviewRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+
+        [Test]
+        public async Task GatewayPageSubmitPostClarification_When_GatewayReviewStatus_InProgress_Does_Not_Start_GatewayReview()
+        {
+            _application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
+
+            var gatewayReviewStatus = GatewayReviewStatus.Pass;
+            var gatewayReviewComment = "Some comment";
+
+            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
+            {
+                ApplicationId = _applicationId,
+                Comments = gatewayReviewComment,
+                Status = gatewayReviewStatus,
+                UserId = _userId,
+                UserName = _userName,
+                PageId = _twoInTwelveMonthsPageId,
+                ClarificationAnswer = "answer"
+            };
+
+            await _controller.GatewayPageSubmitPostClarification(request);
+
+            _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mediator.Verify(x => x.Send(It.IsAny<StartGatewayReviewRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
     }
 }

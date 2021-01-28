@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -7,10 +8,10 @@ using MediatR;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
-using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -33,27 +34,49 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [Test]
         public async Task Check_count_of_pending_results_are_correct()
         {
-            var pendingOversights = new List<ApplicationOversightDetails>
+            var pendingOversights = new PendingOversightReviews 
             {
-                new ApplicationOversightDetails
+                Reviews = new List<PendingOversightReview> { 
+                new PendingOversightReview
                 {
-                    Id = Guid.NewGuid(),
                     ApplicationId = Guid.NewGuid(),
                     OrganisationName = "XXX Limited",
                     Ukprn = "12344321",
                     ProviderRoute = "Main",
-                    ApplicationReferenceNumber = "APR000111",
-                    OversightStatus = OversightReviewStatus.New
+                    ApplicationReferenceNumber = "APR000111"
                 },
-                new ApplicationOversightDetails
+                new PendingOversightReview
                 {
-                    Id = Guid.NewGuid(),
                     ApplicationId = Guid.NewGuid(),
                     OrganisationName = "ZZZ Limited",
                     Ukprn = "43211234",
                     ProviderRoute = "Employer",
                     ApplicationReferenceNumber = "APR000112",
-                    OversightStatus = OversightReviewStatus.New
+                }
+            }};
+
+            _mediator
+                .Setup(x => x.Send(It.IsAny<GetOversightsPendingRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(pendingOversights);
+
+            var actualResult = await _controller.OversightsPending();
+            Assert.AreEqual(pendingOversights.Reviews.Count, actualResult.Value.Reviews.Count);
+        }
+
+        [Test]
+        public async Task Check_pending_results_are_as_expected()
+        {
+            var pendingOversights = new PendingOversightReviews
+            {
+                Reviews = new List<PendingOversightReview>
+                {
+                    new PendingOversightReview{
+                        ApplicationId = Guid.NewGuid(),
+                        OrganisationName = "XXX Limited",
+                        Ukprn = "12344321",
+                        ProviderRoute = "Main",
+                        ApplicationReferenceNumber = "APR000111"
+                    }
                 }
             };
 
@@ -62,38 +85,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 .ReturnsAsync(pendingOversights);
 
             var actualResult = await _controller.OversightsPending();
+            var returnedOversight = actualResult.Value.Reviews.First();
 
-           Assert.AreEqual(pendingOversights.Count, actualResult.Value.Count);
-
-        }
-
-        [Test]
-        public async Task Check_pending_results_are_as_expected()
-        {
-            var oversight = new ApplicationOversightDetails
-            {
-                Id = Guid.NewGuid(),
-                ApplicationId = Guid.NewGuid(),
-                OrganisationName = "XXX Limited",
-                Ukprn = "12344321",
-                ProviderRoute = "Main",
-                ApplicationReferenceNumber = "APR000111",
-                OversightStatus = OversightReviewStatus.New
-            };
-
-            var pendingOversights = new List<ApplicationOversightDetails>
-            {
-               oversight
-            };
-
-            _mediator
-                .Setup(x => x.Send(It.IsAny<GetOversightsPendingRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(pendingOversights);
-
-            var actualResult = await _controller.OversightsPending();
-            var returnedOversight = actualResult.Value[0];
-
-            Assert.That(returnedOversight,Is.SameAs(oversight));
+            Assert.That(returnedOversight,Is.SameAs(pendingOversights.Reviews.First()));
         }
 
 

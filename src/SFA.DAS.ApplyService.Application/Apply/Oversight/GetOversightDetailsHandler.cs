@@ -1,24 +1,24 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 {
-
     public class GetOversightDetailsHandler : IRequestHandler<GetOversightDetailsRequest, ApplicationOversightDetails>
     {
-        private readonly IApplyRepository _applyRepository;
+        private readonly IOversightReviewQueries _oversightReviewQueries;
 
-        public GetOversightDetailsHandler(IApplyRepository applyRepository)
+        public GetOversightDetailsHandler(IOversightReviewQueries oversightReviewQueries)
         {
-            _applyRepository = applyRepository;
+            _oversightReviewQueries = oversightReviewQueries;
         }
 
         public async Task<ApplicationOversightDetails> Handle(GetOversightDetailsRequest request,
             CancellationToken cancellationToken)
         {
-            return await _applyRepository.GetOversightDetails(request.ApplicationId);
+            return await _oversightReviewQueries.GetOversightDetails(request.ApplicationId);
         }
     }
 }
