@@ -18,7 +18,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string GatewayReviewStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
         public string ModerationStatus { get; set; }
-        public string OversightStatus { get; set; }
 
         public ApplyData ApplyData { get; set; }
         public FinancialReviewDetails FinancialGrade { get; set; }
