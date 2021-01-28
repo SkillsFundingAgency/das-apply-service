@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -24,17 +25,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         [HttpGet]
         [Route("Oversights/Pending")]
-        public async Task<ActionResult<List<ApplicationOversightDetails>>> OversightsPending()
+        public async Task<ActionResult<PendingOversightReviews>> OversightsPending()
         {
-            return await _mediator.Send( new GetOversightsPendingRequest());
+            return await _mediator.Send(new GetOversightsPendingRequest());
         }
 
         [HttpGet]
         [Route("Oversights/Completed")]
-        public async Task<ActionResult<List<ApplicationOversightDetails>>> OversightsCompleted()
+        public async Task<ActionResult<CompletedOversightReviews>> OversightsCompleted()
         {
             return await _mediator.Send(new GetOversightsCompletedRequest());
         }
+
 
         [HttpGet]
         [Route("Oversights/Download")]
