@@ -4,11 +4,9 @@ using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
-using NUnit.Framework.Internal;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -179,7 +177,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var fileStream = new FileStreamResult(new MemoryStream(), "application/pdf");
             fileStream.FileDownloadName = fileName;
 
-            var file = new DownloadFile
+            var file = new InternalApi.Services.Files.DownloadFile
             {
                 ContentType = "application/pdf", FileName = fileName, Stream = fileStream.FileStream
             };
@@ -251,37 +249,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                     "Yes"),
             };
 
-
-           
-            
-            
-            
-            
-            
-
             applicationSection.QnAData.Pages = pages;
             ;
-            
-           
-            // _qnaApiClient
-            //     .Setup(x => x.GetAnswerValueFromActiveQuestion(_applicationId,
-            //         RoatpWorkflowSequenceIds.YourOrganisation,
-            //         RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-            //         RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMonitoringVisitGradedInadequateInLast18Months,
-            //         RoatpYourOrganisationQuestionIdConstants.HasMonitoringVisitGradedInadequateInLast18Months)).ReturnsAsync("Yes");
-            //
-            //
-            // _qnaApiClient
-            //     .Setup(x => x.GetAnswerValueFromActiveQuestion(_applicationId,
-            //         RoatpWorkflowSequenceIds.YourOrganisation,
-            //         RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-            //         It.Is<PageAndQuestion[]>(y =>
-            //             y.First().PageId == RoatpWorkflowPageIds.ExperienceAndAccreditations.GradeWithinLast3YearsOfsFunded && y.First().QuestionId == RoatpYourOrganisationQuestionIdConstants.GradeWithinLast3YearsOfsFunded
-            //             && y.Last().PageId == RoatpWorkflowPageIds.ExperienceAndAccreditations.GradeWithinLast3YearsNonOfsFunded && y.Last().QuestionId == RoatpYourOrganisationQuestionIdConstants.GradeWithinLast3YearsNonOfsFunded)))
-            //     .ReturnsAsync("Yes");
-
-           
-
 
             _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
