@@ -32,6 +32,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
         {
             _logger.LogInformation($"Recording Oversight review status of {request.OversightStatus} for application Id {request.ApplicationId}");
 
+            var application = await _applyRepository.GetApplication(request.ApplicationId);
+
+            if(application == null)
+            {
+                throw new InvalidOperationException($"Application {request.ApplicationId} not found");
+            }
+
             var oversightReview = new OversightReview
             {
                 ApplicationId = request.ApplicationId,
@@ -46,16 +53,20 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
             _auditService.StartTracking(UserAction.RecordOversightOutcome, request.UserId, request.UserName);
             _auditService.AuditInsert(oversightReview);
+            _auditService.AuditUpdate(application);
+            
             await _oversightReviewRepository.Add(oversightReview);
-            await _auditService.Save();
 
-            var applicationStatus = ApplicationStatus.Approved;
-            if (request.OversightStatus == OversightReviewStatus.Unsuccessful)
+            if (request.OversightStatus != OversightReviewStatus.InProgress)
             {
-                applicationStatus = ApplicationStatus.Rejected;
-            }
+                application.ApplicationStatus = request.OversightStatus == OversightReviewStatus.Unsuccessful
+                    ? ApplicationStatus.Rejected
+                    : ApplicationStatus.Approved;
 
-            await _applyRepository.UpdateApplicationStatus(request.ApplicationId, applicationStatus);
+                await _applyRepository.UpdateApplication(application);
+            }
+            
+            await _auditService.Save();
 
             return true;
         }
