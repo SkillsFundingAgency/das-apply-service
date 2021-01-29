@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +16,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
+using Polly;
+using Polly.Extensions.Http;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
@@ -151,63 +155,72 @@ namespace SFA.DAS.ApplyService.Web
                 config.BaseAddress = new Uri(_configService.InternalApi.Uri);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
-            .SetHandlerLifetime(handlerLifeTime);
+            .SetHandlerLifetime(handlerLifeTime)
+            .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHttpClient<ICharityCommissionApiClient, CharityCommissionApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.Uri);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
-            .SetHandlerLifetime(handlerLifeTime);
+            .SetHandlerLifetime(handlerLifeTime)
+            .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHttpClient<ICompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.Uri);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
-            .SetHandlerLifetime(handlerLifeTime);
+            .SetHandlerLifetime(handlerLifeTime)
+            .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHttpClient<IEmailTemplateClient, EmailTemplateClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.Uri);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
-            .SetHandlerLifetime(handlerLifeTime);
+            .SetHandlerLifetime(handlerLifeTime)
+            .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHttpClient<IOrganisationApiClient, OrganisationApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.Uri);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
-            .SetHandlerLifetime(handlerLifeTime);
+            .SetHandlerLifetime(handlerLifeTime)
+            .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.Uri);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
-            .SetHandlerLifetime(handlerLifeTime);
+            .SetHandlerLifetime(handlerLifeTime)
+            .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHttpClient<IUkrlpApiClient, UkrlpApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.Uri);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
-            .SetHandlerLifetime(handlerLifeTime);
+            .SetHandlerLifetime(handlerLifeTime)
+            .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHttpClient<IUsersApiClient, UsersApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.Uri);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
-            .SetHandlerLifetime(handlerLifeTime);
+            .SetHandlerLifetime(handlerLifeTime)
+            .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHttpClient<IWhitelistedProvidersApiClient, WhitelistedProvidersApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.Uri);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
-            .SetHandlerLifetime(handlerLifeTime);
+            .SetHandlerLifetime(handlerLifeTime)
+            .AddPolicyHandler(GetRetryPolicy());
         }
 
         private void ConfigureDependencyInjection(IServiceCollection services)
@@ -304,6 +317,14 @@ namespace SFA.DAS.ApplyService.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
         }
     }
 }

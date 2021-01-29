@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using Polly.Extensions.Http;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Application.Organisations;
@@ -191,35 +194,40 @@ namespace SFA.DAS.ApplyService.InternalApi
                 config.BaseAddress = new Uri(_applyConfig.ProviderRegisterApiAuthentication.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
-            .SetHandlerLifetime(handlerLifeTime);
+            .SetHandlerLifetime(handlerLifeTime)
+            .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHttpClient<ReferenceDataApiClient, ReferenceDataApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.ReferenceDataApiAuthentication.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
-            .SetHandlerLifetime(handlerLifeTime);
+            .SetHandlerLifetime(handlerLifeTime)
+            .AddPolicyHandler(GetRetryPolicy()); 
 
             services.AddHttpClient<CompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.CompaniesHouseApiAuthentication.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
-            .SetHandlerLifetime(handlerLifeTime);
+            .SetHandlerLifetime(handlerLifeTime)
+            .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
-            .SetHandlerLifetime(handlerLifeTime);
+            .SetHandlerLifetime(handlerLifeTime)
+            .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHttpClient<IInternalQnaApiClient, InternalQnaApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.QnaApiAuthentication.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
-            .SetHandlerLifetime(handlerLifeTime);
+            .SetHandlerLifetime(handlerLifeTime)
+            .AddPolicyHandler(GetRetryPolicy());
         }
 
         private void ConfigureDependencyInjection(IServiceCollection services)
@@ -273,6 +281,14 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IFileStorageService, FileStorageService>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
+        }
+
+        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
         }
     }
 }
