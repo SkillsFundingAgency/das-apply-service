@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -380,7 +379,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 
                 if (page == null || page.Questions == null)
                 {
-                    return await TaskList(applicationId, sequenceId);
+                    return TaskList(applicationId, sequenceId);
                 }
 
                 page = await GetDataFedOptions(applicationId, page);
@@ -419,7 +418,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
             if (nextPageId == null || section.QnAData.Pages.FirstOrDefault(x => x.PageId == nextPageId) == null)
-                return await TaskList(applicationId, sequenceId);
+                return TaskList(applicationId, sequenceId);
 
             return RedirectToAction("Page", new
             {
@@ -519,7 +518,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [Route("apply-training-provider-tasklist")]
         [HttpGet]
-        public async Task<IActionResult> TaskList(Guid applicationId, int? sequenceId)
+        public IActionResult TaskList(Guid applicationId, int? sequenceId)
         {
             return sequenceId != null ? 
                 RedirectToAction("TaskListRefresh","RoatpApplication", new {applicationId},"Sequence_" + sequenceId) : 
@@ -812,7 +811,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 if (string.IsNullOrEmpty(nextActionId) || !NextAction.NextPage.Equals(nextAction, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return await TaskList(applicationId, sequenceNo);
+                    return TaskList(applicationId, sequenceNo);
                 }
 
                 return RedirectToAction("Page", new

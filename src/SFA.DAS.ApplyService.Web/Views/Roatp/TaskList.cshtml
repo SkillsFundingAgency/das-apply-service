@@ -11,7 +11,8 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
     <partial name="TaskList/ApplicationSummary.cshtml" model="@Model.ApplicationSummaryViewModel" />
-      <div class="govuk-grid-row">
+
+   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
     <ol class="app-task-list">
     
@@ -19,10 +20,10 @@
         {
 
             <li>
-                <h2 id="Sequence_@sequence.Id"class="app-task-list__section">
+                <h2 id="Sequence_@sequence.Id" class="app-task-list__section">
                     <span class="app-task-list__section-number">@Html.Raw(sequence.Id). </span>
                     @Html.Raw(sequence.Description)
-</h2>
+                </h2>
                 
                 <ul class="app-task-list__items">
                     @foreach (var seqSection in sequence.Sections)
