@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -307,7 +309,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (previousPageId == null)
             {
-                return RedirectToAction("TaskList", new { applicationId });
+                return RedirectToAction("TaskList", new { applicationId , sequenceId});
             }
 
             return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId = previousPageId, redirectAction });
@@ -319,7 +321,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
             if (!canUpdate)
             {
-                return RedirectToAction("TaskList", new { applicationId });
+                return RedirectToAction("TaskList", new { applicationId, sequenceId });
             }
             
             var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
@@ -341,7 +343,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
-                return RedirectToAction("TaskList", new { applicationId });
+                return RedirectToAction("TaskList", new { applicationId, sequenceId });
             }
 
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
@@ -378,7 +380,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 
                 if (page == null || page.Questions == null)
                 {
-                    return await TaskList(applicationId);
+                    return await TaskList(applicationId, sequenceId);
                 }
 
                 page = await GetDataFedOptions(applicationId, page);
@@ -407,7 +409,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
-                return RedirectToAction("TaskList", new { applicationId });
+                return RedirectToAction("TaskList", new { applicationId, sequenceId });
             }
 
             var nextAction = await _qnaApiClient.SkipPageBySectionNo(applicationId, sequenceId, sectionId, pageId);
@@ -417,7 +419,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
             if (nextPageId == null || section.QnAData.Pages.FirstOrDefault(x => x.PageId == nextPageId) == null)
-                return await TaskList(applicationId);
+                return await TaskList(applicationId, sequenceId);
 
             return RedirectToAction("Page", new
             {
@@ -441,7 +443,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
-                return RedirectToAction("TaskList", new { applicationId });
+                return RedirectToAction("TaskList", new { applicationId, sequenceId });
             }
 
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
@@ -487,7 +489,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             if (page == null)
             {
-                return RedirectToAction("TaskList", new { applicationId = applicationId });
+                return RedirectToAction("TaskList", new { applicationId = applicationId, sequenceId });
             }
 
             if (IsFileUploadWithNonEmptyValue(page))
@@ -508,7 +510,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("TaskList", new { applicationId = applicationId });
+                    return RedirectToAction("TaskList", new { applicationId, sequenceId });
                 }
             }
 
@@ -517,7 +519,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [Route("apply-training-provider-tasklist")]
         [HttpGet]
-        public async Task<IActionResult> TaskList(Guid applicationId)
+        public async Task<IActionResult> TaskList(Guid applicationId, int? sequenceId)
+        {
+            if (sequenceId != null)
+            {
+                return Redirect(Url.RouteUrl(new {action = "TaskListRefresh", applicationId}) + "#Sequence_" + sequenceId);
+            }
+            
+            return Redirect(Url.RouteUrl(new { action = "TaskListRefresh", applicationId }));
+        }
+
+        [Route("application-tasklist")]
+        [HttpGet]
+        public async Task<IActionResult> TaskListRefresh(Guid applicationId)
         {
             var canUpdate = await CanUpdateApplication(applicationId);
             if (!canUpdate)
@@ -526,7 +540,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             var viewModel = await _taskListOrchestrator.GetTaskListViewModel(applicationId, User.GetUserId());
-            return View("~/Views/Roatp/TaskList.cshtml", viewModel);
+            var view = View("~/Views/Roatp/TaskList.cshtml", viewModel);
+
+            return view;
         }
 
         [Route("change-ukprn")]
@@ -801,7 +817,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 if (string.IsNullOrEmpty(nextActionId) || !NextAction.NextPage.Equals(nextAction, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return await TaskList(applicationId);
+                    return await TaskList(applicationId, sequenceNo);
                 }
 
                 return RedirectToAction("Page", new
@@ -1224,7 +1240,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var canUpdate = await CanUpdateApplication(model.ApplicationId);
             if (!canUpdate)
             {
-                return RedirectToAction("TaskList", new { applicationId = model.ApplicationId });
+                return RedirectToAction("TaskList", new { applicationId = model.ApplicationId});
             }
 
             if (!ModelState.IsValid)

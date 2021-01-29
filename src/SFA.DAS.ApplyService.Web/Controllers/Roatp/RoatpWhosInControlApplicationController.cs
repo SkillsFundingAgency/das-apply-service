@@ -128,7 +128,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return RedirectToAction("ConfirmTrusteesNoDob", new { applicationId });
                 }
 
-                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId, sequenceId = 1});
             }
         }
 
@@ -600,7 +600,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, soleTradeDobAnswer);
             
-            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
+            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId, sequenceId = 1 });
         }
 
         [HttpGet]
@@ -816,7 +816,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             // tech debt - this will be reworked by the changes to the QnA config JSON and method
             // for determining that application section completed is derived (APR-1008)
             // It only act as redirector
-            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId, sequenceId = 1 });
         }
 
         private IActionResult ConfirmRemovalOfPersonInControl(Guid applicationId, string name, string actionName, string backActionName)
