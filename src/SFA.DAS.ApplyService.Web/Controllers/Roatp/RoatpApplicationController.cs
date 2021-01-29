@@ -521,12 +521,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> TaskList(Guid applicationId, int? sequenceId)
         {
-            if (sequenceId != null)
-            {
-                return Redirect(Url.RouteUrl(new {action = "TaskListRefresh", applicationId}) + "#Sequence_" + sequenceId);
-            }
-            
-            return Redirect(Url.RouteUrl(new { action = "TaskListRefresh", applicationId }));
+            return sequenceId != null ? 
+                RedirectToAction("TaskListRefresh","RoatpApplication", new {applicationId},"Sequence_" + sequenceId) : 
+                RedirectToAction("TaskListRefresh","RoatpApplication", new { applicationId });
         }
 
         [Route("application-tasklist")]
