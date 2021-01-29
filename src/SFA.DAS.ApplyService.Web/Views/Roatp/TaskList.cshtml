@@ -19,9 +19,9 @@
         {
 
             <li>
-                <h2 class="app-task-list__section">
+                <h2 id="Sequence_@sequence.Id"class="app-task-list__section">
                     <span class="app-task-list__section-number">@Html.Raw(sequence.Id). </span>
-                    <a id="Sequence_@sequence.Id">@Html.Raw(sequence.Description)</a>
+                    @Html.Raw(sequence.Description)
 </h2>
                 
                 <ul class="app-task-list__items">

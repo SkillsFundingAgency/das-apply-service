@@ -540,9 +540,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             var viewModel = await _taskListOrchestrator.GetTaskListViewModel(applicationId, User.GetUserId());
-            var view = View("~/Views/Roatp/TaskList.cshtml", viewModel);
-
-            return view;
+            return View("~/Views/Roatp/TaskList.cshtml", viewModel);
         }
 
         [Route("change-ukprn")]
