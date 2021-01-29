@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "serviceName": {
@@ -11,16 +11,16 @@
         "environmentName": {
             "type": "string"
         },
-        "sharedAppServicePlanResourceGroup": {
+        "sharedEnvResourceGroup": {
             "type": "string"
         },
-        "sharedFrontEndAppServicePlan": {
+        "sharedFrontEndAppServicePlanName": {
             "type": "string"
         },
         "sharedFrontEndSubnetResourceId": {
             "type": "string"
         },
-        "sharedBackEndAppServicePlan": {
+        "sharedBackEndAppServicePlanName": {
             "type": "string"
         },
         "sharedBackEndSubnetResourceId": {
@@ -54,19 +54,36 @@
         },
         "apiCertificateName": {
             "type": "string"
+        },
+        "tags": {
+            "type": "object"
+        },
+        "resourceGroupLocation": {
+            "type": "string"
         }
     },
     "variables": {
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
         "resourceNamePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-' , parameters('serviceName'))]",
+        "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
         "uiAppServiceName": "[concat(variables('resourceNamePrefix'),'ui-as')]",
         "apiAppServiceName": "[concat(variables('resourceNamePrefix'),'api-as')]",
         "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]"
     },
     "resources": [
         {
-            "apiVersion": "2017-08-01",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "[parameters('resourceGroupLocation')]",
+            "tags": "[parameters('tags')]",
+            "properties": {
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
             "name": "ui-app-insights",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -85,8 +102,9 @@
             }
         },
         {
-            "apiVersion": "2017-08-01",
+            "apiVersion": "2020-06-01",
             "name": "api-app-insights",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -107,9 +125,9 @@
             ]
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-06-01",
             "name": "ui-app-service-certificate",
-            "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -131,9 +149,9 @@
             }
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-06-01",
             "name": "api-app-service-certificate",
-            "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -155,8 +173,9 @@
             }
         },
         {
-            "apiVersion": "2017-08-01",
+            "apiVersion": "2020-06-01",
             "name": "ui-app-service",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -169,10 +188,10 @@
                         "value": "[variables('uiAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('sharedFrontEndAppServicePlan')]"
+                        "value": "[parameters('sharedFrontEndAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+                        "value": "[parameters('sharedEnvResourceGroup')]"
                     },
                     "subnetResourceId": {
                         "value": "[parameters('sharedFrontEndSubnetResourceId')]"
@@ -223,8 +242,9 @@
             ]
         },
         {
-            "apiVersion": "2017-08-01",
+            "apiVersion": "2020-06-01",
             "name": "api-app-service",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -237,10 +257,10 @@
                         "value": "[variables('apiAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('sharedBackEndAppServicePlan')]"
+                        "value": "[parameters('sharedBackEndAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[parameters('SharedAppServicePlanResourceGroup')]"
+                        "value": "[parameters('SharedEnvResourceGroup')]"
                     },
                     "subnetResourceId": {
                         "value": "[parameters('sharedBackEndSubnetResourceId')]"
@@ -295,8 +315,9 @@
             ]
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-06-01",
             "name": "storage-account",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -313,6 +334,10 @@
         }
     ],
     "outputs": {
+        "ResourceGroupName": {
+            "type": "string",
+            "value": "[variables('resourceGroupName')]"
+        },
         "UiAppServiceName": {
             "type": "string",
             "value": "[variables('uiAppServiceName')]"
