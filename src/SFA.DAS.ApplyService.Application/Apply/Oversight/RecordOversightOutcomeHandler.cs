@@ -54,7 +54,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             _auditService.StartTracking(UserAction.RecordOversightOutcome, request.UserId, request.UserName);
             _auditService.AuditInsert(oversightReview);
             _auditService.AuditUpdate(application);
-            
+
             await _oversightReviewRepository.Add(oversightReview);
 
             if (request.OversightStatus != OversightReviewStatus.InProgress)

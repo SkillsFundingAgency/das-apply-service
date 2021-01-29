@@ -19,17 +19,20 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
         private Mock<IApplyRepository> _applyRepository;
         private Mock<IOversightReviewRepository> _oversightReviewRepository;
         private Mock<IAuditService> _auditService;
+        private Guid _applicationId;
 
         [SetUp]
         public void SetUp()
         {
+            _applicationId = Guid.NewGuid();
             _applyRepository = new Mock<IApplyRepository>();
             _oversightReviewRepository = new Mock<IOversightReviewRepository>();
             _auditService = new Mock<IAuditService>();
 
-            _applyRepository.Setup(x => x.UpdateApplicationStatus(It.IsAny<Guid>(), It.IsAny<string>()))
-                .Returns(Task.CompletedTask);
+            _applyRepository.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(() => new Domain.Entities.Apply
+                { ApplicationId = _applicationId, Status = ApplicationStatus.Submitted });
 
+            _applyRepository.Setup(x => x.UpdateApplication(It.IsAny<Domain.Entities.Apply>())).Returns(Task.CompletedTask);
             _oversightReviewRepository.Setup(x => x.Add(It.IsAny<OversightReview>())).Returns(Task.CompletedTask);
 
             _auditService.Setup(x => x.AuditInsert(It.IsAny<OversightReview>()));
@@ -45,7 +48,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
         {
             var request = new RecordOversightGatewayFailOutcomeCommand
             {
-                ApplicationId = Guid.NewGuid(),
+                ApplicationId = _applicationId,
                 UserId = "test user id",
                 UserName = "test user name"
             };
@@ -64,7 +67,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
         {
             var request = new RecordOversightGatewayFailOutcomeCommand
             {
-                ApplicationId = Guid.NewGuid(),
+                ApplicationId = _applicationId,
                 UserId = "test user id",
                 UserName = "test user name"
             };
@@ -83,15 +86,16 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
         {
             var request = new RecordOversightGatewayFailOutcomeCommand
             {
-                ApplicationId = Guid.NewGuid(),
+                ApplicationId = _applicationId,
                 UserId = "test user id",
                 UserName = "test user name"
             };
 
             await _handler.Handle(request, new CancellationToken());
 
-            _applyRepository.Verify(x => x.UpdateApplicationStatus(It.Is<Guid>(id => id == request.ApplicationId),
-                It.Is<string>(status => status == ApplicationStatus.Rejected)));
+            _applyRepository.Verify(x => x.UpdateApplication(It.Is<Domain.Entities.Apply>(apply =>
+                    apply.ApplicationId == _applicationId && apply.ApplicationStatus == ApplicationStatus.Rejected)),
+                Times.Once);
         }
     }
 }
