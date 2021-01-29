@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Infrastructure.Firewall;
 using System.Text;
+using SFA.DAS.ApplyService.Infrastructure.Exceptions;
 
 namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
 {
@@ -48,6 +49,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
                 using (var response = await _httpClient.GetAsync(new Uri(uri, UriKind.Relative)))
                 {
                     await LogErrorIfUnsuccessfulResponse(response);
+                    ThrowExceptionIfUnsuccessfulResponse(response);
                     return await response.Content.ReadAsAsync<T>();
                 }
             }
@@ -70,7 +72,8 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
             {
                 using (var response = await _httpClient.GetAsync(new Uri(uri, UriKind.Relative)))
                 {
-                    await LogErrorIfUnsuccessfulResponse(response);
+                    await LogErrorIfUnsuccessfulResponse(response); 
+                    ThrowExceptionIfUnsuccessfulResponse(response);
                     return await response.Content.ReadAsStringAsync();
                 }
             }
@@ -94,6 +97,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
                 var response = await _httpClient.GetAsync(new Uri(uri, UriKind.Relative));
 
                 await LogErrorIfUnsuccessfulResponse(response);
+                ThrowExceptionIfUnsuccessfulResponse(response);
                 return response;
             }
             catch (HttpRequestException ex)
@@ -119,6 +123,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
                     new StringContent(serializeObject, Encoding.UTF8, _contentType)))
                 {
                     await LogErrorIfUnsuccessfulResponse(response);
+                    ThrowExceptionIfUnsuccessfulResponse(response);
                     return response.StatusCode;
                 }
             }
@@ -147,6 +152,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
                     new StringContent(serializeObject, Encoding.UTF8, _contentType)))
                 {
                     await LogErrorIfUnsuccessfulResponse(response);
+                    ThrowExceptionIfUnsuccessfulResponse(response);
                     return await response.Content.ReadAsAsync<U>();
                 }
             }
@@ -173,6 +179,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
                     new StringContent(serializeObject, Encoding.UTF8, _contentType)))
                 {
                     await LogErrorIfUnsuccessfulResponse(response);
+                    ThrowExceptionIfUnsuccessfulResponse(response);
                     return response.StatusCode;
                 }
             }
@@ -201,6 +208,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
                     new StringContent(serializeObject, Encoding.UTF8, _contentType)))
                 {
                     await LogErrorIfUnsuccessfulResponse(response);
+                    ThrowExceptionIfUnsuccessfulResponse(response);
                     return await response.Content.ReadAsAsync<U>();
                 }
             }
@@ -224,6 +232,16 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
                 var message = TryParseJson<ApiError>(responseContent, out var apiError) ? apiError?.Message : responseContent;
 
                 _logger.LogError($"HTTP {statusCode} {reasonPhrase} || {httpMethod}: {requestUri} || Message: {message}");
+            }
+        }
+
+        private void ThrowExceptionIfUnsuccessfulResponse(HttpResponseMessage response)
+        {
+            if (response?.RequestMessage != null && !response.IsSuccessStatusCode)
+            {
+                var httpMethod = response.RequestMessage.Method.ToString();
+                var requestUri = response.RequestMessage.RequestUri;
+                throw new ApiClientException(response, $"Error when processing response: {httpMethod} - {requestUri}");
             }
         }
 

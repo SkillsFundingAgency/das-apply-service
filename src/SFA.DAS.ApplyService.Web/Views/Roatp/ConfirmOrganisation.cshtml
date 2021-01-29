@@ -8,7 +8,7 @@
 <partial name="~/Views/Roatp/PreambleHeader.cshtml" />
 
 @*
-<form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm">
+<form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm" novalidate>
     <input type="hidden" asp-for="UKPRN" />
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
 </form>
@@ -116,7 +116,7 @@
                     </div>
                 </details>
 
-                <form method="get" asp-action="VerifyOrganisationDetails" asp-controller="RoatpApplicationPreamble">
+                <form method="get" asp-action="VerifyOrganisationDetails" asp-controller="RoatpApplicationPreamble" novalidate>
                     <input type="submit" class="govuk-button" value="Confirm and continue" />
                 </form>
             </div>

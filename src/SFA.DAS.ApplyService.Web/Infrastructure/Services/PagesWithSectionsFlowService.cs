@@ -23,10 +23,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
 
         private string AssociatedPagesWithSectionStatus(Page page, QnAData selectedSectionQnAData, bool isFirstPage)
         {
-            if (isFirstPage && page.Complete != true) return "";
-            if (page.Next.All(x => x.Action != "NextPage")) return TaskListSectionStatus.Completed;
+            if (isFirstPage && !page.Complete) return "";
+            if (page.Next.All(x => x.Action != NextAction.NextPage)) return TaskListSectionStatus.Completed;
 
-            foreach (var nxt in page.Next.Where(x => x.Action == "NextPage"))
+            foreach (var nxt in page.Next.Where(x => x.Action == NextAction.NextPage))
             {
                 var pageId = nxt.ReturnId;
 

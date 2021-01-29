@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.Application.Apply.Gateway.Applications;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
+using SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -16,6 +17,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public GatewayReviewController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet("GatewayReview/Counts")]
+        public async Task<GetGatewayApplicationCountsResponse> GetApplicationCounts()
+        {
+            var applicationCounts = await _mediator.Send(new GetGatewayApplicationCountsRequest());
+            return applicationCounts;
         }
 
         [HttpGet("GatewayReview/NewApplications")]
@@ -45,21 +53,37 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             await _mediator.Send(new EvaluateGatewayRequest(applicationId, request.IsGatewayApproved, request.EvaluatedBy));
         }
 
-        [HttpPost("GatewayReview/{applicationId}/StartReview")]
-        public async Task StartGatewayReview(Guid applicationId, [FromBody] StartGatewayReviewApplicationRequest request)
+        [HttpPost("GatewayReview/{applicationId}/Withdraw")]
+        public async Task<bool> WithdrawApplication(Guid applicationId, [FromBody] GatewayWithdrawApplicationRequest request)
         {
-            await _mediator.Send(new StartGatewayReviewRequest(applicationId, request.Reviewer));
+            return await _mediator.Send(new WithdrawApplicationRequest(applicationId, request.Comments, request.UserId, request.UserName));
         }
-    }
 
-    public class StartGatewayReviewApplicationRequest
-    {
-        public string Reviewer { get; set; }
+        [HttpPost("GatewayReview/{applicationId}/Remove")]
+        public async Task<bool> RemoveApplication(Guid applicationId, [FromBody] GatewayRemoveApplicationRequest request)
+        {
+            return await _mediator.Send(new RemoveApplicationRequest(applicationId, request.Comments, request.ExternalComments, request.UserId, request.UserName));
+        }
     }
 
     public class EvaluateGatewayApplicationRequest
     {
         public bool IsGatewayApproved { get; set; }
         public string EvaluatedBy { get; set; }
+    }
+
+    public class GatewayWithdrawApplicationRequest
+    {
+        public string Comments { get; set; }
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+    }
+
+    public class GatewayRemoveApplicationRequest
+    {
+        public string Comments { get; set; }
+        public string ExternalComments { get; set; }
+        public string UserId { get; set; }
+        public string UserName { get; set; }
     }
 }

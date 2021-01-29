@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
-using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Submit
 {
@@ -13,5 +12,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
         public string ProviderRouteName { get; set; }
 
         public ApplyData ApplyData { get; set; }
+        public FinancialData FinancialData { get; set; }
+        public string OrganisationType { get; set; }
+        public string Address { get; set; }
     }
 }

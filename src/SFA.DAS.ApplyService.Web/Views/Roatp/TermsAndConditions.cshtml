@@ -16,7 +16,7 @@
         <div class="govuk-grid-column-two-thirds">
             @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
             {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
@@ -74,7 +74,7 @@
                 Any such changes will apply to your admission to RoATP from the date they come into force irrespective of the date you were admitted.
             </p>
 
-            <form method="post" asp-action="ConfirmTermsAndConditions" asp-controller="RoatpApplicationPreamble">
+            <form method="post" asp-action="ConfirmTermsAndConditions" asp-controller="RoatpApplicationPreamble" novalidate>
                 <div id="TermsConditions" class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ConditionsAccepted">
                     <input type="hidden" asp-for="ApplicationRouteId" />
                     <input type="hidden" asp-for="ApplicationId" />

@@ -1,0 +1,26 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.UkprnSearchResultsViewModel
+
+@{
+    ViewBag.Title = "UKRLP is unavailable";
+    Layout = "_Layout";
+}
+
+<partial name="~/Views/Roatp/PreambleHeader.cshtml" />
+
+@*
+<form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm" novalidate>
+    <input type="hidden" asp-for="UKPRN" />
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
+*@
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">UKRLP is unavailable</h1>
+            <p class="govuk-body">We were unable to get information from UKRLP.</p>
+            <p class="govuk-body">You'll need to sign back in and continue with your application later.</p>
+            <p class="govuk-body"><a href="https://www.gov.uk" class="govuk-link">Back to GOV.UK</a></p>
+        </div>
+    </div>
+</main>

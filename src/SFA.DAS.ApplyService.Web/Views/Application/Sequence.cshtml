@@ -13,7 +13,7 @@
         <div class="govuk-grid-column-two-thirds">
             @if (!ViewData.ModelState.IsValid || Model.ErrorMessages?.Any() is true)
             {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
@@ -69,7 +69,7 @@
 
                 @if (Model.Status != ApplicationSequenceStatus.Submitted)
                 {
-                    <form asp-action="Submit" asp-controller="Application">
+                    <form asp-action="Submit" asp-controller="Application" novalidate>
                         <input type="hidden" asp-for="ApplicationId" />
                         <input type="hidden" asp-for="SequenceId" />
                         <div class="govuk-form-group">

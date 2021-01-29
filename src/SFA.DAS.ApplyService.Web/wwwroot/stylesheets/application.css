@@ -81,7 +81,7 @@
 }
 
 .app-check-your-answers {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -597,7 +597,7 @@
 
 .ui-autocomplete .ui-menu-item {
   cursor: pointer;
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.25;
   font-weight: 300;
@@ -706,7 +706,7 @@
 
 .app-navigation {
   border-bottom: 1px solid #bfc1c3;
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 700;
@@ -831,7 +831,7 @@
 }
 
 .roatp__navigation-item {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 14px;
@@ -880,7 +880,7 @@
 }
 
 .govuk-details--get-help .govuk-details__summary {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -924,7 +924,7 @@
 /* Cookie banner */
 
 .das-cookie-banner {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 14px;
@@ -1038,7 +1038,7 @@
 }
 
 .das-cookie-banner__hide-button {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 16px;
@@ -1131,7 +1131,7 @@
 }
 
 .das-notice__title {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 700;
@@ -1172,7 +1172,7 @@
 }
 
 .das-notice__description {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -1216,7 +1216,7 @@
 }
 
 .cookie-settings__confirmation {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -1244,4 +1244,9 @@
     font-size: 14pt;
     line-height: 1.15;
   }
+}
+
+.das-body--hint,
+.das-list--hint {
+  color: #6f777b;
 }

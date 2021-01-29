@@ -36,16 +36,16 @@ else
             <div id="gethelp_content">
                 <p class="govuk-body">Do not include any personal or financial information.</p>
                
-                <form method="post" asp-controller="GetHelp" asp-action="Index">
-                    <input type="hidden" asp-for="ApplicationId" />
-                    <input type="hidden" asp-for="SequenceId" />
-                    <input type="hidden" asp-for="SectionId" />
-                    <input type="hidden" asp-for="PageId" />
-                    <input type="hidden" asp-for="Title" />
+                <form method="post" asp-controller="GetHelp" asp-action="Index" novalidate>
+                    <input type="hidden" asp-for="ApplicationId" id="@($"help_ApplicationId")" />
+                    <input type="hidden" asp-for="SequenceId" id="@($"help_SequenceId")" />
+                    <input type="hidden" asp-for="SectionId" id="@($"help_SectionId")" />
+                    <input type="hidden" asp-for="PageId" id="@($"help_PageId")" />
+                    <input type="hidden" asp-for="Title" id="@($"help_Title")" />
                     <input type="hidden" id="controller" name="controller" value="@controllerName" />
                     <input type="hidden" id="action" name="action" value="@actionName" />
 
-                    <div class="govuk-character-count" data-module="character-count" data-maxlength="250">
+                    <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="250">
                         <div class="govuk-form-group">
                             <label class="govuk-label" for="gethelp">
                                 What do you need help with?

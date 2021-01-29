@@ -173,10 +173,15 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         }
 
 
-        public async Task<Answer> GetAnswer(Guid applicationId, Guid sectionId, string pageId, string questionId)
+        public async Task<Answer> GetAnswer(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
         {
-            var pageContainingQuestion = await GetPage(applicationId, sectionId, pageId);
+            var pageContainingQuestion = await GetPageBySectionNo(applicationId, sequenceNo, sectionNo, pageId);
 
+            return GetAnswer(pageContainingQuestion, questionId);
+        }
+
+        public Answer GetAnswer(Page pageContainingQuestion, string questionId)
+        {
             if (pageContainingQuestion?.Questions != null)
             {
                 foreach (var question in pageContainingQuestion.Questions)
@@ -219,6 +224,21 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             var json = await response.Content.ReadAsStringAsync();
 
+            return HandleUpdatePageAnswersResponse(applicationId, pageId, response, json);
+        }
+
+        public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, int sequenceNo, int sectionNo, string pageId, List<Answer> answers)
+        {
+            // NOTE: This should be called SetPageAnswers, but leaving alone for now
+            var response = await _httpClient.PostAsJsonAsync($"/Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}", answers);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            return HandleUpdatePageAnswersResponse(applicationId, pageId, response, json);
+        }
+
+        private SetPageAnswersResponse HandleUpdatePageAnswersResponse(Guid applicationId, string pageId, HttpResponseMessage response, string json)
+        {
             if (response.IsSuccessStatusCode)
             {
                 return JsonConvert.DeserializeObject<SetPageAnswersResponse>(json);
@@ -228,7 +248,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 var apiError = GetApiErrorFromJson(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
-                _logger.LogError($"Error Updating Page Answers into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
+                _logger.LogError(
+                    $"Error Updating Page Answers into QnA. Application: {applicationId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
 
                 var validationErrorMessage = "Cannot save answers at this time. Please contact your system administrator.";
 
@@ -239,8 +260,23 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 }
 
                 var validationError = new KeyValuePair<string, string>(string.Empty, validationErrorMessage);
-                return new SetPageAnswersResponse { ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> { validationError } };
+                return new SetPageAnswersResponse
+                    {ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> {validationError}};
             }
+        }
+
+        public async Task<bool> CanUpdatePage(Guid applicationId, Guid sectionId, string pageId)
+        {
+            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/canupdate");
+
+            return await response.Content.ReadAsAsync<bool>();
+        }
+
+        public async Task<bool> CanUpdatePageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
+        {
+            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/canupdate");
+
+            return await response.Content.ReadAsAsync<bool>();
         }
 
         public async Task<ResetPageAnswersResponse> ResetPageAnswers(Guid applicationId, Guid sectionId, string pageId)
@@ -267,13 +303,39 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
-        public async Task<AddPageAnswerResponse> AddPageAnswerToMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer)
+        public async Task<ResetPageAnswersResponse> ResetPageAnswersBySequenceAndSectionNumber(Guid applicationId, int sequenceNo,
+            int sectionNo, string pageId)
+        {
+            var response = await _httpClient.PostAsJsonAsync(
+                $"/Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/reset",
+                new { });
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<ResetPageAnswersResponse>(json);
+            }
+            else
+            {
+                var apiError = GetApiErrorFromJson(json);
+                var apiErrorMessage = apiError?.Message ?? json;
+                var errorMessage =
+                    $"Error Resetting Page Answers into QnA. Application: {applicationId} | SequenceNo: {sequenceNo}| SectionNo: {sectionNo} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}";
+
+                _logger.LogError(errorMessage);
+
+                return new ResetPageAnswersResponse {ValidationPassed = false, ValidationErrors = null};
+            }
+        }
+
+        public Task<AddPageAnswerResponse> AddPageAnswerToMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer)
         {
             // Not used. May need in future. See how EPAO Assessor Service does it
             throw new NotImplementedException();
         }
 
-        public async Task<Page> RemovePageAnswerFromMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, Guid answerId)
+        public Task<Page> RemovePageAnswerFromMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, Guid answerId)
         {
             // Not used. May need in future. See how EPAO Assessor Service does it
             throw new NotImplementedException();

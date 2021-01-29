@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
     <PropertyGroup>
+        <ProjectGuid>{1F7E8D8A-E6AE-40EB-AB77-52176FD6FFC4}</ProjectGuid>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <OutputType>Library</OutputType>
     </PropertyGroup>
@@ -27,7 +28,7 @@
         <PackageReference Include="NUnit3TestAdapter">
             <Version>3.10.0</Version>
         </PackageReference>
-        <PackageReference Include="SFA.DAS.QnA.Api.Views" Version="0.2.188" />
+        <PackageReference Include="SFA.DAS.QnA.Api.Views" Version="0.2.218" />
     </ItemGroup>
 
     <ItemGroup>

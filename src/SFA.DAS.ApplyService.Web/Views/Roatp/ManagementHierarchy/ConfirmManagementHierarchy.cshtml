@@ -21,13 +21,14 @@
         </div>
     </div>
 
-    <table class="govuk-table">
-
+    <table class="govuk-table govuk-!-margin-bottom-3">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 @foreach (var title in Model.ManagementHierarchyData.HeadingTitles.Take(numberOfTitles))
                 {
-                    <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
+                    <th class="govuk-table__header" scope="col">
+                        @title
+                    </th>
                 }
                 <th class="govuk-table__header" scope="col"></th>
                 <th class="govuk-table__header" scope="col"></th>
@@ -42,20 +43,21 @@
                         <td class="govuk-table__cell">@column</td>
                     }
                     <td class="govuk-table__cell govuk-table__cell--numeric">
-                        <a class="govuk-link govuk-link--no-visited-state" asp-action="EditManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Change<span class="govuk-visually-hidden"> management hierarchy</span></a>
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="EditManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Change<span class="govuk-visually-hidden"> @Model.ManagementHierarchyData.DataRows[index].Columns[0]</span></a>
                     </td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">
-                        <a class="govuk-link govuk-link--no-visited-state" asp-action="RemoveManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Remove<span class="govuk-visually-hidden"> management hierarchy</span></a>
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="RemoveManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Remove<span class="govuk-visually-hidden"> @Model.ManagementHierarchyData.DataRows[index].Columns[0]</span></a>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+    
     @if (Model.ManagementHierarchyData.DataRows.Count < ConfirmPartnersViewModel.MaximumNumberOfPartners)
     {
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <p class="govuk-body">
+                <p class="govuk-body govuk-!-margin-bottom-8">
                     <a class="govuk-link" asp-action="AddManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId">Add another person</a>
                 </p>
             </div>
@@ -64,7 +66,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="post" asp-action="CompleteManagementHierarchySection">
+            <form method="post" asp-action="CompleteManagementHierarchySection" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="GetHelpAction" />
 

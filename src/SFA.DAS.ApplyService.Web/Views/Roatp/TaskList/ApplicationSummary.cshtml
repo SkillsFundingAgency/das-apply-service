@@ -1,0 +1,58 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Application overview</h1>
+        <dl class="govuk-summary-list govuk-summary-list--min-width-550 govuk-!-margin-bottom-9">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key das-no-wrap">
+                    Organisation name
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.OrganisationName
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Model.TradingName))
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key das-no-wrap">
+                        Trading name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.TradingName
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+            }
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key das-no-wrap">
+                    UKPRN
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.UKPRN
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" asp-action="ChangeUkprn" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">
+                        Change<span class="govuk-visually-hidden"> UKPRN</span>
+                    </a>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Provider route
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.ApplicationRouteShortText
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" asp-action="ConfirmChangeRoute" asp-controller="RoatpApplicationPreamble" asp-route-applicationId="@Model.ApplicationId">
+                        Change<span class="govuk-visually-hidden"> provider route</span>
+                    </a>
+                </dd>
+            </div>
+        </dl>
+    </div>
+</div>

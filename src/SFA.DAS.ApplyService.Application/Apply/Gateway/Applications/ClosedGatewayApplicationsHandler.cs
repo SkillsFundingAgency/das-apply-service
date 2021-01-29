@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
 {
-    public class ClosedGatewayApplicationsHandler : IRequestHandler<ClosedGatewayApplicationsRequest, List<RoatpApplicationSummaryItem>>
+    public class ClosedGatewayApplicationsHandler : IRequestHandler<ClosedGatewayApplicationsRequest, List<RoatpGatewaySummaryItem>>
     {
         private readonly IApplyRepository _repository;
 
@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
             _repository = repository;
         }
 
-        public async Task<List<RoatpApplicationSummaryItem>> Handle(ClosedGatewayApplicationsRequest request, CancellationToken cancellationToken)
+        public async Task<List<RoatpGatewaySummaryItem>> Handle(ClosedGatewayApplicationsRequest request, CancellationToken cancellationToken)
         {
             return await _repository.GetClosedGatewayApplications();
         }

@@ -17,7 +17,13 @@
         "sharedFrontEndAppServicePlan": {
             "type": "string"
         },
+        "sharedFrontEndSubnetResourceId": {
+            "type": "string"
+        },
         "sharedBackEndAppServicePlan": {
+            "type": "string"
+        },
+        "sharedBackEndSubnetResourceId": {
             "type": "string"
         },
         "configurationStorageConnectionString": {
@@ -155,7 +161,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'app-service.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-v2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -168,30 +174,37 @@
                     "appServicePlanResourceGroup": {
                         "value": "[parameters('sharedAppServicePlanResourceGroup')]"
                     },
+                    "subnetResourceId": {
+                        "value": "[parameters('sharedFrontEndSubnetResourceId')]"
+                    },
                     "appServiceAppSettings": {
-                        "value": [
-                            {
-                                "name": "ConfigurationStorageConnectionString",
-                                "value": "[parameters('configurationStorageConnectionString')]"
-                            },
-                            {
-                                "name": "EnvironmentName",
-                                "value": "[parameters('environmentName')]"
-                            },
-                            {
-                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference('ui-app-insights').outputs.InstrumentationKey.value]"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "ConfigurationStorageConnectionString",
+                                    "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                    "name": "EnvironmentName",
+                                    "value": "[parameters('environmentName')]"
+                                },
+                                {
+                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                    "value": "[reference('ui-app-insights').outputs.InstrumentationKey.value]"
+                                }
+                            ]
+                        }
                     },
                     "appServiceConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "Redis",
+                                    "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                    "type": "Custom"
+                                }
+                            ]
+                        }
                     },
                     "customHostName": {
                         "value": "[parameters('uiCustomHostname')]"
@@ -216,7 +229,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'app-service.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-v2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -229,34 +242,41 @@
                     "appServicePlanResourceGroup": {
                         "value": "[parameters('SharedAppServicePlanResourceGroup')]"
                     },
+                    "subnetResourceId": {
+                        "value": "[parameters('sharedBackEndSubnetResourceId')]"
+                    },
                     "appServiceAppSettings": {
-                        "value": [
-                            {
-                                "name": "ConfigurationStorageConnectionString",
-                                "value": "[parameters('configurationStorageConnectionString')]"
-                            },
-                            {
-                                "name": "EnvironmentName",
-                                "value": "[parameters('environmentName')]"
-                            },
-                            {
-                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference('api-app-insights').outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "FileStorage:StorageConnectionString",
-                                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "ConfigurationStorageConnectionString",
+                                    "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                    "name": "EnvironmentName",
+                                    "value": "[parameters('environmentName')]"
+                                },
+                                {
+                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                    "value": "[reference('api-app-insights').outputs.InstrumentationKey.value]"
+                                },
+                                {
+                                    "name": "FileStorage:StorageConnectionString",
+                                    "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                                }
+                            ]
+                        }
                     },
                     "appServiceConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "Redis",
+                                    "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                    "type": "Custom"
+                                }
+                            ]
+                        }
                     },
                     "customHostName": {
                         "value": "[parameters('apiCustomHostname')]"

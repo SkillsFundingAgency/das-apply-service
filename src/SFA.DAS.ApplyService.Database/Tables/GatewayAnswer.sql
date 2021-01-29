@@ -4,9 +4,11 @@
 	[PageId] [nvarchar](50) NOT NULL,
 	[Status] [nvarchar](20) NULL,
 	Comments NVARCHAR(MAX) NULL,
+	ClarificationComments NVARCHAR(MAX) NULL,
+	ClarificationDate Datetime2 null,
+	ClarificationBy NVARCHAR(256) null,
+	ClarificationAnswer NVARCHAR(MAX) NULL,
 	[GatewayPageData] nvarchar(max) NULL,
-	[CreatedAt] DATETIME2 NOT NULL, 
-    [CreatedBy] NVARCHAR(256) NOT NULL, 
     [UpdatedAt] DATETIME2 NULL, 
     [UpdatedBy] NVARCHAR(256) NULL, 
  CONSTRAINT [PK_GatewayStatus] PRIMARY KEY CLUSTERED 
@@ -17,9 +19,6 @@
 GO
 
 ALTER TABLE [dbo].GatewayAnswer ADD  DEFAULT (newid()) FOR [Id]
-GO
-
-ALTER TABLE [dbo].GatewayAnswer ADD  DEFAULT (getdate()) FOR [CreatedAt]
 GO
 
 CREATE UNIQUE INDEX GatewayAnswer_pk

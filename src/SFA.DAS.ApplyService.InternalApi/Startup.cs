@@ -19,16 +19,18 @@ using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
 using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
+using SFA.DAS.ApplyService.Data.Queries;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using SFA.DAS.ApplyService.InternalApi.Services.Moderator;
 using CharityCommissionApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CharityCommissionApiClient;
 using CompaniesHouseApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CompaniesHouseApiClient;
 using IQnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.IQnaTokenService;
@@ -43,6 +45,8 @@ namespace SFA.DAS.ApplyService.InternalApi
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Services;
+    using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
+    using SFA.DAS.ApplyService.InternalApi.Services.Files;
     using Swashbuckle.AspNetCore.Swagger;
     using System.IO;
 
@@ -132,7 +136,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.ApplyService.InternalApi", Version = "v1" });
-
+                c.CustomSchemaIds(x => x.FullName); // Fixes issue when the same type name appears twice
                 if (_env.IsDevelopment())
                 {
                     var basePath = AppContext.BaseDirectory;
@@ -185,14 +189,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             var acceptHeaderValue = "application/json";
             var handlerLifeTime = TimeSpan.FromMinutes(5);
 
-            services.AddHttpClient<AssessorServiceApiClient, AssessorServiceApiClient>(config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.AssessorServiceApiAuthentication.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
-            })
-            .SetHandlerLifetime(handlerLifeTime)
-            .AddPolicyHandler(GetRetryPolicy());
-
             services.AddHttpClient<ProviderRegisterApiClient, ProviderRegisterApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.ProviderRegisterApiAuthentication.ApiBaseAddress);
@@ -235,9 +231,7 @@ namespace SFA.DAS.ApplyService.InternalApi
         }
 
         private void ConfigureDependencyInjection(IServiceCollection services)
-        {
-            ServiceCollectionExtensions.RegisterAllTypes<IValidator>(services, new[] { typeof(IValidator).Assembly });
-            
+        {            
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
                 
             services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
@@ -246,13 +240,16 @@ namespace SFA.DAS.ApplyService.InternalApi
                  _configuration["ConfigurationStorageConnectionString"],
                  _version,
                  _serviceName));
-
-            services.AddTransient<IValidatorFactory, ValidatorFactory>();
             
             services.AddTransient<IContactRepository, ContactRepository>();
             services.AddTransient<IApplyRepository, ApplyRepository>();
+            services.AddTransient<IAssessorRepository, AssessorRepository>();
             services.AddTransient<IOrganisationRepository, OrganisationRepository>();
+            services.AddTransient<IModeratorRepository, ModeratorRepository>();
+            services.AddTransient<IClarificationRepository, ClarificationRepository>();
             services.AddTransient<IDfeSignInService, DfeSignInService>();
+            services.AddTransient<IOversightReviewRepository, OversightReviewRepository>();
+            services.AddTransient<IOversightReviewQueries, OversightReviewQueries>();
             
             services.AddTransient<IEmailService, EmailService.EmailService>();
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
@@ -266,6 +263,22 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();
             services.AddTransient<IGatewayApiChecksService, GatewayApiChecksService>();
             services.AddTransient<ICriminalComplianceChecksQuestionLookupService, CriminalComplianceChecksQuestionLookupService>();
+            services.AddTransient<IRegistrationDetailsService, RegistrationDetailsService>();
+            services.AddTransient<IAssessorLookupService, AssessorLookupService>();
+            services.AddTransient<IExtractAnswerValueService, ExtractAnswerValueService>();
+            services.AddTransient<IAssessorSequenceService, AssessorSequenceService>();
+            services.AddTransient<IAssessorPageService, AssessorPageService>();
+            services.AddTransient<IAssessorSectorService, AssessorSectorService>();
+            services.AddTransient<IAssessorSectorDetailsService, AssessorSectorDetailsService>();
+            services.AddTransient<IAssessorReviewCreationService, AssessorReviewCreationService>();
+            services.AddTransient<IModeratorReviewCreationService, ModeratorReviewCreationService>();
+
+            services.AddTransient<IDiffService, DiffService>();
+            services.AddTransient<IStateService, StateService>();
+            services.AddTransient<IAuditService, AuditService>();
+
+            services.AddTransient<IFileEncryptionService, FileEncryptionService>();
+            services.AddTransient<IFileStorageService, FileStorageService>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }

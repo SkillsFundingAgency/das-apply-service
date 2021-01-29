@@ -2,7 +2,7 @@
 @model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ExistingAccountViewModel
 
 @{
-    ViewBag.Title = "Is this your first time using the apprenticeship service (AS) sign in?";
+    ViewBag.Title = "Do you have an apprenticeship service (AS) sign in account?";
     var showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 }
 
@@ -12,7 +12,7 @@
         <div class="govuk-grid-column-two-thirds">
             @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
             {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
@@ -27,7 +27,7 @@
                 </div>
             }
 
-            <h1 class="govuk-heading-xl">Is this your first time using the apprenticeship service (AS) sign in?</h1>
+            <h1 class="govuk-heading-xl">Do you have an apprenticeship service (AS) sign in account?</h1>
 
         </div>
     </div>
@@ -35,7 +35,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="post" asp-action="ConfirmExistingAccount">
+            <form method="post" asp-action="ConfirmExistingAccount" novalidate>
 
                 <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="FirstTimeSignin">
                     @if (showErrors)
@@ -49,25 +49,22 @@
                         <div class="govuk-radios">
 
                             <div class="govuk-radios__item">
-
-                                <input asp-for="FirstTimeSignin" class="govuk-radios__input" id="FirstTimeSignin-Yes"
-                                       name="FirstTimeSignin" type="radio" value="Y"
+                                <input asp-for="FirstTimeSignin" class="govuk-radios__input" id="FirstTimeSignin-No"
+                                       name="FirstTimeSignin" type="radio" value="N"
                                        sfa-validation-for="FirstTimeSignin" sfa-validationerror-class="form-control-error">
-                                <label class="govuk-label govuk-radios__label" for="FirstTimeSignin-Yes">
+                                <label class="govuk-label govuk-radios__label" for="FirstTimeSignin-No">
                                     Yes
                                 </label>
 
                             </div>
 
                             <div class="govuk-radios__item">
-
-                                <input asp-for="FirstTimeSignin" class="govuk-radios__input" id="FirstTimeSignin-No"
-                                       name="FirstTimeSignin" type="radio" value="N"
+                                <input asp-for="FirstTimeSignin" class="govuk-radios__input" id="FirstTimeSignin-Yes"
+                                       name="FirstTimeSignin" type="radio" value="Y"
                                        sfa-validation-for="FirstTimeSignin" sfa-validationerror-class="form-control-error">
-                                <label class="govuk-label govuk-radios__label" for="FirstTimeSignin-No">
-                                    No - I've used it before
+                                <label class="govuk-label govuk-radios__label" for="FirstTimeSignin-Yes">
+                                    No - I need to create one
                                 </label>
-
                             </div>
 
                         </div>

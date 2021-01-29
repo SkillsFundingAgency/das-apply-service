@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -18,15 +17,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             _sessionService = sessionService;
         }
-        
-        [Route("not-accept-terms-conditions")]
-        public async Task<IActionResult> TermsAndConditionsNotAgreed(ConditionsOfAcceptanceViewModel model)
+
+        [Route("two-unsuccessful-applications-within-twelve-months")]
+        public IActionResult TwoApplicationsWithinTwelveMonths()
         {
-            return View("~/Views/Roatp/TermsAndConditionsNotAgreed.cshtml", model);
+            return View("~/Views/Roatp/ShutterPages/TwoApplicationsWithinTwelveMonths.cshtml");
+        }
+
+        [Route("not-accepted-terms-and-conditions")]
+        public IActionResult TermsAndConditionsNotAgreed(ConditionsOfAcceptanceViewModel model)
+        {
+            return View("~/Views/Roatp/ShutterPages/TermsAndConditionsNotAgreed.cshtml", model);
         }
 
         [Route("uk-provider-reference-number-not-found")]
-        public async Task<IActionResult> UkprnNotFound()
+        public IActionResult UkprnNotFound()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
 
@@ -35,11 +40,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
-            return View("~/Views/Roatp/UkprnNotFound.cshtml", viewModel);
+            return View("~/Views/Roatp/ShutterPages/UkprnNotFound.cshtml", viewModel);
         }
 
         [Route("company-not-found")]
-        public async Task<IActionResult> CompanyNotFound()
+        public IActionResult CompanyNotFound()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
 
@@ -49,11 +54,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ProviderDetails = applicationDetails.UkrlpLookupDetails
             };
 
-            return View("~/Views/Roatp/CompanyNotFound.cshtml", viewModel);
+            return View("~/Views/Roatp/ShutterPages/CompanyNotFound.cshtml", viewModel);
         }
 
         [Route("charity-not-found")]
-        public async Task<IActionResult> CharityNotFound()
+        public IActionResult CharityNotFound()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
 
@@ -63,43 +68,43 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ProviderDetails = applicationDetails.UkrlpLookupDetails
             };
 
-            return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
+            return View("~/Views/Roatp/ShutterPages/CharityNotFound.cshtml", viewModel);
         }
 
         [Route("chosen-not-apply-roatp")]
-        public async Task<IActionResult> NonLevyAbandonedApplication()
+        public IActionResult NonLevyAbandonedApplication()
         {
-            return View("~/Views/Roatp/NonLevyAbandonedApplication.cshtml");
+            return View("~/Views/Roatp/ShutterPages/NonLevyAbandonedApplication.cshtml");
         }
 
         [Route("ukrlp-unavailable")]
-        public async Task<IActionResult> UkrlpNotAvailable()
+        public IActionResult UkrlpNotAvailable()
         {
-            return View("~/Views/Roatp/UkrlpNotAvailable.cshtml");
+            return View("~/Views/Roatp/ShutterPages/UkrlpNotAvailable.cshtml");
         }
 
         [Route("companies-house-unavailable")]
-        public async Task<IActionResult> CompaniesHouseNotAvailable()
+        public IActionResult CompaniesHouseNotAvailable()
         {
-            return View("~/Views/Roatp/CompaniesHouseNotAvailable.cshtml");
+            return View("~/Views/Roatp/ShutterPages/CompaniesHouseNotAvailable.cshtml");
         }
 
         [Route("charity-commission-unavailable")]
-        public async Task<IActionResult> CharityCommissionNotAvailable()
+        public IActionResult CharityCommissionNotAvailable()
         {
-            return View("~/Views/Roatp/CharityCommissionNotAvailable.cshtml");
+            return View("~/Views/Roatp/ShutterPages/CharityCommissionNotAvailable.cshtml");
         }
 
         [Route("application-in-progress")]
-        public async Task<IActionResult> ApplicationInProgress(ExistingApplicationViewModel model)
+        public IActionResult ApplicationInProgress(ExistingApplicationViewModel model)
         {
-            return View("~/Views/Roatp/ApplicationInProgress.cshtml", model);
+            return View("~/Views/Roatp/ShutterPages/ApplicationInProgress.cshtml", model);
         }
 
         [Route("application-submitted")]
-        public async Task<IActionResult> ApplicationPreviouslySubmitted(ExistingApplicationViewModel model)
+        public IActionResult ApplicationPreviouslySubmitted(ExistingApplicationViewModel model)
         {
-            return View("~/Views/Roatp/ApplicationPreviouslySubmitted.cshtml", model);
+            return View("~/Views/Roatp/ShutterPages/ApplicationPreviouslySubmitted.cshtml", model);
         }
     }
 }

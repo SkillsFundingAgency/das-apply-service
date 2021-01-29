@@ -9,12 +9,13 @@
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Ukrlp;
     using SFA.DAS.ApplyService.Infrastructure.ApiClients;
+    using System;
 
     public class RoatpApiClient : ApiClientBase<RoatpApiClient>, IRoatpApiClient
     {
         public RoatpApiClient(HttpClient httpClient, ILogger<RoatpApiClient> logger, IRoatpTokenService tokenService) : base(httpClient, logger)
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken(httpClient.BaseAddress));
         }
 
         public async virtual Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn)
@@ -36,6 +37,11 @@
             _logger.LogInformation($"Retrieving UKRLP details for {ukprn}");
 
             return await Get<UkprnLookupResponse>($"/api/v1/ukrlp/lookup/{ukprn}");
+        }
+
+        public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int? providerTypeId)
+        {
+            return await Get<List<OrganisationType>>($"/api/v1/lookupData/organisationTypes?providerTypeId={providerTypeId}");
         }
     }
 }

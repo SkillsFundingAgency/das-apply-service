@@ -28,6 +28,7 @@ using SFA.DAS.ApplyService.Web;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Infrastructure.Services;
+using SFA.DAS.ApplyService.Web.Orchestrators;
 using StructureMap;
 using StackExchange.Redis;
 
@@ -83,6 +84,7 @@ namespace SFA.DAS.ApplyService.Web
             });
             
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateAccountValidator>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddOptions();
@@ -189,14 +191,6 @@ namespace SFA.DAS.ApplyService.Web
             .SetHandlerLifetime(handlerLifeTime)
             .AddPolicyHandler(GetRetryPolicy());
 
-            services.AddHttpClient<OrganisationSearchApiClient, OrganisationSearchApiClient>(config =>
-            {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
-            })
-            .SetHandlerLifetime(handlerLifeTime)
-            .AddPolicyHandler(GetRetryPolicy());
-
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.Uri);
@@ -232,8 +226,6 @@ namespace SFA.DAS.ApplyService.Web
 
         private void ConfigureDependencyInjection(IServiceCollection services)
         {
-            services.RegisterAllTypes<IValidator>(new[] { typeof(IValidator).Assembly });
-
             services.AddTransient<ITokenService, TokenService>();
 
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
@@ -255,6 +247,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IQnaApiClient, QnaApiClient>();
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
+            services.AddTransient<IResetRouteQuestionsService, ResetRouteQuestionsService>();
             services.AddTransient<IPagesWithSectionsFlowService, PagesWithSectionsFlowService>();
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
             services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
@@ -283,6 +276,10 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<ITabularDataService, TabularDataService>();
             services.AddTransient<ITabularDataRepository, TabularDataRepository>();
             services.AddTransient<IUkprnWhitelistValidator, UkprnWhitelistValidator>();
+            services.AddTransient<IRoatpTaskListWorkflowService, RoatpTaskListWorkflowService>();
+            services.AddTransient<IRoatpOrganisationVerificationService, RoatpOrganisationVerificationService>();
+            services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
+            services.AddTransient<ITaskListOrchestrator, TaskListOrchestrator>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

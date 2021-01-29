@@ -30,7 +30,7 @@ else
 }
 
 @*
-<form asp-controller="@backController" asp-action="@backAction" method="get" name="backForm">
+<form asp-controller="@backController" asp-action="@backAction" method="get" name="backForm" novalidate>
     @if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
     {
         <input type="hidden" asp-for="ApplicationId" />
@@ -45,7 +45,7 @@ else
         <div class="govuk-grid-column-two-thirds">
             @if (showErrors)
             {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
@@ -63,7 +63,7 @@ else
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="post" asp-action="@submitAction" asp-controller="RoatpApplicationPreamble">
+            <form method="post" asp-action="@submitAction" asp-controller="RoatpApplicationPreamble" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="SequenceId" />
                 <input type="hidden" asp-for="SectionId" />
