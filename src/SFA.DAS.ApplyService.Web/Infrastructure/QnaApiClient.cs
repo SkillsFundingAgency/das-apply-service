@@ -66,14 +66,14 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<object> GetApplicationData(Guid applicationId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/applicationData");
+            var response = await GetResponse($"Applications/{applicationId}/applicationData");
 
             return await response.Content.ReadAsAsync<object>();
         }
 
         public async Task<string> GetQuestionTag(Guid applicationId, string questionTag)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/applicationData/{questionTag}");
+            var response = await GetResponse($"Applications/{applicationId}/applicationData/{questionTag}");
             
             if (response.IsSuccessStatusCode)
             {
@@ -92,69 +92,48 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/Sequences");
-
-            return await response.Content.ReadAsAsync<IEnumerable<ApplicationSequence>>();
+            return await Get<List<ApplicationSequence>>($"Applications/{applicationId}/Sequences");
         }
 
         public async Task<ApplicationSequence> GetSequence(Guid applicationId, Guid sequenceId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/Sequences/{sequenceId}");
-
-            return await response.Content.ReadAsAsync<ApplicationSequence>();
+            return await Get<ApplicationSequence>($"Applications/{applicationId}/Sequences/{sequenceId}");
         }
 
         public async Task<ApplicationSequence> GetSequenceBySequenceNo(Guid applicationId, int sequenceNo)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/Sequences/{sequenceNo}");
-
-            return await response.Content.ReadAsAsync<ApplicationSequence>();
+            return await Get<ApplicationSequence>($"Applications/{applicationId}/Sequences/{sequenceNo}");
         }
-
 
         public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sections");
-
-            return await response.Content.ReadAsAsync<IEnumerable<ApplicationSection>>();
+            return await Get<List<ApplicationSection>>($"Applications/{applicationId}/sections");
         }
 
         public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, Guid sequenceId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/Sequences/{sequenceId}/sections");
-
-            return await response.Content.ReadAsAsync<IEnumerable<ApplicationSection>>();
+            return await Get<List<ApplicationSection>>($"Applications/{applicationId}/Sequences/{sequenceId}/sections");
         }
 
         public async Task<ApplicationSection> GetSection(Guid applicationId, Guid sectionId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sections/{sectionId}");
-
-            return await response.Content.ReadAsAsync<ApplicationSection>();
+            return await Get<ApplicationSection>($"Applications/{applicationId}/sections/{sectionId}");
         }
 
         public async Task<ApplicationSection> GetSectionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}");
-
-            return await response.Content.ReadAsAsync<ApplicationSection>();
+            return await Get<ApplicationSection>($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}");
         }
-
 
         public async Task<Page> GetPage(Guid applicationId, Guid sectionId, string pageId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sections/{sectionId}/pages/{pageId}");
-
-            return await response.Content.ReadAsAsync<Page>();
+            return await Get<Page>($"Applications/{applicationId}/sections/{sectionId}/pages/{pageId}");
         }
 
         public async Task<Page> GetPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}");
-
-            return await response.Content.ReadAsAsync<Page>();
+            return await Get<Page>($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}");
         }
-
 
         public async Task<Answer> GetAnswer(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
         {
@@ -244,21 +223,16 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<bool> CanUpdatePage(Guid applicationId, Guid sectionId, string pageId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/canupdate");
-
-            return await response.Content.ReadAsAsync<bool>();
+            return await Get<bool>($"Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/canupdate");
         }
 
         public async Task<bool> CanUpdatePageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/canupdate");
-
-            return await response.Content.ReadAsAsync<bool>();
+            return await Get<bool>($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/canupdate");
         }
 
         public async Task<ResetPageAnswersResponse> ResetPageAnswers(Guid applicationId, Guid sectionId, string pageId)
         {
-
             var response = await _httpClient.PostAsJsonAsync($"/Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/reset", new{});
 
             var json = await response.Content.ReadAsStringAsync();
