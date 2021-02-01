@@ -14,44 +14,27 @@ using Polly;
 using Polly.Extensions.Http;
 using Polly.Retry;
 using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.Infrastructure.Firewall;
 using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class QnaApiClient : IQnaApiClient
+    public class QnaApiClient : ApiClientBase<QnaApiClient>, IQnaApiClient
     {
-        private readonly ILogger<QnaApiClient> _logger;
         private readonly IQnaTokenService _tokenService;
-        private static readonly HttpClient _httpClient = new HttpClient();
         private readonly RetryPolicy<HttpResponseMessage> _retryPolicy;
-        private readonly string _environmentName;
 
-        protected readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
+        public QnaApiClient(HttpClient httpClient, ILogger<QnaApiClient> logger, IQnaTokenService tokenService) : base(httpClient, logger)
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore
-        };
-
-        public QnaApiClient(IConfigurationService configurationService, ILogger<QnaApiClient> logger, IQnaTokenService tokenService)
-        {
-            _logger = logger;
             _tokenService = tokenService;
             _retryPolicy = HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.QnaApiAuthentication.ApiBaseAddress);
-            }
-
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
-            _environmentName = configurationService.GetEnvironmentName();
         }
 
         public async Task<StartQnaApplicationResponse> StartApplication(string userReference, string workflowType, string applicationData)
@@ -253,12 +236,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
                 var validationErrorMessage = "Cannot save answers at this time. Please contact your system administrator.";
 
-                if (!_environmentName.EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    // Show API error message if outside of PROD and PREPROD environments
-                    validationErrorMessage = apiErrorMessage;
-                }
-
                 var validationError = new KeyValuePair<string, string>(string.Empty, validationErrorMessage);
                 return new SetPageAnswersResponse
                     {ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> {validationError}};
@@ -396,12 +373,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 _logger.LogError($"Error Uploading files into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
 
                 var validationErrorMessage = "Cannot upload files at this time. Please contact your system administrator.";
-
-                if (!_environmentName.EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    // Show API error message if outside of PROD and PREPROD environments
-                    validationErrorMessage = apiErrorMessage;
-                }
 
                 var validationError = new KeyValuePair<string, string>(string.Empty, validationErrorMessage);
                 return new UploadPageAnswersResult { ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> { validationError } };
