@@ -76,6 +76,8 @@
         public const string ReceivedFullInspectionGradeForApprenticeships = "YO-270";
         public const string FullInspectionOverallEffectivenessGrade = "YO-280";
         public const string HasHadMonitoringVisit = "YO-290";
+        public const string Has2MonitoringVisitsGradedInadequate = "YO-292";
+        public const string HasMonitoringVisitGradedInadequateInLast18Months = "YO-294";
         public const string HasMaintainedFundingSinceInspection = "YO-320";
         public const string HasHadShortInspectionWithinLast3Years = "YO-330";
         public const string HasMaintainedFullGradeInShortInspection = "YO-340";
@@ -244,6 +246,8 @@
             public const string ReceivedFullInspectionGradeForApprenticeships = "270";
             public const string FullInspectionOverallEffectivenessGrade = "280";
             public const string HasHadMonitoringVisit = "290";
+            public const string Has2MonitoringVisitsGradedInadequate = "292";
+            public const string HasMonitoringVisitGradedInadequateInLast18Months = "294";
             public const string HasMaintainedFundingSinceInspection = "320";
             public const string HasHadShortInspectionWithinLast3Years = "330";
             public const string HasMaintainedFullGradeInShortInspection = "340";
