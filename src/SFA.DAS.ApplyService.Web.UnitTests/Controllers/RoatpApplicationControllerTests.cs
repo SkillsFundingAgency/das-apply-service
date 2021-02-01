@@ -773,7 +773,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _taskListOrchestrator.Setup(x => x.GetTaskListViewModel(applicationId, userId))
                 .ReturnsAsync(() => new TaskListViewModel());
 
-            var result = await _controller.TaskListRefresh(applicationId);
+            var result = await _controller.TaskList(applicationId);
 
             Assert.IsInstanceOf<ViewResult>(result);
             var viewResult = (ViewResult) result;

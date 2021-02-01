@@ -68,7 +68,7 @@
                 <partial name="~/Views/Roatp/ManagementHierarchy/AddEditManagementHierarchy.cshtml" for="@Model" />
                 <button type="submit" class="govuk-button  govuk-!-margin-right-3">Confirm and continue</button>
 
-                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">Return to this question later</a>
+                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-fragment="@Model.SequenceId" asp-route-pageId="@Model.PageId">Return to this question later</a>
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>

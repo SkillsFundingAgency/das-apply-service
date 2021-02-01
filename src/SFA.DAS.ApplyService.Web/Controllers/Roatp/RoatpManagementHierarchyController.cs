@@ -283,8 +283,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         [HttpPost]
         public async Task<IActionResult> CompleteManagementHierarchySection(Guid applicationId)
-        {           
-            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId, sequenceId = 7 });
+        {
+            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, "Sequence_7");
         }
 
         private IActionResult ConfirmRemovalOfManagementHierarchy(Guid applicationId, string name, string actionName, string backActionName)

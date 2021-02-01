@@ -132,7 +132,7 @@
             }
             else
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId, sequenceId = 1 });
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId}, "Sequence_1" );
             }
         }
 
