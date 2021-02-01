@@ -9,6 +9,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Application.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTests
 {
@@ -24,56 +25,34 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 ApplicationId = Guid.NewGuid(),
                 OversightStatus = oversightReviewStatus,
                 UserName = "test user",
-                UserId = "testUser"
+                UserId = "testUser",
+                InternalComments = "testInternalComments",
+                ExternalComments = "testExternalComments"
             };
 
-            var repository = new Mock<IApplyRepository>();
-            repository.Setup(x => x.UpdateOversightReviewStatus(command.ApplicationId, command.OversightStatus, 
-                                                                command.UserId, command.UserName))
-                                                                .ReturnsAsync(true);
+            var oversightReviewRepository = new Mock<IOversightReviewRepository>();
+            oversightReviewRepository.Setup(x => x.Add(It.IsAny<OversightReview>())).Returns(() => Task.CompletedTask);
 
+            var repository = new Mock<IApplyRepository>();
             repository.Setup(x => x.UpdateApplicationStatus(command.ApplicationId, applicationStatus)).Returns(Task.CompletedTask);
 
             var logger = new Mock<ILogger<RecordOversightOutcomeHandler>>();
-            var handler = new RecordOversightOutcomeHandler(repository.Object, logger.Object);
+            var handler = new RecordOversightOutcomeHandler(logger.Object, oversightReviewRepository.Object, repository.Object, Mock.Of<IAuditService>());
 
             var result = await handler.Handle(command, new CancellationToken());
 
             result.Should().BeTrue();
 
-            repository.Verify(x => x.UpdateOversightReviewStatus(command.ApplicationId, command.OversightStatus,
-                                                                command.UserId, command.UserName), Times.Once);
+            oversightReviewRepository.Verify(
+                x => x.Add(It.Is<OversightReview>(
+                    r => r.ApplicationId == command.ApplicationId
+                         && r.ApplicationDeterminedDate == DateTime.UtcNow.Date
+                         && r.InternalComments == command.InternalComments
+                         && r.ExternalComments == command.ExternalComments
+                         && r.Status == command.OversightStatus
+                         )),
+                Times.Once);
             repository.Verify(x => x.UpdateApplicationStatus(command.ApplicationId, applicationStatus), Times.Once);
-        }
-
-        [Test]
-        public async Task Application_status_is_not_updated_if_fails_to_update_oversight_status()
-        {
-            var command = new RecordOversightOutcomeCommand
-            {
-                ApplicationId = Guid.NewGuid(),
-                OversightStatus = OversightReviewStatus.Successful,
-                UserName = "test user",
-                UserId = "testUser"
-            };
-
-            var repository = new Mock<IApplyRepository>();
-            repository.Setup(x => x.UpdateOversightReviewStatus(command.ApplicationId, command.OversightStatus,
-                                                                command.UserId, command.UserName))
-                                                                .ReturnsAsync(false);
-
-            repository.Setup(x => x.UpdateApplicationStatus(command.ApplicationId, ApplicationStatus.Approved)).Returns(Task.CompletedTask);
-
-            var logger = new Mock<ILogger<RecordOversightOutcomeHandler>>();
-            var handler = new RecordOversightOutcomeHandler(repository.Object, logger.Object);
-
-            var result = await handler.Handle(command, new CancellationToken());
-
-            result.Should().BeFalse();
-
-            repository.Verify(x => x.UpdateOversightReviewStatus(command.ApplicationId, command.OversightStatus,
-                                                                command.UserId, command.UserName), Times.Once);
-            repository.Verify(x => x.UpdateApplicationStatus(command.ApplicationId, ApplicationStatus.Approved), Times.Never);
         }
     }   
 }

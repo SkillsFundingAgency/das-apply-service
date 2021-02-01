@@ -5,9 +5,11 @@ using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using System;
 using System.Linq;
 using System.IO;
+using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.InternalApi.Services.Files;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -15,7 +17,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
    public class ExperienceAndAccreditationControllerTests
    {
         private Mock<IInternalQnaApiClient> _qnaApiClient;
-        
+        private Mock<IFileStorageService> _fileStorageService;
         private ExperienceAndAccreditationController _controller;
 
         private const string ValueOfQuestion = "swordfish";
@@ -24,7 +26,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void Before_each_test()
         {
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
-            _controller = new ExperienceAndAccreditationController(_qnaApiClient.Object);
+            _fileStorageService = new Mock<IFileStorageService>();
+            _controller = new ExperienceAndAccreditationController(_qnaApiClient.Object, _fileStorageService.Object);
         }
 
         [Test]
@@ -163,6 +166,31 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var result = _controller.GetSubcontractorDeclarationContractFile(applicationId).Result;
 
             Assert.AreSame(expectedFileStream, result);
+        }
+
+        [Test]
+        public void get_gateway_declaration_contract_file_clarification_returns_the_submitted_file()
+        {
+            var applicationId = Guid.NewGuid();
+            var fileName = "something.pdf";
+            var fileStream = new FileStreamResult(new MemoryStream(), "application/pdf");
+            fileStream.FileDownloadName = fileName;
+
+            var file = new DownloadFile
+            {
+                ContentType = "application/pdf", FileName = fileName, Stream = fileStream.FileStream
+            };
+
+            _fileStorageService.Setup(x => x.DownloadFile(applicationId, RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                RoatpClarificationUpload.SubcontractorDeclarationClarificationFile, fileName,
+                ContainerType.Gateway,It.IsAny<CancellationToken>())).ReturnsAsync(file);
+
+            var result = _controller.GetSubcontractorDeclarationContractFileClarification(applicationId, fileName).Result as FileStreamResult;
+
+            Assert.AreEqual(fileStream.ContentType,result.ContentType);
+            Assert.AreEqual(fileStream.FileDownloadName, result.FileDownloadName); 
+            Assert.AreEqual(fileStream.FileStream, result.FileStream);
         }
 
         [Test]

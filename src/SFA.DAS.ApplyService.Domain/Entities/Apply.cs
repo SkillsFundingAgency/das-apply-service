@@ -33,10 +33,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string GatewayUserId { get; set; }
         public string GatewayUserName { get; set; }
 
-        public string OversightUserId { get; set; }
-        public string OversightUserName { get; set; }
-        public DateTime? ApplicationDeterminedDate { get; set; }
-
         public string Comments { get; set; }
         public string ExternalComments { get; set; }
     }
@@ -250,7 +246,9 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string InProgress = "In Progress";
         public const string Successful = "Successful";
         public const string Unsuccessful = "Unsuccessful";
+        public const string SuccessfulAlreadyActive = "Successful - already active";
+        public const string SuccessfulFitnessForFunding = "Successful - fitness for funding";
+        public const string Rejected = "Rejected";
     }
-
-    
+   
 }
