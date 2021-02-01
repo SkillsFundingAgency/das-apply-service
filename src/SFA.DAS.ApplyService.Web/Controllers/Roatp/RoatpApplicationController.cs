@@ -486,9 +486,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             if (page == null)
             {
-                return sequenceId != null ?
-                    RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, $"Sequence_{sequenceId}") :
-                    RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+                RedirectToAction("TaskList", "RoatpApplication", new {applicationId}, $"Sequence_{sequenceId}");
             }
 
             if (IsFileUploadWithNonEmptyValue(page))
