@@ -16,7 +16,13 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ExternalComments { get; set; }
         public string UserId { get; set; }
         public string UserName { get; set; }
+        public DateTime? InProgressDate { get; set; }
+        public string InProgressUserId { get; set; }
+        public string InProgressUserName { get; set; }
+        public string InProgressInternalComments { get; set; }
+        public string InProgressExternalComments { get; set; }
         public DateTime CreatedOn { get; set; }
+        public DateTime? UpdatedOn { get; set; }
 
         public OversightReview()
         {

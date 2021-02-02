@@ -51,6 +51,11 @@ namespace SFA.DAS.ApplyService.Data
                         [ExternalComments],
                         [UserId],
                         [UserName],
+                        [InProgressDate],
+                        [InProgressUserId],
+                        [InProgressUserName],
+                        [InProgressInternalComments],
+                        [InProgressExternalComments],
                         [CreatedOn])
                         VALUES (
                         @Id,
@@ -63,6 +68,11 @@ namespace SFA.DAS.ApplyService.Data
                         @ExternalComments,
                         @UserId,
                         @UserName,
+                        @InProgressDate,
+                        @InProgressUserId,
+                        @InProgressUserName,
+                        @InProgressInternalComments,
+                        @InProgressExternalComments,
                         @CreatedOn)",
                     entity);
             }
@@ -81,7 +91,13 @@ namespace SFA.DAS.ApplyService.Data
                         [InternalComments] = @InternalComments,
                         [ExternalComments] = @ExternalComments,
                         [UserId] =  @UserId,
-                        [UserName] =  @UserName
+                        [UserName] =  @UserName,
+                        [InProgressDate] = @InProgressDate,
+                        [InProgressUserId] = @InProgressUserId,
+                        [InProgressUserName] = @InProgressUserName,
+                        [InProgressInternalComments] = @InProgressInternalComments,
+                        [InProgressExternalComments] = @InProgressExternalComments,
+                        [UpdatedOn] = @updatedOn
                         WHERE [Id] = @id",
                     entity);
             }
