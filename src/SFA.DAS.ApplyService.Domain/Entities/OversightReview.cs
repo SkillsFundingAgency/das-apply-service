@@ -28,6 +28,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         {
             Id = Guid.NewGuid();
             CreatedOn = DateTime.UtcNow;
+            ApplicationDeterminedDate = DateTime.UtcNow;
         }
     };
 }

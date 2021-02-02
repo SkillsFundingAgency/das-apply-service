@@ -97,7 +97,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             if (request.OversightStatus == OversightReviewStatus.InProgress)
             {
                 oversightReview.InProgressDate = DateTime.UtcNow;
-                oversightReview.ApplicationDeterminedDate = DateTime.UtcNow;
                 oversightReview.InProgressInternalComments = request.InternalComments;
                 oversightReview.InProgressExternalComments = request.ExternalComments;
                 oversightReview.InProgressUserId = request.UserId;
@@ -105,7 +104,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             }
             else
             {
-                oversightReview.ApplicationDeterminedDate = DateTime.UtcNow;
                 oversightReview.InternalComments = request.InternalComments;
                 oversightReview.ExternalComments = request.ExternalComments;
                 oversightReview.UserId = request.UserId;
