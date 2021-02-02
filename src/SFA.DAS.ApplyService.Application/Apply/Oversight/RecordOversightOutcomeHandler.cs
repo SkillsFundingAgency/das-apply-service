@@ -47,6 +47,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 isNew = true;
                 oversightReview = new OversightReview {ApplicationId = request.ApplicationId};
             }
+            else
+            {
+                if (oversightReview.Status != OversightReviewStatus.InProgress)
+                {
+                    throw new InvalidOperationException($"Unable to modify oversight review for application {application.Id} with a status of {oversightReview.Status}");
+                }
+            }
 
             _auditService.StartTracking(UserAction.RecordOversightOutcome, request.UserId, request.UserName);
 
@@ -62,6 +69,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             _auditService.AuditUpdate(application);
 
             ApplyUserInput(oversightReview, request);
+            if (!isNew)
+            {
+                oversightReview.UpdatedOn = DateTime.UtcNow;
+            }
 
             if (isNew)
             {
@@ -91,10 +102,22 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             oversightReview.GatewayApproved = request.ApproveGateway;
             oversightReview.ModerationApproved = request.ApproveModeration;
             oversightReview.Status = request.OversightStatus;
-            oversightReview.InternalComments = request.InternalComments;
-            oversightReview.ExternalComments = request.ExternalComments;
-            oversightReview.UserId = request.UserId;
-            oversightReview.UserName = request.UserName;
+
+            if (request.OversightStatus == OversightReviewStatus.InProgress)
+            {
+                oversightReview.InProgressDate = DateTime.UtcNow;
+                oversightReview.InProgressInternalComments = request.InternalComments;
+                oversightReview.InProgressExternalComments = request.ExternalComments;
+                oversightReview.InProgressUserId = request.UserId;
+                oversightReview.InProgressUserName = request.UserName;
+            }
+            else
+            {
+                oversightReview.InternalComments = request.InternalComments;
+                oversightReview.ExternalComments = request.ExternalComments;
+                oversightReview.UserId = request.UserId;
+                oversightReview.UserName = request.UserName;
+            }
         }
     }
 }
