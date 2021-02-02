@@ -138,7 +138,12 @@ namespace SFA.DAS.ApplyService.Data.Queries
 							apply.ModerationStatus as ModerationReviewStatus,
 							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS ModerationOutcomeMadeOn,
 							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratedBy,
-							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorComments') AS ModerationComments                       
+							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorComments') AS ModerationComments,
+                            outcome.[InProgressDate],
+                            outcome.[InProgressUserId],
+                            outcome.[InProgressUserName],
+                            outcome.[InProgressInternalComments],
+                            outcome.[InProgressExternalComments]
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                           LEFT JOIN OversightReview outcome ON outcome.ApplicationId = apply.ApplicationId
