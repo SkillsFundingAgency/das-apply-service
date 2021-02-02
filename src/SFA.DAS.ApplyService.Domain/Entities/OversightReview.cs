@@ -11,7 +11,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public bool? GatewayApproved { get; set; }
         public bool? ModerationApproved { get; set; }
         public OversightReviewStatus Status { get; set; }
-        public DateTime ApplicationDeterminedDate { get; set; }
+        public DateTime? ApplicationDeterminedDate { get; set; }
         public string InternalComments { get; set; }
         public string ExternalComments { get; set; }
         public string UserId { get; set; }
@@ -28,7 +28,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         {
             Id = Guid.NewGuid();
             CreatedOn = DateTime.UtcNow;
-            ApplicationDeterminedDate = DateTime.UtcNow.Date;
         }
     };
 }

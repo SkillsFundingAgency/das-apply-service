@@ -50,7 +50,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             oversightReviewRepository.Verify(
                 x => x.Add(It.Is<OversightReview>(
                     r => r.ApplicationId == command.ApplicationId
-                         && r.ApplicationDeterminedDate == DateTime.UtcNow.Date
+                         && r.ApplicationDeterminedDate.Date == DateTime.UtcNow.Date
                          && r.InternalComments == command.InternalComments
                          && r.ExternalComments == command.ExternalComments
                          && r.Status == command.OversightStatus
