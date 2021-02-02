@@ -80,7 +80,5 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload(DateTime dateFrom, DateTime dateTo);
         
         Task<IEnumerable<GatewayApplicationStatusCount>> GetGatewayApplicationStatusCounts();
-
-        Task InsertAudit(Audit audit);
     }
 }

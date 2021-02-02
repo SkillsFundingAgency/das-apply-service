@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
@@ -136,6 +137,22 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var result = await _controller.RecordOversightOutcome(command);
             result.Should().NotBeNull();
             result.Value.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task Record_oversight_gateway_fail_outcome_updates_oversight_status_and_determined_date()
+        {
+            var command = new RecordOversightGatewayFailOutcomeCommand
+            {
+                ApplicationId = Guid.NewGuid(),
+                UserId = "User Id",
+                UserName = "Test user"
+            };
+
+            _mediator.Setup(x => x.Send(command, It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
+
+            var result = await _controller.RecordOversightGatewayFailOutcome(command);
+            result.Should().BeOfType<OkResult>();
         }
 
         [Test]

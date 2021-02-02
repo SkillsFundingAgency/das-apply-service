@@ -1130,37 +1130,5 @@ namespace SFA.DAS.ApplyService.Data
 
             return await Task.FromResult(true);
         }
-
-
-        public async Task InsertAudit(Audit audit)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"INSERT INTO [dbo].[Audit]
-           ([EntityType]
-           ,[EntityId]
-           ,[UserId]
-           ,[UserName]
-           ,[UserAction]
-           ,[AuditDate]
-           ,[InitialState]
-           ,[UpdatedState]
-           ,[Diff]
-           ,[CorrelationId])
-            VALUES
-           (@EntityType
-           ,@EntityId
-           ,@UserId
-           ,@UserName
-           ,@UserAction
-           ,@AuditDate
-           ,@InitialState
-           ,@UpdatedState
-           ,@Diff
-           ,@CorrelationId)",
-                    audit);
-            }
-        }
-
     }
 }

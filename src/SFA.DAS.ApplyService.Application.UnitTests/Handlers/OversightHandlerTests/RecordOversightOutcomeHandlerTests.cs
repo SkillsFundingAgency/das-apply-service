@@ -35,7 +35,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             oversightReviewRepository.Setup(x => x.Add(It.IsAny<OversightReview>())).Returns(() => Task.CompletedTask);
 
             var repository = new Mock<IApplyRepository>();
-            repository.Setup(x => x.UpdateApplicationStatus(command.ApplicationId, applicationStatus)).Returns(Task.CompletedTask);
+            repository.Setup(x => x.GetApplication(command.ApplicationId)).ReturnsAsync(() => new Domain.Entities.Apply
+                {ApplicationId = command.ApplicationId, Status = ApplicationStatus.Submitted});
+            repository.Setup(x => x.UpdateApplication(It.IsAny<Domain.Entities.Apply>())).Returns(Task.CompletedTask);
 
             var logger = new Mock<ILogger<RecordOversightOutcomeHandler>>();
             var handler = new RecordOversightOutcomeHandler(logger.Object, oversightReviewRepository.Object, repository.Object, Mock.Of<IAuditService>());
@@ -53,7 +55,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                          && r.Status == command.OversightStatus
                          )),
                 Times.Once);
-            repository.Verify(x => x.UpdateApplicationStatus(command.ApplicationId, applicationStatus), Times.Once);
+
+            repository.Verify(x => x.UpdateApplication(It.Is<Domain.Entities.Apply>(apply =>
+                    apply.ApplicationId == command.ApplicationId && apply.ApplicationStatus == applicationStatus)),
+                Times.Once);
         }
     }   
 }
