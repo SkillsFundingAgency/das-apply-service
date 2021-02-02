@@ -46,5 +46,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
         public string InProgressUserName { get; set; }
         public string InProgressInternalComments { get; set; }
         public string InProgressExternalComments { get; set; }
+        public bool? GatewayApproved { get; set; }
+        public bool? ModerationApproved { get; set; }
     }
 }
