@@ -39,23 +39,38 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 throw new InvalidOperationException($"Application {request.ApplicationId} not found");
             }
 
-            var oversightReview = new OversightReview
+            var isNew = false;
+
+            var oversightReview = await _oversightReviewRepository.GetByApplicationId(request.ApplicationId);
+            if (oversightReview == null)
             {
-                ApplicationId = request.ApplicationId,
-                GatewayApproved = request.ApproveGateway,
-                ModerationApproved = request.ApproveModeration,
-                Status = request.OversightStatus,
-                InternalComments = request.InternalComments,
-                ExternalComments = request.ExternalComments,
-                UserId = request.UserId,
-                UserName = request.UserName,
-            };
+                isNew = true;
+                oversightReview = new OversightReview {ApplicationId = request.ApplicationId};
+            }
 
             _auditService.StartTracking(UserAction.RecordOversightOutcome, request.UserId, request.UserName);
-            _auditService.AuditInsert(oversightReview);
+
+            if (isNew)
+            {
+                _auditService.AuditInsert(oversightReview);
+            }
+            else
+            {
+                _auditService.AuditUpdate(oversightReview);
+            }
+            
             _auditService.AuditUpdate(application);
 
-            await _oversightReviewRepository.Add(oversightReview);
+            ApplyUserInput(oversightReview, request);
+
+            if (isNew)
+            {
+                await _oversightReviewRepository.Add(oversightReview);
+            }
+            else
+            {
+                await _oversightReviewRepository.Update(oversightReview);
+            }
 
             if (request.OversightStatus != OversightReviewStatus.InProgress)
             {
@@ -69,6 +84,17 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             await _auditService.Save();
 
             return true;
+        }
+
+        private void ApplyUserInput(OversightReview oversightReview, RecordOversightOutcomeCommand request)
+        {
+            oversightReview.GatewayApproved = request.ApproveGateway;
+            oversightReview.ModerationApproved = request.ApproveModeration;
+            oversightReview.Status = request.OversightStatus;
+            oversightReview.InternalComments = request.InternalComments;
+            oversightReview.ExternalComments = request.ExternalComments;
+            oversightReview.UserId = request.UserId;
+            oversightReview.UserName = request.UserName;
         }
     }
 }

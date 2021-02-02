@@ -8,5 +8,6 @@ namespace SFA.DAS.ApplyService.Application.Interfaces
     {
         Task<OversightReview> GetByApplicationId(Guid applicationId);
         Task Add(OversightReview entity);
+        Task Update(OversightReview entity);
     }
 }

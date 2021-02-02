@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = GetConnection())
             {
-                return await connection.QuerySingleAsync<OversightReview>(
+                return await connection.QuerySingleOrDefaultAsync<OversightReview>(
                     "select * from OversightReview where ApplicationId = @applicationId",
                     new
                     {
@@ -64,6 +64,25 @@ namespace SFA.DAS.ApplyService.Data
                         @UserId,
                         @UserName,
                         @CreatedOn)",
+                    entity);
+            }
+        }
+
+        public async Task Update(OversightReview entity)
+        {
+            using (var connection = GetConnection())
+            {
+                await connection.ExecuteAsync(
+                    @"UPDATE [OversightReview]
+                        SET [GatewayApproved] = @GatewayApproved,
+                        [ModerationApproved] = @ModerationApproved,
+                        [Status] = @Status,
+                        [ApplicationDeterminedDate] = @ApplicationDeterminedDate,
+                        [InternalComments] = @InternalComments,
+                        [ExternalComments] = @ExternalComments,
+                        [UserId] =  @UserId,
+                        [UserName] =  @UserName
+                        WHERE [Id] = @id",
                     entity);
             }
         }
