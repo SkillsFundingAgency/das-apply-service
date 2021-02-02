@@ -399,7 +399,8 @@ namespace SFA.DAS.ApplyService.Data
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
-	                        AND apply.GatewayReviewStatus = @gatewayReviewStatusNew",
+	                        AND apply.GatewayReviewStatus = @gatewayReviewStatusNew
+                          ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC",
                         new
                         {
                             applicationStatusSubmitted = ApplicationStatus.Submitted,
@@ -431,7 +432,8 @@ namespace SFA.DAS.ApplyService.Data
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
-	                        AND apply.GatewayReviewStatus in (@gatewayReviewStatusInProgress, @gatewayReviewStatusClarificationSent)",
+	                        AND apply.GatewayReviewStatus in (@gatewayReviewStatusInProgress, @gatewayReviewStatusClarificationSent)
+                          ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC",
                         new
                         {
                             applicationStatusSubmitted = ApplicationStatus.Submitted,
@@ -476,7 +478,8 @@ namespace SFA.DAS.ApplyService.Data
                             AND (
                                     apply.ApplicationStatus in (@applicationStatusWithdrawn, @applicationStatusRemoved)
                                     OR apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusFailed, @gatewayReviewStatusRejected)
-                                )",
+                                )
+                          ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC",
                         new
                         {
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
@@ -597,9 +600,10 @@ namespace SFA.DAS.ApplyService.Data
                             )
                         ) seq
                         WHERE seq.SequenceNo = @financialHealthSequence
-                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
-                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN (@financialStatusDraft, @financialStatusNew, @financialStatusInProgress)",
+                          AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
+                          AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
+                          AND apply.FinancialReviewStatus IN (@financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
+                        ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC",
                         new
                         {
                             financialHealthSequence = 2,
@@ -656,9 +660,10 @@ namespace SFA.DAS.ApplyService.Data
                             )
                         ) seq
                         WHERE seq.SequenceNo = @financialHealthSequence
-                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
-                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass)";
+                          AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
+                          AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
+                          AND apply.GatewayReviewStatus IN (@gatewayStatusPass)
+                        ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC";
 
             var parameters = new
             {
@@ -722,9 +727,10 @@ namespace SFA.DAS.ApplyService.Data
                             )
                         ) seq
                         WHERE seq.SequenceNo = @financialHealthSequence
-                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
-                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN (@financialStatusClarificationSent)",
+                          AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
+                          AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
+                          AND apply.FinancialReviewStatus IN (@financialStatusClarificationSent)
+                        ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  org.Name ASC",
                         new
                         {
                             financialHealthSequence = 2,
@@ -781,12 +787,13 @@ namespace SFA.DAS.ApplyService.Data
                             )
                         ) seq
                         WHERE seq.SequenceNo = @financialHealthSequence
-                        AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
-                        AND apply.DeletedAt IS NULL
-                        AND (
-                             apply.ApplicationStatus IN (@applicationStatusWithdrawn, @applicationStatusRemoved)
-                             OR apply.FinancialReviewStatus IN (@financialStatusApproved, @financialStatusDeclined, @financialStatusExempt)
-                            )",
+                          AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
+                          AND apply.DeletedAt IS NULL
+                          AND (
+                               apply.ApplicationStatus IN (@applicationStatusWithdrawn, @applicationStatusRemoved)
+                               OR apply.FinancialReviewStatus IN (@financialStatusApproved, @financialStatusDeclined, @financialStatusExempt)
+                              )
+                        ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  org.Name ASC",
                        new
                        {
                            financialHealthSequence = 2,
