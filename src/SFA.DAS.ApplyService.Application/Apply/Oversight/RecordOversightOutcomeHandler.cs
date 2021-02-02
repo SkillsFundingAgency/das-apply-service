@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 {
@@ -34,6 +35,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             var oversightReview = new OversightReview
             {
                 ApplicationId = request.ApplicationId,
+                GatewayApproved = request.ApproveGateway,
+                ModerationApproved = request.ApproveModeration,
                 Status = request.OversightStatus,
                 InternalComments = request.InternalComments,
                 ExternalComments = request.ExternalComments,
