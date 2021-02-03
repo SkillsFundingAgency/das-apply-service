@@ -6,6 +6,7 @@
         UpdateGatewayPageClarificationOutcome,
         UpdateGatewayPagePostClarification,
 		RecordOversightOutcome,
+        RecordOversightGatewayFailOutcome,
         UpdateGatewayReviewStatus
     }
 }
