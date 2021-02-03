@@ -20,8 +20,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
         public string OversightUserName { get; set; }
 
         public string ApplicationEmailAddress { get; set; }
-        public string AssessorReviewStatus { get; set; } 
-
+        public string AssessorReviewStatus { get; set; }
+        public string GatewayReviewStatus { get; set; }
         public DateTime? GatewayOutcomeMadeDate { get; set; }
 
         public string GatewayOutcomeMadeBy { get; set; }
