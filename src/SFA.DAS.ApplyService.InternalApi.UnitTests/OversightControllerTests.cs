@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
@@ -12,6 +13,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
+using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -104,7 +106,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Ukprn = "12344321",
                 ProviderRoute = "Main",
                 ApplicationReferenceNumber = "APR000111",
-                OversightStatus = OversightReviewStatus.New
+                OversightStatus = OversightReviewStatus.InProgress
             };
 
             _mediator
@@ -120,7 +122,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
         [TestCase(OversightReviewStatus.Successful)]
         [TestCase(OversightReviewStatus.Unsuccessful)]
-        public async Task Record_oversight_outcome_updates_oversight_status_and_determined_date(string oversightStatus)
+        public async Task Record_oversight_outcome_updates_oversight_status_and_determined_date(OversightReviewStatus oversightStatus)
         {
             var command = new RecordOversightOutcomeCommand
             {
@@ -135,6 +137,22 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var result = await _controller.RecordOversightOutcome(command);
             result.Should().NotBeNull();
             result.Value.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task Record_oversight_gateway_fail_outcome_updates_oversight_status_and_determined_date()
+        {
+            var command = new RecordOversightGatewayFailOutcomeCommand
+            {
+                ApplicationId = Guid.NewGuid(),
+                UserId = "User Id",
+                UserName = "Test user"
+            };
+
+            _mediator.Setup(x => x.Send(command, It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
+
+            var result = await _controller.RecordOversightGatewayFailOutcome(command);
+            result.Should().BeOfType<OkResult>();
         }
 
         [Test]

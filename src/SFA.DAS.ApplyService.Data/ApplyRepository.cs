@@ -8,13 +8,12 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply.Gateway;
 using SFA.DAS.ApplyService.Domain.Audit;
-using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
+using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -224,7 +223,6 @@ namespace SFA.DAS.ApplyService.Data
                         Assessor1ReviewStatus = @Assessor1ReviewStatus,
                         Assessor2ReviewStatus = @Assessor2ReviewStatus,
                         ModerationStatus = @ModerationStatus,
-                        OversightStatus = @OversightStatus,
                         GatewayUserId = @gatewayUserId,
                         GatewayUserName = @gatewayUserName,
                         UpdatedBy = @updatedBy,
@@ -913,23 +911,23 @@ namespace SFA.DAS.ApplyService.Data
                     applyData.ApplyDetails.ApplicationWithdrawnBy = userName;
                 }
 
-                var rowsAffected = await connection.ExecuteAsync(@"UPDATE Apply
-                                                SET  ApplicationStatus = @applicationStatusWithdrawn,
-                                                     Comments = @comments,
-                                                     ApplyData = @applyData,
-                                                     UpdatedAt = GETUTCDATE(),
-                                                     UpdatedBy = @updatedBy
-                                                WHERE ApplicationId = @applicationId
-                                                    AND OversightStatus NOT IN (@oversightReviewStatusSucessful, @oversightReviewStatusUnsuccessful)",
+                var rowsAffected = await connection.ExecuteAsync(@"UPDATE app
+                                                SET  app.ApplicationStatus = @applicationStatusWithdrawn,
+                                                     app.Comments = @comments,
+                                                     app.ApplyData = @applyData,
+                                                     app.UpdatedAt = GETUTCDATE(),
+                                                     app.UpdatedBy = @updatedBy
+                                                FROM Apply app
+                                                LEFT JOIN OversightReview outcome on outcome.ApplicationId = app.ApplicationId
+                                                WHERE app.ApplicationId = @applicationId
+                                                AND outcome.[Status] IS NULL",
                                                 new { 
                                                         applicationId,
                                                         comments,
                                                         applyData,
                                                         updatedBy = userName,
-                                                        applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
-                                                        oversightReviewStatusSucessful = OversightReviewStatus.Successful,
-                                                        oversightReviewStatusUnsuccessful = OversightReviewStatus.Unsuccessful,
-                                                });
+                                                        applicationStatusWithdrawn = ApplicationStatus.Withdrawn
+                                                        });
 
                 return rowsAffected > 0;
             }
@@ -1007,7 +1005,6 @@ namespace SFA.DAS.ApplyService.Data
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.OrganisationType') AS OrganisationType,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.CompaniesHouseDetails.CompanyNumber') AS CompanyNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.Address') AS Address,
-                            COALESCE(r.[Status], 'New') as OversightStatus,
                             apply.ApplicationStatus,
 							apply.ApplicationDeterminedDate,
                             apply.GatewayReviewStatus as GatewayOutcome,
@@ -1133,65 +1130,5 @@ namespace SFA.DAS.ApplyService.Data
 
             return await Task.FromResult(true);
         }
-
-        public async Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, string userId, string userName, string internalComments, string externalComments)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE Apply 
-                                                SET OversightStatus = @oversightStatus, 
-                                                ApplicationDeterminedDate = GETUTCDATE(),
-                                                OversightUserId = @userId,
-                                                OversightUserName = @userName,
-                                                OversightInternalComments = @internalComments,
-                                                OversightExternalComments = @externalComments,
-                                                UpdatedBy = @updatedBy,
-                                                UpdatedAt = GETUTCDATE()
-                                                WHERE ApplicationId = @applicationId",
-                            new
-                            {
-                                applicationId,
-                                oversightStatus,
-                                userId,
-                                userName,
-                                internalComments,
-                                externalComments,
-                                updatedBy = userName
-                            });
-            }
-
-            return await Task.FromResult(true);
-        }
-
-        public async Task InsertAudit(Audit audit)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"INSERT INTO [dbo].[Audit]
-           ([EntityType]
-           ,[EntityId]
-           ,[UserId]
-           ,[UserName]
-           ,[UserAction]
-           ,[AuditDate]
-           ,[InitialState]
-           ,[UpdatedState]
-           ,[Diff]
-           ,[CorrelationId])
-            VALUES
-           (@EntityType
-           ,@EntityId
-           ,@UserId
-           ,@UserName
-           ,@UserAction
-           ,@AuditDate
-           ,@InitialState
-           ,@UpdatedState
-           ,@Diff
-           ,@CorrelationId)",
-                    audit);
-            }
-        }
-
     }
 }
