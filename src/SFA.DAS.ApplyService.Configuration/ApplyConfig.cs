@@ -19,8 +19,6 @@ namespace SFA.DAS.ApplyService.Configuration
         public CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
         public CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
 
-        public string FeedbackUrl { get; set; }
-
         public RoatpApiAuthentication RoatpApiAuthentication { get; set; }
 
         public QnaApiAuthentication QnaApiAuthentication { get; set; }
