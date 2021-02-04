@@ -27,7 +27,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="post" asp-action="EnterNewUkprn" asp-controller="RoatpApplication" novalidate>
+            <form class="js-disable-on-submit" method="post" asp-action="EnterNewUkprn" asp-controller="RoatpApplication" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="CurrentUkprn" />
 

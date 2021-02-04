@@ -71,7 +71,7 @@
                 Any such changes will apply to your admission to RoATP from the date they come into force irrespective of the date you were admitted.
             </p>
 
-            <form method="post" asp-action="ConfirmTermsAndConditions" asp-controller="RoatpApplicationPreamble" novalidate>
+            <form class="js-disable-on-submit" method="post" asp-action="ConfirmTermsAndConditions" asp-controller="RoatpApplicationPreamble" novalidate>
                 <div id="TermsConditions" class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ConditionsAccepted">
                     <input type="hidden" asp-for="ApplicationRouteId" />
                     <input type="hidden" asp-for="ApplicationId" />
