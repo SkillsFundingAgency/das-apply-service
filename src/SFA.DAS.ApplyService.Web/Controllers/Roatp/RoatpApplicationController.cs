@@ -1161,11 +1161,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> Submitted(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
-            var config = await _configService.GetConfig();
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel
             {
-                ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber,
-                FeedbackUrl = config.FeedbackUrl,
+                ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber
             });
         }
 
@@ -1173,11 +1171,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> NotSubmitted(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
-            var config = await _configService.GetConfig();
             return View("~/Views/Application/NotSubmitted.cshtml", new SubmittedViewModel
             {
-                ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber,
-                FeedbackUrl = config.FeedbackUrl,
+                ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber
             });
         }
 
