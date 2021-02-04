@@ -246,7 +246,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Applications_shows_task_list_if_an_application_in_progress()
+        public async Task Applications_shows_task_list_if_an_application_in_progress()
         {
             var inProgressApp = new Domain.Entities.Apply
             {
@@ -259,7 +259,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
 
-            var result = _controller.Applications().GetAwaiter().GetResult();
+            var result = await _controller.Applications();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -267,7 +267,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Applications_shows_confirmation_page_if_application_submitted()
+        public async Task Applications_shows_confirmation_page_if_application_submitted()
         {
             var submittedApp = new Domain.Entities.Apply
             {
@@ -280,7 +280,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
 
-            var result = _controller.Applications().GetAwaiter().GetResult();
+            var result = await _controller.Applications();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -288,7 +288,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Applications_shows_confirmation_page_if_application_Gateway_Assessed()
+        public async Task Applications_shows_confirmation_page_if_application_Gateway_Assessed()
         {
             var submittedApp = new Domain.Entities.Apply
             {
@@ -301,7 +301,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
 
-            var result = _controller.Applications().GetAwaiter().GetResult();
+            var result = await _controller.Applications();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -310,7 +310,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
 
         [Test]
-        public void Applications_shows_confirmation_page_if_application_new()
+        public async Task Applications_shows_confirmation_page_if_application_new()
         {
             var submittedApp = new Domain.Entities.Apply
             {
@@ -323,7 +323,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
 
-            var result = _controller.Applications().GetAwaiter().GetResult();
+            var result = await _controller.Applications();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -331,7 +331,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Applications_shows_confirmation_page_if_application_resubmitted()
+        public async Task Applications_shows_confirmation_page_if_application_resubmitted()
         {
             var submittedApp = new Domain.Entities.Apply
             {
@@ -344,7 +344,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
 
-            var result = _controller.Applications().GetAwaiter().GetResult();
+            var result = await _controller.Applications();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -353,7 +353,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
 
         [Test]
-        public void Applications_shows_two_in_twelve_months_page_if_application_cancelled()
+        public async Task Applications_shows_two_in_twelve_months_page_if_application_cancelled()
         {
             var submittedApp = new Domain.Entities.Apply
             {
@@ -366,7 +366,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
 
-            var result = _controller.Applications().GetAwaiter().GetResult();
+            var result = await _controller.Applications();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -385,6 +385,39 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.Should().NotBeNull();
             redirectResult.ActionName.Should().Be("TwoInTwelveMonths");
             redirectResult.ControllerName.Should().Be("RoatpApplicationPreamble");
+        }
+
+        [Test]
+        public async Task Applications_shows_Applications_page_if_multiple_applications_in_progress()
+        {
+            var inProgressApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.InProgress
+            };
+
+            var submittedApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.Submitted
+            };
+
+            var gatewayAssessedApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.GatewayAssessed
+            };
+
+            var applications = new List<Domain.Entities.Apply>
+            {
+                inProgressApp,
+                submittedApp,
+                gatewayAssessedApp
+            };
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
+
+            var result = await _controller.Applications();
+
+            var viewResult = result as ViewResult;
+            viewResult.ViewName.Should().EndWith("Applications.cshtml");
         }
 
         [Test]
