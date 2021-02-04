@@ -43,7 +43,8 @@ namespace SFA.DAS.ApplyService.Data.Queries
                           and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
 						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
-                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
+                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject)
+                            OR apply.ApplicationStatus = @applicationStatusRemoved)
                             order by CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
                 {
                     gatewayReviewStatusPass = GatewayReviewStatus.Pass,
@@ -53,7 +54,8 @@ namespace SFA.DAS.ApplyService.Data.Queries
                     assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
                     financialReviewStatusApproved = FinancialReviewStatus.Pass,
                     financialReviewStatusDeclined = FinancialReviewStatus.Fail,
-                    financialReviewStatusExempt = FinancialReviewStatus.Exempt
+                    financialReviewStatusExempt = FinancialReviewStatus.Exempt,
+                    applicationStatusRemoved = ApplicationStatus.Removed
                 })).ToList();
 
                 return new PendingOversightReviews
@@ -139,6 +141,8 @@ namespace SFA.DAS.ApplyService.Data.Queries
 							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS ModerationOutcomeMadeOn,
 							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratedBy,
 							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorComments') AS ModerationComments,
+                            apply.Comments 'ApplyInternalComments',
+                            apply.ExternalComments 'ApplyExternalComments',
                             outcome.[InProgressDate],
                             outcome.[InProgressUserId],
                             outcome.[InProgressUserName],
