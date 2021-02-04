@@ -79,7 +79,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Services
         private class AuditServiceTestsFixture
         {
             public AuditService AuditService { get; set; }
-            public Mock<IApplyRepository> Repository { get; }
+            public Mock<IAuditRepository> Repository { get; }
             public TestAuditEntity TestInsertAuditEntity { get; set; }
             public TestAuditEntity TestUpdateAuditEntity { get; set; }
             public TestAuditEntity TestDeleteAuditEntity { get; set; }
@@ -113,8 +113,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Services
                 StateService.Setup(x => x.GetState(It.Is<object>(o => o == TestUpdateAuditEntity))).Returns(TestUpdateInitialState);
                 StateService.Setup(x => x.GetState(It.Is<object>(o => o == TestDeleteAuditEntity))).Returns(TestDeleteInitialState);
 
-                Repository = new Mock<IApplyRepository>();
-                Repository.Setup(x => x.InsertAudit(It.IsAny<Audit>())).Returns(Task.CompletedTask);
+                Repository = new Mock<IAuditRepository>();
+                Repository.Setup(x => x.Add(It.IsAny<Audit>())).Returns(Task.CompletedTask);
 
                 AuditService = new AuditService(StateService.Object, Mock.Of<IDiffService>(), Repository.Object);
                 AuditService.StartTracking(UserAction, UserId, UserName);
@@ -169,7 +169,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Services
             public void VerifyInsertSaved()
             {
                 Repository.Verify(
-                    x => x.InsertAudit(It.Is<Audit>(
+                    x => x.Add(It.Is<Audit>(
                             a => a.UserId == UserId 
                                    && a.UserName == UserName
                                    && a.UserAction == UserAction.ToString()
@@ -183,7 +183,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Services
             public void VerifyUpdateSaved()
             {
                 Repository.Verify(
-                    x => x.InsertAudit(It.Is<Audit>(
+                    x => x.Add(It.Is<Audit>(
                         a => a.UserId == UserId
                              && a.UserName == UserName
                              && a.UserAction == UserAction.ToString()
@@ -197,7 +197,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Services
             public void VerifyDeleteSaved()
             {
                 Repository.Verify(
-                    x => x.InsertAudit(It.Is<Audit>(
+                    x => x.Add(It.Is<Audit>(
                         a => a.UserId == UserId
                              && a.UserName == UserName
                              && a.UserAction == UserAction.ToString()

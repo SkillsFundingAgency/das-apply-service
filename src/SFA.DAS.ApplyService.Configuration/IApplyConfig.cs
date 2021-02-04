@@ -22,12 +22,7 @@ namespace SFA.DAS.ApplyService.Configuration
         CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
         CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
 
-        string FeedbackUrl { get; set; }
-        string AssessorServiceBaseUrl { get; set; }
-
         RoatpApiAuthentication RoatpApiAuthentication { get; set; }
-
-        UkrlpApiAuthentication UkrlpApiAuthentication { get; set; }
 
         QnaApiAuthentication QnaApiAuthentication { get; set; }
     }
