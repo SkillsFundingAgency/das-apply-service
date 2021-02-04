@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -307,7 +306,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (previousPageId == null)
             {
-                return RedirectToAction("TaskList", new { applicationId });
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, $"Sequence_{sequenceId}");
             }
 
             return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId = previousPageId, redirectAction });
@@ -319,7 +318,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
             if (!canUpdate)
             {
-                return RedirectToAction("TaskList", new { applicationId });
+                RedirectToAction("TaskList", "RoatpApplication", new {applicationId}, $"Sequence_{sequenceId}");
             }
             
             var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
@@ -341,7 +340,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
-                return RedirectToAction("TaskList", new { applicationId });
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, $"Sequence_{sequenceId}");
             }
 
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
@@ -378,7 +377,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 
                 if (page == null || page.Questions == null)
                 {
-                    return await TaskList(applicationId);
+                    return RedirectToAction("TaskList","RoatpApplication", new { applicationId },$"Sequence_{sequenceId}");
                 }
 
                 page = await GetDataFedOptions(applicationId, page);
@@ -407,7 +406,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
-                return RedirectToAction("TaskList", new { applicationId });
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, $"Sequence_{sequenceId}");
             }
 
             var nextAction = await _qnaApiClient.SkipPageBySectionNo(applicationId, sequenceId, sectionId, pageId);
@@ -417,7 +416,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
             if (nextPageId == null || section.QnAData.Pages.FirstOrDefault(x => x.PageId == nextPageId) == null)
-                return await TaskList(applicationId);
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, $"Sequence_{sequenceId}");
 
             return RedirectToAction("Page", new
             {
@@ -441,7 +440,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
-                return RedirectToAction("TaskList", new { applicationId });
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, $"Sequence_{sequenceId}");
             }
 
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
@@ -487,7 +486,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             if (page == null)
             {
-                return RedirectToAction("TaskList", new { applicationId = applicationId });
+                RedirectToAction("TaskList", "RoatpApplication", new {applicationId}, $"Sequence_{sequenceId}");
             }
 
             if (IsFileUploadWithNonEmptyValue(page))
@@ -508,7 +507,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("TaskList", new { applicationId = applicationId });
+                    return RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, $"Sequence_{sequenceId}");
                 }
             }
 
@@ -801,7 +800,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 if (string.IsNullOrEmpty(nextActionId) || !NextAction.NextPage.Equals(nextAction, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return await TaskList(applicationId);
+                    return RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, $"Sequence_{sequenceNo}");
                 }
 
                 return RedirectToAction("Page", new
@@ -1162,11 +1161,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> Submitted(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
-            var config = await _configService.GetConfig();
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel
             {
-                ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber,
-                FeedbackUrl = config.FeedbackUrl,
+                ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber
             });
         }
 
@@ -1174,11 +1171,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> NotSubmitted(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
-            var config = await _configService.GetConfig();
             return View("~/Views/Application/NotSubmitted.cshtml", new SubmittedViewModel
             {
-                ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber,
-                FeedbackUrl = config.FeedbackUrl,
+                ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber
             });
         }
 
@@ -1224,7 +1219,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var canUpdate = await CanUpdateApplication(model.ApplicationId);
             if (!canUpdate)
             {
-                return RedirectToAction("TaskList", new { applicationId = model.ApplicationId });
+                return RedirectToAction("TaskList", new { applicationId = model.ApplicationId});
             }
 
             if (!ModelState.IsValid)
