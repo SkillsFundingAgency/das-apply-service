@@ -61,6 +61,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return new OkResult();
         }
 
+        [HttpPost]
+        [Route("Oversight/GatewayRemovedOutcome")]
+        public async Task<ActionResult> RecordOversightGatewayRemovedOutcome([FromBody] RecordOversightGatewayRemovedOutcomeCommand command)
+        {
+            await _mediator.Send(command);
+            return new OkResult();
+        }
+
         [HttpGet]
         [Route("Oversight/RegistrationDetails/{applicationId}")]
         public async Task<ActionResult<RoatpRegistrationDetails>> GetRegistrationDetails(Guid applicationId)
