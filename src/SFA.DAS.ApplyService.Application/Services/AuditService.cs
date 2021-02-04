@@ -12,17 +12,17 @@ namespace SFA.DAS.ApplyService.Application.Services
     {
         private readonly IStateService _stateService;
         private readonly IDiffService _diffService;
-        private readonly IApplyRepository _applyRepository;
+        private readonly IAuditRepository _auditRepository;
         private readonly List<TrackedItem> _trackedItems;
         private UserAction _userAction;
         private string _userId;
         private string _userName;
 
-        public AuditService(IStateService stateService, IDiffService diffService, IApplyRepository applyRepository)
+        public AuditService(IStateService stateService, IDiffService diffService, IAuditRepository auditRepository)
         {
             _stateService = stateService;
             _diffService = diffService;
-            _applyRepository = applyRepository;
+            _auditRepository = auditRepository;
             _trackedItems = new List<TrackedItem>();
         }
 
@@ -81,7 +81,7 @@ namespace SFA.DAS.ApplyService.Application.Services
                     CorrelationId = correlationId
                 };
 
-                await _applyRepository.InsertAudit(audit);
+                await _auditRepository.Add(audit);
             }
         }
     }

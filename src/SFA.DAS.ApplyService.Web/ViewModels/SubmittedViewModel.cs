@@ -3,6 +3,5 @@
     public class SubmittedViewModel
     {
         public string ReferenceNumber { get; set; }
-        public string FeedbackUrl { get; set; }
     }
 }

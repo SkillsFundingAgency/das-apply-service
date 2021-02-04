@@ -43,6 +43,8 @@ namespace SFA.DAS.ApplyService.Data
                     @"INSERT INTO [OversightReview]
                         ([Id],
                         [ApplicationId],
+                        [GatewayApproved],
+                        [ModerationApproved],
                         [Status],
                         [ApplicationDeterminedDate],
                         [InternalComments],
@@ -53,6 +55,8 @@ namespace SFA.DAS.ApplyService.Data
                         VALUES (
                         @Id,
                         @ApplicationId,
+                        @GatewayApproved,
+                        @ModerationApproved,
                         @Status,
                         @ApplicationDeterminedDate,
                         @InternalComments,
