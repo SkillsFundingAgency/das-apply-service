@@ -2,11 +2,13 @@
 using Moq;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.EmailService;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using SFA.DAS.ApplyService.Domain.Roatp;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests
 {
@@ -32,12 +34,13 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         }
 
         [Test]
-        public void Service_sends_email_to_notifications_api_with_tokens_for_template()
+        public async Task Service_sends_email_to_notifications_api_with_tokens_for_template()
         {
             var emailTemplate = new EmailTemplate
             {
                 TemplateId = Guid.NewGuid().ToString(),
-                TemplateName = "Template Name"
+                TemplateName = "Template Name",
+                Recipients = "recipients@test.com"
             };
 
             _emailTemplateClient.Setup(x => x.GetEmailTemplate(It.IsAny<string>())).ReturnsAsync(emailTemplate).Verifiable();
@@ -56,7 +59,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
                 UKPRN = "10002000"
             };
 
-            _service.SendGetHelpWithQuestionEmail(getHelpWithQuestion).GetAwaiter().GetResult();
+            await _service.SendGetHelpWithQuestionEmail(getHelpWithQuestion);
 
             _emailTemplateClient.VerifyAll();
             _notificationsApi.VerifyAll();
