@@ -23,7 +23,6 @@ namespace SFA.DAS.ApplyService.Configuration
         CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
 
         string FeedbackUrl { get; set; }
-        string AssessorServiceBaseUrl { get; set; }
 
         RoatpApiAuthentication RoatpApiAuthentication { get; set; }
 
