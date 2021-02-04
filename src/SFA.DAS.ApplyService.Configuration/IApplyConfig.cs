@@ -27,8 +27,6 @@ namespace SFA.DAS.ApplyService.Configuration
 
         RoatpApiAuthentication RoatpApiAuthentication { get; set; }
 
-        UkrlpApiAuthentication UkrlpApiAuthentication { get; set; }
-
         QnaApiAuthentication QnaApiAuthentication { get; set; }
     }
 
