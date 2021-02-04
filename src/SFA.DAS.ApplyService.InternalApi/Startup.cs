@@ -280,6 +280,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddTransient<IDiffService, DiffService>();
             services.AddTransient<IStateService, StateService>();
+            services.AddTransient<IAuditRepository, AuditRepository>();
             services.AddTransient<IAuditService, AuditService>();
 
             services.AddTransient<IFileEncryptionService, FileEncryptionService>();

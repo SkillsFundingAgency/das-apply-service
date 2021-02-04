@@ -1,4 +1,5 @@
 ﻿using System;
+using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
 {
@@ -12,9 +13,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
         public string ProviderRoute { get; set; }
         public string ApplicationReferenceNumber { get; set; }
         public DateTime ApplicationSubmittedDate { get; set; }
-        public string OversightStatus { get; set; }
         public string ApplicationStatus { get; set; }
+        public OversightReviewStatus OversightStatus { get; set; }
+       
         public DateTime? ApplicationDeterminedDate { get; set; }
+        public string OversightUserName { get; set; }
 
         public string ApplicationEmailAddress { get; set; }
         public string AssessorReviewStatus { get; set; } 
@@ -24,7 +27,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
 
         public string GatewayOutcomeMadeBy { get; set; }
         public string GatewayComments { get; set; }
-
+        public string GatewayExternalComments { get; set; }
         public string FinancialReviewStatus { get; set; }
         public string FinancialGradeAwarded { get; set; }
 
@@ -32,11 +35,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
         public string FinancialHealthAssessedBy { get; set; }
 
         public string FinancialHealthComments { get; set; }
+        public string FinancialHealthExternalComments { get; set; }
         public string ModerationReviewStatus { get; set; }
 
         public DateTime? ModerationOutcomeMadeOn { get; set; }
         public string ModeratedBy { get; set; }
         public string ModerationComments { get; set; }
-
     }
 }

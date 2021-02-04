@@ -770,7 +770,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.GetApplicationByUserId(applicationId, userId)).ReturnsAsync(() => inProgressApp);
 
-
             _taskListOrchestrator.Setup(x => x.GetTaskListViewModel(applicationId, userId))
                 .ReturnsAsync(() => new TaskListViewModel());
 

@@ -71,7 +71,7 @@
                 <input type="hidden" asp-for="GetHelpAction" />
 
                 <button type="submit" class="govuk-button govuk-!-margin-right-3">Continue</button>
-                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">Return to this question later</a>
+                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">Return to this question later</a>
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>
