@@ -108,7 +108,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var applications = await _apiClient.GetApplications(signinId, false);
 
             var statusFilter = new[] { ApplicationStatus.Rejected, ApplicationStatus.Cancelled, ApplicationStatus.Withdrawn, ApplicationStatus.Removed };
-            applications = applications.Where(app => !statusFilter.Contains(app.ApplicationStatus)).ToList();
+            applications = applications.Where(app => !statusFilter.Contains(app.ApplicationStatus)).OrderByDescending(app => app.CreatedAt).ToList();
 
             var application = new Apply();
             Guid applicationId;
@@ -116,7 +116,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (applications.Count > 1)
             {
-                return View(applications);
+                _logger.LogError($"Multiple in flight applications found for userId: {signinId}");
+                return View("~/Views/Roatp/Applications.cshtml", applications);
             }
             if (applications.Count == 1)
             {
