@@ -52,7 +52,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(command);
         }
-        
+
+        [HttpPost]
+        [Route("Oversight/GatewayFailOutcome")]
+        public async Task<ActionResult> RecordOversightGatewayFailOutcome([FromBody] RecordOversightGatewayFailOutcomeCommand command)
+        {
+            await _mediator.Send(command);
+            return new OkResult();
+        }
+
         [HttpGet]
         [Route("Oversight/RegistrationDetails/{applicationId}")]
         public async Task<ActionResult<RoatpRegistrationDetails>> GetRegistrationDetails(Guid applicationId)
