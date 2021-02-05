@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.EmailService
         private readonly IApplyRepository _applyRepository;
         private readonly IConfigurationService _configurationService;
 
-        public ApplicationUpdatedEmailService(ILogger<NotificationApiEmailService> logger,
+        public ApplicationUpdatedEmailService(ILogger<ApplicationUpdatedEmailService> logger,
             IEmailTemplateClient emailTemplateClient,
             INotificationsApi notificationsApi,
             IApplyRepository applyRepository,
