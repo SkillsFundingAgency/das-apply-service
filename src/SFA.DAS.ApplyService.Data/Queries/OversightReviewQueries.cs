@@ -31,6 +31,9 @@ namespace SFA.DAS.ApplyService.Data.Queries
                 var reviews = (await connection.QueryAsync<PendingOversightReview>(@"SELECT 
                             apply.ApplicationId AS ApplicationId,
 							 org.Name AS OrganisationName,
+                            apply.GatewayReviewStatus,
+                            apply.FinancialReviewStatus,
+                            apply.ModerationStatus AS ModerationReviewStatus,
 					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,

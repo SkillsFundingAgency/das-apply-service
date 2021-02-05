@@ -31,8 +31,9 @@ namespace SFA.DAS.ApplyService.Web
 {
     using Controllers;
     using SFA.DAS.ApplyService.Application.Apply;
-    using SFA.DAS.ApplyService.Application.Email;
     using SFA.DAS.ApplyService.EmailService;
+    using SFA.DAS.ApplyService.EmailService.Infrastructure;
+    using SFA.DAS.ApplyService.EmailService.Interfaces;
     using SFA.DAS.ApplyService.Web.Configuration;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
@@ -239,12 +240,15 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
             services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();
             services.AddTransient<IAnswerFormService, AnswerFormService>();
+            services.AddTransient<IEmailTokenService, EmailTokenService>();
             services.AddTransient<IGetHelpWithQuestionEmailService, GetHelpWithQuestionEmailService>();
             services.AddTransient<INotificationsApi>(x => {
                 var apiConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
                 {
                     ApiBaseUrl = _configService.NotificationsApiClientConfiguration.ApiBaseUrl,
+#pragma warning disable 618
                     ClientToken = _configService.NotificationsApiClientConfiguration.ClientToken,
+#pragma warning restore 618
                     ClientId = _configService.NotificationsApiClientConfiguration.ClientId,
                     ClientSecret = _configService.NotificationsApiClientConfiguration.ClientSecret,
                     IdentifierUri = _configService.NotificationsApiClientConfiguration.IdentifierUri,

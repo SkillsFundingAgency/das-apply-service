@@ -3,7 +3,6 @@ using System.Threading;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
