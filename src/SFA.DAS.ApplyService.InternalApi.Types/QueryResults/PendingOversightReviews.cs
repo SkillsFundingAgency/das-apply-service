@@ -20,5 +20,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
         public string GatewayReviewStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
         public string ModerationReviewStatus { get; set; }
+        public string ApplicationStatus { get; set; }
     }
 }

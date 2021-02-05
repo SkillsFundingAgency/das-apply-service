@@ -30,7 +30,8 @@ namespace SFA.DAS.ApplyService.Data.Queries
             {
                 var reviews = (await connection.QueryAsync<PendingOversightReview>(@"SELECT 
                             apply.ApplicationId AS ApplicationId,
-							 org.Name AS OrganisationName,
+                            apply.ApplicationStatus,
+                            org.Name AS OrganisationName,
                             apply.GatewayReviewStatus,
                             apply.FinancialReviewStatus,
                             apply.ModerationStatus AS ModerationReviewStatus,
