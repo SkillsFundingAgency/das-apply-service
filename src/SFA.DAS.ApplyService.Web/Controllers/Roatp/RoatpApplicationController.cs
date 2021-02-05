@@ -24,7 +24,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     using Configuration;
     using Microsoft.Extensions.Options;
     using MoreLinq;
-    using SFA.DAS.ApplyService.EmailService;
+    using SFA.DAS.ApplyService.EmailService.Interfaces;
     using SFA.DAS.ApplyService.Web.Controllers.Roatp;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
@@ -1316,7 +1316,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     EmailAddress = User.GetEmail()
                 };
 
-                await _submitApplicationEmailService.SendGetHelpWithQuestionEmail(applicationSubmitConfirmation);
+                await _submitApplicationEmailService.SendSubmitConfirmationEmail(applicationSubmitConfirmation);
                 return RedirectToAction("ApplicationSubmitted", new { model.ApplicationId });
             }
             else
