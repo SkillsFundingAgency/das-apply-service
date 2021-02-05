@@ -40,10 +40,16 @@ using ServiceCollectionExtensions = SFA.DAS.ApplyService.InternalApi.Infrastruct
 namespace SFA.DAS.ApplyService.InternalApi
 {
     using SFA.DAS.ApplyService.Domain.Roatp;
+    using SFA.DAS.ApplyService.EmailService;
+    using SFA.DAS.ApplyService.EmailService.Infrastructure;
+    using SFA.DAS.ApplyService.EmailService.Interfaces;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Services;
     using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
     using SFA.DAS.ApplyService.InternalApi.Services.Files;
+    using SFA.DAS.Http;
+    using SFA.DAS.Http.TokenGenerators;
+    using SFA.DAS.Notifications.Api.Client;
     using Swashbuckle.AspNetCore.Swagger;
     using System.IO;
 
@@ -60,7 +66,7 @@ namespace SFA.DAS.ApplyService.InternalApi
         {
             _env = env;
             _configuration = configuration;
-            
+
             _applyConfig = new ConfigurationService(_env, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], _version, _serviceName).GetConfig().GetAwaiter().GetResult();
         }
 
@@ -72,7 +78,7 @@ namespace SFA.DAS.ApplyService.InternalApi
                 })
                 .AddJwtBearer(o =>
                 {
-                    o.Authority = $"https://login.microsoftonline.com/{_applyConfig.ApiAuthentication.TenantId}"; 
+                    o.Authority = $"https://login.microsoftonline.com/{_applyConfig.ApiAuthentication.TenantId}";
                     o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                     {
                         RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
@@ -86,19 +92,19 @@ namespace SFA.DAS.ApplyService.InternalApi
                     {
                         OnMessageReceived = c =>
                         {
-                            
                             return Task.CompletedTask;
                         },
                         OnTokenValidated = c =>
                         {
                             return Task.CompletedTask;
-                        }, OnAuthenticationFailed = c =>
+                        },
+                        OnAuthenticationFailed = c =>
                         {
                             return Task.CompletedTask;
                         }
                     };
-                });    
-            
+                });
+
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
             ConfigHttpClients(services);
@@ -125,7 +131,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             mvcBuilder.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
-            
+
             services.AddDistributedMemoryCache();
 
             services.AddHealthChecks();
@@ -220,19 +226,26 @@ namespace SFA.DAS.ApplyService.InternalApi
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IEmailTemplateClient, EmailTemplateClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.InternalApi.Uri);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
         }
 
         private void ConfigureDependencyInjection(IServiceCollection services)
-        {            
+        {
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-                
+
             services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
                  sp.GetService<IHostingEnvironment>(),
                  _configuration["EnvironmentName"],
                  _configuration["ConfigurationStorageConnectionString"],
                  _version,
                  _serviceName));
-            
+
             services.AddTransient<IContactRepository, ContactRepository>();
             services.AddTransient<IApplyRepository, ApplyRepository>();
             services.AddTransient<IAssessorRepository, AssessorRepository>();
@@ -242,8 +255,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IDfeSignInService, DfeSignInService>();
             services.AddTransient<IOversightReviewRepository, OversightReviewRepository>();
             services.AddTransient<IOversightReviewQueries, OversightReviewQueries>();
-            
-            services.AddTransient<IEmailService, EmailService.EmailService>();
+
+            services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
             // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
@@ -274,6 +287,35 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IFileStorageService, FileStorageService>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
+
+            ConfigureNotificationApiEmailService(services);
+        }
+
+        private void ConfigureNotificationApiEmailService(IServiceCollection services)
+        {
+            services.AddTransient<INotificationsApi>(x =>
+            {
+                var apiConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
+                {
+                    ApiBaseUrl = _applyConfig.NotificationsApiClientConfiguration.ApiBaseUrl,
+#pragma warning disable 618
+                    ClientToken = _applyConfig.NotificationsApiClientConfiguration.ClientToken,
+#pragma warning restore 618
+                    ClientId = _applyConfig.NotificationsApiClientConfiguration.ClientId,
+                    ClientSecret = _applyConfig.NotificationsApiClientConfiguration.ClientSecret,
+                    IdentifierUri = _applyConfig.NotificationsApiClientConfiguration.IdentifierUri,
+                    Tenant = _applyConfig.NotificationsApiClientConfiguration.Tenant
+                };
+
+                var httpClient = string.IsNullOrWhiteSpace(apiConfiguration.ClientId)
+                    ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(apiConfiguration)).Build()
+                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(apiConfiguration)).Build();
+
+                return new NotificationsApi(httpClient, apiConfiguration);
+            });
+
+            services.AddTransient<IEmailTokenService, EmailTokenService>();
+            services.AddTransient<IWithdrawApplicationConfirmationEmailService, WithdrawApplicationConfirmationEmailService>();
         }
     }
 }
