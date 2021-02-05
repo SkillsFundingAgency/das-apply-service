@@ -14,6 +14,7 @@ using NotificationsApiClientConfiguration = SFA.DAS.Notifications.Api.Client.Con
 
 namespace SFA.DAS.ApplyService.EmailService
 {
+    [System.Obsolete("Email Service has been replaced with NotificationApiEmailService")]
     public class EmailService : IEmailService
     {
         private const string SYSTEM_ID = "ApplyService";
