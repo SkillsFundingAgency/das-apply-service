@@ -315,7 +315,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             });
 
             services.AddTransient<IEmailTokenService, EmailTokenService>();
-            services.AddTransient<IWithdrawApplicationConfirmationEmailService, WithdrawApplicationConfirmationEmailService>();
+            services.AddTransient<IApplicationUpdatedEmailService, ApplicationUpdatedEmailService>();
         }
     }
 }
