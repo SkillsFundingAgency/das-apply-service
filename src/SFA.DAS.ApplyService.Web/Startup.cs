@@ -154,6 +154,13 @@ namespace SFA.DAS.ApplyService.Web
             })
             .SetHandlerLifetime(handlerLifeTime);
 
+            services.AddHttpClient<IQnaApiClient, QnaApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.QnaApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
             services.AddHttpClient<ICharityCommissionApiClient, CharityCommissionApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.Uri);
@@ -232,7 +239,6 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<CreateAccountValidator, CreateAccountValidator>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
-            services.AddTransient<IQnaApiClient, QnaApiClient>();
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
             services.AddTransient<IResetRouteQuestionsService, ResetRouteQuestionsService>();
             services.AddTransient<IPagesWithSectionsFlowService, PagesWithSectionsFlowService>();
