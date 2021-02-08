@@ -6,7 +6,8 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
+using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Domain.QueryResults;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTests
 {

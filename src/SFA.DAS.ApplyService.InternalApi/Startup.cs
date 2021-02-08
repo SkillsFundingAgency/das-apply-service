@@ -26,6 +26,7 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
 using SFA.DAS.ApplyService.Data.Queries;
 using SFA.DAS.ApplyService.DfeSignIn;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Services.Moderator;
 using CharityCommissionApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CharityCommissionApiClient;

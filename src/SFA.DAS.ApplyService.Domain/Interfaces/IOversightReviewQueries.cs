@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
+using SFA.DAS.ApplyService.Domain.QueryResults;
 
-namespace SFA.DAS.ApplyService.Application.Interfaces
+namespace SFA.DAS.ApplyService.Domain.Interfaces
 {
     public interface IOversightReviewQueries
     {

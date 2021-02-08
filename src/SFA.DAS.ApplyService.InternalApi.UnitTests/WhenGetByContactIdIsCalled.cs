@@ -11,6 +11,7 @@ using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.GetContact;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests

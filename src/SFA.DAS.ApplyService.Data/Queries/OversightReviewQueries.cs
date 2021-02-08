@@ -3,10 +3,10 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
+using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Domain.QueryResults;
 
 namespace SFA.DAS.ApplyService.Data.Queries
 {

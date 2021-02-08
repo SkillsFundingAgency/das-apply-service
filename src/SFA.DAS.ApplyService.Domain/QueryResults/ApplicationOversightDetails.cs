@@ -1,7 +1,7 @@
 ﻿using System;
 using SFA.DAS.ApplyService.Types;
 
-namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
+namespace SFA.DAS.ApplyService.Domain.QueryResults
 {
     public class ApplicationOversightDetails
     {

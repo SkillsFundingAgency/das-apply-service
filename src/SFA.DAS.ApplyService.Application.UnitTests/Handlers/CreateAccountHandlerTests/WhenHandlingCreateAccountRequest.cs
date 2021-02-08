@@ -8,6 +8,7 @@ using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Domain.Entities;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandlerTests
 {
