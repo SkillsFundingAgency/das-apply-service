@@ -14,13 +14,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 {
     public class RecordOversightGatewayFailOutcomeCommandHandler : IRequestHandler<RecordOversightGatewayFailOutcomeCommand>
     {
-        private readonly IApplyRepository _applyRepository;
+        private readonly IApplicationRepository _applyRepository;
         private readonly IOversightReviewRepository _oversightReviewRepository;
         private readonly ILogger<RecordOversightGatewayFailOutcomeCommandHandler> _logger;
         private readonly IAuditService _auditService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public RecordOversightGatewayFailOutcomeCommandHandler(IApplyRepository applyRepository,
+        public RecordOversightGatewayFailOutcomeCommandHandler(IApplicationRepository applyRepository,
             IOversightReviewRepository oversightReviewRepository,
             ILogger<RecordOversightGatewayFailOutcomeCommandHandler> logger,
             IAuditService auditService, IUnitOfWork unitOfWork)
@@ -58,7 +58,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             _oversightReviewRepository.Add(oversightReview);
 
             application.ApplicationStatus = ApplicationStatus.Rejected;
-            await _applyRepository.UpdateApplication(application);
+            _applyRepository.Update(application);
 
             _auditService.Save();
 

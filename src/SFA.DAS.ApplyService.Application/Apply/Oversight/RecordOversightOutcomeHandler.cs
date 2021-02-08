@@ -14,7 +14,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 {
     public class RecordOversightOutcomeHandler : IRequestHandler<RecordOversightOutcomeCommand, bool>
     {
-        private readonly IApplyRepository _applyRepository;
+        private readonly IApplicationRepository _applyRepository;
         private readonly IOversightReviewRepository _oversightReviewRepository;
         private readonly ILogger<RecordOversightOutcomeHandler> _logger;
         private readonly IAuditService _auditService;
@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
         public RecordOversightOutcomeHandler(ILogger<RecordOversightOutcomeHandler> logger,
             IOversightReviewRepository oversightReviewRepository,
-            IApplyRepository applyRepository,
+            IApplicationRepository applyRepository,
             IAuditService auditService, IUnitOfWork unitOfWork)
         {
             _logger = logger;
@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             var (oversightReview, isNew) = await GetExistingOrNewOversightReview(request.ApplicationId);
 
             ApplyChanges(oversightReview, request, isNew);
-            await SaveChanges(oversightReview, application, isNew);
+            SaveChanges(oversightReview, application, isNew);
             
             _auditService.Save();
 
@@ -116,7 +116,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 oversightReview.UserName = request.UserName;
             }
         }
-        private async Task SaveChanges(OversightReview oversightReview, Domain.Entities.Apply application, bool isNew)
+        private void SaveChanges(OversightReview oversightReview, Domain.Entities.Apply application, bool isNew)
         {
             if (isNew)
             {
@@ -133,7 +133,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 ? ApplicationStatus.Rejected
                 : ApplicationStatus.Approved;
 
-            await _applyRepository.UpdateApplication(application);
+            _applyRepository.Update(application);
         }
     }
 }
