@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
@@ -17,16 +18,18 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
         private readonly IOversightReviewRepository _oversightReviewRepository;
         private readonly ILogger<RecordOversightGatewayFailOutcomeCommandHandler> _logger;
         private readonly IAuditService _auditService;
+        private readonly IUnitOfWork _unitOfWork;
 
         public RecordOversightGatewayFailOutcomeCommandHandler(IApplyRepository applyRepository,
             IOversightReviewRepository oversightReviewRepository,
             ILogger<RecordOversightGatewayFailOutcomeCommandHandler> logger,
-            IAuditService auditService)
+            IAuditService auditService, IUnitOfWork unitOfWork)
         {
             _applyRepository = applyRepository;
             _oversightReviewRepository = oversightReviewRepository;
             _logger = logger;
             _auditService = auditService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Unit> Handle(RecordOversightGatewayFailOutcomeCommand request, CancellationToken cancellationToken)
@@ -51,13 +54,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             _auditService.StartTracking(UserAction.RecordOversightGatewayFailOutcome, request.UserId, request.UserName);
             _auditService.AuditInsert(oversightReview);
             _auditService.AuditUpdate(application);
-            
-            await _oversightReviewRepository.Add(oversightReview);
+
+            _oversightReviewRepository.Add(oversightReview);
 
             application.ApplicationStatus = ApplicationStatus.Rejected;
             await _applyRepository.UpdateApplication(application);
-            
-            await _auditService.Save();
+
+            _auditService.Save();
+
+            await _unitOfWork.Commit();
 
             return Unit.Value;
         }

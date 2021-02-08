@@ -137,8 +137,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
                     _auditService.StartTracking(UserAction.UpdateGatewayReviewStatus, request.UserId, request.UserName);
                     _auditService.AuditInsert(oversightReview);
-                    await _oversightReviewRepository.Add(oversightReview);
-                    await _auditService.Save();
+                    //await _oversightReviewRepository.Add(oversightReview);
+                    //await _auditService.Save();
                 }
 
                 return result;
