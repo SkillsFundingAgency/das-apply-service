@@ -14,44 +14,27 @@ using Polly;
 using Polly.Extensions.Http;
 using Polly.Retry;
 using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.Infrastructure.Firewall;
 using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class QnaApiClient : IQnaApiClient
+    public class QnaApiClient : ApiClientBase<QnaApiClient>, IQnaApiClient
     {
-        private readonly ILogger<QnaApiClient> _logger;
         private readonly IQnaTokenService _tokenService;
-        private static readonly HttpClient _httpClient = new HttpClient();
         private readonly RetryPolicy<HttpResponseMessage> _retryPolicy;
-        private readonly string _environmentName;
 
-        protected readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
+        public QnaApiClient(HttpClient httpClient, ILogger<QnaApiClient> logger, IQnaTokenService tokenService) : base(httpClient, logger)
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore
-        };
-
-        public QnaApiClient(IConfigurationService configurationService, ILogger<QnaApiClient> logger, IQnaTokenService tokenService)
-        {
-            _logger = logger;
             _tokenService = tokenService;
             _retryPolicy = HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.QnaApiAuthentication.ApiBaseAddress);
-            }
-
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
-            _environmentName = configurationService.GetEnvironmentName();
         }
 
         public async Task<StartQnaApplicationResponse> StartApplication(string userReference, string workflowType, string applicationData)
@@ -83,14 +66,14 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<object> GetApplicationData(Guid applicationId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/applicationData");
+            var response = await GetResponse($"Applications/{applicationId}/applicationData");
 
             return await response.Content.ReadAsAsync<object>();
         }
 
         public async Task<string> GetQuestionTag(Guid applicationId, string questionTag)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/applicationData/{questionTag}");
+            var response = await GetResponse($"Applications/{applicationId}/applicationData/{questionTag}");
             
             if (response.IsSuccessStatusCode)
             {
@@ -109,69 +92,48 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/Sequences");
-
-            return await response.Content.ReadAsAsync<IEnumerable<ApplicationSequence>>();
+            return await Get<List<ApplicationSequence>>($"Applications/{applicationId}/Sequences");
         }
 
         public async Task<ApplicationSequence> GetSequence(Guid applicationId, Guid sequenceId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/Sequences/{sequenceId}");
-
-            return await response.Content.ReadAsAsync<ApplicationSequence>();
+            return await Get<ApplicationSequence>($"Applications/{applicationId}/Sequences/{sequenceId}");
         }
 
         public async Task<ApplicationSequence> GetSequenceBySequenceNo(Guid applicationId, int sequenceNo)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/Sequences/{sequenceNo}");
-
-            return await response.Content.ReadAsAsync<ApplicationSequence>();
+            return await Get<ApplicationSequence>($"Applications/{applicationId}/Sequences/{sequenceNo}");
         }
-
 
         public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sections");
-
-            return await response.Content.ReadAsAsync<IEnumerable<ApplicationSection>>();
+            return await Get<List<ApplicationSection>>($"Applications/{applicationId}/sections");
         }
 
         public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, Guid sequenceId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/Sequences/{sequenceId}/sections");
-
-            return await response.Content.ReadAsAsync<IEnumerable<ApplicationSection>>();
+            return await Get<List<ApplicationSection>>($"Applications/{applicationId}/Sequences/{sequenceId}/sections");
         }
 
         public async Task<ApplicationSection> GetSection(Guid applicationId, Guid sectionId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sections/{sectionId}");
-
-            return await response.Content.ReadAsAsync<ApplicationSection>();
+            return await Get<ApplicationSection>($"Applications/{applicationId}/sections/{sectionId}");
         }
 
         public async Task<ApplicationSection> GetSectionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}");
-
-            return await response.Content.ReadAsAsync<ApplicationSection>();
+            return await Get<ApplicationSection>($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}");
         }
-
 
         public async Task<Page> GetPage(Guid applicationId, Guid sectionId, string pageId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sections/{sectionId}/pages/{pageId}");
-
-            return await response.Content.ReadAsAsync<Page>();
+            return await Get<Page>($"Applications/{applicationId}/sections/{sectionId}/pages/{pageId}");
         }
 
         public async Task<Page> GetPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}");
-
-            return await response.Content.ReadAsAsync<Page>();
+            return await Get<Page>($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}");
         }
-
 
         public async Task<Answer> GetAnswer(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
         {
@@ -253,12 +215,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
                 var validationErrorMessage = "Cannot save answers at this time. Please contact your system administrator.";
 
-                if (!_environmentName.EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    // Show API error message if outside of PROD and PREPROD environments
-                    validationErrorMessage = apiErrorMessage;
-                }
-
                 var validationError = new KeyValuePair<string, string>(string.Empty, validationErrorMessage);
                 return new SetPageAnswersResponse
                     {ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> {validationError}};
@@ -267,21 +223,16 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<bool> CanUpdatePage(Guid applicationId, Guid sectionId, string pageId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/canupdate");
-
-            return await response.Content.ReadAsAsync<bool>();
+            return await Get<bool>($"Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/canupdate");
         }
 
         public async Task<bool> CanUpdatePageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/canupdate");
-
-            return await response.Content.ReadAsAsync<bool>();
+            return await Get<bool>($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/canupdate");
         }
 
         public async Task<ResetPageAnswersResponse> ResetPageAnswers(Guid applicationId, Guid sectionId, string pageId)
         {
-
             var response = await _httpClient.PostAsJsonAsync($"/Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/reset", new{});
 
             var json = await response.Content.ReadAsStringAsync();
@@ -396,12 +347,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 _logger.LogError($"Error Uploading files into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
 
                 var validationErrorMessage = "Cannot upload files at this time. Please contact your system administrator.";
-
-                if (!_environmentName.EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    // Show API error message if outside of PROD and PREPROD environments
-                    validationErrorMessage = apiErrorMessage;
-                }
 
                 var validationError = new KeyValuePair<string, string>(string.Empty, validationErrorMessage);
                 return new UploadPageAnswersResult { ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> { validationError } };
