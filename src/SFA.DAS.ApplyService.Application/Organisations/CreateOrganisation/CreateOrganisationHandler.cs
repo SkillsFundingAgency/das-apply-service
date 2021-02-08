@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Threading;
@@ -10,12 +9,10 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
     public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationRequest, Organisation>
     {
         private readonly IOrganisationRepository _organisationRepository;
-        private readonly IEmailService _emailService;
-
-        public CreateOrganisationHandler(IOrganisationRepository organisationRepository, IEmailService emailService)
+        
+        public CreateOrganisationHandler(IOrganisationRepository organisationRepository)
         {
             _organisationRepository = organisationRepository;
-            _emailService = emailService;
         }
 
         public async Task<Organisation> Handle(CreateOrganisationRequest request, CancellationToken cancellationToken)

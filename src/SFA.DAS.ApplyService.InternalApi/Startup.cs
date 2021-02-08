@@ -256,7 +256,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IOversightReviewRepository, OversightReviewRepository>();
             services.AddTransient<IOversightReviewQueries, OversightReviewQueries>();
 
-            services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
             // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.

@@ -11,15 +11,12 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
     {
         private readonly IContactRepository _contactRepository;
         private readonly IDfeSignInService _dfeSignInService;
-        private readonly IEmailService _emailServiceObject;
         private readonly ILogger<CreateAccountHandler> _logger;
 
-        public CreateAccountHandler(IContactRepository contactRepository, IDfeSignInService dfeSignInService,
-            IEmailService emailServiceObject, ILogger<CreateAccountHandler> logger)
+        public CreateAccountHandler(IContactRepository contactRepository, IDfeSignInService dfeSignInService, ILogger<CreateAccountHandler> logger)
         {
             _contactRepository = contactRepository;
             _dfeSignInService = dfeSignInService;
-            _emailServiceObject = emailServiceObject;
             _logger = logger;
         }
 
