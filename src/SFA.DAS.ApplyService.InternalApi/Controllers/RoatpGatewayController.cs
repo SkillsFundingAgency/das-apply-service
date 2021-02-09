@@ -132,7 +132,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         ApplicationId = request.ApplicationId,
                         Status = OversightReviewStatus.Rejected,
                         UserId = request.UserId,
-                        UserName = request.UserName
+                        UserName = request.UserName,
+                        InternalComments = request.GatewayReviewComment,
+                        ExternalComments = request.GatewayReviewExternalComment
                     };
 
                     _auditService.StartTracking(UserAction.UpdateGatewayReviewStatus, request.UserId, request.UserName);
