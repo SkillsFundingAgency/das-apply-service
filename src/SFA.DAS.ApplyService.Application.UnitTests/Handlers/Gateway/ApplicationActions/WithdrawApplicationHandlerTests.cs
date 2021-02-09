@@ -6,13 +6,16 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions;
+using SFA.DAS.ApplyService.Application.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.ApplicationActions
 {
     public class WithdrawApplicationHandlerTests
     {
         private WithdrawApplicationHandler _handler;
-        private Mock<IApplyRepository> _repository;
+        private Mock<IApplyRepository> _applyRepository;
+        private Mock<IOversightReviewRepository> _oversightReviewRepository;
+        private Mock<IAuditService> _auditService;
 
         private Guid _applicationId;
         private const string _comments = "comments";
@@ -24,17 +27,19 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.Applicatio
         {
             _applicationId = Guid.NewGuid();
 
-            _repository = new Mock<IApplyRepository>();
+            _applyRepository = new Mock<IApplyRepository>();
+            _oversightReviewRepository = new Mock<IOversightReviewRepository>();
+            _auditService = new Mock<IAuditService>();
             var logger = Mock.Of<ILogger<WithdrawApplicationHandler>>();
             
-            _handler = new WithdrawApplicationHandler(_repository.Object, logger);
+            _handler = new WithdrawApplicationHandler(_applyRepository.Object, _oversightReviewRepository.Object, _auditService.Object, logger);
         }
 
         [Test]
         public async Task Handler_withdraws_application()
         {
             await _handler.Handle(new WithdrawApplicationRequest(_applicationId, _comments, _userId, _userName), CancellationToken.None);
-            _repository.Verify(x => x.WithdrawApplication(_applicationId, _comments, _userId, _userName), Times.Once);
+            _applyRepository.Verify(x => x.WithdrawApplication(_applicationId, _comments, _userId, _userName), Times.Once);
         }
     }
 }
