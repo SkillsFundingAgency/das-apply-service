@@ -25,6 +25,7 @@ using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
 using SFA.DAS.ApplyService.Data.Queries;
+using SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Domain.Interfaces;
@@ -279,6 +280,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IAssessorReviewCreationService, AssessorReviewCreationService>();
             services.AddTransient<IModeratorReviewCreationService, ModeratorReviewCreationService>();
 
+            services.AddTransient<IApplicationRepository, ApplicationRepository>();
             services.AddTransient<IDiffService, DiffService>();
             services.AddTransient<IStateService, StateService>();
             services.AddTransient<IAuditRepository, AuditRepository>();

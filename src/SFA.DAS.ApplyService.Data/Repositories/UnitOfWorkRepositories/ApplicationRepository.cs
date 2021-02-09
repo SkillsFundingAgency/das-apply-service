@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
@@ -20,15 +19,19 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
         {
             _unitOfWork = unitOfWork;
             _config = configurationService.GetConfig().Result;
+
+            SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
+            SqlMapper.AddTypeHandler(typeof(FinancialReviewDetails), new FinancialReviewDetailsDataHandler());
         }
 
         public async Task<Apply> GetApplication(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+
                 return await connection.QuerySingleOrDefaultAsync<Apply>(
                     @"SELECT * FROM apply WHERE ApplicationId = @applicationId",
-                    new { applicationId });
+                    new {applicationId});
             }
         }
 
