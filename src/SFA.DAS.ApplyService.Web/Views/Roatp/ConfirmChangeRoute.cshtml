@@ -46,7 +46,7 @@ else
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form class="js-disable-on-submit" method="post" asp-action="SubmitConfirmChangeRoute" asp-controller="RoatpApplicationPreamble" novalidate>
+            <form method="post" asp-action="SubmitConfirmChangeRoute" asp-controller="RoatpApplicationPreamble" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="SequenceId" />
                 <input type="hidden" asp-for="SectionId" />
@@ -103,7 +103,9 @@ else
                         </div>
                     </fieldset>
                 </div>
-                <input type="submit" class="govuk-button" value="Save and continue" />
+                <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                    Save and continue
+                </button>
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>

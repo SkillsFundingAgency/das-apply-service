@@ -42,7 +42,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form class="js-disable-on-submit" method="post" asp-action="SearchByUkprn" asp-controller="RoatpApplicationPreamble" novalidate>
+            <form method="post" asp-action="SearchByUkprn" asp-controller="RoatpApplicationPreamble" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="SequenceId" />
                 <input type="hidden" asp-for="SectionId" />
@@ -73,7 +73,9 @@
                         <p>After you’ve registered and received a UKPRN, sign back in to continue with this application.</p>
                     </div>
                 </details>
-                <input type="submit" class="govuk-button" value="Save and continue" />
+                <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                    Save and continue
+                </button>
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>

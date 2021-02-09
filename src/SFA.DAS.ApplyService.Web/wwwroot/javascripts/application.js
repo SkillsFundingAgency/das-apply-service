@@ -91,12 +91,12 @@ window.DASFrontend.cookies.init();
   };
 
   DASFrontend.disableOnSubmit = {
-    buttonToDisable: document.querySelectorAll(
+    buttonsToDisable: document.querySelectorAll(
       "[data-disable-on-submit='true']"
     ),
 
     init: function () {
-      if (!this.buttonToDisable.length) return;
+      if (!this.buttonsToDisable.length) return;
       document.addEventListener("click", this.disableButton);
     },
 
@@ -104,13 +104,11 @@ window.DASFrontend.cookies.init();
       if (event.target.type !== "submit") return;
       if (event.target.dataset.disableOnSubmit !== "true") return;
 
+      var button = DASFrontend.disableOnSubmit.buttonsToDisable;
+
       setTimeout(function () {
-        for (
-          var i = 0;
-          i < DASFrontend.disableOnSubmit.buttonToDisable.length;
-          i++
-        ) {
-          DASFrontend.disableOnSubmit.buttonToDisable[i].disabled = true;
+        for (var i = 0; i < button.length; i++) {
+          button[i].disabled = true;
         }
       }, 0);
     },
