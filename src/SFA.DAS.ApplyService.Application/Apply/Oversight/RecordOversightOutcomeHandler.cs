@@ -32,43 +32,102 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
         {
             _logger.LogInformation($"Recording Oversight review status of {request.OversightStatus} for application Id {request.ApplicationId}");
 
-            var application = await _applyRepository.GetApplication(request.ApplicationId);
-
-            if(application == null)
-            {
-                throw new InvalidOperationException($"Application {request.ApplicationId} not found");
-            }
-
-            var oversightReview = new OversightReview
-            {
-                ApplicationId = request.ApplicationId,
-                GatewayApproved = request.ApproveGateway,
-                ModerationApproved = request.ApproveModeration,
-                Status = request.OversightStatus,
-                InternalComments = request.InternalComments,
-                ExternalComments = request.ExternalComments,
-                UserId = request.UserId,
-                UserName = request.UserName,
-            };
-
             _auditService.StartTracking(UserAction.RecordOversightOutcome, request.UserId, request.UserName);
-            _auditService.AuditInsert(oversightReview);
-            _auditService.AuditUpdate(application);
 
-            await _oversightReviewRepository.Add(oversightReview);
+            var application = await GetApplicationOrThrow(request.ApplicationId);
 
-            if (request.OversightStatus != OversightReviewStatus.InProgress)
-            {
-                application.ApplicationStatus = request.OversightStatus == OversightReviewStatus.Unsuccessful
-                    ? ApplicationStatus.Rejected
-                    : ApplicationStatus.Approved;
+            var (oversightReview, isNew) = await GetExistingOrNewOversightReview(request.ApplicationId);
 
-                await _applyRepository.UpdateApplication(application);
-            }
+            ApplyChanges(oversightReview, request, isNew);
+            await SaveChanges(oversightReview, application, isNew);
             
             await _auditService.Save();
 
             return true;
+        }
+
+        private async Task<Domain.Entities.Apply> GetApplicationOrThrow(Guid applicationId)
+        {
+            var application = await _applyRepository.GetApplication(applicationId);
+
+            if (application == null)
+            {
+                throw new InvalidOperationException($"Application {applicationId} not found");
+            }
+
+            _auditService.AuditUpdate(application);
+
+            return application;
+        }
+
+        private async Task<(OversightReview, bool)> GetExistingOrNewOversightReview(Guid applicationId)
+        {
+            var isNew = false;
+            var oversightReview = await _oversightReviewRepository.GetByApplicationId(applicationId);
+
+            if (oversightReview == null)
+            {
+                isNew = true;
+                oversightReview = new OversightReview { ApplicationId = applicationId };
+                _auditService.AuditInsert(oversightReview);
+            }
+            else
+            {
+                if (oversightReview.Status != OversightReviewStatus.InProgress)
+                {
+                    throw new InvalidOperationException($"Unable to modify oversight review for application {applicationId} with a status of {oversightReview.Status}");
+                }
+                _auditService.AuditUpdate(oversightReview);
+            }
+
+            return (oversightReview, isNew);
+        }
+
+        private void ApplyChanges(OversightReview oversightReview, RecordOversightOutcomeCommand request, bool isNew)
+        {
+            oversightReview.GatewayApproved = request.ApproveGateway;
+            oversightReview.ModerationApproved = request.ApproveModeration;
+            oversightReview.Status = request.OversightStatus;
+
+            if (!isNew)
+            {
+                oversightReview.UpdatedOn = DateTime.UtcNow;
+            }
+
+            if (request.OversightStatus == OversightReviewStatus.InProgress)
+            {
+                oversightReview.InProgressDate = DateTime.UtcNow;
+                oversightReview.InProgressInternalComments = request.InternalComments;
+                oversightReview.InProgressExternalComments = request.ExternalComments;
+                oversightReview.InProgressUserId = request.UserId;
+                oversightReview.InProgressUserName = request.UserName;
+            }
+            else
+            {
+                oversightReview.InternalComments = request.InternalComments;
+                oversightReview.ExternalComments = request.ExternalComments;
+                oversightReview.UserId = request.UserId;
+                oversightReview.UserName = request.UserName;
+            }
+        }
+        private async Task SaveChanges(OversightReview oversightReview, Domain.Entities.Apply application, bool isNew)
+        {
+            if (isNew)
+            {
+                await _oversightReviewRepository.Add(oversightReview);
+            }
+            else
+            {
+                await _oversightReviewRepository.Update(oversightReview);
+            }
+
+            if (oversightReview.Status == OversightReviewStatus.InProgress) return;
+
+            application.ApplicationStatus = oversightReview.Status == OversightReviewStatus.Unsuccessful
+                ? ApplicationStatus.Rejected
+                : ApplicationStatus.Approved;
+
+            await _applyRepository.UpdateApplication(application);
         }
     }
 }

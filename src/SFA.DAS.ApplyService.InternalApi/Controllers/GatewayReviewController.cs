@@ -6,6 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.Application.Apply.Gateway.Applications;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions;
+using SFA.DAS.ApplyService.Application.Apply.GetApplications;
+using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -13,10 +18,17 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     public class GatewayReviewController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly ILogger<GatewayReviewController> _logger;
+        private readonly IConfigurationService _configurationService;
+        private readonly IWithdrawApplicationConfirmationEmailService _withdrawApplicationConfirmationEmailService;
 
-        public GatewayReviewController(IMediator mediator)
+        public GatewayReviewController(IMediator mediator, ILogger<GatewayReviewController> logger,
+             IConfigurationService configurationService, IWithdrawApplicationConfirmationEmailService withdrawApplicationConfirmationEmailService)
         {
             _mediator = mediator;
+            _logger = logger;
+            _configurationService = configurationService;
+            _withdrawApplicationConfirmationEmailService = withdrawApplicationConfirmationEmailService;
         }
 
         [HttpGet("GatewayReview/Counts")]
@@ -56,7 +68,31 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("GatewayReview/{applicationId}/Withdraw")]
         public async Task<bool> WithdrawApplication(Guid applicationId, [FromBody] GatewayWithdrawApplicationRequest request)
         {
-            return await _mediator.Send(new WithdrawApplicationRequest(applicationId, request.Comments, request.UserId, request.UserName));
+            var withdrawResult = await _mediator.Send(new WithdrawApplicationRequest(applicationId, request.Comments, request.UserId, request.UserName));
+
+            try
+            {
+                if (withdrawResult)
+                {
+                    var applicationContact = await _mediator.Send(new GetContactForApplicationRequest(applicationId));
+                    var config = await _configurationService.GetConfig();
+
+                    var applicationWithdrawConfirmation = new ApplicationWithdrawConfirmation
+                    {
+                        ApplicantFullName = $"{applicationContact.GivenNames} {applicationContact.FamilyName}",
+                        EmailAddress = applicationContact.Email,
+                        LoginLink = config.SignInPage
+                    };
+
+                    await _withdrawApplicationConfirmationEmailService.SendWithdrawConfirmationEmail(applicationWithdrawConfirmation);
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, $"Unable to send withdraw confirmation email for application: {applicationId}");
+            }
+
+            return withdrawResult;
         }
 
         [HttpPost("GatewayReview/{applicationId}/Remove")]
