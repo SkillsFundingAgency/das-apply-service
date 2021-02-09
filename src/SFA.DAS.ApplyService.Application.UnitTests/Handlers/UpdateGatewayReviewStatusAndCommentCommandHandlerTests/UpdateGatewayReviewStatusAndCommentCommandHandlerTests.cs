@@ -5,7 +5,6 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Types;
@@ -43,8 +42,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
 
             _handler = new UpdateGatewayReviewStatusAndCommentCommandHandler(_applyRepository.Object,
                 _oversightReviewRepository.Object,
-                Mock.Of<IAuditService>(),
-                Mock.Of<IUnitOfWork>());
+                Mock.Of<IAuditService>());
         }
 
         [Test]

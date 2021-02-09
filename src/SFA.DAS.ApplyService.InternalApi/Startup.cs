@@ -42,6 +42,7 @@ using ServiceCollectionExtensions = SFA.DAS.ApplyService.InternalApi.Infrastruct
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
+    using SFA.DAS.ApplyService.Application.Behaviours;
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.EmailService.Infrastructure;
@@ -291,6 +292,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IFileStorageService, FileStorageService>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkBehaviour<,>));
 
             ConfigureNotificationApiEmailService(services);
         }

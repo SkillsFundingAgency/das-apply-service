@@ -25,6 +25,8 @@ namespace SFA.DAS.ApplyService.Data.UnitOfWork
 
         public async Task Commit()
         {
+            if (_operations.Count == 0) { return; }
+
             var config = await _configurationService.GetConfig();
 
             using (var connection = new SqlConnection(config.SqlConnectionString))

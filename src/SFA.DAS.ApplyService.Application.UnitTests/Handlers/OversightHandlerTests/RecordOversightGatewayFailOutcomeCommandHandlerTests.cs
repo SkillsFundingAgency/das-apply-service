@@ -4,10 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Types;
@@ -42,8 +40,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             _handler = new RecordOversightGatewayFailOutcomeCommandHandler(_applyRepository.Object,
                 _oversightReviewRepository.Object,
                 Mock.Of<ILogger<RecordOversightGatewayFailOutcomeCommandHandler>>(),
-                _auditService.Object,
-                Mock.Of<IUnitOfWork>());
+                _auditService.Object);
         }
 
         [Test]
