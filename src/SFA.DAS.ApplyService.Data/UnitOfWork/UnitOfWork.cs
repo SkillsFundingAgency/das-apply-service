@@ -42,6 +42,8 @@ namespace SFA.DAS.ApplyService.Data.UnitOfWork
 
                 _transaction = null;
             }
+
+            Clear();
         }
 
         public void Clear()
