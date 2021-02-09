@@ -148,7 +148,9 @@ namespace SFA.DAS.ApplyService.Data.Queries
                             outcome.[InProgressInternalComments],
                             outcome.[InProgressExternalComments],
                             outcome.[GatewayApproved],
-                            outcome.[ModerationApproved]
+                            outcome.[ModerationApproved],
+                            outcome.[InternalComments],
+                            outcome.[ExternalComments]
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                           LEFT JOIN OversightReview outcome ON outcome.ApplicationId = apply.ApplicationId
