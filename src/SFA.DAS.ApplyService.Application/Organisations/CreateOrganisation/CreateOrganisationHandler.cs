@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;

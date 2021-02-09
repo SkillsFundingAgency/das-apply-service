@@ -17,6 +17,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
 using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -130,7 +131,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         ApplicationId = request.ApplicationId,
                         Status = OversightReviewStatus.Rejected,
                         UserId = request.UserId,
-                        UserName = request.UserName
+                        UserName = request.UserName,
+                        InternalComments = request.GatewayReviewComment,
+                        ExternalComments = request.GatewayReviewExternalComment
                     };
 
                     _auditService.StartTracking(UserAction.UpdateGatewayReviewStatus, request.UserId, request.UserName);

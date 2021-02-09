@@ -121,27 +121,39 @@ namespace SFA.DAS.ApplyService.Data.Queries
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
-							r.Status as OversightStatus,
                             apply.ApplicationStatus,
-							r.ApplicationDeterminedDate,
+							outcome.Status as OversightStatus,
+							outcome.ApplicationDeterminedDate,
+                            outcome.UserName as OversightUserName,
 							apply.AssessorReviewStatus,
 							contacts.Email as ApplicationEmailAddress,
 							apply.GatewayReviewStatus,
 							JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeMadeDate,
 							apply.GatewayUserName as GatewayOutcomeMadeBy,
 							JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.Comments') AS GatewayComments,
+                            JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.ExternalComments') AS GatewayExternalComments,
 							apply.FinancialReviewStatus,
 							JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') AS FinancialGradeAwarded,
 							JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS FinancialHealthAssessedOn,
 							JSON_VALUE(apply.FinancialGrade, '$.GradedBy') AS FinancialHealthAssessedBy,
                             JSON_VALUE(apply.FinancialGrade, '$.Comments') AS FinancialHealthComments,
+                            JSON_VALUE(apply.FinancialGrade, '$.ExternalComments') AS FinancialHealthExternalComments,
 							apply.ModerationStatus as ModerationReviewStatus,
 							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS ModerationOutcomeMadeOn,
 							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratedBy,
-							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorComments') AS ModerationComments                       
+							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorComments') AS ModerationComments,
+                            outcome.[InProgressDate],
+                            outcome.[InProgressUserId],
+                            outcome.[InProgressUserName],
+                            outcome.[InProgressInternalComments],
+                            outcome.[InProgressExternalComments],
+                            outcome.[GatewayApproved],
+                            outcome.[ModerationApproved],
+                            outcome.[InternalComments],
+                            outcome.[ExternalComments]
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-                          LEFT JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
+                          LEFT JOIN OversightReview outcome ON outcome.ApplicationId = apply.ApplicationId
 						  LEFT OUTER JOIN contacts on contacts.ApplyOrganisationId = org.Id
                         WHERE apply.ApplicationId = @applicationId",
                     new { applicationId });

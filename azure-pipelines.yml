@@ -21,105 +21,148 @@ resources:
     ref: refs/heads/master
     endpoint: "GitHub (SFA)"
 
-jobs:
-- job: 'CodeBuild'
-  pool:
-    name: 'DAS - Continuous Integration'
-  workspace:
-    clean: all
-  steps:
-  - task: gittools.gitversion-preview.gitversion-task.GitVersion@5
-    displayName: GitVersion
-    inputs:
-      configFilePath: GitVersion.yml
-      updateAssemblyInfo: true
+stages:
+- stage: Build
+  jobs:
+  - job: 'CodeBuild'
+    pool:
+      name: 'DAS - Continuous Integration'
+    workspace:
+      clean: all
+    steps:
+    - task: gittools.gitversion-preview.gitversion-task.GitVersion@5
+      displayName: GitVersion
+      inputs:
+        configFilePath: GitVersion.yml
+        updateAssemblyInfo: true
 
-  - task: SonarCloudPrepare@1
-    displayName: 'Prepare Sonarcloud analysis configuration'
-    inputs:
-      SonarCloud: "$(SonarCloudConnectionId)"
-      organization: "$(SonarCloudOrganisationKey)"
-      scannerMode: 'MSBuild'
-      projectName: "$(Build.DefinitionName)"
-      projectKey: "$(sonarCloudProjectKey)"
+    - task: SonarCloudPrepare@1
+      displayName: 'Prepare Sonarcloud analysis configuration'
+      inputs:
+        SonarCloud: "$(SonarCloudConnectionId)"
+        organization: "$(SonarCloudOrganisationKey)"
+        scannerMode: 'MSBuild'
+        projectName: "$(Build.DefinitionName)"
+        projectKey: "$(sonarCloudProjectKey)"
+      enabled: false
 
-  - task: DotNetCoreCLI@2
-    displayName: Restore
-    inputs:
-      command: restore
-      projects: 'src/**/*.csproj'
+    - task: DotNetCoreCLI@2
+      displayName: Restore
+      inputs:
+        command: restore
+        projects: 'src/**/*.csproj'
 
-  - task: DotNetCoreCLI@2
-    displayName: Build
-    inputs:
-      projects: 'src/**/*.csproj'
-      arguments: '--configuration $(buildConfiguration) --no-restore'
+    - task: DotNetCoreCLI@2
+      displayName: Build
+      inputs:
+        projects: 'src/**/*.csproj'
+        arguments: '--configuration $(buildConfiguration) --no-restore'
+        
+    - task: DotNetCoreCLI@2
+      displayName: Test
+      inputs:
+        command: test
+        projects: '**/*.UnitTests.csproj'
+        arguments: '--configuration $(buildConfiguration) --no-build'
+
+    - task: SonarCloudAnalyze@1
+      displayName: 'Run SonarCloud analysis'
+      enabled: false
       
-  - task: DotNetCoreCLI@2
-    displayName: Test
-    inputs:
-      command: test
-      projects: '**/*.UnitTests.csproj'
-      arguments: '--configuration $(buildConfiguration) --no-build'
+    - task: SonarCloudPublish@1
+      displayName: 'Publish results on build summary'
+      inputs:
+        pollingTimeoutSec: '300'
+      enabled: false
 
-  - task: SonarCloudAnalyze@1
-    displayName: 'Run SonarCloud analysis'
+    - template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
+
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet pack'
+      inputs:
+        command: pack
+        packagesToPack: 'src/SFA.DAS.ApplyService.Types/SFA.DAS.ApplyService.Types.csproj'
+        versioningScheme: byBuildNumber
+        packDirectory: $(build.artifactstagingdirectory)/NugetPackages
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish Website'
+      inputs:
+        command: publish
+        publishWebProjects: false
+        projects: 'src/SFA.DAS.ApplyService.Web/SFA.DAS.ApplyService.Web.csproj'
+        arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish API'
+      inputs:
+        command: publish
+        publishWebProjects: false
+        projects: 'src/SFA.DAS.ApplyService.InternalApi/SFA.DAS.ApplyService.InternalApi.csproj'
+        arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+
+    - task: CopyFiles@2
+      displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+      inputs:
+        contents: |
+          azure/**
+        targetFolder: '$(build.artifactstagingdirectory)/publish'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        pathtoPublish: '$(build.artifactstagingdirectory)/publish'
     
-  - task: SonarCloudPublish@1
-    displayName: 'Publish results on build summary'
-    inputs:
-      pollingTimeoutSec: '300'
+    - publish: $(build.artifactstagingdirectory)/NugetPackages
+      artifact: NugetPackages
 
-  - template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
+  - job: 'DACPACBuild'
+    pool: 
+      vmImage: 'windows-2019'
+    workspace:
+      clean: all
+    steps:
+    - task: VSBuild@1
+      displayName: 'Build DACPAC'
+      inputs:
+        solution: 'src/SFA.DAS.ApplyService.Database/SFA.DAS.ApplyService.Database.sqlproj'
+        platform: '$(buildPlatform)'
+        configuration: '$(buildConfiguration)'
+        msbuildArgs: '/p:PackageLocation="$(build.artifactstagingdirectory)/publish"'
+    - task: CopyFiles@2
+      displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+      inputs:
+        contents: |
+          src/**/*.dacpac
+        targetFolder: '$(build.artifactstagingdirectory)/publish'
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        pathtoPublish: '$(build.artifactstagingdirectory)/publish'
 
-  - task: DotNetCoreCLI@2
-    displayName: 'Publish Website'
-    inputs:
-      command: publish
-      publishWebProjects: false
-      projects: 'src/SFA.DAS.ApplyService.Web/SFA.DAS.ApplyService.Web.csproj'
-      arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
-
-  - task: DotNetCoreCLI@2
-    displayName: 'Publish API'
-    inputs:
-      command: publish
-      publishWebProjects: false
-      projects: 'src/SFA.DAS.ApplyService.InternalApi/SFA.DAS.ApplyService.InternalApi.csproj'
-      arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
-
-  - task: CopyFiles@2
-    displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
-    inputs:
-      contents: |
-        azure/**
-      targetFolder: '$(build.artifactstagingdirectory)/publish'
-
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact'
-    inputs:
-      pathtoPublish: '$(build.artifactstagingdirectory)/publish'
-
-- job: 'DACPACBuild'
-  pool: 
-    vmImage: 'windows-2019'
-  workspace:
-    clean: all
-  steps:
-  - task: VSBuild@1
-    displayName: 'Build DACPAC'
-    inputs:
-      solution: 'src/SFA.DAS.ApplyService.Database/SFA.DAS.ApplyService.Database.sqlproj'
-      platform: '$(buildPlatform)'
-      configuration: '$(buildConfiguration)'
-      msbuildArgs: '/p:PackageLocation="$(build.artifactstagingdirectory)/publish"'
-  - task: CopyFiles@2
-    displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
-    inputs:
-      contents: |
-        src/**/*.dacpac
-      targetFolder: '$(build.artifactstagingdirectory)/publish'
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact'
-    inputs:
-      pathtoPublish: '$(build.artifactstagingdirectory)/publish'
+- stage: NugetPublish
+  displayName: 'Publish Nuget Package'
+  pool:
+    name: 'DAS - Continuous Deployment'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.Reason'], 'Manual'))
+  jobs:
+  - job: 'CleanArtifacts'
+    displayName: Clean artifacts directory
+    workspace:
+      clean: all
+  - deployment: 'NugetPush'
+    dependsOn: 'CleanArtifacts'
+    environment: 'Nuget'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: NugetPackages
+          - task: NuGetCommand@2
+            displayName: 'NuGet push'
+            inputs:
+              command: push
+              packagesToPush: '$(Pipeline.Workspace)/NugetPackages/*.nupkg;!$(Pipeline.Workspace)/NugetPackages/*.symbols.nupkg'
+              nuGetFeedType: external
+              publishFeedCredentials: 'SFA NuGet'
