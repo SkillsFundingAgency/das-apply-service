@@ -48,7 +48,6 @@ stages:
         scannerMode: 'MSBuild'
         projectName: "$(Build.DefinitionName)"
         projectKey: "$(sonarCloudProjectKey)"
-      enabled: false
 
     - task: DotNetCoreCLI@2
       displayName: Restore
@@ -72,14 +71,12 @@ stages:
     - task: SonarCloudAnalyze@1
       displayName: 'Run SonarCloud analysis'
       condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
-      enabled: false
 
     - task: SonarCloudPublish@1
       displayName: 'Publish results on build summary'
       condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
       inputs:
         pollingTimeoutSec: '300'
-      enabled: false
 
     - template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
 
