@@ -20,6 +20,7 @@ using SFA.DAS.ApplyService.Application.Users.UpdateContactOrgId;
 using SFA.DAS.ApplyService.Application.Users.UpdateSignInId;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Types;
 

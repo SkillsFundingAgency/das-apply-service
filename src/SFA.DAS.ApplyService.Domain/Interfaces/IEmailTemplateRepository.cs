@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Entities;
 
-namespace SFA.DAS.ApplyService.Application.Email
+namespace SFA.DAS.ApplyService.Domain.Interfaces
 {
     public interface IEmailTemplateRepository
     {

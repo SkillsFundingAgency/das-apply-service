@@ -8,6 +8,7 @@ using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Domain.Entities;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandlerTests
 {
@@ -17,16 +18,14 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
         private Mock<IContactRepository> _userRepository;
         private CreateAccountHandler _handler;
         private Mock<IDfeSignInService> _dfeSignInService;
-        private Mock<IEmailService> _emailService;
 
         [SetUp]
         public void Setup()
         {
             _userRepository = new Mock<IContactRepository>();
             _dfeSignInService = new Mock<IDfeSignInService>();
-            _emailService = new Mock<IEmailService>();
             
-            _handler = new CreateAccountHandler(_userRepository.Object, _dfeSignInService.Object, _emailService.Object, new Mock<ILogger<CreateAccountHandler>>().Object);
+            _handler = new CreateAccountHandler(_userRepository.Object, _dfeSignInService.Object, new Mock<ILogger<CreateAccountHandler>>().Object);
         }
         
         [Test]

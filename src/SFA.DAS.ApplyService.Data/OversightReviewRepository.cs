@@ -2,9 +2,9 @@
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
-using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Data
 {
