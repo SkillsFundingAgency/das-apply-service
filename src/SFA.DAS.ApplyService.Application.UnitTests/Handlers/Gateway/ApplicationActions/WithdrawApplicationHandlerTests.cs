@@ -9,6 +9,7 @@ using SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Types;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.ApplicationActions
 {
