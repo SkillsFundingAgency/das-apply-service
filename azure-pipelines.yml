@@ -41,7 +41,7 @@ stages:
 
     - task: SonarCloudPrepare@1
       displayName: 'Prepare Sonarcloud analysis configuration'
-      condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+      condition: and(succeeded(), (or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),eq(variables['Build.Reason'], 'PullRequest'))))
       inputs:
         SonarCloud: "$(SonarCloudConnectionId)"
         organization: "$(SonarCloudOrganisationKey)"
@@ -70,11 +70,11 @@ stages:
 
     - task: SonarCloudAnalyze@1
       displayName: 'Run SonarCloud analysis'
-      condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+      condition: and(succeeded(), (or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),eq(variables['Build.Reason'], 'PullRequest'))))
 
     - task: SonarCloudPublish@1
       displayName: 'Publish results on build summary'
-      condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+      condition: and(succeeded(), (or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),eq(variables['Build.Reason'], 'PullRequest'))))
       inputs:
         pollingTimeoutSec: '300'
 
