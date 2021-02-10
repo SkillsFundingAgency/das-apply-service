@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
@@ -19,18 +20,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
         private readonly ILogger<RecordOversightGatewayRemovedOutcomeCommandHandler> _logger;
         private readonly IAuditService _auditService;
         private readonly IApplicationUpdatedEmailService _applicationUpdatedEmailService;
+        private readonly IUnitOfWork _unitOfWork;
 
         public RecordOversightGatewayRemovedOutcomeCommandHandler(IApplyRepository applyRepository,
             IOversightReviewRepository oversightReviewRepository,
             ILogger<RecordOversightGatewayRemovedOutcomeCommandHandler> logger,
             IAuditService auditService,
-            IApplicationUpdatedEmailService applicationUpdatedEmailService)
+            IApplicationUpdatedEmailService applicationUpdatedEmailService,
+            IUnitOfWork unitOfWork)
         {
             _applyRepository = applyRepository;
             _oversightReviewRepository = oversightReviewRepository;
             _logger = logger;
             _auditService = auditService;
             _applicationUpdatedEmailService = applicationUpdatedEmailService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Unit> Handle(RecordOversightGatewayRemovedOutcomeCommand request, CancellationToken cancellationToken)
@@ -55,9 +59,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             _auditService.StartTracking(UserAction.RecordOversightGatewayRemovedOutcome, request.UserId, request.UserName);
             _auditService.AuditInsert(oversightReview);
             
-            await _oversightReviewRepository.Add(oversightReview);
+            _oversightReviewRepository.Add(oversightReview);
            
-            await _auditService.Save();
+            _auditService.Save();
+
+            await _unitOfWork.Commit();
 
             await _applicationUpdatedEmailService.SendEmail(request.ApplicationId);
 

@@ -6,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.EmailService.Interfaces;
@@ -36,7 +37,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 { ApplicationId = _applicationId, Status = ApplicationStatus.Submitted });
 
             _applyRepository.Setup(x => x.UpdateApplication(It.IsAny<Domain.Entities.Apply>())).Returns(Task.CompletedTask);
-            _oversightReviewRepository.Setup(x => x.Add(It.IsAny<OversightReview>())).Returns(Task.CompletedTask);
+            _oversightReviewRepository.Setup(x => x.Add(It.IsAny<OversightReview>()));
 
             _auditService.Setup(x => x.AuditInsert(It.IsAny<OversightReview>()));
 
@@ -46,7 +47,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 _oversightReviewRepository.Object,
                 Mock.Of<ILogger<RecordOversightGatewayRemovedOutcomeCommandHandler>>(),
                 _auditService.Object,
-                _applicationUpdatedEmailService.Object);
+                _applicationUpdatedEmailService.Object,
+                Mock.Of<IUnitOfWork>());
         }
 
         [Test]
