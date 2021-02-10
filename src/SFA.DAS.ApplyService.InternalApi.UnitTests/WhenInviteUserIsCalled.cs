@@ -10,6 +10,7 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Types;
 

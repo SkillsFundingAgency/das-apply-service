@@ -5,6 +5,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Services;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers

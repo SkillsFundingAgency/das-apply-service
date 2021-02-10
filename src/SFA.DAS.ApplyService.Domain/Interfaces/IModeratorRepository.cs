@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Entities;
 
-namespace SFA.DAS.ApplyService.Application.Apply
+namespace SFA.DAS.ApplyService.Domain.Interfaces
 {
     public interface IModeratorRepository
     {
