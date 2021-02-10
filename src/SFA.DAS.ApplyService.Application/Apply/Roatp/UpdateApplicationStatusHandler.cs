@@ -1,6 +1,7 @@
 ﻿using System;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 {

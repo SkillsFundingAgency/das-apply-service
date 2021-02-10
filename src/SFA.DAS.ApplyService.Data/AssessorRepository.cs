@@ -1,6 +1,5 @@
 using Dapper;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -11,6 +10,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Data
 {

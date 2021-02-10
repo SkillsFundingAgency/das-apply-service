@@ -10,9 +10,9 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.QueryResults;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Services;
-using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
 using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests

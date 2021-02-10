@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Entities;
 
-namespace SFA.DAS.ApplyService.Application.Users
+namespace SFA.DAS.ApplyService.Domain.Interfaces
 {
     public interface IContactRepository
     {

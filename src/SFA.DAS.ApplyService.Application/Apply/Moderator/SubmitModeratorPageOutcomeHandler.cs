@@ -4,6 +4,7 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 {

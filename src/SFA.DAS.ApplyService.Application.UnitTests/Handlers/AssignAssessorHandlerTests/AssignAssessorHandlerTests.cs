@@ -6,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.AssignAssessorHandlerTests
 {

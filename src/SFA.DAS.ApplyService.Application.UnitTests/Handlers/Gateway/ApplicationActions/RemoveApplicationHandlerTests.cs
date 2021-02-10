@@ -6,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.ApplicationActions
 {

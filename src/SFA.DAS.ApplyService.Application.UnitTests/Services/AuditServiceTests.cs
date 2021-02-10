@@ -10,6 +10,7 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Audit;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Services
 {
