@@ -39,7 +39,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions
 
             var result = await _applyRepository.WithdrawApplication(request.ApplicationId, request.Comments, request.UserId, request.UserName);
 
-            _auditService.StartTracking(UserAction.RecordOversightOutcome, request.UserId, request.UserName);
+            _auditService.StartTracking(UserAction.WithdrawApplication, request.UserId, request.UserName);
             _auditService.AuditInsert(oversightReview);
             await _oversightReviewRepository.Add(oversightReview);
             await _auditService.Save();
