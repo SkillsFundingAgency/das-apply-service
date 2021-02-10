@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -14,10 +16,12 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Session;
+using SFA.DAS.ApplyService.Web.Extensions;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Orchestrators;
 using SFA.DAS.ApplyService.Web.ViewModels;
+
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
@@ -335,6 +339,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [RestoreModelStateFilter]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, List<Question> answeredQuestions)
         {
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
@@ -831,7 +836,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var invalidPage = await GetDataFedOptions(applicationId, page);
             this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage);
 
-            return await Page(applicationId, sequenceNo, sectionNo, pageId, redirectAction, page?.Questions);
+            var tempDataFactory = HttpContext.RequestServices.GetRequiredService<ITempDataDictionaryFactory>();
+            var tempData = tempDataFactory.GetTempData(HttpContext);
+            var serializableModelState = ModelState.ToSerializable();
+            tempData.Set(serializableModelState);
+
+            //Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, List<Question> answeredQuestions
+
+
+            return RedirectToAction("Page", new { applicationId, sequenceId=sequenceNo, sectionId=sectionNo, pageId, redirectAction, answeredQuestions=page?.Questions });
+
+            //return await Page(applicationId, sequenceNo, sectionNo, pageId, redirectAction, page?.Questions);
         }
 
         private static Page StoreEnteredAnswers(List<Answer> answers, Page page)
