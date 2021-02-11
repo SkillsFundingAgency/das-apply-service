@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
+namespace SFA.DAS.ApplyService.Domain.QueryResults
 {
     public class PendingOversightReviews
     {
@@ -17,5 +17,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
         public string ProviderRoute { get; set; }
         public string ApplicationReferenceNumber { get; set; }
         public DateTime ApplicationSubmittedDate { get; set; }
+        public string GatewayReviewStatus { get; set; }
+        public string FinancialReviewStatus { get; set; }
+        public string ModerationReviewStatus { get; set; }
     }
 }

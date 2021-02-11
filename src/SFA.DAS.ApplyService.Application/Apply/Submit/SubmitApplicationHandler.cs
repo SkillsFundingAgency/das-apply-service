@@ -1,11 +1,11 @@
 ﻿using MediatR;
-using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Submit
 {

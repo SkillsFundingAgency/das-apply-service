@@ -1,7 +1,7 @@
 ﻿using System;
 using SFA.DAS.ApplyService.Types;
 
-namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
+namespace SFA.DAS.ApplyService.Domain.QueryResults
 {
     public class ApplicationOversightDetails
     {
@@ -20,8 +20,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
         public string OversightUserName { get; set; }
 
         public string ApplicationEmailAddress { get; set; }
-        public string AssessorReviewStatus { get; set; } 
-
+        public string AssessorReviewStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
         public DateTime? GatewayOutcomeMadeDate { get; set; }
 
@@ -41,5 +40,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.QueryResults
         public DateTime? ModerationOutcomeMadeOn { get; set; }
         public string ModeratedBy { get; set; }
         public string ModerationComments { get; set; }
+        public DateTime? InProgressDate { get; set; }
+        public string InProgressUserId { get; set; }
+        public string InProgressUserName { get; set; }
+        public string InProgressInternalComments { get; set; }
+        public string InProgressExternalComments { get; set; }
+        public bool? GatewayApproved { get; set; }
+        public bool? ModerationApproved { get; set; }
+        public string InternalComments { get; set; }
+        public string ExternalComments { get; set; }
     }
 }
