@@ -89,8 +89,10 @@ namespace SFA.DAS.ApplyService.Data.Queries
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
 						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
                             OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
+                            OR ApplicationStatus in (@applicationStatusWithdrawn)
                             order by CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
                 {
+                    applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                     gatewayReviewStatusPass = GatewayReviewStatus.Pass,
                     gatewayReviewStatusFail = GatewayReviewStatus.Fail,
                     GatewayReviewStatusReject = GatewayReviewStatus.Reject,
