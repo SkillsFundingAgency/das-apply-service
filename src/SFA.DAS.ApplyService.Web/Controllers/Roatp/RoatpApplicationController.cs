@@ -335,6 +335,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, List<Question> answeredQuestions)
         {
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
@@ -429,6 +430,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
+        [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> SaveAnswers(PageViewModel vm, Guid applicationId)
         {
             vm.ApplicationId = applicationId; // why is this being assigned??? TODO: Fix in View so it's part of the ViewModel
@@ -831,7 +833,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var invalidPage = await GetDataFedOptions(applicationId, page);
             this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage);
 
-            return await Page(applicationId, sequenceNo, sectionNo, pageId, redirectAction, page?.Questions);
+            return RedirectToAction("Page", new { applicationId, sequenceId = sequenceNo, sectionId = sectionNo, pageId, redirectAction });
         }
 
         private static Page StoreEnteredAnswers(List<Answer> answers, Page page)
