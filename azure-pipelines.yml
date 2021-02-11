@@ -147,7 +147,7 @@ stages:
   displayName: 'Publish Nuget Package'
   pool:
     name: 'DAS - Continuous Deployment'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.Reason'], 'Manual'))
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
   jobs:
   - job: 'CleanArtifacts'
     displayName: Clean artifacts directory
