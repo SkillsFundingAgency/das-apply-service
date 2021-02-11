@@ -72,8 +72,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ICustomValidatorFactory customValidatorFactory,  
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
-            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator, IUkrlpApiClient ukrlpApiClient, IApplicationApiClient applicationApiClient)
-            :base(sessionService)
+            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator, IUkrlpApiClient ukrlpApiClient, IApplicationApiClient applicationApiClient, ITempDataDictionaryFactory tempDataDictionaryFactory)
+            :base(sessionService, tempDataDictionaryFactory)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -836,17 +836,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var invalidPage = await GetDataFedOptions(applicationId, page);
             this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage);
 
-            var tempDataFactory = HttpContext.RequestServices.GetRequiredService<ITempDataDictionaryFactory>();
-            var tempData = tempDataFactory.GetTempData(HttpContext);
-            var serializableModelState = ModelState.ToSerializable();
-            tempData.Set(serializableModelState);
+            PreserveModelState();
 
-            //Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, List<Question> answeredQuestions
-
-
-            return RedirectToAction("Page", new { applicationId, sequenceId=sequenceNo, sectionId=sectionNo, pageId, redirectAction, answeredQuestions=page?.Questions });
-
-            //return await Page(applicationId, sequenceNo, sectionNo, pageId, redirectAction, page?.Questions);
+            return RedirectToAction("Page", new { applicationId, sequenceId=sequenceNo, sectionId=sectionNo, pageId, redirectAction });
         }
 
         private static Page StoreEnteredAnswers(List<Answer> answers, Page page)

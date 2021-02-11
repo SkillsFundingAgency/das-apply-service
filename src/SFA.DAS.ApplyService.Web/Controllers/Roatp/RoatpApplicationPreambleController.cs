@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
+﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
+
+namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     using System;
     using System.Linq;
@@ -48,8 +50,9 @@
                                                   IApplicationApiClient applicationApiClient,
                                                   IQnaApiClient qnaApiClient,
                                                   IUkprnWhitelistValidator ukprnWhitelistValidator, 
-                                                  IResetRouteQuestionsService resetRouteQuestionsService)
-            : base(sessionService)
+                                                  IResetRouteQuestionsService resetRouteQuestionsService,
+                                                  ITempDataDictionaryFactory tempDataDictionaryFactory)
+            : base(sessionService, tempDataDictionaryFactory)
         {
             _logger = logger;
             _roatpApiClient = roatpApiClient;

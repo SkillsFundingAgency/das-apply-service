@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Application.Services;
 
@@ -28,8 +29,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         public RoatpWhosInControlApplicationController(IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient, 
                                                        IAnswerFormService answerFormService, ITabularDataRepository tabularDataRepository,
-                                                       ISessionService sessionService)
-            :base(sessionService)
+                                                       ISessionService sessionService, ITempDataDictionaryFactory tempDataDictionaryFactory)
+            :base(sessionService, tempDataDictionaryFactory)
         {
             _qnaApiClient = qnaApiClient;
             _applicationApiClient = applicationApiClient;

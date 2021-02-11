@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Web.Orchestrators;
@@ -100,7 +101,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                          _roatpApiClient.Object,
                                                          _submitApplicationEmailService.Object, _tabularDataRepository.Object,
                                                          _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object, _taskListOrchestrator.Object,
-                                                         _ukrlpApiClient.Object, _applicationApiClient.Object)
+                                                         _ukrlpApiClient.Object, _applicationApiClient.Object, Mock.Of<ITempDataDictionaryFactory>())
             {
                 ControllerContext = new ControllerContext()
                 {

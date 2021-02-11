@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Session;
@@ -21,7 +22,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IAnswerFormService _answerFormService;
         private readonly ITabularDataRepository _tabularDataRepository;
 
-        public RoatpManagementHierarchyController(ISessionService sessionService, IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient, IAnswerFormService answerFormService, ITabularDataRepository tabularDataRepository) : base(sessionService)
+        public RoatpManagementHierarchyController(ISessionService sessionService, IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient, IAnswerFormService answerFormService, ITabularDataRepository tabularDataRepository, ITempDataDictionaryFactory tempDataDictionaryFactory) : base(sessionService, tempDataDictionaryFactory)
         {
             _qnaApiClient = qnaApiClient;
             _applicationApiClient = applicationApiClient;

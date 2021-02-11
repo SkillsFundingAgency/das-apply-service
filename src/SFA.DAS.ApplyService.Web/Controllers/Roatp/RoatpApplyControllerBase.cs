@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.ViewModels;
-using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using SFA.DAS.ApplyService.Web.Extensions;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -16,10 +17,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         protected const string GetHelpErrorMessageKey = "Roatp_GetHelp_ErrorMessage_{0}";
 
         protected ISessionService _sessionService;
+        private readonly ITempDataDictionaryFactory _tempDataDictionaryFactory;
 
-        public RoatpApplyControllerBase(ISessionService sessionService)
+        public RoatpApplyControllerBase(ISessionService sessionService, ITempDataDictionaryFactory tempDataDictionaryFactory)
         {
             _sessionService = sessionService;
+            _tempDataDictionaryFactory = tempDataDictionaryFactory;
         }
 
         protected void PopulateGetHelpWithQuestion(IPageViewModel viewModel, string pageId)
@@ -40,6 +43,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 viewModel.GetHelpQuerySubmitted = false;
                 viewModel.GetHelpQuestion = getHelpQuestion;
             }
+        }
+
+        protected void PreserveModelState()
+        {
+            var tempData = _tempDataDictionaryFactory.GetTempData(HttpContext);
+            var serializableModelState = ModelState.ToSerializable();
+            tempData.Set(serializableModelState);
         }
     }
 }

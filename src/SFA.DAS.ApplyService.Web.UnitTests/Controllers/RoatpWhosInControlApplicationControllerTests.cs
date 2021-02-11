@@ -13,6 +13,7 @@ using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
@@ -44,7 +45,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                                       _applicationClient.Object, 
                                                                       _answerFormService.Object,
                                                                       _tabularDataRepository.Object,
-                                                                      _sessionService.Object);
+                                                                      _sessionService.Object, Mock.Of<ITempDataDictionaryFactory>());
             _directors = new TabularData
             {
                 Caption = "Directors",

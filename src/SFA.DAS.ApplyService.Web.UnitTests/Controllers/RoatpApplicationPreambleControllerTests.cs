@@ -81,7 +81,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 _usersApiClient.Object,
                 _applicationApiClient.Object,
                 _qnaApiClient.Object,
-                _ukprnWhitelistValidator.Object, _resetRoutQuestionsService.Object);
+                _ukprnWhitelistValidator.Object, _resetRoutQuestionsService.Object, Mock.Of<ITempDataDictionaryFactory>());
 
             _activeCompany = new CompaniesHouseSummary
             {
