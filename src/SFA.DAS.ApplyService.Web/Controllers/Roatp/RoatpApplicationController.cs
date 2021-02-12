@@ -447,15 +447,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var selectedSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
-            PageViewModel viewModel = null;
-            var returnUrl = Request.Headers["Referer"].ToString();
-
-            string pageContext = string.Empty;
-
             if (!ModelState.IsValid)
             {
                 // when the model state has errors the page will be displayed with the values which failed validation
                 var pageInvalid = JsonConvert.DeserializeObject<Page>((string)this.TempData["InvalidPage"]);
+
+                var returnUrl = Request.Headers["Referer"].ToString();
 
                 var errorMessages = !ModelState.IsValid
                     ? ModelState.SelectMany(k => k.Value.Errors.Select(e => new ValidationErrorDetail()
@@ -467,9 +464,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 var peopleInControlDetails = await GetPeopleInControlDetails(applicationId, sequenceId, sectionId);
 
-                viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, pageInvalid, pageContext, redirectAction,
+                var viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, pageInvalid, string.Empty, redirectAction,
                     returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks, selectedSection.Title, peopleInControlDetails);
-
 
                 viewModel = await TokeniseViewModelProperties(viewModel);
 
@@ -477,8 +473,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
                 }
-
-                return View("~/Views/Application/Pages/Index.cshtml", viewModel);
+                else
+                {
+                    return View("~/Views/Application/Pages/Index.cshtml", viewModel);
+                }
             }
 
             // when the model state has no errors the page will be displayed with the last valid values which were saved
@@ -487,28 +485,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (page == null)
             {
                 RedirectToAction("TaskList", "RoatpApplication", new {applicationId}, $"Sequence_{sequenceId}");
-            }
-
-            if (IsFileUploadWithNonEmptyValue(page))
-            {
-                var nextActionResult = await _qnaApiClient.SkipPageBySectionNo(applicationId, sequenceId, sectionId, pageId);
-
-                if (NextAction.NextPage.Equals(nextActionResult?.NextAction, StringComparison.InvariantCultureIgnoreCase))
-                {
-
-                    return RedirectToAction("Page", new
-                    {
-                        applicationId,
-                        sequenceId = sequenceId,
-                        sectionId = sectionId,
-                        pageId = nextActionResult.NextActionId,
-                        redirectAction
-                    });
-                }
-                else
-                {
-                    return RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, $"Sequence_{sequenceId}");
-                }
             }
 
             return await SaveAnswersGiven(applicationId, selectedSection.Id, selectedSection.SectionId, selectedSection.SequenceId, pageId, page, redirectAction, string.Empty);
@@ -700,29 +676,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, Guid sectionId, int sectionNo, int sequenceNo, string pageId, Page page, string redirectAction, string __formAction)
         {
-            var answers = new List<Answer>();
+            var isFileUploadPage = page.Questions.Any(q => QuestionType.FileUpload.Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase));
 
-            answers.AddRange(GetAnswersFromForm(page));
-
-            // We need to back fill files as GetAnswersFromForm will place blank answers. This won't be a problem when we've fully moved over to the EPAO's way of saving answers
-            foreach (var fileUploadAnswer in GetAnswersFromFiles())
-            {
-                var answer = answers.FirstOrDefault(a => a.QuestionId == fileUploadAnswer.QuestionId);
-
-                if (answer != null)
-                {
-                    answer.Value = fileUploadAnswer.Value;
-                }
-                else
-                {
-                    answers.Add(fileUploadAnswer);
-                }
-            }
+            var answers = isFileUploadPage ? GetAnswersFromFiles() : GetAnswersFromForm(page);
 
             ApplyFormattingToAnswers(answers, page);
 
             RunCustomValidations(page, answers);
-            if (ModelState.IsValid == false)
+            if (!ModelState.IsValid)
             {
                 page = await _qnaApiClient.GetPage(applicationId, sectionId, pageId);
 
@@ -736,7 +697,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (checkBoxListQuestions.Any())
             {
                 var checkBoxListQuestionId = CheckBoxListHasInvalidSelections(checkBoxListQuestions, answers);
-                if (!String.IsNullOrWhiteSpace(checkBoxListQuestionId))
+                if (!string.IsNullOrWhiteSpace(checkBoxListQuestionId))
                 {
                     ModelState.AddModelError(checkBoxListQuestionId, InvalidCheckBoxListSelectionErrorMessage);
 
@@ -746,8 +707,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return await Page(applicationId, sequenceNo, sectionNo, pageId, redirectAction, null);
                 }
             }
-
-            var isFileUploadPage = page.Questions.Any(q => QuestionType.FileUpload.Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase));
 
             bool validationPassed;
             List<KeyValuePair<string, string>> validationErrors;
@@ -823,7 +782,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             page = await _qnaApiClient.GetPage(applicationId, sectionId, pageId);
 
-            if (isFileUploadPage != true)
+            if (!isFileUploadPage)
             {
                 page = StoreEnteredAnswers(answers, page);
             }
@@ -1380,22 +1339,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return viewModel;
-        }
-
-        private bool IsFileUploadWithNonEmptyValue(Page page)
-        {
-            if (page.PageOfAnswers == null || page.PageOfAnswers.Count == 0 || page.Questions == null || page.Questions.Count == 0 || page.Questions[0].Input.Type != QuestionType.FileUpload)
-                return false;
-
-            var fileUploadAnswerValue = string.Empty;
-
-            foreach (var question in page.Questions)
-            {
-                if (fileUploadAnswerValue == string.Empty)
-                    fileUploadAnswerValue = page.PageOfAnswers[0].Answers.FirstOrDefault(x => x.QuestionId == question.QuestionId)?.Value;
-            }
-
-            return !string.IsNullOrEmpty(fileUploadAnswerValue);
         }
 
         private void RunCustomValidations(Page page, List<Answer> answers)
