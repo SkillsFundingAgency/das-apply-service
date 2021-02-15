@@ -676,7 +676,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         question.Input.Options = questionOptions;
                         question.Input.Type = question.Input.Type.Replace("DataFed_", "");
                     }
-                    if (question.Input.Type == QuestionType.TabularData)
+                    if (QuestionType.TabularData.Equals(question.Input.Type, StringComparison.InvariantCultureIgnoreCase))
                     {
                         var answer = await _qnaApiClient.GetAnswerByTag(applicationId, question.QuestionTag, question.QuestionId);
                         if (page.PageOfAnswers == null || page.PageOfAnswers.Count < 1)
@@ -734,11 +734,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             //todo: Should we convert this to a custom validation?
-            var checkBoxListQuestions = PageContainsCheckBoxListQuestions(page);
+            var checkBoxListQuestions = GetCheckBoxListQuestionsFromPage(page);
             if (checkBoxListQuestions.Any())
             {
                 var checkBoxListQuestionId = CheckBoxListHasInvalidSelections(checkBoxListQuestions, answers);
-                if (!String.IsNullOrWhiteSpace(checkBoxListQuestionId))
+                if (!string.IsNullOrWhiteSpace(checkBoxListQuestionId))
                 {
                     ModelState.AddModelError(checkBoxListQuestionId, InvalidCheckBoxListSelectionErrorMessage);
 
@@ -857,7 +857,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 var question = page.Questions.FirstOrDefault(x => x.QuestionId == answer.QuestionId);
                 if (question != null && question.Input != null
-                                     && !String.IsNullOrWhiteSpace(question.Input.InputClasses)
+                                     && !string.IsNullOrWhiteSpace(question.Input.InputClasses)
                                      && question.Input.InputClasses.Contains(InputClassUpperCase))
                 {
                     answer.Value = answer.Value.ToUpper();
@@ -865,9 +865,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
-        private static IEnumerable<Question> PageContainsCheckBoxListQuestions(Page page)
+        private static IEnumerable<Question> GetCheckBoxListQuestionsFromPage(Page page)
         {
-            return page.Questions.Where(q => q.Input.Type == QuestionType.CheckboxList || q.Input.Type == QuestionType.ComplexCheckboxList);
+            return page.Questions.Where(q => QuestionType.CheckboxList.Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase)
+                                          || QuestionType.ComplexCheckboxList.Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase));
         }
 
         private static string CheckBoxListHasInvalidSelections(IEnumerable<Question> checkBoxListQuestions, List<Answer> answers)
@@ -914,13 +915,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             #region FurtherQuestion_Processing
             // Get all questions that have FurtherQuestions in a ComplexRadio
-            var questionsWithFutherQuestions = page.Questions.Where(x => (x.Input.Type == QuestionType.ComplexRadio || x.Input.Type == QuestionType.ComplexCheckboxList)
-            && x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions != null && o.FurtherQuestions.Any()));
-
+            var questionsWithFutherQuestions = GetCheckBoxListQuestionsFromPage(page).Where(x => x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions != null && o.FurtherQuestions.Any()));
 
             foreach (var question in questionsWithFutherQuestions)
             {
-                if (question.Input.Type == QuestionType.ComplexRadio)
+                if (QuestionType.ComplexRadio.Equals(question.Input.Type, StringComparison.InvariantCultureIgnoreCase))
                 {
                     var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
@@ -936,8 +935,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         }
                     }
                 }
-
-                if (question.Input.Type == QuestionType.ComplexCheckboxList)
+                else if (QuestionType.ComplexCheckboxList.Equals(question.Input.Type, StringComparison.InvariantCultureIgnoreCase))
                 {
                     var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
@@ -963,7 +961,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             #endregion FurtherQuestion_Processing
 
             // Address inputs require special processing
-            if (page.Questions.Any(x => x.Input.Type == QuestionType.Address))
+            if (page.Questions.Any(x => QuestionType.Address.Equals(x.Input.Type, StringComparison.InvariantCultureIgnoreCase)))
             {
                 answers = ProcessPageVmQuestionsForAddress(page, answers);
             }
@@ -991,7 +989,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private static List<Answer> ProcessPageVmQuestionsForAddress(Page page, List<Answer> answers)
         {
 
-            if (page.Questions.Any(x => x.Input.Type == QuestionType.Address))
+            if (page.Questions.Any(x => QuestionType.Address.Equals(x.Input.Type, StringComparison.InvariantCultureIgnoreCase)))
             {
                 Dictionary<string, JObject> answerValueDictionary = new Dictionary<string, JObject>();
 

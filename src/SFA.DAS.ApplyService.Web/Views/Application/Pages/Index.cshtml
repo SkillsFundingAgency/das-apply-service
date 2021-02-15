@@ -105,8 +105,11 @@
                 {
                     <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
                         <fieldset class="govuk-fieldset">
-                            @if (question.Type == QuestionType.Checkbox || question.Type == QuestionType.Radio || question.Type == QuestionType.ComplexRadio
-                             || question.Type == QuestionType.CheckboxList || question.Type == QuestionType.ComplexCheckboxList)
+                            @if (QuestionType.Checkbox.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase)
+                                || QuestionType.Radio.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase)
+                                || QuestionType.ComplexRadio.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase)
+                                || QuestionType.CheckboxList.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase)
+                                || QuestionType.ComplexCheckboxList.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase))
                             {
                                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                                     @if (Model.PageContext != null)
@@ -191,7 +194,7 @@
                                 </span>
                             }
 
-                            @if ((question.Type == QuestionType.ComplexRadio || question.Type == QuestionType.ComplexCheckboxList)
+                            @if ((QuestionType.ComplexRadio.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase) || QuestionType.ComplexCheckboxList.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase))
                               && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
                             {
                                 question.ErrorMessages = Model.ErrorMessages;
@@ -213,7 +216,7 @@
                 {
                     <div class="govuk-form-group @(question.ErrorMessages?.Any() ?? false ? "govuk-form-group--error" : "")">
 
-                        @if (question.Type == QuestionType.Address)
+                        @if (QuestionType.Address.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase))
                         {
                             <h2 class="govuk-heading-l">
                                 @Html.Raw(question.Label)
@@ -238,7 +241,7 @@
                             </span>
                         }
 
-                        @if ((question.Type == QuestionType.ComplexRadio || question.Type == QuestionType.ComplexCheckboxList)
+                        @if ((QuestionType.ComplexRadio.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase) || QuestionType.ComplexCheckboxList.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase))
                           && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
                         {
                             question.ErrorMessages = Model.ErrorMessages;
@@ -250,7 +253,7 @@
             }
 
             @* only a single Question of type Address is supported per page *@
-            @if (Model.Questions?.Exists(p => p.Type == "Address") ?? false)
+            @if (Model.Questions?.Exists(p => QuestionType.Address.Equals(p.Type, StringComparison.InvariantCultureIgnoreCase)) ?? false)
             {
                 @section Scripts {
                     <script src="@Url.Content("~/javascripts/lib/jquery/jquery.min.js")"></script>

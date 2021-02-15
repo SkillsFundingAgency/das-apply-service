@@ -136,8 +136,11 @@
                     {
                         <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
                             <fieldset class="govuk-fieldset">
-                                @if (question.Type == QuestionType.Checkbox || question.Type == QuestionType.Radio || question.Type == QuestionType.ComplexRadio
-                               || question.Type == QuestionType.CheckboxList || question.Type == QuestionType.ComplexCheckboxList)
+                                @if (QuestionType.Checkbox.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase)
+                                    || QuestionType.Radio.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase)
+                                    || QuestionType.ComplexRadio.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase)
+                                    || QuestionType.CheckboxList.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase)
+                                    || QuestionType.ComplexCheckboxList.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase))
                                 {
                                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                                     @if (Model.PageContext != null)
