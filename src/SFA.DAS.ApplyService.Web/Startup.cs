@@ -306,6 +306,7 @@ namespace SFA.DAS.ApplyService.Web
             app.UseSession();
             app.UseAuthentication();
             app.UseRequestLocalization();
+            app.UseStatusCodePagesWithReExecute("/Home/{0}");
             app.UseSecurityHeaders();
             app.UseHealthChecks("/health");
             app.UseMvc(routes =>
