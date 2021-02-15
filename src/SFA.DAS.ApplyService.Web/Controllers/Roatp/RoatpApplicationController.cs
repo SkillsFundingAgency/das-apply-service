@@ -724,13 +724,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ApplyFormattingToAnswers(answers, page);
 
             RunCustomValidations(page, answers);
-            if (ModelState.IsValid == false)
+            if (!ModelState.IsValid)
             {
+                //Can this be made common? What about DataFedOptions?
                 page = await _qnaApiClient.GetPage(applicationId, sectionId, pageId);
-
-
                 this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
-                return await Page(applicationId, sequenceNo, sectionNo, pageId, redirectAction, null);
+                return RedirectToAction("Page", new { applicationId, sequenceId = sequenceNo, sectionId = sectionNo, pageId, redirectAction });
             }
 
             //todo: Should we convert this to a custom validation?
@@ -745,7 +744,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     //Can this be made common? What about DataFedOptions?
                     page = await _qnaApiClient.GetPage(applicationId, sectionId, pageId);
                     this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
-                    return await Page(applicationId, sequenceNo, sectionNo, pageId, redirectAction, null);
+                    return RedirectToAction("Page", new { applicationId, sequenceId = sequenceNo, sectionId = sectionNo, pageId, redirectAction });
                 }
             }
 
