@@ -1032,42 +1032,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return answers;
         }
 
-        private bool FileValidationPassed(List<Answer> answers, Page page, List<ValidationErrorDetail> errorMessages)
-        {
-            var fileValidationPassed = true;
-            if (!HttpContext.Request.Form.Files.Any()) return true;
-
-            foreach (var file in HttpContext.Request.Form.Files)
-            {
-
-                var typeValidation = page.Questions.First(q => q.QuestionId == file.Name).Input.Validations.FirstOrDefault(v => v.Name == "FileType");
-                if (typeValidation != null)
-                {
-                    var extension = typeValidation.Value.ToString().Split(",", StringSplitOptions.RemoveEmptyEntries)[0];
-                    var mimeType = typeValidation.Value.ToString().Split(",", StringSplitOptions.RemoveEmptyEntries)[1];
-
-                    if (file.FileName.Substring(file.FileName.IndexOf(".") + 1, (file.FileName.Length - 1) - file.FileName.IndexOf(".")).ToLower() != extension || file.ContentType.ToLower() != mimeType)
-                    {
-                        ModelState.AddModelError(file.Name, typeValidation.ErrorMessage);
-                        errorMessages.Add(new ValidationErrorDetail(file.Name, typeValidation.ErrorMessage));
-                        fileValidationPassed = false;
-                    }
-                    else
-                    {
-                        // Only add to answers if type validation passes.
-                        answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
-                    }
-                }
-                else
-                {
-                    // Only add to answers if type validation passes.
-                    answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
-                }
-            }
-
-            return fileValidationPassed;
-        }
-
         [HttpPost]
         public async Task<IActionResult> Submit(Guid applicationId)
         {
