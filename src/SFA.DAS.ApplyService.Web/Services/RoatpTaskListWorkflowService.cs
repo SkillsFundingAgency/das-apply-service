@@ -118,9 +118,18 @@ namespace SFA.DAS.ApplyService.Web.Services
                 {
                     return true;
                 }
-                var previousSectionStatus = await SectionStatusAsync(applicationId, sequenceId, sectionId - 1, applicationSequences, organisationVerificationStatus); 
-                
-                return (previousSectionStatus == TaskListSectionStatus.Completed ||  previousSectionStatus == TaskListSectionStatus.NotRequired);
+
+                var previousSectionIdToCheck = sectionId - 1;
+
+                var previousSectionStatus = await SectionStatusAsync(applicationId, sequenceId, previousSectionIdToCheck, applicationSequences, organisationVerificationStatus);
+
+                if (previousSectionStatus == TaskListSectionStatus.NotRequired)
+                {
+                    previousSectionIdToCheck = previousSectionIdToCheck - 1;
+                    previousSectionStatus = await SectionStatusAsync(applicationId, sequenceId, previousSectionIdToCheck, applicationSequences, organisationVerificationStatus);
+                }
+
+                return (previousSectionStatus == TaskListSectionStatus.Completed);
             }
 
             if (sequence.Sequential && sectionId > 1)
