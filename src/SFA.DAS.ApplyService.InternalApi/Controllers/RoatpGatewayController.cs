@@ -32,17 +32,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly ILogger<RoatpGatewayController> _logger;
         private readonly IMediator _mediator;
         private readonly IFileStorageService _fileStorageService;
-        private readonly IOversightReviewRepository _oversightReviewRepository;
-        private readonly IAuditService _auditService;
 
-        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IMediator mediator, IGatewayApiChecksService gatewayApiChecksService, IFileStorageService fileStorageService, IOversightReviewRepository oversightReviewRepository, IAuditService auditService) 
+        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IMediator mediator, IGatewayApiChecksService gatewayApiChecksService, IFileStorageService fileStorageService) 
         {
             _applyRepository = applyRepository;
             _logger = logger;
             _gatewayApiChecksService = gatewayApiChecksService;
             _fileStorageService = fileStorageService;
-            _oversightReviewRepository = oversightReviewRepository;
-            _auditService = auditService;
             _mediator = mediator;
         }
 
@@ -110,43 +106,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
 
         [HttpPost("Gateway/UpdateGatewayReviewStatusAndComment")]
-        public async Task<ActionResult<bool>> UpdateGatewayReviewStatusAndComment([FromBody] UpdateGatewayReviewStatusAndCommentRequest request)
+        public async Task<ActionResult<bool>> UpdateGatewayReviewStatusAndComment([FromBody] UpdateGatewayReviewStatusAndCommentCommand request)
         {
-            var application = await _mediator.Send(new GetApplicationRequest(request.ApplicationId));
-
-            if (application != null)
-            {
-                if (application.ApplyData.GatewayReviewDetails != null)
-                {
-                    application.ApplyData.GatewayReviewDetails.OutcomeDateTime = DateTime.UtcNow;
-                    application.ApplyData.GatewayReviewDetails.Comments = request.GatewayReviewComment;
-                    application.ApplyData.GatewayReviewDetails.ExternalComments = request.GatewayReviewExternalComment;
-                }
-
-                var result = await _applyRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, request.GatewayReviewStatus, request.UserId, request.UserName);
-
-                if (result && request.GatewayReviewStatus == GatewayReviewStatus.Reject)
-                {
-                    var oversightReview = new OversightReview
-                    {
-                        ApplicationId = request.ApplicationId,
-                        Status = OversightReviewStatus.Rejected,
-                        UserId = request.UserId,
-                        UserName = request.UserName,
-                        InternalComments = request.GatewayReviewComment,
-                        ExternalComments = request.GatewayReviewExternalComment
-                    };
-
-                    _auditService.StartTracking(UserAction.UpdateGatewayReviewStatus, request.UserId, request.UserName);
-                    _auditService.AuditInsert(oversightReview);
-                    await _oversightReviewRepository.Add(oversightReview);
-                    await _auditService.Save();
-                }
-
-                return result;
-            }
-
-            return false;
+            await _mediator.Send(request);
+            return true;
         }
 
         [HttpPost("Gateway/UpdateGatewayClarification")]
