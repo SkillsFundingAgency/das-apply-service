@@ -14,11 +14,9 @@
 
    <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-    <ol class="app-task-list">
-    
+     <ol class="app-task-list">
         @foreach (var sequence in Model.Sequences)
         {
-
             <li>
                 <h2 id="Sequence_@sequence.Id" class="app-task-list__section">
                     <span class="app-task-list__section-number">@Html.Raw(sequence.Id). </span>
@@ -26,17 +24,14 @@
                 </h2>
                 
                 <ul class="app-task-list__items">
-                    @foreach (var seqSection in sequence.Sections)
-                    {
-
-                        var sequenceSection = sequence.Id + "_" + seqSection.Id;
+                @foreach (var seqSection in sequence.Sections)
+                {
+                    var sequenceSection = sequence.Id + "_" + seqSection.Id;
 
                     <li class="app-task-list__item">
-
                         @if (!seqSection.IsLocked && !seqSection.IsNotRequired)
                         {
-                            <span class="app-task-list__task-name">
-                                
+                            <span class="app-task-list__task-name">                 
                                 @if (sequence.Id == RoatpWorkflowSequenceIds.YourOrganisation && seqSection.Id == RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed)
                                 {
                                     <a class="govuk-link" asp-action="WhatYouWillNeed" asp-controller="RoatpYourOrganisationApplication" asp-route-applicationId="@Model.ApplicationId">
@@ -81,11 +76,8 @@
                                        asp-route-sectionId="@seqSection.Id">
                                         @Html.Raw(seqSection.Title)
                                     </a>
-
                                 }
-
                             </span>
-
                         }
                         else
                         {
@@ -100,43 +92,35 @@
                         }
                     </li>
 
-                        @if (sequence.Id == RoatpWorkflowSequenceIds.Finish && seqSection.Id == RoatpWorkflowSectionIds.Finish.TermsAndConditions)
-                         {
-                            @if (Model.ShowSubmission)
-                             {
-                                 @if (Model.AllowSubmission)
-                                  {
-                                      <li class="app-task-list__item">
-                                          <span class="app-task-list__task-name">
-                                              <a class="govuk-link" asp-action="SubmitApplication" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">
-                                                  Submit application
-                                              </a>
-                                          </span>
-                                          <strong class="govuk-tag app-task-list__task-next" id="completed">
-                                              @Html.Raw("Next")
-                                          </strong>
-
-                                      </li>
-                                 }
-                                  else
-                                  {
-                                      <li class="app-task-list__item">
-                                          <span class="app-task-list__task-name">
-                                              Submit application
-                                          </span>
-                                      </li>
-                                  }
-                             }
-                         }
+                    @if (sequence.Id == RoatpWorkflowSequenceIds.Finish && seqSection.Id == RoatpWorkflowSectionIds.Finish.TermsAndConditions)
+                    {
+                        @if (Model.AllowSubmission)
+                        {
+                            <li class="app-task-list__item">
+                                <span class="app-task-list__task-name">
+                                    <a class="govuk-link" asp-action="SubmitApplication" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">
+                                        Submit application
+                                    </a>
+                                </span>
+                                <strong class="govuk-tag app-task-list__task-next" id="completed">
+                                    Next
+                                </strong>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="app-task-list__item">
+                                <span class="app-task-list__task-name">
+                                    Submit application
+                                </span>
+                            </li>
+                        }
                     }
-
+                }
                 </ul>
             </li>
         }
-
-    </ol>
+     </ol>
     </div>
-    </div>
-    
+   </div>  
 </main>
-

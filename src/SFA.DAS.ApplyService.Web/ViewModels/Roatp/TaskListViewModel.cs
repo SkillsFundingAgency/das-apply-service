@@ -9,7 +9,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public Guid ApplicationId { get; set; }
         public ApplicationSummaryViewModel ApplicationSummaryViewModel { get; set; }
 
-        public bool ShowSubmission { get; set; }
         public bool AllowSubmission { get; set; }
 
         public List<Sequence> Sequences { get; set; }
