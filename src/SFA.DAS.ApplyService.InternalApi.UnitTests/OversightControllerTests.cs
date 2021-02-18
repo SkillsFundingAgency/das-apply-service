@@ -204,5 +204,19 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var result = await _controller.UploadAppealFile(command);
             result.Should().BeOfType<OkResult>();
         }
+
+        [Test]
+        public async Task AppealUploads_Gets_Files_For_Application_Appeal()
+        {
+            var request = new GetAppealFilesRequest();
+            var queryResult = new AppealFiles();
+
+            _mediator.Setup(x => x.Send(request, It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
+
+            var result = await _controller.AppealUploads(request);
+            result.Should().BeOfType<ActionResult<AppealFiles>>();
+
+            Assert.AreEqual(queryResult, result.Value);
+        }
     }
 }
