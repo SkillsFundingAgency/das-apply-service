@@ -35,12 +35,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
                      ClosedApplicationsCount = 3
                 });
 
-            var logger = new Mock<ILogger<GatewayReviewController>>();
-
-            var configurationService = new Mock<IConfigurationService>();
-            configurationService.Setup(x => x.GetConfig()).ReturnsAsync(new ApplyConfig { SignInPage = "https://localhost/" });
-
-            _controller = new GatewayReviewController(_mediator.Object, logger.Object, configurationService.Object);
+            _controller = new GatewayReviewController(_mediator.Object);
         }
 
         [Test]

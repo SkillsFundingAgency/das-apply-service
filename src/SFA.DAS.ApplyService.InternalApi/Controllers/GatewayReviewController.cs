@@ -19,15 +19,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     public class GatewayReviewController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly ILogger<GatewayReviewController> _logger;
-        private readonly IConfigurationService _configurationService;
 
-        public GatewayReviewController(IMediator mediator, ILogger<GatewayReviewController> logger,
-             IConfigurationService configurationService)
+        public GatewayReviewController(IMediator mediator)
         {
             _mediator = mediator;
-            _logger = logger;
-            _configurationService = configurationService;
         }
 
         [HttpGet("GatewayReview/Counts")]
