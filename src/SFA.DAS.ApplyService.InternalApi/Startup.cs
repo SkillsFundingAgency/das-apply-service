@@ -261,6 +261,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IOversightReviewRepository, OversightReviewRepository>();
             services.AddTransient<IOversightReviewQueries, OversightReviewQueries>();
             services.AddTransient<IAppealUploadRepository, AppealUploadRepository>();
+            services.AddTransient<IAppealsQueries, AppealsQueries>();
 
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
