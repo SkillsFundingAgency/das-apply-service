@@ -24,6 +24,7 @@ using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
+using SFA.DAS.ApplyService.Data.FileStorage;
 using SFA.DAS.ApplyService.Data.Queries;
 using SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
@@ -259,6 +260,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IDfeSignInService, DfeSignInService>();
             services.AddTransient<IOversightReviewRepository, OversightReviewRepository>();
             services.AddTransient<IOversightReviewQueries, OversightReviewQueries>();
+            services.AddTransient<IAppealUploadRepository, AppealUploadRepository>();
 
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
@@ -290,6 +292,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddTransient<IFileEncryptionService, FileEncryptionService>();
             services.AddTransient<IFileStorageService, FileStorageService>();
+            services.AddTransient<IAppealFileStorage, AppealFileStorage>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkBehaviour<,>));

@@ -46,6 +46,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             _appealUploadRepository.Add(appealUpload);
 
             _auditService.AuditInsert(appealUpload);
+            _auditService.Save();
 
             return Unit.Value;
         }
