@@ -20,15 +20,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly IMediator _mediator;
         private readonly ILogger<GatewayReviewController> _logger;
         private readonly IConfigurationService _configurationService;
-        private readonly IApplicationUpdatedEmailService _applicationUpdatedEmailService;
 
         public GatewayReviewController(IMediator mediator, ILogger<GatewayReviewController> logger,
-             IConfigurationService configurationService, IApplicationUpdatedEmailService applicationUpdatedEmailService)
+             IConfigurationService configurationService)
         {
             _mediator = mediator;
             _logger = logger;
             _configurationService = configurationService;
-            _applicationUpdatedEmailService = applicationUpdatedEmailService;
         }
 
         [HttpGet("GatewayReview/Counts")]
@@ -69,19 +67,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<bool> WithdrawApplication(Guid applicationId, [FromBody] GatewayWithdrawApplicationRequest request)
         {
             var withdrawResult = await _mediator.Send(new WithdrawApplicationRequest(applicationId, request.Comments, request.UserId, request.UserName));
-
-            try
-            {
-                if (withdrawResult)
-                {
-                    await _applicationUpdatedEmailService.SendEmail(applicationId);
-                }
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, $"Unable to send withdraw confirmation email for application: {applicationId}");
-            }
-
             return withdrawResult;
         }
 

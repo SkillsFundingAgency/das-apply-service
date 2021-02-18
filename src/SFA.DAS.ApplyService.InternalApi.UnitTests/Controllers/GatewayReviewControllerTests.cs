@@ -21,7 +21,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
     {
         private GatewayReviewController _controller;
         private Mock<IMediator> _mediator;
-        private Mock<IApplicationUpdatedEmailService> _applicationUpdatedEmailService;
 
         [SetUp]
         public void TestSetup()
@@ -42,7 +41,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 
             _applicationUpdatedEmailService = new Mock<IApplicationUpdatedEmailService>();
 
-            _controller = new GatewayReviewController(_mediator.Object, logger.Object, configurationService.Object, _applicationUpdatedEmailService.Object);
+            _controller = new GatewayReviewController(_mediator.Object, logger.Object, configurationService.Object);
         }
 
         [Test]
@@ -70,26 +69,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             await _controller.WithdrawApplication(applicationId, request);
 
             _mediator.Verify(x => x.Send(It.Is<WithdrawApplicationRequest>(y => y.ApplicationId == applicationId), It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Test]
-        public async Task WithdrawApplication_sends_updated_email()
-        {
-            var applicationId = Guid.NewGuid();
-
-            _mediator.Setup(x => x.Send(It.Is<WithdrawApplicationRequest>(y => y.ApplicationId == applicationId), It.IsAny<CancellationToken>()))
-                    .ReturnsAsync(true);
-
-            var request = new GatewayWithdrawApplicationRequest
-            {
-                UserId = "userId",
-                UserName = "userName",
-                Comments = "comments"
-            };
-
-            await _controller.WithdrawApplication(applicationId, request);
-
-            _applicationUpdatedEmailService.Verify(x => x.SendEmail(It.Is<Guid>(id => id == applicationId)), Times.Once);
         }
 
         [Test]
