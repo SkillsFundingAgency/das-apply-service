@@ -1,8 +1,9 @@
 ﻿using System;
+using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 {
-    public class UpdateGatewayReviewStatusAndCommentRequest
+    public class UpdateGatewayReviewStatusAndCommentCommand : IRequest
     {
         public Guid ApplicationId { get; }
         public string GatewayReviewStatus { get; }
@@ -11,7 +12,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
         public string UserId { get; }
         public string UserName { get; }
 
-        public UpdateGatewayReviewStatusAndCommentRequest(Guid applicationId, string gatewayReviewStatus, string gatewayReviewComment, string gatewayReviewExternalComment, string userId, string userName)
+        public UpdateGatewayReviewStatusAndCommentCommand(Guid applicationId, string gatewayReviewStatus, string gatewayReviewComment, string gatewayReviewExternalComment, string userId, string userName)
         {
             ApplicationId = applicationId;
             GatewayReviewStatus = gatewayReviewStatus;

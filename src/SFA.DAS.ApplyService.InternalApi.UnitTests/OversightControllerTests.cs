@@ -155,6 +155,23 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             result.Should().BeOfType<OkResult>();
         }
 
+
+        [Test]
+        public async Task Record_oversight_gateway_removed_outcome_updates_oversight_status_and_determined_date()
+        {
+            var command = new RecordOversightGatewayRemovedOutcomeCommand
+            {
+                ApplicationId = Guid.NewGuid(),
+                UserId = "User Id",
+                UserName = "Test user"
+            };
+
+            _mediator.Setup(x => x.Send(command, It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
+
+            var result = await _controller.RecordOversightGatewayRemovedOutcome(command);
+            result.Should().BeOfType<OkResult>();
+        }
+
         [Test]
         public async Task Get_registration_details_retrieves_information_for_adding_provider_to_register()
         {

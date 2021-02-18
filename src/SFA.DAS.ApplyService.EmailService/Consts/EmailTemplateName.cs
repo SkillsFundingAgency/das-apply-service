@@ -20,6 +20,6 @@
         /// <summary>
         /// Requires tokens: { ApplicantFullName, LoginLink }
         /// </summary>
-        public const string ROATP_APPLICATION_WITHDRAWN = "RoATPApplicationWithdrawn";
+        public const string ROATP_APPLICATION_UPDATED = "RoATPApplicationUpdated";
     }
 }

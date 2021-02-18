@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Interfaces;
@@ -53,7 +52,7 @@ namespace SFA.DAS.ApplyService.Application.Services
             _trackedItems.Add(TrackedItem.CreateDeleteTrackedItem(trackedObject, initialState));
         }
 
-        public async Task Save()
+        public void Save()
         {
             var correlationId = Guid.NewGuid();
             var auditDate = DateTime.UtcNow;
@@ -82,7 +81,7 @@ namespace SFA.DAS.ApplyService.Application.Services
                     CorrelationId = correlationId
                 };
 
-                await _auditRepository.Add(audit);
+                _auditRepository.Add(audit);
             }
         }
     }

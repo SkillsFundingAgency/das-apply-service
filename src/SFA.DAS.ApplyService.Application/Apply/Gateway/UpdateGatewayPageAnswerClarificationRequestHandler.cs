@@ -28,8 +28,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             var answer = await _applyRepository.GetGatewayPageAnswer(request.ApplicationId, request.PageId);
             var isNew = answer == null;
 
-            
-
             if (isNew)
             {
                 answer = CreateNewGatewayPageAnswer(request.ApplicationId, request.PageId);
@@ -71,7 +69,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 await _applyRepository.UpdateApplication(application);
             }
 
-            await _auditService.Save();
+            _auditService.Save();
 
             return Unit.Value;
         }

@@ -7,6 +7,7 @@
         UpdateGatewayPagePostClarification,
 		RecordOversightOutcome,
         RecordOversightGatewayFailOutcome,
+        RecordOversightGatewayRemovedOutcome,
         UpdateGatewayReviewStatus,
         WithdrawApplication
     }

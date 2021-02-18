@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Domain.Audit;
+﻿using SFA.DAS.ApplyService.Domain.Audit;
 
 namespace SFA.DAS.ApplyService.Application.Interfaces
 {
@@ -9,6 +8,6 @@ namespace SFA.DAS.ApplyService.Application.Interfaces
         void AuditInsert(IAuditable trackedObject);
         void AuditUpdate(IAuditable trackedObject);
         void AuditDelete(IAuditable trackedObject);
-        Task Save();
+        void Save();
     }
 }

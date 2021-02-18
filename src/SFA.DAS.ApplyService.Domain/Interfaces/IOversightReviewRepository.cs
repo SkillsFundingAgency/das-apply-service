@@ -7,7 +7,7 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
     public interface IOversightReviewRepository
     {
         Task<OversightReview> GetByApplicationId(Guid applicationId);
-        Task Add(OversightReview entity);
-        Task Update(OversightReview entity);
+        void Add(OversightReview entity);
+        void Update(OversightReview entity);
     }
 }
