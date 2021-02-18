@@ -39,8 +39,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             var configurationService = new Mock<IConfigurationService>();
             configurationService.Setup(x => x.GetConfig()).ReturnsAsync(new ApplyConfig { SignInPage = "https://localhost/" });
 
-            _applicationUpdatedEmailService = new Mock<IApplicationUpdatedEmailService>();
-
             _controller = new GatewayReviewController(_mediator.Object, logger.Object, configurationService.Object);
         }
 
