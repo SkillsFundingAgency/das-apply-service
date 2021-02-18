@@ -193,5 +193,16 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             result.Value.UKPRN.Should().Be(response.UKPRN);
         }
+
+        [Test]
+        public async Task Upload_Appeal_File_Adds_Uploaded_File_To_Application()
+        {
+            var command = new UploadAppealFileCommand();
+
+            _mediator.Setup(x => x.Send(command, It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
+
+            var result = await _controller.UploadAppealFile(command);
+            result.Should().BeOfType<OkResult>();
+        }
     }
 }

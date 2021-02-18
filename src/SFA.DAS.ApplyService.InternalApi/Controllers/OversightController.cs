@@ -82,5 +82,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new GetOversightDetailsRequest(applicationId));
         }
+
+        [HttpPost]
+        [Route("Oversight/Appeal/Upload")]
+        public async Task<IActionResult> UploadAppealFile([FromBody] UploadAppealFileCommand command)
+        {
+            await _mediator.Send(command);
+            return new OkResult();
+        }
     }
 }
