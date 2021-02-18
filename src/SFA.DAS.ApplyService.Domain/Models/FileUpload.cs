@@ -2,7 +2,7 @@
 {
     public class FileUpload
     {
-        public string FileName { get; set; }
+        public string Filename { get; set; }
         public byte[] Data { get; set; }
         public string ContentType { get; set; }
     }
