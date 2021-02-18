@@ -13,6 +13,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.EmailService.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
+using SFA.DAS.ApplyService.InternalApi.Types.Requests;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 {
