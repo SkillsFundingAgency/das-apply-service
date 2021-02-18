@@ -49,5 +49,9 @@ namespace SFA.DAS.ApplyService.Domain.QueryResults
         public bool? ModerationApproved { get; set; }
         public string InternalComments { get; set; }
         public string ExternalComments { get; set; }
+        public string ApplyInternalComments { get; set; }
+        public string ApplyExternalComments { get; set; }
+        public DateTime? ApplicationRemovedOn { get; set; }
+        public string ApplicationRemovedBy { get; set; }
     }
 }

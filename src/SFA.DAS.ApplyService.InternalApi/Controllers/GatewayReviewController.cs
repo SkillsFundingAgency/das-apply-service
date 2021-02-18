@@ -20,15 +20,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly IMediator _mediator;
         private readonly ILogger<GatewayReviewController> _logger;
         private readonly IConfigurationService _configurationService;
-        private readonly IWithdrawApplicationConfirmationEmailService _withdrawApplicationConfirmationEmailService;
+        private readonly IApplicationUpdatedEmailService _applicationUpdatedEmailService;
 
         public GatewayReviewController(IMediator mediator, ILogger<GatewayReviewController> logger,
-             IConfigurationService configurationService, IWithdrawApplicationConfirmationEmailService withdrawApplicationConfirmationEmailService)
+             IConfigurationService configurationService, IApplicationUpdatedEmailService applicationUpdatedEmailService)
         {
             _mediator = mediator;
             _logger = logger;
             _configurationService = configurationService;
-            _withdrawApplicationConfirmationEmailService = withdrawApplicationConfirmationEmailService;
+            _applicationUpdatedEmailService = applicationUpdatedEmailService;
         }
 
         [HttpGet("GatewayReview/Counts")]
@@ -74,17 +74,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             {
                 if (withdrawResult)
                 {
-                    var applicationContact = await _mediator.Send(new GetContactForApplicationRequest(applicationId));
-                    var config = await _configurationService.GetConfig();
-
-                    var applicationWithdrawConfirmation = new ApplicationWithdrawConfirmation
-                    {
-                        ApplicantFullName = $"{applicationContact.GivenNames} {applicationContact.FamilyName}",
-                        EmailAddress = applicationContact.Email,
-                        LoginLink = config.SignInPage
-                    };
-
-                    await _withdrawApplicationConfirmationEmailService.SendWithdrawConfirmationEmail(applicationWithdrawConfirmation);
+                    await _applicationUpdatedEmailService.SendEmail(applicationId);
                 }
             }
             catch(Exception ex)

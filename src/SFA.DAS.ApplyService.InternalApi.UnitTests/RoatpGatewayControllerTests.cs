@@ -36,7 +36,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<IMediator> _mediator;
         private Mock<IGatewayApiChecksService> _gatewayApiChecksService;
         private Mock<IFileStorageService> _fileStorage;
-        private Mock<IOversightReviewRepository> _oversightReviewRepository;
         private const string _twoInTwelveMonthsPageId = "TwoInTwelveMonths";
         private const string _userName = "John Smith";
         private const string _userId = "user id 123";
@@ -80,14 +79,14 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _fileStorage = new Mock<IFileStorageService>();
             _mediator = new Mock<IMediator>();
             _mediator.Setup(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_application);
+            _mediator.Setup(x => x.Send(It.IsAny<UpdateGatewayReviewStatusAndCommentCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Unit.Value);
 
             _gatewayApiChecksService = new Mock<IGatewayApiChecksService>();
             _gatewayApiChecksService.Setup(x => x.GetExternalApiCheckDetails(_applicationId, _userName)).ReturnsAsync(new ApplyGatewayDetails());
 
-            _oversightReviewRepository = new Mock<IOversightReviewRepository>();
-            _oversightReviewRepository.Setup(x => x.Add(It.IsAny<OversightReview>())).Returns(() => Task.CompletedTask);
 
-            _controller = new RoatpGatewayController(_applyRepository.Object, _logger.Object, _mediator.Object, _gatewayApiChecksService.Object, _fileStorage.Object, _oversightReviewRepository.Object, Mock.Of<IAuditService>())
+            _controller = new RoatpGatewayController(_applyRepository.Object, _logger.Object, _mediator.Object, _gatewayApiChecksService.Object, _fileStorage.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -165,34 +164,19 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public async Task UpdateGatewayReviewStatusAndComment_executes()
+        public async Task UpdateGatewayReviewStatusAndComment_Updates_Review_Status()
         {
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var gatewayReviewComment = "Some comment";
-            var gatewayReviewExternalComment = "Some external comment";
+            var gatewayReviewExternalComment = "some external comment";
 
-            _applyRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true); 
-
-            var request = new UpdateGatewayReviewStatusAndCommentRequest(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, _userId, _userName);
+            var request = new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, _userId, _userName);
             await _controller.UpdateGatewayReviewStatusAndComment(request);
 
-            _applyRepository.Verify(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName), Times.Once);
+            _mediator.Verify(x => x.Send(request, It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        [Test]
-        public async Task UpdateGatewayReviewStatusAndComment_when_rejected_creates_oversight_review()
-        {
-            var gatewayReviewStatus = GatewayReviewStatus.Reject;
-            var gatewayReviewComment = "Some comment";
-            var gatewayReviewExternalComment = "Some external comment";
 
-            _applyRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
-
-            var request = new UpdateGatewayReviewStatusAndCommentRequest(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, _userId, _userName);
-            await _controller.UpdateGatewayReviewStatusAndComment(request);
-
-            _oversightReviewRepository.Verify(x => x.Add(It.Is<OversightReview>(r => r.ApplicationId == _applicationId && r.Status == OversightReviewStatus.Rejected)));
-        }
 
         [Test]
         public async Task UploadClarificationFile_with_file_calls_file_upload()

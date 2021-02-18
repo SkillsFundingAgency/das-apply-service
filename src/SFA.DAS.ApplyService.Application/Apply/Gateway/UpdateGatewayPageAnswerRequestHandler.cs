@@ -72,7 +72,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 await _applyRepository.UpdateApplication(application);
             }
            
-            await _auditService.Save();
+            _auditService.Save();
 
             return Unit.Value;
         }

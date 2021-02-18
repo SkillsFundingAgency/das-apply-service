@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
     {
         private GatewayReviewController _controller;
         private Mock<IMediator> _mediator;
-        private Mock<IWithdrawApplicationConfirmationEmailService> _withdrawApplicationConfirmationEmailService;
+        private Mock<IApplicationUpdatedEmailService> _applicationUpdatedEmailService;
 
         [SetUp]
         public void TestSetup()
@@ -40,9 +40,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             var configurationService = new Mock<IConfigurationService>();
             configurationService.Setup(x => x.GetConfig()).ReturnsAsync(new ApplyConfig { SignInPage = "https://localhost/" });
 
-            _withdrawApplicationConfirmationEmailService = new Mock<IWithdrawApplicationConfirmationEmailService>();
+            _applicationUpdatedEmailService = new Mock<IApplicationUpdatedEmailService>();
 
-            _controller = new GatewayReviewController(_mediator.Object, logger.Object, configurationService.Object, _withdrawApplicationConfirmationEmailService.Object);
+            _controller = new GatewayReviewController(_mediator.Object, logger.Object, configurationService.Object, _applicationUpdatedEmailService.Object);
         }
 
         [Test]
@@ -73,17 +73,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         }
 
         [Test]
-        public async Task WithdrawApplication_sends_withdraw_email()
+        public async Task WithdrawApplication_sends_updated_email()
         {
             var applicationId = Guid.NewGuid();
-
-            _mediator.Setup(x => x.Send(It.Is<GetContactForApplicationRequest>(y => y.ApplicationId == applicationId), It.IsAny<CancellationToken>()))
-                    .ReturnsAsync(() => new Contact
-                    {
-                        Email = "email@test.test",
-                        GivenNames = "GivenNames",
-                        FamilyName = "FamilyName"
-                    });
 
             _mediator.Setup(x => x.Send(It.Is<WithdrawApplicationRequest>(y => y.ApplicationId == applicationId), It.IsAny<CancellationToken>()))
                     .ReturnsAsync(true);
@@ -97,7 +89,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 
             await _controller.WithdrawApplication(applicationId, request);
 
-            _withdrawApplicationConfirmationEmailService.Verify(x => x.SendWithdrawConfirmationEmail(It.IsAny<ApplicationWithdrawConfirmation>()), Times.Once);
+            _applicationUpdatedEmailService.Verify(x => x.SendEmail(It.Is<Guid>(id => id == applicationId)), Times.Once);
         }
 
         [Test]
