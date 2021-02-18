@@ -7,22 +7,17 @@ using SFA.DAS.ApplyService.Domain.QueryResults;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 {
-    public class GetAppealFilesRequestHandler : IRequestHandler<GetAppealFilesRequest, AppealFiles>
+    public class GetStagedFilesRequestHandler : IRequestHandler<GetStagedFilesRequest, AppealFiles>
     {
         private readonly IAppealsQueries _appealsQueries;
 
-        public GetAppealFilesRequestHandler(IAppealsQueries appealsQueries)
+        public GetStagedFilesRequestHandler(IAppealsQueries appealsQueries)
         {
             _appealsQueries = appealsQueries;
         }
 
-        public async Task<AppealFiles> Handle(GetAppealFilesRequest request, CancellationToken cancellationToken)
+        public async Task<AppealFiles> Handle(GetStagedFilesRequest request, CancellationToken cancellationToken)
         {
-            if (request.AppealId.HasValue)
-            {
-                throw new NotImplementedException();
-            }
-
             return await _appealsQueries.GetStagedAppealFiles(request.ApplicationId);
         }
     }

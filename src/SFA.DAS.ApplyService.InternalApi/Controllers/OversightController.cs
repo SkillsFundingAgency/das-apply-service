@@ -92,8 +92,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet]
-        [Route("Oversights/Appeal/Uploads")]
-        public async Task<ActionResult<AppealFiles>> AppealUploads(GetAppealFilesRequest request)
+        [Route("Oversight/{applicationId}/uploads")]
+        public async Task<ActionResult<AppealFiles>> StagedUploads(GetStagedFilesRequest request)
         {
             return await _mediator.Send(request);
         }

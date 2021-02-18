@@ -12,15 +12,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAppealFilesRequ
     [TestFixture]
     public class GetAppealFilesRequestHandlerTests
     {
-        private GetAppealFilesRequestHandler _handler;
+        private GetStagedFilesRequestHandler _handler;
         private Mock<IAppealsQueries> _appealsQueries;
-        private GetAppealFilesRequest _request;
+        private GetStagedFilesRequest _request;
         private AppealFiles _queryResult;
 
         [SetUp]
         public void Setup()
         {
-            _request = new GetAppealFilesRequest
+            _request = new GetStagedFilesRequest
             {
                 ApplicationId = Guid.NewGuid()
             };
@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAppealFilesRequ
 
             _appealsQueries = new Mock<IAppealsQueries>();
             _appealsQueries.Setup(x => x.GetStagedAppealFiles(_request.ApplicationId)).ReturnsAsync(() => _queryResult);
-            _handler = new GetAppealFilesRequestHandler(_appealsQueries.Object);
+            _handler = new GetStagedFilesRequestHandler(_appealsQueries.Object);
         }
 
         [Test]
@@ -37,13 +37,6 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAppealFilesRequ
         {
             var result = await _handler.Handle(_request, CancellationToken.None);
             Assert.AreSame(_queryResult, result);
-        }
-
-        [Test]
-        public void Handle_If_Appeal_Id_Is_Provided_Then_Throws_As_Not_Implemented()
-        {
-            _request.AppealId = Guid.NewGuid();
-            Assert.ThrowsAsync<NotImplementedException>(() => _handler.Handle(_request, CancellationToken.None));
         }
     }
 }
