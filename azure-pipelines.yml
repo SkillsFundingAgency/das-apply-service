@@ -4,6 +4,9 @@ trigger:
     include:
       - "*"
 
+pr:
+  - master
+
 variables:
   - group: "ESFA - SonarCloud"
   - name: sonarCloudProjectKey
@@ -38,6 +41,7 @@ stages:
 
     - task: SonarCloudPrepare@1
       displayName: 'Prepare Sonarcloud analysis configuration'
+      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),eq(variables['Build.Reason'], 'PullRequest')))
       inputs:
         SonarCloud: "$(SonarCloudConnectionId)"
         organization: "$(SonarCloudOrganisationKey)"
@@ -56,7 +60,7 @@ stages:
       inputs:
         projects: 'src/**/*.csproj'
         arguments: '--configuration $(buildConfiguration) --no-restore'
-        
+
     - task: DotNetCoreCLI@2
       displayName: Test
       inputs:
@@ -66,9 +70,11 @@ stages:
 
     - task: SonarCloudAnalyze@1
       displayName: 'Run SonarCloud analysis'
-      
+      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),eq(variables['Build.Reason'], 'PullRequest')))
+
     - task: SonarCloudPublish@1
       displayName: 'Publish results on build summary'
+      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),eq(variables['Build.Reason'], 'PullRequest')))
       inputs:
         pollingTimeoutSec: '300'
 
@@ -109,12 +115,12 @@ stages:
       displayName: 'Publish Artifact'
       inputs:
         pathtoPublish: '$(build.artifactstagingdirectory)/publish'
-    
+
     - publish: $(build.artifactstagingdirectory)/NugetPackages
       artifact: NugetPackages
 
   - job: 'DACPACBuild'
-    pool: 
+    pool:
       vmImage: 'windows-2019'
     workspace:
       clean: all
@@ -141,7 +147,7 @@ stages:
   displayName: 'Publish Nuget Package'
   pool:
     name: 'DAS - Continuous Deployment'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.Reason'], 'Manual'))
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
   jobs:
   - job: 'CleanArtifacts'
     displayName: Clean artifacts directory

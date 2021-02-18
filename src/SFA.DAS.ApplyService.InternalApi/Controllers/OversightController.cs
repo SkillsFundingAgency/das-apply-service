@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.QueryResults;
 using SFA.DAS.ApplyService.InternalApi.Services;
-using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -56,6 +56,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost]
         [Route("Oversight/GatewayFailOutcome")]
         public async Task<ActionResult> RecordOversightGatewayFailOutcome([FromBody] RecordOversightGatewayFailOutcomeCommand command)
+        {
+            await _mediator.Send(command);
+            return new OkResult();
+        }
+
+        [HttpPost]
+        [Route("Oversight/GatewayRemovedOutcome")]
+        public async Task<ActionResult> RecordOversightGatewayRemovedOutcome([FromBody] RecordOversightGatewayRemovedOutcomeCommand command)
         {
             await _mediator.Send(command);
             return new OkResult();

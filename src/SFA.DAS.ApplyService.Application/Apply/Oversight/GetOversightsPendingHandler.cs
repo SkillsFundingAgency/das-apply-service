@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
+using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Domain.QueryResults;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 {

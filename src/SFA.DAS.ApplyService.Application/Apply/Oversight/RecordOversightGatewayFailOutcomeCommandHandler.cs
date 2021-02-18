@@ -6,18 +6,19 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 {
     public class RecordOversightGatewayFailOutcomeCommandHandler : IRequestHandler<RecordOversightGatewayFailOutcomeCommand>
     {
-        private readonly IApplyRepository _applyRepository;
+        private readonly IApplicationRepository _applyRepository;
         private readonly IOversightReviewRepository _oversightReviewRepository;
         private readonly ILogger<RecordOversightGatewayFailOutcomeCommandHandler> _logger;
         private readonly IAuditService _auditService;
 
-        public RecordOversightGatewayFailOutcomeCommandHandler(IApplyRepository applyRepository,
+        public RecordOversightGatewayFailOutcomeCommandHandler(IApplicationRepository applyRepository,
             IOversightReviewRepository oversightReviewRepository,
             ILogger<RecordOversightGatewayFailOutcomeCommandHandler> logger,
             IAuditService auditService)
@@ -50,13 +51,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             _auditService.StartTracking(UserAction.RecordOversightGatewayFailOutcome, request.UserId, request.UserName);
             _auditService.AuditInsert(oversightReview);
             _auditService.AuditUpdate(application);
-            
-            await _oversightReviewRepository.Add(oversightReview);
+
+            _oversightReviewRepository.Add(oversightReview);
 
             application.ApplicationStatus = ApplicationStatus.Rejected;
-            await _applyRepository.UpdateApplication(application);
-            
-            await _auditService.Save();
+            _applyRepository.Update(application);
+
+            _auditService.Save();
 
             return Unit.Value;
         }

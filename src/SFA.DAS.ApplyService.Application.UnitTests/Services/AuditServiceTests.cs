@@ -10,6 +10,7 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Audit;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Services
 {
@@ -114,7 +115,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Services
                 StateService.Setup(x => x.GetState(It.Is<object>(o => o == TestDeleteAuditEntity))).Returns(TestDeleteInitialState);
 
                 Repository = new Mock<IAuditRepository>();
-                Repository.Setup(x => x.Add(It.IsAny<Audit>())).Returns(Task.CompletedTask);
+                Repository.Setup(x => x.Add(It.IsAny<Audit>()));
 
                 AuditService = new AuditService(StateService.Object, Mock.Of<IDiffService>(), Repository.Object);
                 AuditService.StartTracking(UserAction, UserId, UserName);
@@ -143,7 +144,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Services
                 StateService.Setup(x => x.GetState(It.Is<object>(o => o == TestUpdateAuditEntity))).Returns(TestUpdateUpdatedState);
                 StateService.Setup(x => x.GetState(It.Is<object>(o => o == TestInsertAuditEntity))).Returns(TestInsertUpdatedState);
 
-                AuditService.Save().GetAwaiter().GetResult();
+                AuditService.Save();
 
                 return this;
             }
