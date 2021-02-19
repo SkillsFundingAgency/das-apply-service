@@ -91,6 +91,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return new OkResult();
         }
 
+        [HttpPost]
+        [Route("Oversight/Appeal/Upload/Remove")]
+        public async Task<IActionResult> RemoveAppealFile([FromBody] RemoveAppealFileCommand command)
+        {
+            await _mediator.Send(command);
+            return new OkResult();
+        }
+        
         [HttpGet]
         [Route("Oversight/{applicationId}/uploads")]
         public async Task<ActionResult<AppealFiles>> StagedUploads(GetStagedFilesRequest request)

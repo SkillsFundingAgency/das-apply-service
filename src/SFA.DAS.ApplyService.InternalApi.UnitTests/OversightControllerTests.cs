@@ -206,6 +206,17 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
+        public async Task Remove_Appeal_File_Removes_Uploaded_File_From_Application()
+        {
+            var command = new RemoveAppealFileCommand();
+
+            _mediator.Setup(x => x.Send(command, It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
+
+            var result = await _controller.RemoveAppealFile(command);
+            result.Should().BeOfType<OkResult>();
+        }
+
+        [Test]
         public async Task AppealUploads_Gets_Files_For_Application_Appeal()
         {
             var request = new GetStagedFilesRequest();
