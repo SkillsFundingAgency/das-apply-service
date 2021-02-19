@@ -32,12 +32,17 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 
         public void Remove(Guid entityId)
         {
-            throw new NotImplementedException();
+            _unitOfWork.Register(() => PersistRemoval(entityId));
         }
 
-        public Task<AppealUpload> GetById(Guid entityId)
+        public async Task<AppealUpload> GetById(Guid entityId)
         {
-            throw new NotImplementedException();
+            using (var connection = GetConnection())
+            {
+                return await connection.QuerySingleAsync<AppealUpload>(
+                    @"SELECT * FROM [AppealUpload] WHERE Id = @entityId",
+                    new { entityId });
+            }
         }
 
         public async Task PersistAdd(AppealUpload entity)
@@ -68,6 +73,15 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
                     @UserName,
                     @CreatedOn)",
                 entity, transaction);
+        }
+
+        public async Task PersistRemoval(Guid entityId)
+        {
+            var transaction = _unitOfWork.GetTransaction();
+
+            await transaction.Connection.ExecuteAsync(
+                "DELETE FROM [AppealUpload] WHERE Id = @entityId",
+                    new { entityId }, transaction);
         }
     }
 }
