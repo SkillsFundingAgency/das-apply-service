@@ -14,7 +14,7 @@ namespace SFA.DAS.ApplyService.Data.FileStorage
 
         public Task Remove(Guid applicationId, Guid fileId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }
