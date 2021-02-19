@@ -69,7 +69,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 upload.ApplicationId == _command.ApplicationId
                 && upload.Filename == _command.File.Filename
                 && upload.ContentType == _command.File.ContentType
-                && upload.FileId == _fileStorageFileId
+                && upload.FileStorageReference == _fileStorageFileId
                 && upload.UserId == _command.UserId
                 && upload.UserName == _command.UserName
                 && upload.Size == _command.File.Data.Length
@@ -85,7 +85,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 upload.ApplicationId == _command.ApplicationId
                 && upload.Filename == _command.File.Filename
                 && upload.ContentType == _command.File.ContentType
-                && upload.FileId == _fileStorageFileId
+                && upload.FileStorageReference == _fileStorageFileId
                 && upload.UserId == _command.UserId
                 && upload.UserName == _command.UserName
                 && upload.Size == _command.File.Data.Length

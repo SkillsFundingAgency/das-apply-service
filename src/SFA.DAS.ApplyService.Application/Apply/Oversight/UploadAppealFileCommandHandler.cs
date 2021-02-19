@@ -30,12 +30,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
         {
             _auditService.StartTracking(UserAction.UploadAppealFile, request.UserId, request.UserName);
 
-            var fileId = await _appealFileStorage.Add(request.ApplicationId, request.File, cancellationToken);
+            var fileStorageReference = await _appealFileStorage.Add(request.ApplicationId, request.File, cancellationToken);
 
             var appealUpload = new AppealUpload
             {
                 ApplicationId = request.ApplicationId,
-                FileId = fileId,
+                FileStorageReference = fileStorageReference,
                 ContentType = request.File.ContentType,
                 Filename = request.File.Filename,
                 Size = request.File.Data.Length,

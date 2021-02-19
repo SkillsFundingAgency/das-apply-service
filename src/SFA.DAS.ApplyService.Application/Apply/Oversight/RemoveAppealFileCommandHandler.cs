@@ -26,14 +26,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
         public async Task<Unit> Handle(RemoveAppealFileCommand request, CancellationToken cancellationToken)
         {
-            var upload = await _appealUploadRepository.GetById(request.AppealUploadId);
+            var upload = await _appealUploadRepository.GetById(request.FileId);
 
             if (upload.ApplicationId != request.ApplicationId)
             {
-                throw new InvalidOperationException($"Appeal upload {request.AppealUploadId} does not belong to Application {request.ApplicationId}");
+                throw new InvalidOperationException($"Appeal upload {request.FileId} does not belong to Application {request.ApplicationId}");
             }
 
-            await _appealFileStorage.Remove(request.ApplicationId, upload.FileId, cancellationToken);
+            await _appealFileStorage.Remove(request.ApplicationId, upload.FileStorageReference, cancellationToken);
 
             _auditService.StartTracking(UserAction.RemoveAppealFile, request.UserId, request.UserName);
 
