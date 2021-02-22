@@ -15,6 +15,7 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
 {
@@ -35,7 +36,6 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
             var dfeSignInService = new Mock<IDfeSignInService>();
             dfeSignInService.Setup(s => s.InviteUser("email@email.com", "Fred", "Jones", It.IsAny<Guid>()))
                 .ReturnsAsync(new InviteUserResponse() {IsSuccess = true});
-            var emailService = new Mock<IEmailService>();
             
             var factory = new WebApplicationFactory<Startup>();
 
@@ -46,7 +46,6 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
                     services.AddSingleton(p => configurationService.Object);
                     services.AddTransient(p => contactRepository.Object);
                     services.AddTransient(p => dfeSignInService.Object);
-                    services.AddTransient(p => emailService.Object);
                 });
             }).CreateClient(new WebApplicationFactoryClientOptions() {AllowAutoRedirect = false});
         }

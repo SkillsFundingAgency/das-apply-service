@@ -31,6 +31,18 @@ BEGIN
 	VALUES (NEWID(), 'Live', N'RoATPApplicationSubmittedMain', N'68008288-6497-4de2-be3c-e1409538aad9', GETDATE(), 'System')
 END
 
+IF EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPApplicationWithdrawn')
+BEGIN
+	DELETE FROM EmailTemplates where TemplateName = N'RoATPApplicationWithdrawn'
+END
+
+IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPApplicationUpdated')
+BEGIN
+	INSERT INTO EmailTemplates ([Id], [Status],[TemplateName],[TemplateId],[CreatedAt],[CreatedBy]) 
+	VALUES (NEWID(), 'Live', N'RoATPApplicationUpdated', N'ebb28424-b1ce-4374-b24b-a240f0cecdc1', GETDATE(), 'System')
+END
+
+
 -- Whitelisted Providers
 -- APR-1811 prevent any new applications by removing all previously allowed UKPRNs
 

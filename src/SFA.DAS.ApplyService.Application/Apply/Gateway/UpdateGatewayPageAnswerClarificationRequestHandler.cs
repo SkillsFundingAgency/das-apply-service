@@ -5,6 +5,7 @@ using MediatR;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 {
@@ -26,8 +27,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             var application = await _applyRepository.GetApplication(request.ApplicationId);
             var answer = await _applyRepository.GetGatewayPageAnswer(request.ApplicationId, request.PageId);
             var isNew = answer == null;
-
-            
 
             if (isNew)
             {
@@ -70,7 +69,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 await _applyRepository.UpdateApplication(application);
             }
 
-            await _auditService.Save();
+            _auditService.Save();
 
             return Unit.Value;
         }

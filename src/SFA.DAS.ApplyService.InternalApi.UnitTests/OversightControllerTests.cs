@@ -10,9 +10,9 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.QueryResults;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Services;
-using SFA.DAS.ApplyService.InternalApi.Types.QueryResults;
 using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
@@ -152,6 +152,23 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _mediator.Setup(x => x.Send(command, It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
 
             var result = await _controller.RecordOversightGatewayFailOutcome(command);
+            result.Should().BeOfType<OkResult>();
+        }
+
+
+        [Test]
+        public async Task Record_oversight_gateway_removed_outcome_updates_oversight_status_and_determined_date()
+        {
+            var command = new RecordOversightGatewayRemovedOutcomeCommand
+            {
+                ApplicationId = Guid.NewGuid(),
+                UserId = "User Id",
+                UserName = "Test user"
+            };
+
+            _mediator.Setup(x => x.Send(command, It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
+
+            var result = await _controller.RecordOversightGatewayRemovedOutcome(command);
             result.Should().BeOfType<OkResult>();
         }
 

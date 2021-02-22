@@ -2,10 +2,16 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions;
 using SFA.DAS.ApplyService.Application.Apply.Gateway.Applications;
+using SFA.DAS.ApplyService.Application.Apply.GetApplications;
+using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
@@ -15,6 +21,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
     {
         private GatewayReviewController _controller;
         private Mock<IMediator> _mediator;
+        private Mock<IApplicationUpdatedEmailService> _applicationUpdatedEmailService;
 
         [SetUp]
         public void TestSetup()
@@ -28,7 +35,14 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
                      ClosedApplicationsCount = 3
                 });
 
-            _controller = new GatewayReviewController(_mediator.Object);
+            var logger = new Mock<ILogger<GatewayReviewController>>();
+
+            var configurationService = new Mock<IConfigurationService>();
+            configurationService.Setup(x => x.GetConfig()).ReturnsAsync(new ApplyConfig { SignInPage = "https://localhost/" });
+
+            _applicationUpdatedEmailService = new Mock<IApplicationUpdatedEmailService>();
+
+            _controller = new GatewayReviewController(_mediator.Object, logger.Object, configurationService.Object, _applicationUpdatedEmailService.Object);
         }
 
         [Test]
@@ -56,6 +70,26 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             await _controller.WithdrawApplication(applicationId, request);
 
             _mediator.Verify(x => x.Send(It.Is<WithdrawApplicationRequest>(y => y.ApplicationId == applicationId), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Test]
+        public async Task WithdrawApplication_sends_updated_email()
+        {
+            var applicationId = Guid.NewGuid();
+
+            _mediator.Setup(x => x.Send(It.Is<WithdrawApplicationRequest>(y => y.ApplicationId == applicationId), It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(true);
+
+            var request = new GatewayWithdrawApplicationRequest
+            {
+                UserId = "userId",
+                UserName = "userName",
+                Comments = "comments"
+            };
+
+            await _controller.WithdrawApplication(applicationId, request);
+
+            _applicationUpdatedEmailService.Verify(x => x.SendEmail(It.Is<Guid>(id => id == applicationId)), Times.Once);
         }
 
         [Test]
