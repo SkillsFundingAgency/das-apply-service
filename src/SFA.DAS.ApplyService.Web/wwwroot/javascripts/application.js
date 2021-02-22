@@ -2,25 +2,25 @@
 window.GOVUKFrontend.initAll();
 window.DASFrontend.cookies.init();
 
-(function(global) {
+(function (global) {
   "use strict";
 
-  var GOVUK = global.GOVUK || {};
+  var DASFrontend = global.DASFrontend || {};
 
-  GOVUK.checkAll = {
+  DASFrontend.checkAll = {
     checkAllContainer: document.querySelector(".js-check-all-container"),
     checkboxContainer: document.querySelector(".js-checkbox-container"),
     checkAllControl: document.querySelector(".js-check-all-control"),
     checkAllCheckbox: document.querySelectorAll(".js-check-all-checkbox"),
 
-    numberChecked: function() {
+    numberChecked: function () {
       var trueCount = 0;
       for (
-        var i = 0, length = GOVUK.checkAll.checkAllCheckbox.length;
+        var i = 0, length = DASFrontend.checkAll.checkAllCheckbox.length;
         i < length;
         i++
       ) {
-        if (GOVUK.checkAll.checkAllCheckbox[i].checked === true) {
+        if (DASFrontend.checkAll.checkAllCheckbox[i].checked === true) {
           trueCount++;
         }
       }
@@ -28,64 +28,93 @@ window.DASFrontend.cookies.init();
       return trueCount;
     },
 
-    setControl: function(indeterminate, checked) {
-      GOVUK.checkAll.checkAllControl.indeterminate = indeterminate;
+    setControl: function (indeterminate, checked) {
+      DASFrontend.checkAll.checkAllControl.indeterminate = indeterminate;
       if (checked !== undefined)
-        GOVUK.checkAll.checkAllControl.checked = checked;
+        DASFrontend.checkAll.checkAllControl.checked = checked;
       if (indeterminate) {
-        GOVUK.checkAll.checkAllControl.classList.add(
+        DASFrontend.checkAll.checkAllControl.classList.add(
           "govuk-checkboxes__input--indeterminate"
         );
       } else {
-        GOVUK.checkAll.checkAllControl.classList.remove(
+        DASFrontend.checkAll.checkAllControl.classList.remove(
           "govuk-checkboxes__input--indeterminate"
         );
       }
     },
 
-    determineControlState: function() {
+    determineControlState: function () {
       if (
-        GOVUK.checkAll.numberChecked() ===
-        GOVUK.checkAll.checkAllCheckbox.length
+        DASFrontend.checkAll.numberChecked() ===
+        DASFrontend.checkAll.checkAllCheckbox.length
       ) {
-        GOVUK.checkAll.setControl(false, true);
-      } else if (GOVUK.checkAll.numberChecked() === 0) {
-        GOVUK.checkAll.setControl(false, false);
-      } else if (!GOVUK.checkAll.checkAllControl.indeterminate) {
-        GOVUK.checkAll.setControl(true);
+        DASFrontend.checkAll.setControl(false, true);
+      } else if (DASFrontend.checkAll.numberChecked() === 0) {
+        DASFrontend.checkAll.setControl(false, false);
+      } else if (!DASFrontend.checkAll.checkAllControl.indeterminate) {
+        DASFrontend.checkAll.setControl(true);
       }
     },
 
-    handleClick: function(event) {
+    handleClick: function (event) {
       if (event.target.classList.contains("js-check-all-control")) {
         if (
-          GOVUK.checkAll.checkAllControl.classList.contains(
+          DASFrontend.checkAll.checkAllControl.classList.contains(
             "govuk-checkboxes__input--indeterminate"
           )
         ) {
-          GOVUK.checkAll.setControl(false);
+          DASFrontend.checkAll.setControl(false);
         }
 
         for (
-          var i = 0, length = GOVUK.checkAll.checkAllCheckbox.length;
+          var i = 0, length = DASFrontend.checkAll.checkAllCheckbox.length;
           i < length;
           i++
         ) {
-          GOVUK.checkAll.checkAllCheckbox[i].checked = event.target.checked;
+          DASFrontend.checkAll.checkAllCheckbox[i].checked =
+            event.target.checked;
         }
       } else if (event.target.classList.contains("js-check-all-checkbox")) {
-        GOVUK.checkAll.determineControlState();
+        DASFrontend.checkAll.determineControlState();
       } else {
         return false;
       }
     },
 
-    init: function() {
-      GOVUK.checkAll.checkboxContainer.classList.add("govuk-!-margin-left-8");
-      GOVUK.checkAll.determineControlState();
-      document.addEventListener("change", GOVUK.checkAll.handleClick);
-    }
+    init: function () {
+      DASFrontend.checkAll.checkboxContainer.classList.add(
+        "govuk-!-margin-left-8"
+      );
+      DASFrontend.checkAll.determineControlState();
+      document.addEventListener("change", DASFrontend.checkAll.handleClick);
+    },
   };
 
-  global.GOVUK = GOVUK;
+  DASFrontend.disableOnSubmit = {
+    buttonsToDisable: document.querySelectorAll(
+      "[data-disable-on-submit='true']"
+    ),
+
+    init: function () {
+      if (!this.buttonsToDisable.length) return;
+      document.addEventListener("click", this.disableButton);
+    },
+
+    disableButton: function (event) {
+      if (event.target.type !== "submit") return;
+      if (event.target.dataset.disableOnSubmit !== "true") return;
+
+      var button = DASFrontend.disableOnSubmit.buttonsToDisable;
+
+      setTimeout(function () {
+        for (var i = 0; i < button.length; i++) {
+          button[i].disabled = true;
+        }
+      }, 0);
+    },
+  };
+
+  global.DASFrontend = DASFrontend;
 })(window);
+
+window.DASFrontend.disableOnSubmit.init();

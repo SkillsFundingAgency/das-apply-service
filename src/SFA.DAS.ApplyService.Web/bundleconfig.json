@@ -8,25 +8,13 @@
     {
         "outputFileName": "wwwroot/javascripts/application.min.js",
         "inputFiles": [
-            "wwwroot/javascripts/lib/jquery/jquery.min.js",
             "wwwroot/javascripts/das-cookie-banner.js",
             "wwwroot/javascripts/application.js"
         ],
         "minify": {
-           "enabled": true,
-           "renameLocals": true
+            "enabled": true,
+            "renameLocals": true
         },
         "sourceMap": false
-    },
-    {
-        "outputFileName": "wwwroot/javascripts/gov-uk-postcode-lookup-service.min.js",
-        "inputFiles": [
-            "wwwroot/javascripts/lib/jqueryui/jquery-ui.min.js",
-            "wwwroot/javascripts/gov-uk-postcode-lookup-service.js"
-        ],
-        "minify": {
-           "enabled": true,
-           "renameLocals": true
-        }
     }
 ]
