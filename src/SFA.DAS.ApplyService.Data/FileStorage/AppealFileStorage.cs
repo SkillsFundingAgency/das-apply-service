@@ -1,20 +1,30 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Models;
 
 namespace SFA.DAS.ApplyService.Data.FileStorage
 {
-    public class AppealFileStorage : IAppealFileStorage
+    public class AppealFileStorage : FileStorage, IAppealFileStorage
     {
-        public Task<Guid> Add(Guid applicationId, FileUpload file, CancellationToken cancellationToken)
+        public AppealFileStorage(IConfigurationService configurationService, IByteArrayEncryptionService byteArrayEncryptionService)
+            : base(configurationService, byteArrayEncryptionService)
         {
-            return Task.FromResult(Guid.NewGuid());
         }
 
-        public Task Remove(Guid applicationId, Guid fileId, CancellationToken cancellationToken)
+        protected override string ContainerName => "appeals-uploads";
+
+
+        public async Task<Guid> Add(Guid applicationId, FileUpload file, CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            return await AddFileToContainer($"{applicationId}", file, cancellationToken);
+        }
+
+        public async Task Remove(Guid applicationId, Guid reference, CancellationToken cancellationToken)
+        {
+            await RemoveFileFromContainer($"{applicationId}", reference);
         }
     }
 }
+

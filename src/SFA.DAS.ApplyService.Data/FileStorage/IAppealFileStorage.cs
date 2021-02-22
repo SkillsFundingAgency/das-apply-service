@@ -8,6 +8,6 @@ namespace SFA.DAS.ApplyService.Data.FileStorage
     public interface IAppealFileStorage
     {
         Task<Guid> Add(Guid applicationId, FileUpload file, CancellationToken cancellationToken);
-        Task Remove(Guid applicationId, Guid fileId, CancellationToken cancellationToken);
+        Task Remove(Guid applicationId, Guid reference, CancellationToken cancellationToken);
     }
 }
