@@ -25,6 +25,8 @@ using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
 using SFA.DAS.ApplyService.Data.Queries;
+using SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories;
+using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
@@ -40,6 +42,7 @@ using ServiceCollectionExtensions = SFA.DAS.ApplyService.InternalApi.Infrastruct
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
+    using SFA.DAS.ApplyService.Application.Behaviours;
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.EmailService.Infrastructure;
@@ -278,15 +281,18 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IAssessorReviewCreationService, AssessorReviewCreationService>();
             services.AddTransient<IModeratorReviewCreationService, ModeratorReviewCreationService>();
 
+            services.AddTransient<IApplicationRepository, ApplicationRepository>();
             services.AddTransient<IDiffService, DiffService>();
             services.AddTransient<IStateService, StateService>();
             services.AddTransient<IAuditRepository, AuditRepository>();
             services.AddTransient<IAuditService, AuditService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddTransient<IFileEncryptionService, FileEncryptionService>();
             services.AddTransient<IFileStorageService, FileStorageService>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkBehaviour<,>));
 
             ConfigureNotificationApiEmailService(services);
         }
@@ -315,7 +321,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             });
 
             services.AddTransient<IEmailTokenService, EmailTokenService>();
-            services.AddTransient<IWithdrawApplicationConfirmationEmailService, WithdrawApplicationConfirmationEmailService>();
+            services.AddTransient<IApplicationUpdatedEmailService, ApplicationUpdatedEmailService>();
         }
     }
 }
