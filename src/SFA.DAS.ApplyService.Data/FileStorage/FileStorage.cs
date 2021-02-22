@@ -15,22 +15,20 @@ namespace SFA.DAS.ApplyService.Data.FileStorage
 {
     public abstract class FileStorage
     {
+        private readonly BlobServiceClient _blobServiceClient;
         private readonly IByteArrayEncryptionService _byteArrayEncryptionService;
-        protected FileStorageConfig _config;
 
-        protected FileStorage(IConfigurationService configurationService, IByteArrayEncryptionService byteArrayEncryptionService)
+        protected FileStorage(BlobServiceClient blobServiceClient, IConfigurationService configurationService, IByteArrayEncryptionService byteArrayEncryptionService)
         {
+            _blobServiceClient = blobServiceClient;
             _byteArrayEncryptionService = byteArrayEncryptionService;
-            var config = configurationService.GetConfig().GetAwaiter().GetResult();
-            _config = config.FileStorage;
         }
 
         protected abstract string ContainerName { get; }
 
         protected async Task<BlobContainerClient> GetClient()
         {
-            var blobServiceClient = new BlobServiceClient(_config.StorageConnectionString);
-            var container = blobServiceClient.GetBlobContainerClient(ContainerName);
+            var container = _blobServiceClient.GetBlobContainerClient(ContainerName);
             await container.CreateIfNotExistsAsync();
             return container;
         }

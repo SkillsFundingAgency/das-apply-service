@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Models;
 
@@ -8,8 +9,8 @@ namespace SFA.DAS.ApplyService.Data.FileStorage
 {
     public class AppealFileStorage : FileStorage, IAppealFileStorage
     {
-        public AppealFileStorage(IConfigurationService configurationService, IByteArrayEncryptionService byteArrayEncryptionService)
-            : base(configurationService, byteArrayEncryptionService)
+        public AppealFileStorage(BlobServiceClient blobServiceClient, IConfigurationService configurationService, IByteArrayEncryptionService byteArrayEncryptionService)
+            : base(blobServiceClient, configurationService, byteArrayEncryptionService)
         {
         }
 
