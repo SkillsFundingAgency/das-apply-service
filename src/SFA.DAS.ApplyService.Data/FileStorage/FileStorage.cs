@@ -22,9 +22,9 @@ namespace SFA.DAS.ApplyService.Data.FileStorage
 
         protected async Task<BlobContainerClient> GetClient()
         {
-            var container = _blobServiceClient.GetBlobContainerClient(ContainerName);
-            await container.CreateIfNotExistsAsync();
-            return container;
+            var result = _blobServiceClient.GetBlobContainerClient(ContainerName);
+            await result.CreateIfNotExistsAsync();
+            return result;
         }
 
         protected async Task<Guid> AddFileToContainer(string path, FileUpload file, CancellationToken cancellationToken)

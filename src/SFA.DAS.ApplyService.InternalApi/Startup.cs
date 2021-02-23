@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.ApplyService.Application.Apply;
@@ -295,11 +297,17 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IFileStorageService, FileStorageService>();
             services.AddTransient<IAppealsFileStorage, AppealsFileStorage>();
             services.AddTransient<IByteArrayEncryptionService, ByteArrayEncryptionService>();
-
+            
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkBehaviour<,>));
 
             ConfigureNotificationApiEmailService(services);
+
+            services.AddAzureClients(builder =>
+            {
+                builder.AddBlobServiceClient(_applyConfig.FileStorage.StorageConnectionString);
+            });
+
         }
 
         private void ConfigureNotificationApiEmailService(IServiceCollection services)
