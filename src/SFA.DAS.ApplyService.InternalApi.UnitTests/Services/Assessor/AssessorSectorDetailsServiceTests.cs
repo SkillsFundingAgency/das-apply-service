@@ -54,9 +54,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             _assessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _sixthPageId))
                 .ReturnsAsync(new AssessorPage { PageId = _sixthPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() } });
             _assessorLookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(It.IsAny<string>())).Returns(_sectorQuestionIds);
-            // _extractAnswerValueService
-            //     .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.FullName))
-            //     .Returns(string.Empty);
 
             _sectorQuestionIds.HowHaveTheyDeliveredTraining = "HowHaveTheyDeliveredId";
             var howHaveTheyDelivered = "delivery mechanism";
