@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
     {
         private UploadAppealFileCommandHandler _handler;
         private Mock<IAppealUploadRepository> _appealUploadRepository;
-        private Mock<IAppealFileStorage> _appealFileStorage;
+        private Mock<IAppealsFileStorage> _appealFileStorage;
         private Mock<IAuditService> _auditService;
 
         private UploadAppealFileCommand _command;
@@ -40,7 +40,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             _appealUploadRepository = new Mock<IAppealUploadRepository>();
             _appealUploadRepository.Setup(x => x.Add(It.IsAny<AppealUpload>()));
 
-            _appealFileStorage = new Mock<IAppealFileStorage>();
+            _appealFileStorage = new Mock<IAppealsFileStorage>();
             _appealFileStorage.Setup(x => x.Add(_applicationId, It.IsAny<FileUpload>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => _fileStorageFileId);
 

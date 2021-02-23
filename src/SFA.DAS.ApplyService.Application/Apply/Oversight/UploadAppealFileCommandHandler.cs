@@ -12,17 +12,17 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
     public class UploadAppealFileCommandHandler : IRequestHandler<UploadAppealFileCommand>
     {
         private readonly IAppealUploadRepository _appealUploadRepository;
-        private readonly IAppealFileStorage _appealFileStorage;
+        private readonly IAppealsFileStorage _appealsFileStorage;
         private readonly IAuditService _auditService;
 
         public UploadAppealFileCommandHandler(
             IAppealUploadRepository appealUploadRepository,
-            IAppealFileStorage appealFileStorage,
+            IAppealsFileStorage appealsFileStorage,
             IAuditService auditService
             )
         {
             _appealUploadRepository = appealUploadRepository;
-            _appealFileStorage = appealFileStorage;
+            _appealsFileStorage = appealsFileStorage;
             _auditService = auditService;
         }
 
@@ -30,7 +30,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
         {
             _auditService.StartTracking(UserAction.UploadAppealFile, request.UserId, request.UserName);
 
-            var fileStorageReference = await _appealFileStorage.Add(request.ApplicationId, request.File, cancellationToken);
+            var fileStorageReference = await _appealsFileStorage.Add(request.ApplicationId, request.File, cancellationToken);
 
             var appealUpload = new AppealUpload
             {

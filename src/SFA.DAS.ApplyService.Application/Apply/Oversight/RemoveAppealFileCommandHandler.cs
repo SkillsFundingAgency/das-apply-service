@@ -12,15 +12,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
     public class RemoveAppealFileCommandHandler : IRequestHandler<RemoveAppealFileCommand>
     {
         private readonly IAppealUploadRepository _appealUploadRepository;
-        private readonly IAppealFileStorage _appealFileStorage;
+        private readonly IAppealsFileStorage _appealsFileStorage;
         private readonly IAuditService _auditService;
 
         public RemoveAppealFileCommandHandler(IAppealUploadRepository appealUploadRepository,
-            IAppealFileStorage appealFileStorage,
+            IAppealsFileStorage appealsFileStorage,
             IAuditService auditService)
         {
             _appealUploadRepository = appealUploadRepository;
-            _appealFileStorage = appealFileStorage;
+            _appealsFileStorage = appealsFileStorage;
             _auditService = auditService;
         }
 
@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 throw new InvalidOperationException($"Appeal upload {request.FileId} does not belong to Application {request.ApplicationId}");
             }
 
-            await _appealFileStorage.Remove(request.ApplicationId, upload.FileStorageReference, cancellationToken);
+            await _appealsFileStorage.Remove(request.ApplicationId, upload.FileStorageReference, cancellationToken);
 
             _auditService.StartTracking(UserAction.RemoveAppealFile, request.UserId, request.UserName);
 

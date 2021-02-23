@@ -7,5 +7,6 @@
         public string GatewayContainerName { get; set; }
         public string FinancialContainerName { get; set; }
         public string AssessorContainerName { get; set; }
+        public string AppealsContainerName { get; set; }
     }
 }

@@ -293,7 +293,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddTransient<IFileEncryptionService, FileEncryptionService>();
             services.AddTransient<IFileStorageService, FileStorageService>();
-            services.AddTransient<IAppealFileStorage, AppealFileStorage>();
+            services.AddTransient<IAppealsFileStorage, AppealsFileStorage>();
             services.AddTransient<IByteArrayEncryptionService, ByteArrayEncryptionService>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);

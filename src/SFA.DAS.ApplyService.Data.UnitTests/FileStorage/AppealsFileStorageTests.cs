@@ -13,12 +13,14 @@ using SFA.DAS.ApplyService.Domain.Models;
 namespace SFA.DAS.ApplyService.Data.UnitTests.FileStorage
 {
     [TestFixture]
-    public class AppealFileStorageTests
+    public class AppealsFileStorageTests
     {
         private Mock<BlobServiceClient> _blobServiceClient;
         private Mock<BlobContainerClient> _blobContainerClient;
-        private AppealFileStorage _appealFileStorage;
+        private AppealsFileStorage _appealFileStorage;
         private Mock<IByteArrayEncryptionService> _byteArrayEncryptionService;
+        private Mock<IConfigurationService> _configurationService;
+        private FileStorageConfig _config;
         private byte[] _encryptionServiceResult;
         private string _capturedBlobName;
         private Stream _capturedUploadStream;
@@ -29,6 +31,10 @@ namespace SFA.DAS.ApplyService.Data.UnitTests.FileStorage
             var autoFixture = new Fixture();
             _encryptionServiceResult = autoFixture.Create<byte[]>();
 
+            _configurationService = new Mock<IConfigurationService>();
+            _configurationService.Setup(x => x.GetConfig()).ReturnsAsync(() => new ApplyConfig {FileStorage = _config});
+
+            _config = autoFixture.Create<FileStorageConfig>();
             _blobServiceClient = new Mock<BlobServiceClient>();
             _blobContainerClient = new Mock<BlobContainerClient>();
 
@@ -47,8 +53,15 @@ namespace SFA.DAS.ApplyService.Data.UnitTests.FileStorage
             _byteArrayEncryptionService = new Mock<IByteArrayEncryptionService>();
             _byteArrayEncryptionService.Setup(x => x.Encrypt(It.IsAny<byte[]>())).Returns(_encryptionServiceResult);
 
-            _appealFileStorage = new AppealFileStorage(_blobServiceClient.Object,
-                _byteArrayEncryptionService.Object);
+            _appealFileStorage = new AppealsFileStorage(_blobServiceClient.Object,
+                _byteArrayEncryptionService.Object, _configurationService.Object);
+        }
+
+        [Test]
+        public async Task Add_Uploads_File_Into_Configured_Container()
+        {
+            await _appealFileStorage.Add(Guid.NewGuid(), new FileUpload(), new CancellationToken());
+            _blobServiceClient.Verify(x=> x.GetBlobContainerClient(It.Is<string>(containerName => containerName == _config.AppealsContainerName)));
         }
 
         [Test]
@@ -63,7 +76,7 @@ namespace SFA.DAS.ApplyService.Data.UnitTests.FileStorage
         {
             await _appealFileStorage.Add(Guid.NewGuid(), new FileUpload(), new CancellationToken());
 
-            var capturedBytes = ReadFully(_capturedUploadStream);
+            var capturedBytes = ReadByteArrayFromStream(_capturedUploadStream);
             Assert.AreEqual(_encryptionServiceResult, capturedBytes);
         }
 
@@ -83,7 +96,7 @@ namespace SFA.DAS.ApplyService.Data.UnitTests.FileStorage
             Assert.AreEqual(expectedBlobName, _capturedBlobName);
         }
 
-        private static byte[] ReadFully(Stream input)
+        private static byte[] ReadByteArrayFromStream(Stream input)
         {
             using MemoryStream ms = new MemoryStream();
             input.CopyTo(ms);
