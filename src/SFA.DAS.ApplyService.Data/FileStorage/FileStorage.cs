@@ -1,14 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Models;
 
 namespace SFA.DAS.ApplyService.Data.FileStorage
@@ -18,7 +12,7 @@ namespace SFA.DAS.ApplyService.Data.FileStorage
         private readonly BlobServiceClient _blobServiceClient;
         private readonly IByteArrayEncryptionService _byteArrayEncryptionService;
 
-        protected FileStorage(BlobServiceClient blobServiceClient, IConfigurationService configurationService, IByteArrayEncryptionService byteArrayEncryptionService)
+        protected FileStorage(BlobServiceClient blobServiceClient, IByteArrayEncryptionService byteArrayEncryptionService)
         {
             _blobServiceClient = blobServiceClient;
             _byteArrayEncryptionService = byteArrayEncryptionService;

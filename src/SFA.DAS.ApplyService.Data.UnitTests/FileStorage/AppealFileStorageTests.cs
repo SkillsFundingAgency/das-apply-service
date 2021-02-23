@@ -47,7 +47,7 @@ namespace SFA.DAS.ApplyService.Data.UnitTests.FileStorage
             _byteArrayEncryptionService = new Mock<IByteArrayEncryptionService>();
             _byteArrayEncryptionService.Setup(x => x.Encrypt(It.IsAny<byte[]>())).Returns(_encryptionServiceResult);
 
-            _appealFileStorage = new AppealFileStorage(_blobServiceClient.Object, Mock.Of<IConfigurationService>(),
+            _appealFileStorage = new AppealFileStorage(_blobServiceClient.Object,
                 _byteArrayEncryptionService.Object);
         }
 
