@@ -39,7 +39,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.Applicatio
             _emailService = new Mock<IApplicationUpdatedEmailService>();
             var logger = Mock.Of<ILogger<WithdrawApplicationHandler>>();
             
-            _handler = new WithdrawApplicationHandler(_applyRepository.Object, _oversightReviewRepository.Object, _auditService.Object, logger, _emailService.Object);
+            _handler = new WithdrawApplicationHandler(_applyRepository.Object, logger, _oversightReviewRepository.Object, _auditService.Object, _emailService.Object);
         }
 
         [Test]
@@ -66,9 +66,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.Applicatio
         [Test]
         public async Task Handler_sends_updated_email()
         {
-            _repository.Setup(x => x.WithdrawApplication(_applicationId, _comments, _userId, _userName)).Returns(Task.FromResult(true));
+            _applyRepository.Setup(x => x.WithdrawApplication(_applicationId, _comments, _userId, _userName)).Returns(Task.FromResult(true));
 
-            await _handler.Handle(new WithdrawApplicationRequest(_applicationId, _comments, _userId, _userName), CancellationToken.None);
+            await _handler.Handle(new WithdrawApplicationCommand(_applicationId, _comments, _userId, _userName), CancellationToken.None);
 
             _emailService.Verify(x => x.SendEmail(It.Is<Guid>(id => id == _applicationId)), Times.Once);
         }
