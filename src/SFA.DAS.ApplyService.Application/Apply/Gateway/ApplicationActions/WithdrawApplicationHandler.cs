@@ -7,6 +7,8 @@ using SFA.DAS.ApplyService.Types;
 using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
+using System;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions
 {
@@ -16,13 +18,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions
         private readonly IOversightReviewRepository _oversightReviewRepository;
         private readonly IAuditService _auditService;
         private readonly ILogger<WithdrawApplicationHandler> _logger;
+        private readonly IApplicationUpdatedEmailService _applicationUpdatedEmailService;
 
-        public WithdrawApplicationHandler(IApplyRepository applyRepository, IOversightReviewRepository oversightReviewRepository, IAuditService auditService, ILogger<WithdrawApplicationHandler> logger)
+        public WithdrawApplicationHandler(IApplyRepository applyRepository, ILogger<WithdrawApplicationHandler> logger, IOversightReviewRepository oversightReviewRepository, IAuditService auditService, IApplicationUpdatedEmailService applicationUpdatedEmailService)
         {
             _applyRepository = applyRepository;
             _oversightReviewRepository = oversightReviewRepository;
             _auditService = auditService;
             _logger = logger;
+            _applicationUpdatedEmailService = applicationUpdatedEmailService;
         }
 
         public async Task<bool> Handle(WithdrawApplicationCommand request, CancellationToken cancellationToken)
@@ -39,6 +43,18 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions
             };
 
             var result = await _applyRepository.WithdrawApplication(request.ApplicationId, request.Comments, request.UserId, request.UserName);
+
+            try
+            {
+                if (result)
+                {
+                    await _applicationUpdatedEmailService.SendEmail(request.ApplicationId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Unable to send withdraw confirmation email for application: {request.ApplicationId}");
+            }
 
             _auditService.StartTracking(UserAction.WithdrawApplication, request.UserId, request.UserName);
             _auditService.AuditInsert(oversightReview);

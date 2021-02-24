@@ -11,6 +11,7 @@ using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.EmailService.Interfaces;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.InternalApi.Types.Requests;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -18,17 +19,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     public class GatewayReviewController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly ILogger<GatewayReviewController> _logger;
-        private readonly IConfigurationService _configurationService;
-        private readonly IApplicationUpdatedEmailService _applicationUpdatedEmailService;
 
-        public GatewayReviewController(IMediator mediator, ILogger<GatewayReviewController> logger,
-             IConfigurationService configurationService, IApplicationUpdatedEmailService applicationUpdatedEmailService)
+        public GatewayReviewController(IMediator mediator)
         {
             _mediator = mediator;
-            _logger = logger;
-            _configurationService = configurationService;
-            _applicationUpdatedEmailService = applicationUpdatedEmailService;
         }
 
         [HttpGet("GatewayReview/Counts")]
@@ -69,19 +63,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<bool> WithdrawApplication(Guid applicationId, [FromBody] GatewayWithdrawApplicationRequest request)
         {
             var withdrawResult = await _mediator.Send(new WithdrawApplicationCommand(applicationId, request.Comments, request.UserId, request.UserName));
-
-            try
-            {
-                if (withdrawResult)
-                {
-                    await _applicationUpdatedEmailService.SendEmail(applicationId);
-                }
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, $"Unable to send withdraw confirmation email for application: {applicationId}");
-            }
-
             return withdrawResult;
         }
 
@@ -90,26 +71,5 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new RemoveApplicationRequest(applicationId, request.Comments, request.ExternalComments, request.UserId, request.UserName));
         }
-    }
-
-    public class EvaluateGatewayApplicationRequest
-    {
-        public bool IsGatewayApproved { get; set; }
-        public string EvaluatedBy { get; set; }
-    }
-
-    public class GatewayWithdrawApplicationRequest
-    {
-        public string Comments { get; set; }
-        public string UserId { get; set; }
-        public string UserName { get; set; }
-    }
-
-    public class GatewayRemoveApplicationRequest
-    {
-        public string Comments { get; set; }
-        public string ExternalComments { get; set; }
-        public string UserId { get; set; }
-        public string UserName { get; set; }
     }
 }

@@ -61,7 +61,7 @@ else
                     }
 
                     <p class="govuk-body">
-                        If you change your provider route, we will ask you different application questions and you may be required to provide different answers and uploads.
+                        If you change your provider route, we may ask you different application questions and you may be required to provide different answers and uploads.
                     </p>
 
                     <p class="govuk-body">
@@ -103,7 +103,9 @@ else
                         </div>
                     </fieldset>
                 </div>
-                <input type="submit" class="govuk-button" value="Save and continue" />
+                <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                    Save and continue
+                </button>
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>

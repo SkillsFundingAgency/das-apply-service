@@ -10,15 +10,18 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.ApplicationActions
 {
+    [TestFixture]
     public class WithdrawApplicationHandlerTests
     {
         private WithdrawApplicationHandler _handler;
         private Mock<IApplyRepository> _applyRepository;
         private Mock<IOversightReviewRepository> _oversightReviewRepository;
         private Mock<IAuditService> _auditService;
+        private Mock<IApplicationUpdatedEmailService> _emailService;
 
         private Guid _applicationId;
         private const string _comments = "comments";
@@ -33,9 +36,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.Applicatio
             _applyRepository = new Mock<IApplyRepository>();
             _oversightReviewRepository = new Mock<IOversightReviewRepository>();
             _auditService = new Mock<IAuditService>();
+            _emailService = new Mock<IApplicationUpdatedEmailService>();
             var logger = Mock.Of<ILogger<WithdrawApplicationHandler>>();
             
-            _handler = new WithdrawApplicationHandler(_applyRepository.Object, _oversightReviewRepository.Object, _auditService.Object, logger);
+            _handler = new WithdrawApplicationHandler(_applyRepository.Object, _oversightReviewRepository.Object, _auditService.Object, logger, _emailService.Object);
         }
 
         [Test]
@@ -57,6 +61,16 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.Applicatio
                     && or.UserId == _userId
                     && or.UserName == _userName)), 
                 Times.Once);
+        }
+
+        [Test]
+        public async Task Handler_sends_updated_email()
+        {
+            _repository.Setup(x => x.WithdrawApplication(_applicationId, _comments, _userId, _userName)).Returns(Task.FromResult(true));
+
+            await _handler.Handle(new WithdrawApplicationRequest(_applicationId, _comments, _userId, _userName), CancellationToken.None);
+
+            _emailService.Verify(x => x.SendEmail(It.Is<Guid>(id => id == _applicationId)), Times.Once);
         }
     }
 }
