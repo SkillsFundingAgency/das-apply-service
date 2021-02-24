@@ -12,17 +12,9 @@
             "wwwroot/javascripts/application.js"
         ],
         "minify": {
+            "enabled": true,
             "renameLocals": true
         },
         "sourceMap": false
-    },
-    {
-        "outputFileName": "wwwroot/javascripts/gov-uk-postcode-lookup-service.min.js",
-        "inputFiles": [
-            "wwwroot/javascripts/gov-uk-postcode-lookup-service.js"
-        ],
-        "minify": {
-            "renameLocals": true
-        }
     }
 ]

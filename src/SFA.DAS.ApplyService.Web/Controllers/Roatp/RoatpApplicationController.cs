@@ -105,10 +105,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _logger.LogDebug($"Got LoggedInUser from Session: {user}");
 
             var signinId = await _userService.GetSignInId();
-            var applications = await _apiClient.GetApplications(signinId, false);
-
-            var statusFilter = new[] { ApplicationStatus.Rejected, ApplicationStatus.Cancelled, ApplicationStatus.Withdrawn, ApplicationStatus.Removed };
-            applications = applications.Where(app => !statusFilter.Contains(app.ApplicationStatus)).ToList();
+            var applications = await GetInFlightApplicationsForSignInId(signinId);
 
             var application = new Apply();
             Guid applicationId;
@@ -116,7 +113,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (applications.Count > 1)
             {
-                return View(applications);
+                _logger.LogError($"Multiple in flight applications found for userId: {signinId}");
+                return View("~/Views/Roatp/Applications.cshtml", applications);
             }
             if (applications.Count == 1)
             {
@@ -157,13 +155,28 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
+        private async Task<List<Apply>> GetInFlightApplicationsForSignInId(Guid signinId)
+        {
+            var applications = await _apiClient.GetApplications(signinId, false);
+
+            var statusFilter = new[] { ApplicationStatus.Rejected, ApplicationStatus.Cancelled, ApplicationStatus.Withdrawn, ApplicationStatus.Removed };
+
+            return applications.Where(app => !statusFilter.Contains(app.ApplicationStatus)).OrderByDescending(app => app.CreatedAt).ToList();
+        }
+
         private async Task<Guid> StartApplication(Guid signinId)
         {
             _logger.LogDebug("StartApplication method invoked");
 
-            var applicationType = ApplicationTypes.RegisterTrainingProviders;
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            var applications = await GetInFlightApplicationsForSignInId(signinId);
 
+            if (applications.Any())
+            {
+                _logger.LogError($"Multiple in flight applications found for userId: {signinId}");
+                return applications.First().ApplicationId;
+            }
+
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             if (applicationDetails is null)
             {
                 return Guid.Empty;
@@ -181,6 +194,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var user = await _usersApiClient.GetUserBySignInId(signinId.ToString());
 
+            var applicationType = ApplicationTypes.RegisterTrainingProviders;
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
             _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{user.Id.ToString()}], applicationType: [{applicationType}], startApplicationJson: [{startApplicationJson}]");
             var qnaResponse = await _qnaApiClient.StartApplication(user.Id.ToString(), applicationType, startApplicationJson);
