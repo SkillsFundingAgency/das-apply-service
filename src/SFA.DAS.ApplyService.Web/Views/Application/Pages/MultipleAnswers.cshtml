@@ -114,7 +114,9 @@
                             <input type="hidden" asp-for="PageId" />
                             <input type="hidden" asp-for="RedirectAction" />
                             <div class="govuk-!-margin-top-4">
-                                <button class="govuk-button govuk-button--looks-like-link" type="submit">Delete</button>
+                                <button class="govuk-button govuk-button--looks-like-link" data-module="govuk-button" data-disable-on-submit="true">
+                                    Delete
+                                </button>
                             </div>
                         </form>
                     </dl>
@@ -209,12 +211,16 @@
                 }
 
                 <div class="govuk-form-group">
-                    <button type="submit" class="govuk-button govuk-button--looks-like-link" name="__formAction" value="Add">Save and add another</button>
+                    <button class="govuk-button govuk-button--looks-like-link" data-module="govuk-button" data-disable-on-submit="true">
+                        Save and add another
+                    </button>
                 </div>
 
                 <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
 
-                <button type="submit" class="govuk-button" name="__formAction" value="Save">Save and continue</button>
+                <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                    Save and continue
+                </button>
             </form>
 
             <p class="govuk-body">

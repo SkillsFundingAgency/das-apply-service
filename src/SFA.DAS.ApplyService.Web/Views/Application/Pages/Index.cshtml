@@ -272,7 +272,9 @@
 
             @if (!Model.HideCTA)
             {
-                <button type="submit" class="govuk-button govuk-!-margin-right-3">@Model.CTAButtonText</button>
+                <button class="govuk-button govuk-!-margin-right-3" data-module="govuk-button" data-disable-on-submit="true">
+                    @Model.CTAButtonText
+                </button>
             }
 
             @foreach (var linksConfiguration in Model.LinksConfiguration)
