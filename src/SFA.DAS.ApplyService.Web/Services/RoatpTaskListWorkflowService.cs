@@ -98,7 +98,12 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             var sequence = applicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
 
-            if (sequence.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation)
+            if(sequence is null)
+            {
+                _logger.LogError($"PreviousSectionCompleted - Sequence '{sequenceId}' could not found in Application {applicationId}");
+                return false;
+            }
+            else if (sequence.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation)
             {
                 var complete = true;
                 for(var index = 1; index < sectionId; index++)
@@ -111,19 +116,28 @@ namespace SFA.DAS.ApplyService.Web.Services
                 }
                 return complete;
             }
-
-            if (sequenceId == RoatpWorkflowSequenceIds.Finish)
+            else if (sequence.SequenceId == RoatpWorkflowSequenceIds.Finish)
             {
                 if (sectionId == 1)
                 {
                     return true;
                 }
-                var previousSectionStatus = await SectionStatusAsync(applicationId, sequenceId, sectionId - 1, applicationSequences, organisationVerificationStatus); 
-                
-                return (previousSectionStatus == TaskListSectionStatus.Completed ||  previousSectionStatus == TaskListSectionStatus.NotRequired);
-            }
+                else
+                {
+                    var previousSectionStatus = string.Empty;
 
-            if (sequence.Sequential && sectionId > 1)
+                    // This loop goes to the next previous section if it happens to be 'Not required'
+                    for (var previousSectionId = sectionId - 1; previousSectionId > 0; previousSectionId--)
+                    {
+                        previousSectionStatus = await SectionStatusAsync(applicationId, sequenceId, previousSectionId, applicationSequences, organisationVerificationStatus);
+
+                        if (previousSectionStatus != TaskListSectionStatus.NotRequired) break;
+                    }
+
+                    return previousSectionStatus == TaskListSectionStatus.Completed;
+                }                
+            }
+            else if (sequence.Sequential && sectionId > 1)
             {
                 var previousSection = sequence.Sections.FirstOrDefault(x => x.SectionId == (sectionId - 1));
                 if (previousSection == null)
