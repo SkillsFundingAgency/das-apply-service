@@ -69,7 +69,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 
             await _controller.WithdrawApplication(applicationId, request);
 
-            _mediator.Verify(x => x.Send(It.Is<WithdrawApplicationRequest>(y => y.ApplicationId == applicationId), It.IsAny<CancellationToken>()), Times.Once);
+            _mediator.Verify(x => x.Send(It.Is<WithdrawApplicationCommand>(y => y.ApplicationId == applicationId), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
@@ -77,7 +77,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         {
             var applicationId = Guid.NewGuid();
 
-            _mediator.Setup(x => x.Send(It.Is<WithdrawApplicationRequest>(y => y.ApplicationId == applicationId), It.IsAny<CancellationToken>()))
+            _mediator.Setup(x => x.Send(It.Is<WithdrawApplicationCommand>(y => y.ApplicationId == applicationId), It.IsAny<CancellationToken>()))
                     .ReturnsAsync(true);
 
             var request = new GatewayWithdrawApplicationRequest

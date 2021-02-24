@@ -68,7 +68,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("GatewayReview/{applicationId}/Withdraw")]
         public async Task<bool> WithdrawApplication(Guid applicationId, [FromBody] GatewayWithdrawApplicationRequest request)
         {
-            var withdrawResult = await _mediator.Send(new WithdrawApplicationRequest(applicationId, request.Comments, request.UserId, request.UserName));
+            var withdrawResult = await _mediator.Send(new WithdrawApplicationCommand(applicationId, request.Comments, request.UserId, request.UserName));
 
             try
             {

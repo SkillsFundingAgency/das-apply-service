@@ -10,7 +10,7 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions
 {
-    public class WithdrawApplicationHandler : IRequestHandler<WithdrawApplicationRequest, bool>
+    public class WithdrawApplicationHandler : IRequestHandler<WithdrawApplicationCommand, bool>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IOversightReviewRepository _oversightReviewRepository;
@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions
             _logger = logger;
         }
 
-        public async Task<bool> Handle(WithdrawApplicationRequest request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(WithdrawApplicationCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Performing Withdraw Application action for ApplicationId: {request.ApplicationId}");
 
@@ -42,8 +42,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions
 
             _auditService.StartTracking(UserAction.WithdrawApplication, request.UserId, request.UserName);
             _auditService.AuditInsert(oversightReview);
-            await _oversightReviewRepository.Add(oversightReview);
-            await _auditService.Save();
+            _oversightReviewRepository.Add(oversightReview);
+            _auditService.Save();
 
             return result;
         }

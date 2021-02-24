@@ -41,14 +41,14 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.Applicatio
         [Test]
         public async Task Handler_withdraws_application()
         {
-            await _handler.Handle(new WithdrawApplicationRequest(_applicationId, _comments, _userId, _userName), CancellationToken.None);
+            await _handler.Handle(new WithdrawApplicationCommand(_applicationId, _comments, _userId, _userName), CancellationToken.None);
             _applyRepository.Verify(x => x.WithdrawApplication(_applicationId, _comments, _userId, _userName), Times.Once);
         }
 
         [Test]
         public async Task Handler_adds_oversight_review()
         {
-            await _handler.Handle(new WithdrawApplicationRequest(_applicationId, _comments, _userId, _userName), CancellationToken.None);
+            await _handler.Handle(new WithdrawApplicationCommand(_applicationId, _comments, _userId, _userName), CancellationToken.None);
 
             _oversightReviewRepository.Verify(x => 
                 x.Add(It.Is<OversightReview>(or => or.ApplicationId == _applicationId
