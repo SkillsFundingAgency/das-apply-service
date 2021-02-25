@@ -50,7 +50,11 @@
                 <input type="hidden" asp-for="GetHelpAction" />
 
                 <partial name="~/Views/Roatp/WhosInControl/AddEditPersonInControl.cshtml" for="@Model" />
-                <button type="submit" class="govuk-button">Confirm and continue</button>
+                
+                <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                    Confirm and continue
+                </button>
+
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>
