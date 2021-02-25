@@ -104,7 +104,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
 
             result.Filename = "test.pdf";
             result.Data = ms.ToArray();
-            result.ContentType = "application.pdf";
+            result.ContentType = "application/pdf";
 
             return result;
         }
