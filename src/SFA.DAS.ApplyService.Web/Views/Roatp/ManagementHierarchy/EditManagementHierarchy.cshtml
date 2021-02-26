@@ -53,7 +53,10 @@
                 <input type="hidden" asp-for="GetHelpAction" />
 
                 <partial name="~/Views/Roatp/ManagementHierarchy/AddEditManagementHierarchy.cshtml" for="@Model" />
-                <button type="submit" class="govuk-button govuk-!-margin-right-3">Confirm and continue</button>
+
+                <button class="govuk-button govuk-!-margin-right-3" data-module="govuk-button" data-disable-on-submit="true">
+                    Confirm and continue
+                </button>
 
                 <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="ConfirmManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId">Return to this question later</a>
             </form>
