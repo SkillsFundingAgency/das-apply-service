@@ -87,7 +87,9 @@
                         </div>
                     </fieldset>
                 </div>
-                <input type="submit" class="govuk-button govuk-!-margin-right-3" value="Confirm and continue" />
+                <button class="govuk-button govuk-!-margin-right-3" data-module="govuk-button" data-disable-on-submit="true">
+                    Confirm and continue
+                </button>
                 <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="ConfirmManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId">Return to this question later</a>
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
