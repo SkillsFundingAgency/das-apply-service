@@ -103,7 +103,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         [HttpPost]
         [Route("Oversight/{applicationId}/uploads/{fileId}/remove")]
-        public async Task<IActionResult> RemoveAppealFile(Guid applicationId, Guid fileId, RemoveAppealFileRequest request)
+        public async Task<IActionResult> RemoveAppealFile(Guid applicationId, Guid fileId, [FromBody] RemoveAppealFileRequest request)
         {
             var command = new RemoveAppealFileCommand
             {
