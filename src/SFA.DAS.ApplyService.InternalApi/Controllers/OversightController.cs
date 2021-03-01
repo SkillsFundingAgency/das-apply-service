@@ -14,7 +14,6 @@ using SFA.DAS.ApplyService.InternalApi.Types.Requests.Oversight;
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
     [Authorize]
-    [ApiController]
     public class OversightController : Controller
     {
         private readonly IMediator _mediator;
