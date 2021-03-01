@@ -7,11 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.QueryResults;
+using SFA.DAS.ApplyService.InternalApi.Extensions;
 using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Types.Requests.Oversight;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
     [Authorize]
+    [ApiController]
     public class OversightController : Controller
     {
         private readonly IMediator _mediator;
@@ -84,24 +87,40 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost]
-        [Route("Oversight/Appeal/Upload")]
-        public async Task<IActionResult> UploadAppealFile([FromBody] UploadAppealFileCommand command)
+        [Route("Oversight/{applicationId}/uploads")]
+        public async Task<IActionResult> UploadAppealFile([FromForm] UploadAppealFileRequest request)
         {
+            var command = new UploadAppealFileCommand
+            {
+                ApplicationId = request.ApplicationId,
+                File = await request.File.ToFileUpload(),
+                UserId = request.UserId,
+                UserName = request.UserName
+            };
+
             await _mediator.Send(command);
             return new OkResult();
         }
 
         [HttpPost]
-        [Route("Oversight/Appeal/Upload/Remove")]
-        public async Task<IActionResult> RemoveAppealFile([FromBody] RemoveAppealFileCommand command)
+        [Route("Oversight/{applicationId}/uploads/{fileId}/remove")]
+        public async Task<IActionResult> RemoveAppealFile(Guid applicationId, Guid fileId, RemoveAppealFileRequest request)
         {
+            var command = new RemoveAppealFileCommand
+            {
+                ApplicationId = applicationId,
+                FileId = fileId,
+                UserId = request.UserId,
+                UserName = request.UserName
+            };
+
             await _mediator.Send(command);
             return new OkResult();
         }
         
         [HttpGet]
         [Route("Oversight/{applicationId}/uploads")]
-        public async Task<ActionResult<AppealFiles>> StagedUploads(GetStagedFilesRequest request)
+        public async Task<ActionResult<AppealFiles>> StagedUploads([FromRoute] GetStagedFilesRequest request)
         {
             return await _mediator.Send(request);
         }
