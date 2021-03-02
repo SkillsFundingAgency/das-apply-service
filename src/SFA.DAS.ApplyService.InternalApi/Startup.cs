@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,9 +15,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Interfaces;
@@ -24,6 +28,7 @@ using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
+using SFA.DAS.ApplyService.Data.FileStorage;
 using SFA.DAS.ApplyService.Data.Queries;
 using SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
@@ -121,20 +126,25 @@ namespace SFA.DAS.ApplyService.InternalApi
                 options.RequestCultureProviders.Clear();
             });
 
-            IMvcBuilder mvcBuilder;
-            if (_env.IsDevelopment())
-                mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
-            else
-                mvcBuilder = services.AddMvc();
+            services.AddMvc(opt =>
+            {
+                if (_env.IsDevelopment())
+                {
+                    opt.Filters.Add(new AllowAnonymousFilter());
+                }
+            })
+            .AddFluentValidation(fv =>
+            {
+                fv.RegisterValidatorsFromAssemblyContaining<GetStagedFilesRequestValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<Startup>();
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddOptions();
 
             services.Configure<List<RoatpSequences>>(_configuration.GetSection("RoatpSequences"));
             services.Configure<List<CriminalComplianceGatewayConfig>>(_configuration.GetSection("CriminalComplianceGatewayConfig"));
             services.Configure<List<CriminalComplianceGatewayOverrideConfig>>(_configuration.GetSection("SoleTraderCriminalComplianceGatewayOverrides"));
-
-            mvcBuilder.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             services.AddDistributedMemoryCache();
 
@@ -259,6 +269,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IDfeSignInService, DfeSignInService>();
             services.AddTransient<IOversightReviewRepository, OversightReviewRepository>();
             services.AddTransient<IOversightReviewQueries, OversightReviewQueries>();
+            services.AddTransient<IAppealUploadRepository, AppealUploadRepository>();
+            services.AddTransient<IAppealsQueries, AppealsQueries>();
 
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
@@ -290,11 +302,19 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddTransient<IFileEncryptionService, FileEncryptionService>();
             services.AddTransient<IFileStorageService, FileStorageService>();
-
+            services.AddTransient<IAppealsFileStorage, AppealsFileStorage>();
+            services.AddTransient<IByteArrayEncryptionService, ByteArrayEncryptionService>();
+            
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
             ConfigureNotificationApiEmailService(services);
+
+            services.AddAzureClients(builder =>
+            {
+                builder.AddBlobServiceClient(_applyConfig.FileStorage.StorageConnectionString);
+            });
         }
 
         private void ConfigureNotificationApiEmailService(IServiceCollection services)

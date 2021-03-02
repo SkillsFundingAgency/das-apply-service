@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoFixture" Version="4.15.0" />
         <PackageReference Include="FluentAssertions">
             <Version>5.4.2</Version>
         </PackageReference>

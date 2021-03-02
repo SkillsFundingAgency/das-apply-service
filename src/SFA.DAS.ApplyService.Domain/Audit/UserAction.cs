@@ -9,6 +9,8 @@
         RecordOversightGatewayFailOutcome,
         RecordOversightGatewayRemovedOutcome,
         UpdateGatewayReviewStatus,
+        UploadAppealFile,
+        RemoveAppealFile,
         WithdrawApplication
     }
 }
