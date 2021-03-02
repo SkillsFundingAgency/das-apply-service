@@ -136,26 +136,26 @@
             }
         }
 
-        [HttpGet("two-in-twelve-months")]
-        public IActionResult TwoInTwelveMonths()
+        [HttpGet("one-in-twelve-months")]
+        public IActionResult OneInTwelveMonths()
         {
-            var model = new TwoInTwelveMonthsViewModel();
-            PopulateGetHelpWithQuestion(model, "TwoApplicationsWithinTwelveMonths");
+            var model = new OneInTwelveMonthsViewModel();
+            PopulateGetHelpWithQuestion(model, "OneApplicationWithinTwelveMonths");
 
-            return View("~/Views/Roatp/TwoInTwelveMonths.cshtml", model);
+            return View("~/Views/Roatp/OneInTwelveMonths.cshtml", model);
         }
 
-        [HttpPost("two-in-twelve-months")]
-        public IActionResult TwoInTwelveMonths(TwoInTwelveMonthsViewModel model)
+        [HttpPost("one-in-twelve-months")]
+        public IActionResult OneInTwelveMonths(OneInTwelveMonthsViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return View("~/Views/Roatp/TwoInTwelveMonths.cshtml", model);
+                return View("~/Views/Roatp/OneInTwelveMonths.cshtml", model);
             }
 
-            if (model.HasTwoInTwelveMonths is true)
+            if (model.HasOneInTwelveMonths is true)
             {
-                return RedirectToAction("TwoApplicationsWithinTwelveMonths", "RoatpShutterPages");
+                return RedirectToAction("OneApplicationWithinTwelveMonths", "RoatpShutterPages");
             }
             else
             {
