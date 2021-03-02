@@ -74,7 +74,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
                 {
                     await LogErrorIfUnsuccessfulResponse(response); 
                     ThrowExceptionIfUnsuccessfulResponse(response);
-                    return await response.Content.ReadAsStringAsync();
+                    return await response.Content.ReadAsAsync<string>();
                 }
             }
             catch (HttpRequestException ex)

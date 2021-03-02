@@ -29,6 +29,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<IEnumerable<RoatpSequences>> GetRoatpSequences();
 
+        Task<string> GetOrganisationTypeFromApplication(Guid applicationId);
+
 
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId);
         Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId);
