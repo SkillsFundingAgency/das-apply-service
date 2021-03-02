@@ -36,7 +36,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<IMediator> _mediator;
         private Mock<IGatewayApiChecksService> _gatewayApiChecksService;
         private Mock<IFileStorageService> _fileStorage;
-        private const string _twoInTwelveMonthsPageId = "TwoInTwelveMonths";
+        private const string _oneInTwelveMonthsPageId = "OneInTwelveMonths";
         private const string _userName = "John Smith";
         private const string _userId = "user id 123";
 
@@ -96,7 +96,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public async Task GatewayPageSubmit_When_TwoInTwelveMonths_and_GatewayReviewStatus_New_Starts_GatewayReview()
+        public async Task GatewayPageSubmit_When_OneInTwelveMonths_and_GatewayReviewStatus_New_Starts_GatewayReview()
         {
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var gatewayReviewComment = "Some comment";
@@ -108,7 +108,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Status = gatewayReviewStatus,
                 UserId = _userId,
                 UserName = _userName,
-                PageId = _twoInTwelveMonthsPageId
+                PageId = _oneInTwelveMonthsPageId
             };
             await _controller.GatewayPageSubmit(request);
 
@@ -117,7 +117,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public async Task GatewayPageSubmit_When_TwoInTwelveMonths_and_GatewayReviewStatus_InProgress_Does_Not_Start_GatewayReview()
+        public async Task GatewayPageSubmit_When_OneInTwelveMonths_and_GatewayReviewStatus_InProgress_Does_Not_Start_GatewayReview()
         {
             _application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
 
@@ -131,7 +131,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Status = gatewayReviewStatus,
                 UserId = _userId,
                 UserName = _userName,
-                PageId = _twoInTwelveMonthsPageId
+                PageId = _oneInTwelveMonthsPageId
             };
 
             await _controller.GatewayPageSubmit(request);
@@ -141,7 +141,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public async Task GatewayPageSubmit_When_Pass_TwoInTwelveMonths_And_GatewayReviewDetails_Null_Saves_ExternalApi_Checks()
+        public async Task GatewayPageSubmit_When_Pass_OneInTwelveMonths_And_GatewayReviewDetails_Null_Saves_ExternalApi_Checks()
         {
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var gatewayReviewComment = "Some comment";
@@ -153,7 +153,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Status = gatewayReviewStatus,
                 UserId = _userId,
                 UserName = _userName,
-                PageId = _twoInTwelveMonthsPageId
+                PageId = _oneInTwelveMonthsPageId
             };
 
             await _controller.GatewayPageSubmit(request);
@@ -318,7 +318,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Status = gatewayReviewStatus,
                 UserId = _userId,
                 UserName = _userName,
-                PageId = _twoInTwelveMonthsPageId
+                PageId = _oneInTwelveMonthsPageId
             };
             await _controller.GatewayPageSubmitClarification(request);
 
@@ -342,7 +342,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Status = gatewayReviewStatus,
                 UserId = _userId,
                 UserName = _userName,
-                PageId = _twoInTwelveMonthsPageId
+                PageId = _oneInTwelveMonthsPageId
             };
 
             await _controller.GatewayPageSubmitClarification(request);
@@ -367,7 +367,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Status = gatewayReviewStatus,
                 UserId = _userId,
                 UserName = _userName,
-                PageId = _twoInTwelveMonthsPageId,
+                PageId = _oneInTwelveMonthsPageId,
                 ClarificationAnswer = "answer"
             };
 

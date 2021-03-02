@@ -26,32 +26,32 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public void get_two_in_twelve_months_returns_expected_value_when_present()
+        public void get_one_in_twelve_months_returns_expected_value_when_present()
         {
             _qnaApiClient
                 .Setup(x => x.GetAnswerValue(_applicationId,
                     RoatpWorkflowSequenceIds.Preamble,
                     RoatpWorkflowSectionIds.Preamble,
                     RoatpWorkflowPageIds.Preamble,
-                    RoatpPreambleQuestionIdConstants.TwoInTwelveMonths)).ReturnsAsync(ValueOfQuestion);
+                    RoatpPreambleQuestionIdConstants.OneInTwelveMonths)).ReturnsAsync(ValueOfQuestion);
 
-            var actualResult = _controller.GetTwoInTwelveMonths(_applicationId).Result;
+            var actualResult = _controller.GetOneInTwelveMonths(_applicationId).Result;
 
             Assert.AreEqual(ValueOfQuestion, actualResult);
         }
 
 
         [Test]
-        public void get_two_in_twelve_months_returns_no_value_when_not_present()
+        public void get_one_in_twelve_months_returns_no_value_when_not_present()
         {
             _qnaApiClient
                 .Setup(x => x.GetAnswerValue(_applicationId,
                     RoatpWorkflowSequenceIds.Preamble,
                     RoatpWorkflowSectionIds.Preamble,
                     RoatpWorkflowPageIds.Preamble,
-                    RoatpPreambleQuestionIdConstants.TwoInTwelveMonths)).ReturnsAsync((string)null);
+                    RoatpPreambleQuestionIdConstants.OneInTwelveMonths)).ReturnsAsync((string)null);
 
-            var actualResult = _controller.GetTwoInTwelveMonths(_applicationId).Result;
+            var actualResult = _controller.GetOneInTwelveMonths(_applicationId).Result;
 
             Assert.IsNull(actualResult);
         }

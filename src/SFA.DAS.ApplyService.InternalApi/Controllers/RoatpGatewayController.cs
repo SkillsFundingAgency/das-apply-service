@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     [Authorize]
     public class RoatpGatewayController: Controller
     {
-        private const string TwoInTwelveMonthsPageId = "TwoInTwelveMonths";
+        private const string OneInTwelveMonthsPageId = "OneInTwelveMonths";
 
         private readonly IApplyRepository _applyRepository;
         private readonly IGatewayApiChecksService _gatewayApiChecksService;
@@ -46,9 +46,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost]
          public async Task GatewayPageSubmit([FromBody] Types.Requests.UpdateGatewayPageAnswerRequest request)
         {
-            if(request.PageId == TwoInTwelveMonthsPageId)
+            if(request.PageId == OneInTwelveMonthsPageId)
             {
-                await UpdateTwoInTwelveMonthApplyData(request);
+                await UpdateOneInTwelveMonthApplyData(request);
             }
 
             _logger.LogInformation($"Submitting Gateway page submit for ApplicationId '{request.ApplicationId}' for PageId '{request.PageId}', Status '{request.Status}', " +
@@ -67,9 +67,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
          [HttpPost]
          public async Task GatewayPageSubmitClarification([FromBody] Types.Requests.UpdateGatewayPageAnswerRequest request)
          {
-             if (request.PageId == TwoInTwelveMonthsPageId)
+             if (request.PageId == OneInTwelveMonthsPageId)
              {
-                 await UpdateTwoInTwelveMonthApplyData(request);
+                 await UpdateOneInTwelveMonthApplyData(request);
              }
 
              _logger.LogInformation($"Submitting Gateway page submit clarification for ApplicationId '{request.ApplicationId}' for PageId '{request.PageId}', Status '{request.Status}', " +
@@ -88,9 +88,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
          [HttpPost]
          public async Task GatewayPageSubmitPostClarification([FromBody] Types.Requests.UpdateGatewayPageAnswerRequest request)
          {
-             if (request.PageId == TwoInTwelveMonthsPageId)
+             if (request.PageId == OneInTwelveMonthsPageId)
              {
-                 await UpdateTwoInTwelveMonthApplyData(request);
+                 await UpdateOneInTwelveMonthApplyData(request);
              }
 
              _logger.LogInformation($"Submitting Gateway page post clarification for ApplicationId '{request.ApplicationId}' for PageId '{request.PageId}', Status '{request.Status}', " +
@@ -216,21 +216,21 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
 
-        private async Task UpdateTwoInTwelveMonthApplyData(Types.Requests.UpdateGatewayPageAnswerRequest request)
+        private async Task UpdateOneInTwelveMonthApplyData(Types.Requests.UpdateGatewayPageAnswerRequest request)
         {
             var application = await _mediator.Send(new GetApplicationRequest(request.ApplicationId));
 
             if (application.GatewayReviewStatus == GatewayReviewStatus.New)
             {
                 _logger.LogInformation(
-                    $"{TwoInTwelveMonthsPageId} - Starting Gateway Review for application {application.ApplicationId}");
+                    $"{OneInTwelveMonthsPageId} - Starting Gateway Review for application {application.ApplicationId}");
                 await _mediator.Send(new StartGatewayReviewRequest(application.ApplicationId, request.UserName));
             }
 
             if (request.Status == GatewayAnswerStatus.Pass)
             {
                 _logger.LogInformation(
-                    $"{TwoInTwelveMonthsPageId} - Getting external API checks data for application {application.ApplicationId}");
+                    $"{OneInTwelveMonthsPageId} - Getting external API checks data for application {application.ApplicationId}");
                 var gatewayDetails = application.ApplyData.GatewayReviewDetails;
                 var clarificationRequestedOn = gatewayDetails?.ClarificationRequestedOn;
                 var clarificationRequestedBy = gatewayDetails?.ClarificationRequestedBy;
