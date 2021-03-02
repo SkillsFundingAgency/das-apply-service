@@ -33,13 +33,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             {
                 throw new InvalidOperationException($"Application {request.ApplicationId} not found");
             }
-        
-            if (application.ApplyData.GatewayReviewDetails != null)
-            {
-                application.ApplyData.GatewayReviewDetails.OutcomeDateTime = DateTime.UtcNow;
-                application.ApplyData.GatewayReviewDetails.Comments = request.GatewayReviewComment;
-                application.ApplyData.GatewayReviewDetails.ExternalComments = request.GatewayReviewExternalComment;
-            }
+
+            if (application.ApplyData.GatewayReviewDetails == null)
+                application.ApplyData.GatewayReviewDetails = new ApplyGatewayDetails();
+
+            application.ApplyData.GatewayReviewDetails.OutcomeDateTime = DateTime.UtcNow;
+            application.ApplyData.GatewayReviewDetails.Comments = request.GatewayReviewComment;
+            application.ApplyData.GatewayReviewDetails.ExternalComments = request.GatewayReviewExternalComment;
 
             var result = await _applyRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, request.GatewayReviewStatus, request.UserId, request.UserName);
 

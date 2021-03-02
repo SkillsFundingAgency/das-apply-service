@@ -78,7 +78,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         [Test]
         public void GetSectorIdsForSectorPageId()
         {
-            var pageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.MostExperiencedEmployee;
+            var pageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.HowManyStarts;
             var result = _assessorLookupService.GetSectorQuestionIdsForSectorPageId(pageId);
 
             Assert.AreEqual(
@@ -90,7 +90,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         [Test]
         public void GetSectorNameForSectorPageId()
         {
-            var pageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.MostExperiencedEmployee;
+            var pageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.HowManyStarts;
             var actualName = _assessorLookupService.GetSectorNameForPage(pageId);
 
             Assert.AreEqual(actualName, RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.Name);

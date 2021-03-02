@@ -3,9 +3,13 @@
     public class AssessorSectorDetails
     {
         public string SectorName { get; set; }
+        public string HowManyStarts { get; set; }
+        public string HowManyEmployees { get; set; }
         public string FullName { get; set; }
         public string JobRole { get; set; }
         public string TimeInRole { get; set; }
+        public string IsPartOfAnyOtherOrganisations { get; set; }
+        public string OtherOrganisations { get; set; }
 
         public string ExperienceOfDelivering { get; set; }
         public string WhereDidTheyGainThisExperience { get; set; }
