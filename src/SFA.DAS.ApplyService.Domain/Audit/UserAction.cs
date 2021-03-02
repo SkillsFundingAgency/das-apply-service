@@ -10,7 +10,7 @@
         RecordOversightGatewayRemovedOutcome,
         UpdateGatewayReviewStatus,
         UploadAppealFile,
-        RemoveAppealFile
+        RemoveAppealFile,
         WithdrawApplication
     }
 }
