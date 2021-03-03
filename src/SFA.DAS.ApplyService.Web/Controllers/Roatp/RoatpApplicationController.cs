@@ -349,6 +349,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, List<Question> answeredQuestions)
         {
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
@@ -443,6 +444,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
+        [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> SaveAnswers(PageViewModel vm, Guid applicationId)
         {
             vm.ApplicationId = applicationId; // why is this being assigned??? TODO: Fix in View so it's part of the ViewModel
@@ -664,7 +666,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         question.Input.Options = questionOptions;
                         question.Input.Type = question.Input.Type.Replace("DataFed_", "");
                     }
-                    if (question.Input.Type == QuestionType.TabularData)
+                    if (QuestionType.TabularData.Equals(question.Input.Type, StringComparison.InvariantCultureIgnoreCase))
                     {
                         var answer = await _qnaApiClient.GetAnswerByTag(applicationId, question.QuestionTag, question.QuestionId);
                         if (page.PageOfAnswers == null || page.PageOfAnswers.Count < 1)
@@ -699,15 +701,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             RunCustomValidations(page, answers);
             if (!ModelState.IsValid)
             {
+                //Can this be made common? What about DataFedOptions?
                 page = await _qnaApiClient.GetPage(applicationId, sectionId, pageId);
-
-
                 this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
-                return await Page(applicationId, sequenceNo, sectionNo, pageId, redirectAction, null);
+                return RedirectToAction("Page", new { applicationId, sequenceId = sequenceNo, sectionId = sectionNo, pageId, redirectAction });
             }
 
             //todo: Should we convert this to a custom validation?
-            var checkBoxListQuestions = PageContainsCheckBoxListQuestions(page);
+            var checkBoxListQuestions = GetCheckBoxListQuestionsFromPage(page);
             if (checkBoxListQuestions.Any())
             {
                 var checkBoxListQuestionId = CheckBoxListHasInvalidSelections(checkBoxListQuestions, answers);
@@ -718,7 +719,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     //Can this be made common? What about DataFedOptions?
                     page = await _qnaApiClient.GetPage(applicationId, sectionId, pageId);
                     this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
-                    return await Page(applicationId, sequenceNo, sectionNo, pageId, redirectAction, null);
+                    return RedirectToAction("Page", new { applicationId, sequenceId = sequenceNo, sectionId = sectionNo, pageId, redirectAction });
                 }
             }
 
@@ -804,7 +805,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var invalidPage = await GetDataFedOptions(applicationId, page);
             this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage);
 
-            return await Page(applicationId, sequenceNo, sectionNo, pageId, redirectAction, page?.Questions);
+            return RedirectToAction("Page", new { applicationId, sequenceId = sequenceNo, sectionId = sectionNo, pageId, redirectAction });
         }
 
         private static Page StoreEnteredAnswers(List<Answer> answers, Page page)
@@ -828,7 +829,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 var question = page.Questions.FirstOrDefault(x => x.QuestionId == answer.QuestionId);
                 if (question != null && question.Input != null
-                                     && !String.IsNullOrWhiteSpace(question.Input.InputClasses)
+                                     && !string.IsNullOrWhiteSpace(question.Input.InputClasses)
                                      && question.Input.InputClasses.Contains(InputClassUpperCase))
                 {
                     answer.Value = answer.Value.ToUpper();
@@ -836,9 +837,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
-        private static IEnumerable<Question> PageContainsCheckBoxListQuestions(Page page)
+        private static IEnumerable<Question> GetCheckBoxListQuestionsFromPage(Page page)
         {
-            return page.Questions.Where(q => q.Input.Type == QuestionType.CheckboxList || q.Input.Type == QuestionType.ComplexCheckboxList);
+            return page.Questions.Where(q => QuestionType.CheckboxList.Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase)
+                                          || QuestionType.ComplexCheckboxList.Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase));
         }
 
         private static string CheckBoxListHasInvalidSelections(IEnumerable<Question> checkBoxListQuestions, List<Answer> answers)
@@ -885,13 +887,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             #region FurtherQuestion_Processing
             // Get all questions that have FurtherQuestions in a ComplexRadio
-            var questionsWithFutherQuestions = page.Questions.Where(x => (x.Input.Type == QuestionType.ComplexRadio || x.Input.Type == QuestionType.ComplexCheckboxList)
-            && x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions != null && o.FurtherQuestions.Any()));
-
+            var questionsWithFutherQuestions = GetCheckBoxListQuestionsFromPage(page).Where(x => x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions != null && o.FurtherQuestions.Any()));
 
             foreach (var question in questionsWithFutherQuestions)
             {
-                if (question.Input.Type == QuestionType.ComplexRadio)
+                if (QuestionType.ComplexRadio.Equals(question.Input.Type, StringComparison.InvariantCultureIgnoreCase))
                 {
                     var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
@@ -907,8 +907,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         }
                     }
                 }
-
-                if (question.Input.Type == QuestionType.ComplexCheckboxList)
+                else if (QuestionType.ComplexCheckboxList.Equals(question.Input.Type, StringComparison.InvariantCultureIgnoreCase))
                 {
                     var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
@@ -934,7 +933,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             #endregion FurtherQuestion_Processing
 
             // Address inputs require special processing
-            if (page.Questions.Any(x => x.Input.Type == QuestionType.Address))
+            if (page.Questions.Any(x => QuestionType.Address.Equals(x.Input.Type, StringComparison.InvariantCultureIgnoreCase)))
             {
                 answers = ProcessPageVmQuestionsForAddress(page, answers);
             }
@@ -962,7 +961,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private static List<Answer> ProcessPageVmQuestionsForAddress(Page page, List<Answer> answers)
         {
 
-            if (page.Questions.Any(x => x.Input.Type == QuestionType.Address))
+            if (page.Questions.Any(x => QuestionType.Address.Equals(x.Input.Type, StringComparison.InvariantCultureIgnoreCase)))
             {
                 Dictionary<string, JObject> answerValueDictionary = new Dictionary<string, JObject>();
 
@@ -1003,42 +1002,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return answers;
-        }
-
-        private bool FileValidationPassed(List<Answer> answers, Page page, List<ValidationErrorDetail> errorMessages)
-        {
-            var fileValidationPassed = true;
-            if (!HttpContext.Request.Form.Files.Any()) return true;
-
-            foreach (var file in HttpContext.Request.Form.Files)
-            {
-
-                var typeValidation = page.Questions.First(q => q.QuestionId == file.Name).Input.Validations.FirstOrDefault(v => v.Name == "FileType");
-                if (typeValidation != null)
-                {
-                    var extension = typeValidation.Value.ToString().Split(",", StringSplitOptions.RemoveEmptyEntries)[0];
-                    var mimeType = typeValidation.Value.ToString().Split(",", StringSplitOptions.RemoveEmptyEntries)[1];
-
-                    if (file.FileName.Substring(file.FileName.IndexOf(".") + 1, (file.FileName.Length - 1) - file.FileName.IndexOf(".")).ToLower() != extension || file.ContentType.ToLower() != mimeType)
-                    {
-                        ModelState.AddModelError(file.Name, typeValidation.ErrorMessage);
-                        errorMessages.Add(new ValidationErrorDetail(file.Name, typeValidation.ErrorMessage));
-                        fileValidationPassed = false;
-                    }
-                    else
-                    {
-                        // Only add to answers if type validation passes.
-                        answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
-                    }
-                }
-                else
-                {
-                    // Only add to answers if type validation passes.
-                    answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
-                }
-            }
-
-            return fileValidationPassed;
         }
 
         [HttpPost]
