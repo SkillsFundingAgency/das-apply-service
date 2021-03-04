@@ -6,23 +6,23 @@ using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
 {
     [TestFixture]
-    public class TwoInTwelveMonthsValidatorTests
+    public class OneInTwelveMonthsValidatorTests
     {
-        private TwoInTwelveMonthsValidator _validator;
+        private OneInTwelveMonthsValidator _validator;
 
         [SetUp]
         public void Arrange()
         {
-            _validator = new TwoInTwelveMonthsValidator();
+            _validator = new OneInTwelveMonthsValidator();
         }
 
         [Test]
         public void Validate_Returns_Valid_When_Applicant_Selects_True()
         {
-            var viewModel = new TwoInTwelveMonthsViewModel
+            var viewModel = new OneInTwelveMonthsViewModel
             {
                 ApplicationId = Guid.NewGuid(),
-                HasTwoInTwelveMonths = true
+                HasOneInTwelveMonths = true
             };
 
             var result = _validator.Validate(viewModel);
@@ -33,10 +33,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
         [Test]
         public void Validate_Returns_Valid_When_Applicant_Selects_False()
         {
-            var viewModel = new TwoInTwelveMonthsViewModel
+            var viewModel = new OneInTwelveMonthsViewModel
             {
                 ApplicationId = Guid.NewGuid(),
-                HasTwoInTwelveMonths = false
+                HasOneInTwelveMonths = false
             };
 
             var result = _validator.Validate(viewModel);
@@ -47,17 +47,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
         [Test]
         public void Validate_Returns_Appropriate_Error_When_Applicant_Selects_Nothing()
         {
-            var viewModel = new TwoInTwelveMonthsViewModel
+            var viewModel = new OneInTwelveMonthsViewModel
             {
                 ApplicationId = Guid.NewGuid(),
-                HasTwoInTwelveMonths = null
+                HasOneInTwelveMonths = null
             };
 
             var result = _validator.Validate(viewModel);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.AreEqual(nameof(viewModel.HasTwoInTwelveMonths), result.Errors[0].PropertyName);
+            Assert.AreEqual(nameof(viewModel.HasOneInTwelveMonths), result.Errors[0].PropertyName);
         }
     }
 }

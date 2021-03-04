@@ -1,4 +1,4 @@
-﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.TwoInTwelveMonthsViewModel
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.OneInTwelveMonthsViewModel
 
 @{
     ViewBag.Title = Model.Title;
@@ -19,7 +19,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="post" asp-action="TwoInTwelveMonths" asp-controller="RoatpApplicationPreamble" novalidate>
+            <form method="post" asp-action="OneInTwelveMonths" asp-controller="RoatpApplicationPreamble" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="SequenceId" />
                 <input type="hidden" asp-for="SectionId" />
@@ -27,20 +27,20 @@
 
                 <div class="govuk-form-group @(!ViewContext.ModelState.IsValid ? "govuk-form-group--error" : "")" sfa-anyvalidationerror-class="form-group-error">
                     <span class="govuk-error-message">
-                        @Html.ValidationMessageFor(m => m.HasTwoInTwelveMonths, null, new { @class = "govuk-error-message error", id = "error-message-" + Html.IdFor(m => m.HasTwoInTwelveMonths) })
+                        @Html.ValidationMessageFor(m => m.HasOneInTwelveMonths, null, new { @class = "govuk-error-message error", id = "error-message-" + Html.IdFor(m => m.HasOneInTwelveMonths) })
                     </span>
 
                     <fieldset class="govuk-fieldset">
                         <div class="govuk-radios">
                             <div class="govuk-radios__item">
-                                <input asp-for="HasTwoInTwelveMonths" class="govuk-radios__input" type="radio" value="true">
-                                <label asp-for="HasTwoInTwelveMonths" class="govuk-label govuk-radios__label">
+                                <input asp-for="HasOneInTwelveMonths" class="govuk-radios__input" type="radio" value="true">
+                                <label asp-for="HasOneInTwelveMonths" class="govuk-label govuk-radios__label">
                                     Yes
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
-                                <input asp-for="HasTwoInTwelveMonths" class="govuk-radios__input" id="HasTwoInTwelveMonths-No" type="radio" value="false">
-                                <label class="govuk-label govuk-radios__label" for="HasTwoInTwelveMonths-No">
+                                <input asp-for="HasOneInTwelveMonths" class="govuk-radios__input" id="HasOneInTwelveMonths-No" type="radio" value="false">
+                                <label class="govuk-label govuk-radios__label" for="HasOneInTwelveMonths-No">
                                     No
                                 </label>
                             </div>

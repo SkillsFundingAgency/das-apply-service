@@ -53,13 +53,13 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         }
 
         [Test]
-        public void Preamble_questions_contains_TwoInTwelveMonths()
+        public void Preamble_questions_contains_OneInTwelveMonths()
         {
             var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
 
             questions.Should().NotBeNull();
 
-            var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.TwoInTwelveMonths);
+            var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.OneInTwelveMonths);
             question.Should().NotBeNull();
             question.Value.Should().Be("No");
         }

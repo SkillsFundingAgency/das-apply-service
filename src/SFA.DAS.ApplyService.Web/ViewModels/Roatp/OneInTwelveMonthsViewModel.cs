@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
-    public class TwoInTwelveMonthsViewModel : IPageViewModel
+    public class OneInTwelveMonthsViewModel : IPageViewModel
     {
-        public bool? HasTwoInTwelveMonths { get; set; }
+        public bool? HasOneInTwelveMonths { get; set; }
 
-        public string Title { get { return "Have you submitted 2 applications to join the RoATP in the last 12 months?"; } set { } }
+        public string Title { get { return "Have you submitted an application to join the RoATP in the last 12 months?"; } set { } }
 
         public Guid ApplicationId { get; set; }
 
@@ -24,6 +24,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
-        public string GetHelpAction { get { return "TwoInTwelveMonths"; } set { } }
+        public string GetHelpAction { get { return "OneInTwelveMonths"; } set { } }
     }
 }
