@@ -7,19 +7,15 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
+using SFA.DAS.ApplyService.Application.Apply.Gateway.ExternalApiCheckDetails;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.InternalApi.Types.Requests.Gateway;
-using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -28,15 +24,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     {
         private const string OneInTwelveMonthsPageId = "OneInTwelveMonths";
 
-        private readonly IApplyRepository _applyRepository;
         private readonly IGatewayApiChecksService _gatewayApiChecksService;
         private readonly ILogger<RoatpGatewayController> _logger;
         private readonly IMediator _mediator;
         private readonly IFileStorageService _fileStorageService;
 
-        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IMediator mediator, IGatewayApiChecksService gatewayApiChecksService, IFileStorageService fileStorageService) 
+        public RoatpGatewayController(ILogger<RoatpGatewayController> logger, IMediator mediator, IGatewayApiChecksService gatewayApiChecksService, IFileStorageService fileStorageService) 
         {
-            _applyRepository = applyRepository;
             _logger = logger;
             _gatewayApiChecksService = gatewayApiChecksService;
             _fileStorageService = fileStorageService;
@@ -232,15 +226,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             {
                 _logger.LogInformation(
                     $"{OneInTwelveMonthsPageId} - Getting external API checks data for application {application.ApplicationId}");
-                var gatewayDetails = application.ApplyData.GatewayReviewDetails;
-                var clarificationRequestedOn = gatewayDetails?.ClarificationRequestedOn;
-                var clarificationRequestedBy = gatewayDetails?.ClarificationRequestedBy;
-                application.ApplyData.GatewayReviewDetails =
-                    await _gatewayApiChecksService.GetExternalApiCheckDetails(application.ApplicationId, request.UserName);
-                application.ApplyData.GatewayReviewDetails.ClarificationRequestedBy = clarificationRequestedBy;
-                application.ApplyData.GatewayReviewDetails.ClarificationRequestedOn = clarificationRequestedOn;
 
-                await _applyRepository.UpdateApplyData(application.ApplicationId, application.ApplyData, request.UserName);
+                var gatewayExternalApiCheckDetails = await _gatewayApiChecksService.GetExternalApiCheckDetails(application.ApplicationId, request.UserName);
+
+                await _mediator.Send(new UpdateExternalApiCheckDetailsRequest(application.ApplicationId, gatewayExternalApiCheckDetails, request.UserId, request.UserName));
             }
         }
     }
