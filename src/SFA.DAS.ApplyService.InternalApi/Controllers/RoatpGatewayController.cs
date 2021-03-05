@@ -18,6 +18,7 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
 using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.ApplyService.InternalApi.Types.Requests.Gateway;
 using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -241,13 +242,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
                 await _applyRepository.UpdateApplyData(application.ApplicationId, application.ApplyData, request.UserName);
             }
-        }
-
-        public class SubcontractorDeclarationClarificationFileCommand
-        {
-            public string UserId { get; set; }
-            public string UserName { get; set; }
-            public string FileName { get; set; }
         }
     }
 }

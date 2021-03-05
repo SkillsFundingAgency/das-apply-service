@@ -25,6 +25,7 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
 using SFA.DAS.ApplyService.Types;
+using SFA.DAS.ApplyService.InternalApi.Types.Requests.Gateway;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -186,7 +187,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var formFileCollection = new FormFileCollection { file };
             _controller.HttpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>(), formFileCollection);
 
-            var command = new RoatpGatewayController.SubcontractorDeclarationClarificationFileCommand
+            var command = new SubcontractorDeclarationClarificationFileCommand
             {
                 UserId = "user id", UserName = "user name"
             };
@@ -209,7 +210,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var formFileCollection = new FormFileCollection();
             _controller.HttpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>(), formFileCollection);
 
-            var command = new RoatpGatewayController.SubcontractorDeclarationClarificationFileCommand
+            var command = new SubcontractorDeclarationClarificationFileCommand
             {
                 UserId = "user id",
                 UserName = "user name"
@@ -235,7 +236,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var formFileCollection = new FormFileCollection { file };
             _controller.HttpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>(), formFileCollection);
 
-            var command = new RoatpGatewayController.SubcontractorDeclarationClarificationFileCommand
+            var command = new SubcontractorDeclarationClarificationFileCommand
             {
                 UserId = "user id",
                 UserName = "user name"
@@ -259,7 +260,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         {
             var clarificationFileName = "file.pdf";
             
-            var command = new RoatpGatewayController.SubcontractorDeclarationClarificationFileCommand
+            var command = new SubcontractorDeclarationClarificationFileCommand
             {
                 UserId = "user id",
                 UserName = "user name",
@@ -284,7 +285,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         {
             var clarificationFileName = "file.pdf";
 
-            var command = new RoatpGatewayController.SubcontractorDeclarationClarificationFileCommand
+            var command = new SubcontractorDeclarationClarificationFileCommand
             {
                 UserId = "user id",
                 UserName = "user name",
