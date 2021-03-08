@@ -371,10 +371,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (!ModelState.IsValid)
             {
                 // when the model state has errors the page will be displayed with the values which failed validation
-                //var page = JsonConvert.DeserializeObject<Page>((string)this.TempData["InvalidPage"]);
-
                 var page = selectedSection.GetPage(pageId);
-                var pageOfAnswers = JsonConvert.DeserializeObject<List<PageOfAnswers>>((string)TempData["InvalidPage"]);
+                var pageOfAnswers = JsonConvert.DeserializeObject<List<PageOfAnswers>>((string)TempData["InvalidPageOfAnswers"]);
                 page.PageOfAnswers = pageOfAnswers;
 
                 var peopleInControlDetails = await GetPeopleInControlDetails(applicationId, sequenceId, sectionId);
@@ -470,10 +468,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (!ModelState.IsValid)
             {
                 // when the model state has errors the page will be displayed with the values which failed validation
-                //var pageInvalid = JsonConvert.DeserializeObject<Page>((string)this.TempData["InvalidPage"]);
-
                 var pageInvalid = selectedSection.GetPage(pageId);
-                var pageOfAnswers = JsonConvert.DeserializeObject<List<PageOfAnswers>>((string)TempData["InvalidPage"]);
+                var pageOfAnswers = JsonConvert.DeserializeObject<List<PageOfAnswers>>((string)TempData["InvalidPageOfAnswers"]);
                 pageInvalid.PageOfAnswers = pageOfAnswers;
 
                 var returnUrl = Request.Headers["Referer"].ToString();
@@ -711,7 +707,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 //Can this be made common? What about DataFedOptions?
                 page = await _qnaApiClient.GetPage(applicationId, sectionId, pageId);
-                this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page.PageOfAnswers);
+                this.TempData["InvalidPageOfAnswers"] = JsonConvert.SerializeObject(page.PageOfAnswers);
                 return RedirectToAction("Page", new { applicationId, sequenceId = sequenceNo, sectionId = sectionNo, pageId, redirectAction });
             }
 
@@ -726,7 +722,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                     //Can this be made common? What about DataFedOptions?
                     page = await _qnaApiClient.GetPage(applicationId, sectionId, pageId);
-                    this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page.PageOfAnswers);
+                    this.TempData["InvalidPageOfAnswers"] = JsonConvert.SerializeObject(page.PageOfAnswers);
                     return RedirectToAction("Page", new { applicationId, sequenceId = sequenceNo, sectionId = sectionNo, pageId, redirectAction });
                 }
             }
@@ -810,8 +806,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 page = StoreEnteredAnswers(answers, page);
             }
 
-            var invalidPage = await GetDataFedOptions(applicationId, page);
-            this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage.PageOfAnswers);
+            var invalidPageOfAnswers = await GetDataFedOptions(applicationId, page);
+            this.TempData["InvalidPageOfAnswers"] = JsonConvert.SerializeObject(invalidPageOfAnswers.PageOfAnswers);
 
             return RedirectToAction("Page", new { applicationId, sequenceId = sequenceNo, sectionId = sectionNo, pageId, redirectAction });
         }
