@@ -806,8 +806,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 page = StoreEnteredAnswers(answers, page);
             }
 
-            var invalidPageOfAnswers = await GetDataFedOptions(applicationId, page);
-            this.TempData["InvalidPageOfAnswers"] = JsonConvert.SerializeObject(invalidPageOfAnswers.PageOfAnswers);
+            var invalidPage = await GetDataFedOptions(applicationId, page);
+            this.TempData["InvalidPageOfAnswers"] = JsonConvert.SerializeObject(invalidPage.PageOfAnswers);
 
             return RedirectToAction("Page", new { applicationId, sequenceId = sequenceNo, sectionId = sectionNo, pageId, redirectAction });
         }
