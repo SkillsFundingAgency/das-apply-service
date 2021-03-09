@@ -76,6 +76,7 @@
     <Build Include="Tables\Audit.sql" />
     <Build Include="Tables\OversightReview.sql" />
     <Build Include="Tables\AppealUpload.sql" />
+    <Build Include="Tables\Appeal.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

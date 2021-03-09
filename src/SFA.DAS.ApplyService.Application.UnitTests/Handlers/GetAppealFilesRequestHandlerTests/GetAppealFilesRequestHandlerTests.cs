@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Domain.QueryResults;
 

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using FluentValidation;
 using MediatR;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Domain.QueryResults;
 
-namespace SFA.DAS.ApplyService.Application.Apply.Oversight
+namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles
 {
     public class GetStagedFilesRequestHandler : IRequestHandler<GetStagedFilesRequest, AppealFiles>
     {

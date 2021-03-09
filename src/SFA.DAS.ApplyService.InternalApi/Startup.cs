@@ -20,6 +20,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
 using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Interfaces;

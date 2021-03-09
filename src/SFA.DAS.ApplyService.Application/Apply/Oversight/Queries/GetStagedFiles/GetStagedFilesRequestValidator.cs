@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace SFA.DAS.ApplyService.Application.Apply.Oversight
+namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles
 {
     public class GetStagedFilesRequestValidator : AbstractValidator<GetStagedFilesRequest>
     {

@@ -35,4 +35,8 @@
       <ProjectReference Include="..\SFA.DAS.ApplyService.EmailService\SFA.DAS.ApplyService.EmailService.csproj" />
       <ProjectReference Include="..\SFA.DAS.ApplyService.InternalApi.Types\SFA.DAS.ApplyService.InternalApi.Types.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Apply\Oversight\Commands\CreateAppeal\" />
+    </ItemGroup>
 </Project>
