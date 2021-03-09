@@ -299,6 +299,7 @@
             public const string PriorLearningQualifications = "5510";
             public const string EnglishAndMathsAssessments = "5550";
             public const string EnglishAndMathsAssessmentsWhere = "5560";
+            public const string EnglishAndMathsAssessmentsHowIfSignificantEvent = "5570";
             public const string SubcontractorsUse = "5600";
             public const string SubcontractorsDueDiligence = "5610";
         }
