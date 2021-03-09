@@ -6,6 +6,7 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
 using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway
@@ -15,14 +16,17 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
         private readonly IApplyRepository _applyRepository;
         private readonly IOversightReviewRepository _oversightReviewRepository;
         private readonly IAuditService _auditService;
+        private readonly IApplicationUpdatedEmailService _applicationUpdatedEmailService;
 
         public UpdateGatewayReviewStatusAndCommentCommandHandler(IApplyRepository applyRepository,
             IOversightReviewRepository oversightReviewRepository,
-            IAuditService auditService)
+            IAuditService auditService,
+            IApplicationUpdatedEmailService applicationUpdatedEmailService)
         {
             _applyRepository = applyRepository;
             _oversightReviewRepository = oversightReviewRepository;
             _auditService = auditService;
+            _applicationUpdatedEmailService = applicationUpdatedEmailService;
         }
 
         public async Task<Unit> Handle(UpdateGatewayReviewStatusAndCommentCommand request, CancellationToken cancellationToken)
@@ -59,6 +63,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 _auditService.AuditInsert(oversightReview);
                 _oversightReviewRepository.Add(oversightReview);
                 _auditService.Save();
+
+                await _applicationUpdatedEmailService.SendEmail(request.ApplicationId);
             }
 
             return Unit.Value;
