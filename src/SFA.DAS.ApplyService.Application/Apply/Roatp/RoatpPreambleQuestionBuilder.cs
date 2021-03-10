@@ -316,7 +316,8 @@
             public const string EngagingWithAssessmentOrganisations = "6270";
             public const string EngagingWithAwardingBodies = "6280";
             public const string TrainingApprentices = "6300";
-            public const string EnsureApprenticesAreSupported = "6400";
+            public const string EnsureApprenticesAreSupportedEmployer = "6400";
+            public const string EnsureApprenticesAreSupportedMain = "6405";
             public const string EnsureApprenticesAreSupportedHow = "6410";
             public const string EnsureApprenticesAreSupportedOtherWays = "6420";
             public const string ForecastingStarts = "6500";
