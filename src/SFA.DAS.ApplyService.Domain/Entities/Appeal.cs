@@ -6,7 +6,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     public class Appeal : IAuditable
     {
         public Guid Id { get; set; }
-        public Guid ApplicationId { get; set; }
+        public Guid OversightReviewId { get; set; }
         public string Message { get; set; }
         public string UserId { get; set; }
         public string UserName { get; set; }
