@@ -136,6 +136,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
                             apply.ExternalComments 'ApplyExternalComments',
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') AS ApplicationRemovedOn,                            
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy') AS ApplicationRemovedBy,                            
+                            outcome.[Id] as OversightReviewId,        
                             outcome.[InProgressDate],
                             outcome.[InProgressUserId],
                             outcome.[InProgressUserName],
