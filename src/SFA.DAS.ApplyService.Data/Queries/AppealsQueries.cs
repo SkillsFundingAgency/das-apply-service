@@ -40,5 +40,23 @@ namespace SFA.DAS.ApplyService.Data.Queries
                 };
             }
         }
+
+        public async Task<Appeal> GetAppeal(Guid applicationId, Guid oversightReviewId)
+        {
+            using (var connection = GetConnection())
+            {
+                return await connection.QuerySingleOrDefaultAsync<Appeal>(
+                    @"SELECT a.Message, a.UserId, a.UserName, a.CreatedOn
+                        FROM [Appeal] a
+                        JOIN [OversightReview] r ON r.Id = a.OversightReviewId
+                        where a.OversightReviewId = @oversightReviewId
+                        AND r.ApplicationId = @applicationId",
+                    new
+                    {
+                        applicationId,
+                        oversightReviewId
+                    });
+            }
+        }
     }
 }

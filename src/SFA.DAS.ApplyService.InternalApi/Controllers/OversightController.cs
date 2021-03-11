@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightDetails;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -155,6 +156,27 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             await _mediator.Send(command);
             return new OkResult();
+        }
+
+        [HttpGet]
+        [Route("Oversight/{applicationId}/oversight-reviews/{oversightReviewId}/appeal")]
+        public async Task<ActionResult<GetAppealResponse>> GetAppeal([FromRoute] GetAppealRequest request)
+        {
+            var query = new GetAppealQuery
+            {
+                ApplicationId = request.ApplicationId,
+                OversightReviewId = request.OversightReviewId
+            };
+
+            var result = await _mediator.Send(query);
+
+            return new GetAppealResponse
+            {
+                Message = result.Message,
+                CreatedOn = result.CreatedOn,
+                UserId = result.UserId,
+                UserName = result.UserName
+            };
         }
     }
 }

@@ -18,6 +18,7 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightDetails;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -268,7 +269,13 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task AppealUploads_Gets_Files_For_Application_Appeal()
         {
             var request = new GetStagedFilesRequest();
-            var queryResult = new GetStagedFilesResult();
+            var queryResult = new GetStagedFilesQueryResult
+            {
+                Files = new List<GetStagedFilesQueryResult.AppealFile>
+                {
+                    new GetStagedFilesQueryResult.AppealFile{ Id = Guid.NewGuid(), Filename = AutoFixture.Create<string>()}
+                }
+            };
 
             _mediator.Setup(x => x.Send(It.IsAny<GetStagedFilesQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
 
@@ -305,6 +312,29 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 c.UserId == request.UserId &&
                 c.UserName == request.UserName), It.IsAny<CancellationToken>()));
         }
+
+        [Test]
+        public async Task GetAppeal_Gets_Appeal_For_Application_And_OversightReview()
+        {
+            var request = new GetAppealRequest();
+            var queryResult = new GetAppealQueryResult
+            {
+                Message = AutoFixture.Create<string>(),
+                CreatedOn = AutoFixture.Create<DateTime>(),
+                UserId = AutoFixture.Create<string>(),
+                UserName = AutoFixture.Create<string>()
+            };
+
+            _mediator.Setup(x => x.Send(It.IsAny<GetAppealQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
+
+            var result = await _controller.GetAppeal(request);
+            result.Should().BeOfType<ActionResult<GetAppealResponse>>();
+
+            var compareLogic = new CompareLogic(new ComparisonConfig { IgnoreObjectTypes = true });
+            var comparisonResult = compareLogic.Compare(queryResult, result);
+            Assert.IsTrue(comparisonResult.AreEqual);
+        }
+
 
         private static IFormFile GenerateFile()
         {
