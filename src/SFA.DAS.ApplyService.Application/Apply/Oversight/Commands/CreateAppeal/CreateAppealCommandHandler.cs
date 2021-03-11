@@ -47,9 +47,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal
 
             foreach (var upload in uploads)
             {
+                _auditService.AuditUpdate(upload);
                 upload.AppealId = appeal.Id;
                 _appealUploadRepository.Update(upload);
-                _auditService.AuditUpdate(upload);
             }
 
             _auditService.Save();

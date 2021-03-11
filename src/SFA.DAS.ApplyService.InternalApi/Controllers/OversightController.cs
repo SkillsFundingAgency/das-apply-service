@@ -130,7 +130,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         [HttpPost]
         [Route("Oversight/{applicationId}/oversight-reviews/{oversightReviewId}/appeal")]
-        public async Task<IActionResult> CreateAppeal(Guid applicationId, Guid oversightReviewId, CreateAppealRequest request)
+        public async Task<IActionResult> CreateAppeal(Guid applicationId, Guid oversightReviewId, [FromBody] CreateAppealRequest request)
         {
             var command = new CreateAppealCommand
             {
