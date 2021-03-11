@@ -2,9 +2,9 @@
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles
 {
-    public class GetStagedFilesRequestValidator : AbstractValidator<GetStagedFilesRequest>
+    public class GetStagedFilesQueryValidator : AbstractValidator<GetStagedFilesQuery>
     {
-        public GetStagedFilesRequestValidator()
+        public GetStagedFilesQueryValidator()
         {
             RuleFor(x => x.ApplicationId).NotEmpty();
         }

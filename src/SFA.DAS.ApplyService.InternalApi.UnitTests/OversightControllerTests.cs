@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
+using KellermanSoftware.CompareNetObjects;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
@@ -24,6 +25,7 @@ using SFA.DAS.ApplyService.Domain.QueryResults;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.InternalApi.Types.Requests.Oversight;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
@@ -266,14 +268,16 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task AppealUploads_Gets_Files_For_Application_Appeal()
         {
             var request = new GetStagedFilesRequest();
-            var queryResult = new AppealFiles();
+            var queryResult = new GetStagedFilesResult();
 
-            _mediator.Setup(x => x.Send(request, It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
+            _mediator.Setup(x => x.Send(It.IsAny<GetStagedFilesQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
 
             var result = await _controller.StagedUploads(request);
-            result.Should().BeOfType<ActionResult<AppealFiles>>();
+            result.Should().BeOfType<ActionResult<GetStagedFilesResponse>>();
 
-            Assert.AreEqual(queryResult, result.Value);
+            var compareLogic = new CompareLogic(new ComparisonConfig { IgnoreObjectTypes = true });
+            var comparisonResult = compareLogic.Compare(queryResult, result);
+            Assert.IsTrue(comparisonResult.AreEqual);
         }
 
         [Test]

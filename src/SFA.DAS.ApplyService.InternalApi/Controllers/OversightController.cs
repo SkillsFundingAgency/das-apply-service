@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -14,6 +15,7 @@ using SFA.DAS.ApplyService.Domain.QueryResults;
 using SFA.DAS.ApplyService.InternalApi.Extensions;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.InternalApi.Types.Requests.Oversight;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -123,9 +125,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         
         [HttpGet]
         [Route("Oversight/{applicationId}/uploads")]
-        public async Task<ActionResult<AppealFiles>> StagedUploads([FromRoute] GetStagedFilesRequest request)
+        public async Task<ActionResult<GetStagedFilesResponse>> StagedUploads([FromRoute] GetStagedFilesRequest request)
         {
-            return await _mediator.Send(request);
+            var query = new GetStagedFilesQuery
+            {
+                ApplicationId = request.ApplicationId
+            };
+
+            var result = await _mediator.Send(query);
+
+            return new GetStagedFilesResponse
+            {
+                Files = result.Files.Select(file => new GetStagedFilesResponse.AppealFile{ Id = file.Id, Filename = file.Filename}).ToList()
+            };
         }
 
         [HttpPost]

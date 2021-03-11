@@ -136,7 +136,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .AddFluentValidation(fv =>
             {
-                fv.RegisterValidatorsFromAssemblyContaining<GetStagedFilesRequestValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<GetStagedFilesQueryValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<Startup>();
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
