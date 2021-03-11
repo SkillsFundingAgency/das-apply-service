@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightDetails;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
@@ -125,6 +126,23 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<AppealFiles>> StagedUploads([FromRoute] GetStagedFilesRequest request)
         {
             return await _mediator.Send(request);
+        }
+
+        [HttpPost]
+        [Route("Oversight/{applicationId}/oversight-reviews/{oversightReviewId}/appeal")]
+        public async Task<IActionResult> CreateAppeal(Guid applicationId, Guid oversightReviewId, CreateAppealRequest request)
+        {
+            var command = new CreateAppealCommand
+            {
+                ApplicationId = applicationId,
+                OversightReviewId = oversightReviewId,
+                Message = request.Message,
+                UserId = request.UserId,
+                UserName = request.UserName
+            };
+
+            await _mediator.Send(command);
+            return new OkResult();
         }
     }
 }

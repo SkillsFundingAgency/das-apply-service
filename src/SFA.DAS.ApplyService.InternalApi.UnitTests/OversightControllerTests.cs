@@ -15,6 +15,7 @@ using Moq;
 using NPOI.OpenXmlFormats.Dml;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightDetails;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
@@ -273,6 +274,32 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             result.Should().BeOfType<ActionResult<AppealFiles>>();
 
             Assert.AreEqual(queryResult, result.Value);
+        }
+
+        [Test]
+        public async Task CreateAppeal_Adds_Appeal_To_Oversight_Review()
+        {
+            var applicationId = AutoFixture.Create<Guid>();
+            var oversightReviewId = AutoFixture.Create<Guid>();
+
+            var request = new CreateAppealRequest
+            {
+                Message = AutoFixture.Create<string>(),
+                UserId = AutoFixture.Create<string>(),
+                UserName = AutoFixture.Create<string>()
+            };
+
+            _mediator.Setup(x => x.Send(It.IsAny<CreateAppealCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
+
+            var result = await _controller.CreateAppeal(applicationId, oversightReviewId, request);
+            Assert.IsInstanceOf<OkResult>(result);
+
+            _mediator.Verify(x => x.Send(It.Is<CreateAppealCommand>(c =>
+                c.ApplicationId == applicationId &&
+                c.OversightReviewId == oversightReviewId &&
+                c.Message == request.Message &&
+                c.UserId == request.UserId &&
+                c.UserName == request.UserName), It.IsAny<CancellationToken>()));
         }
 
         private static IFormFile GenerateFile()

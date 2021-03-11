@@ -61,6 +61,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
 
             _command = new CreateAppealCommand
             {
+                ApplicationId = _applicationId,
                 OversightReviewId = _oversightReviewId,
                 Message = _fixture.Create<string>(),
                 UserId = _fixture.Create<string>(),
@@ -166,6 +167,13 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             _oversightReviewRepository.Setup(x => x.GetById(_oversightReviewId))
                 .ReturnsAsync(() => null);
 
+            Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(_command, CancellationToken.None));
+        }
+
+        [Test]
+        public void Handle_Throws_If_Oversight_Review_Does_Not_Belong_To_Application()
+        {
+            _oversightReview.ApplicationId = Guid.NewGuid();
             Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(_command, CancellationToken.None));
         }
     }

@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal
 
 		public async Task<Unit> Handle(CreateAppealCommand request, CancellationToken cancellationToken)
 		{
-            var oversightReview = await GetOversightReview(request.OversightReviewId);
+            var oversightReview = await GetOversightReview(request.OversightReviewId, request.ApplicationId);
             await VerifyAppealDoesNotExist(request.OversightReviewId);
 
             _auditService.StartTracking(UserAction.CreateAppeal, request.UserId, request.UserName);
@@ -57,13 +57,18 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal
 			return Unit.Value;
 		}
 
-        private async Task<OversightReview> GetOversightReview(Guid oversightReviewId)
+        private async Task<OversightReview> GetOversightReview(Guid oversightReviewId, Guid applicationId)
         {
             var oversightReview = await _oversightReviewRepository.GetById(oversightReviewId);
 
             if (oversightReview == null)
             {
                 throw new InvalidOperationException($"OversightReview {oversightReviewId} not found");
+            }
+
+            if (oversightReview.ApplicationId != applicationId)
+            {
+                throw new InvalidOperationException($"OversightReview {oversightReviewId} is not for application {applicationId}");
             }
 
             if (oversightReview.Status != OversightReviewStatus.Unsuccessful)
