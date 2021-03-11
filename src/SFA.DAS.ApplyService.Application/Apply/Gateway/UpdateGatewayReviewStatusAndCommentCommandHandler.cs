@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
@@ -17,16 +18,19 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
         private readonly IOversightReviewRepository _oversightReviewRepository;
         private readonly IAuditService _auditService;
         private readonly IApplicationUpdatedEmailService _applicationUpdatedEmailService;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UpdateGatewayReviewStatusAndCommentCommandHandler(IApplyRepository applyRepository,
             IOversightReviewRepository oversightReviewRepository,
             IAuditService auditService,
-            IApplicationUpdatedEmailService applicationUpdatedEmailService)
+            IApplicationUpdatedEmailService applicationUpdatedEmailService,
+            IUnitOfWork unitOfWork)
         {
             _applyRepository = applyRepository;
             _oversightReviewRepository = oversightReviewRepository;
             _auditService = auditService;
             _applicationUpdatedEmailService = applicationUpdatedEmailService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Unit> Handle(UpdateGatewayReviewStatusAndCommentCommand request, CancellationToken cancellationToken)
@@ -63,6 +67,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 _auditService.AuditInsert(oversightReview);
                 _oversightReviewRepository.Add(oversightReview);
                 _auditService.Save();
+                await _unitOfWork.Commit();
 
                 await _applicationUpdatedEmailService.SendEmail(request.ApplicationId);
             }

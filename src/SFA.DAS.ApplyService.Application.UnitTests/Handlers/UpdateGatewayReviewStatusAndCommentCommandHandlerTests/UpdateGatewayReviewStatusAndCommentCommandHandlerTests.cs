@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.EmailService.Interfaces;
@@ -47,7 +48,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
             _handler = new UpdateGatewayReviewStatusAndCommentCommandHandler(_applyRepository.Object,
                 _oversightReviewRepository.Object,
                 Mock.Of<IAuditService>(),
-                _applicationUpdatedEmailService.Object);
+                _applicationUpdatedEmailService.Object,
+                Mock.Of<IUnitOfWork>());
         }
 
         [Test]
@@ -82,7 +84,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
         }
 
         [Test]
-        public async Task Handler_sends_updated_email()
+        public async Task Handler_sends_email_when_application_rejected()
         {
             var gatewayReviewStatus = GatewayReviewStatus.Reject;
             var gatewayReviewComment = "Some comment";
@@ -95,6 +97,28 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
             await _handler.Handle(request, CancellationToken.None);
 
             _applicationUpdatedEmailService.Verify(x => x.SendEmail(It.Is<Guid>(id => id == _applicationId)), Times.Once);
+        }
+
+        [TestCase(GatewayReviewStatus.Pass)]
+        [TestCase(GatewayReviewStatus.Fail)]
+        [TestCase(GatewayReviewStatus.InProgress)]
+        [TestCase(GatewayReviewStatus.New)]
+        [TestCase(GatewayReviewStatus.Resubmitted)]
+        [TestCase(GatewayReviewStatus.ClarificationSent)]
+        [TestCase(GatewayReviewStatus.Draft)]
+        public async Task Handler_does_not_send_email_when_application_not_rejected(string status)
+        {
+            var gatewayReviewStatus = status;
+            var gatewayReviewComment = "Some comment";
+            var gatewayReviewExternalComment = "Some external comment";
+
+            _applyRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
+
+            var request = new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, _userId, _userName);
+
+            await _handler.Handle(request, CancellationToken.None);
+
+            _applicationUpdatedEmailService.Verify(x => x.SendEmail(It.Is<Guid>(id => id == _applicationId)), Times.Never);
         }
     }
 }
