@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
@@ -24,19 +25,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAppealQueryHand
         {
             var autoFixture = new Fixture();
 
-            _query = new GetAppealQuery
-            {
-                ApplicationId = Guid.NewGuid(),
-                OversightReviewId = Guid.NewGuid()
-            };
+            _query = autoFixture.Create<GetAppealQuery>();
 
-            _queryResult = new Appeal
-            {
-                Message = autoFixture.Create<string>(),
-                CreatedOn = autoFixture.Create<DateTime>(),
-                UserId = autoFixture.Create<string>(),
-                UserName = autoFixture.Create<string>()
-            };
+            _queryResult = autoFixture.Create<Appeal>();
 
             _appealsQueries = new Mock<IAppealsQueries>();
             _appealsQueries.Setup(x => x.GetAppeal(_query.ApplicationId, _query.OversightReviewId)).ReturnsAsync(() => _queryResult);

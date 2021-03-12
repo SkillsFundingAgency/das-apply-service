@@ -170,12 +170,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             var result = await _mediator.Send(query);
 
-            return new GetAppealResponse
+            return result == null ? null : new GetAppealResponse
             {
                 Message = result.Message,
                 CreatedOn = result.CreatedOn,
                 UserId = result.UserId,
-                UserName = result.UserName
+                UserName = result.UserName,
+                Uploads = result.Uploads.Select(upload => new GetAppealResponse.AppealUpload
+                {
+                    Id = upload.Id,
+                    Filename = upload.Filename,
+                    ContentType = upload.ContentType
+                }).ToList()
             };
         }
     }

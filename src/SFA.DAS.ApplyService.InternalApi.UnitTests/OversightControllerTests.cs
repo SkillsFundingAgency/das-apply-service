@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NPOI.OpenXmlFormats.Dml;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal;
@@ -21,7 +20,6 @@ using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightDetails;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
-using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.QueryResults;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Services;
@@ -317,13 +315,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task GetAppeal_Gets_Appeal_For_Application_And_OversightReview()
         {
             var request = new GetAppealRequest();
-            var queryResult = new GetAppealQueryResult
-            {
-                Message = AutoFixture.Create<string>(),
-                CreatedOn = AutoFixture.Create<DateTime>(),
-                UserId = AutoFixture.Create<string>(),
-                UserName = AutoFixture.Create<string>()
-            };
+            var queryResult = AutoFixture.Create<GetAppealQueryResult>();
 
             _mediator.Setup(x => x.Send(It.IsAny<GetAppealQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
 
