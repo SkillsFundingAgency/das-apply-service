@@ -290,13 +290,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         {
             var applicationId = AutoFixture.Create<Guid>();
             var oversightReviewId = AutoFixture.Create<Guid>();
-
-            var request = new CreateAppealRequest
-            {
-                Message = AutoFixture.Create<string>(),
-                UserId = AutoFixture.Create<string>(),
-                UserName = AutoFixture.Create<string>()
-            };
+            var request = AutoFixture.Create<CreateAppealRequest>();
 
             _mediator.Setup(x => x.Send(It.IsAny<CreateAppealCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
 
