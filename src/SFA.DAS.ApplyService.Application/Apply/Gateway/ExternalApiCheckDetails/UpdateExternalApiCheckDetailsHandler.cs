@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ExternalApiCheckDetails
@@ -19,6 +20,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ExternalApiCheckDetails
             var application = await _applyRepository.GetApplication(request.ApplicationId);
 
             if (application is null || request.ApplyGatewayDetails is null) return false;
+
+            if (application.ApplyData.GatewayReviewDetails is null)
+            {
+                application.ApplyData.GatewayReviewDetails = new ApplyGatewayDetails();
+            }
 
             application.ApplyData.GatewayReviewDetails.UkrlpDetails             = request.ApplyGatewayDetails.UkrlpDetails;
             application.ApplyData.GatewayReviewDetails.RoatpRegisterDetails     = request.ApplyGatewayDetails.RoatpRegisterDetails;
