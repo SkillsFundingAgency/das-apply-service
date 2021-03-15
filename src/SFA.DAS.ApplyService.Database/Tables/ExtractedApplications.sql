@@ -4,8 +4,6 @@
     [ApplicationId] UNIQUEIDENTIFIER NOT NULL,  
     [ExtractedDate] DATETIME2 NOT NULL,
 
-    CONSTRAINT PK_ExtractedApplications PRIMARY KEY (Id),
-    CONSTRAINT [FK_ExtractedApplications_Apply] FOREIGN KEY([ApplicationId])
-    REFERENCES [dbo].[Apply]([ApplicationId])
+    CONSTRAINT PK_ExtractedApplications PRIMARY KEY (Id)
 )
 GO
