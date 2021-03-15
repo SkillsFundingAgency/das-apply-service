@@ -4,6 +4,7 @@
     [ApplicationId] UNIQUEIDENTIFIER NOT NULL,  
     [ExtractedDate] DATETIME2 NOT NULL,
 
-    CONSTRAINT PK_ExtractedApplications PRIMARY KEY (Id)
+    CONSTRAINT PK_ExtractedApplications PRIMARY KEY (Id),
+    INDEX IX_ExtractedApplications_ApplicationId (ApplicationId)
 )
 GO
