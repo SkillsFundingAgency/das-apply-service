@@ -9,6 +9,6 @@
 	[ColumnHeading] NVARCHAR(100) NULL,
 
 	CONSTRAINT PK_SubmittedApplicationAnswers PRIMARY KEY (Id),
-	INDEX IX_SubmittedApplicationAnswers_ByApplication (ApplicationId)
+	INDEX IX_SubmittedApplicationAnswers_ApplicationId (ApplicationId)
 )
 GO
