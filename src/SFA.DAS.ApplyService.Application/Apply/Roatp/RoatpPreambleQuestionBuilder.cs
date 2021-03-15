@@ -324,6 +324,7 @@
             public const string ReadyToDeliverAgainstStarts = "6510";
             public const string RecruitNewStaff = "6520";
             public const string RatioOfStaffToApprentices = "6530";
+            public const string HowSupportIsAgreed = "6540";
             public const string OnTheJobTrainingTeachingMethods = "6600";
             public const string OnTheJobTrainingTeachingRelevance = "6610";
             public const string AddressWhereApprenticesWillBeTrained = "6700";

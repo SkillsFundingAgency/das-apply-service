@@ -115,6 +115,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                     return "Recruit new staff to deliver training against forecast";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.RatioOfStaffToApprentices:
                     return "Typical ratio of the staff delivering training to the apprentices";
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.HowSupportIsAgreed:
+                    return "How support is agreed between employer and apprentice";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnTheJobTrainingTeachingMethods:
                     return "Methods used to deliver 20% off the job training";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnTheJobTrainingTeachingRelevance:
