@@ -18,6 +18,7 @@ using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppeal;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppealUpload;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightDetails;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
 using SFA.DAS.ApplyService.Domain.QueryResults;
@@ -321,6 +322,21 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.IsTrue(comparisonResult.AreEqual);
         }
 
+        [Test]
+        public async Task GetAppealUpload_Gets_AppealUpload_For_Application_Appeal()
+        {
+            var request = new GetAppealUploadRequest();
+            var queryResult = AutoFixture.Create<GetAppealUploadQueryResult>();
+
+            _mediator.Setup(x => x.Send(It.IsAny<GetAppealUploadQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
+
+            var result = await _controller.GetAppealUpload(request);
+            result.Should().BeOfType<ActionResult<GetAppealUploadResponse>>();
+
+            Assert.AreEqual(queryResult.Filename, result.Value.Filename);
+            Assert.AreEqual(queryResult.Content, result.Value.Content);
+            Assert.AreEqual(queryResult.ContentType, result.Value.ContentType);
+        }
 
         private static IFormFile GenerateFile()
         {

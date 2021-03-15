@@ -1,8 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Domain.Models;
 
 namespace SFA.DAS.ApplyService.Data.FileStorage
@@ -53,6 +56,24 @@ namespace SFA.DAS.ApplyService.Data.FileStorage
             var blobName = string.IsNullOrWhiteSpace(path) ? reference.ToString() : $"{path}/{reference}";
 
             await client.DeleteBlobIfExistsAsync(blobName);
+        }
+
+        protected async Task<byte[]> GetFileFromContainer(string path, Guid reference)
+        {
+            var client = await GetClient();
+
+            path = RemoveTrailingDelimiter(path);
+
+            var blobName = string.IsNullOrWhiteSpace(path) ? reference.ToString() : $"{path}/{reference}";
+
+            var blobClient = client.GetBlobClient(blobName);
+
+            using (MemoryStream s = new MemoryStream())
+            {
+                await blobClient.DownloadToAsync(s);
+                var decoded = _byteArrayEncryptionService.Decrypt(s.ToArray());
+                return decoded;
+            }
         }
 
         private string RemoveTrailingDelimiter(string path)

@@ -9,6 +9,7 @@ using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppeal;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppealUpload;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightDetails;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -182,6 +183,28 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     Filename = upload.Filename,
                     ContentType = upload.ContentType
                 }).ToList()
+            };
+        }
+
+        [HttpGet]
+        [Route("Oversight/{applicationId}/oversight-reviews/{oversightReviewId}/appeals/{appealId}/uploads/{appealUploadId}")]
+        public async Task<ActionResult<GetAppealUploadResponse>> GetAppealUpload([FromRoute] GetAppealUploadRequest request)
+        {
+            var query = new GetAppealUploadQuery
+            {
+                ApplicationId = request.ApplicationId,
+                AppealId = request.AppealId,
+                AppealUploadId = request.AppealUploadId,
+                OversightReviewId = request.OversightReviewId
+            };
+
+            var result = await _mediator.Send(query);
+
+            return new GetAppealUploadResponse
+            {
+                Filename = result.Filename,
+                ContentType = result.ContentType,
+                Content = result.Content
             };
         }
     }
