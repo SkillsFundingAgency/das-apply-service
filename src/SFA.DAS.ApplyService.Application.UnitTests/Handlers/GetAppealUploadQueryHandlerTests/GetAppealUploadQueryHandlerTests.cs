@@ -41,7 +41,6 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAppealUploadQue
             _request = new GetAppealUploadQuery
             {
                 ApplicationId = _applicationId,
-                OversightReviewId = _oversightReviewId,
                 AppealId = _appealId,
                 AppealUploadId = _appealUploadId
             };
