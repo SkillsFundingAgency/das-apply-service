@@ -173,6 +173,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return result == null ? null : new GetAppealResponse
             {
+                Id = result.Id,
                 Message = result.Message,
                 CreatedOn = result.CreatedOn,
                 UserId = result.UserId,
@@ -187,7 +188,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet]
-        [Route("Oversight/{applicationId}/oversight-reviews/{oversightReviewId}/appeals/{appealId}/uploads/{appealUploadId}")]
+        [Route("Oversight/{applicationId}/appeals/{appealId}/uploads/{appealUploadId}")]
         public async Task<ActionResult<GetAppealUploadResponse>> GetAppealUpload([FromRoute] GetAppealUploadRequest request)
         {
             var query = new GetAppealUploadQuery
@@ -195,7 +196,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 ApplicationId = request.ApplicationId,
                 AppealId = request.AppealId,
                 AppealUploadId = request.AppealUploadId,
-                OversightReviewId = request.OversightReviewId
             };
 
             var result = await _mediator.Send(query);

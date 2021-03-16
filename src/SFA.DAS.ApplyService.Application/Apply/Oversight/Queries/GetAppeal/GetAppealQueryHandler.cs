@@ -21,6 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppeal
 
             return result == null ? null : new GetAppealQueryResult
             {
+                Id = result.Id,
                 Message = result.Message,
                 CreatedOn = result.CreatedOn,
                 UserId = result.UserId,
