@@ -580,8 +580,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     UKPRN = ukprn,
                     UkrlpLookupDetails = ukrlpLookupResults.Results.FirstOrDefault()
                 };
-
-                await _applicationApiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled);
+                var userName  = User.Identity.Name;
+                await _applicationApiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled, userName);
                 _sessionService.Remove(ApplicationDetailsKey);
 
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);

@@ -895,13 +895,15 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task UpdateApplicationStatus(Guid applicationId, string status)
+        public async Task UpdateApplicationStatus(Guid applicationId, string status, string userName)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE Apply
-                                                SET  ApplicationStatus = @status                                                
-                                                WHERE ApplicationId = @ApplicationId", new {applicationId, status});
+                                                SET  ApplicationStatus = @status,
+                                                UpdatedBy = @userName,
+                                                UpdatedAt = GETUTCDATE()
+                                                WHERE ApplicationId = @ApplicationId", new {applicationId, status, userName});
             }
         }
 

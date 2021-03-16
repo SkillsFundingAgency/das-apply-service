@@ -7,11 +7,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     {
         public Guid ApplicationId { get; set; }
         public string ApplicationStatus { get; set; }
+        public string UserName { get; set; }
 
-        public UpdateApplicationStatusRequest(Guid applicationId, string applicationStatus)
+        public UpdateApplicationStatusRequest(Guid applicationId, string applicationStatus, string userName)
         {
             ApplicationId = applicationId;
             ApplicationStatus = applicationStatus;
+            UserName = userName;
         }
     }
 }
