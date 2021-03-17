@@ -7,6 +7,7 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Domain.QueryResults;
+using OversightReview = SFA.DAS.ApplyService.Domain.QueryResults.OversightReview;
 
 namespace SFA.DAS.ApplyService.Data.Queries
 {
@@ -157,5 +158,31 @@ namespace SFA.DAS.ApplyService.Data.Queries
             }
         }
 
+        public async Task<OversightReview> GetOversightReview(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var results = await connection.QueryAsync<OversightReview>(@"SELECT 
+                        r.[Id],        
+                        r.Status,
+						r.ApplicationDeterminedDate,
+                        r.[InProgressDate],
+                        r.[InProgressUserId],
+                        r.[InProgressUserName],
+                        r.[InProgressInternalComments],
+                        r.[InProgressExternalComments],
+                        r.[GatewayApproved],
+                        r.[ModerationApproved],
+                        r.[InternalComments],
+                        r.[ExternalComments],
+                        r.[UserId],    
+                        r.UserName
+                        FROM [OversightReview] r 
+                        WHERE r.ApplicationId = @applicationId",
+                    new { applicationId });
+
+                return results.FirstOrDefault();
+            }
+        }
     }
 }

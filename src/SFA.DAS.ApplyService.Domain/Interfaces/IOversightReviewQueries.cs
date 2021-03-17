@@ -9,5 +9,6 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         Task<PendingOversightReviews> GetPendingOversightReviews();
         Task<CompletedOversightReviews> GetCompletedOversightReviews();
         Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId);
+        Task<OversightReview> GetOversightReview(Guid applicationId);
     }
 }

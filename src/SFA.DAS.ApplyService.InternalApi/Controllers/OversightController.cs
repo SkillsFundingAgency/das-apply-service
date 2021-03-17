@@ -11,6 +11,7 @@ using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppealUpload;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightDetails;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightReview;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.QueryResults;
@@ -91,6 +92,33 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<ApplicationOversightDetails>> OversightDetails(Guid applicationId)
         {
             return await _mediator.Send(new GetOversightDetailsRequest(applicationId));
+        }
+
+        [HttpGet]
+        [Route("Oversight/{applicationId}/review")]
+        public async Task<ActionResult<GetOversightReviewResponse>> OversightReview(GetOversightReviewRequest request)
+        {
+            var query = new GetOversightReviewQuery {ApplicationId = request.ApplicationId};
+
+            var result = await _mediator.Send(query);
+
+            return result == null ? null : new GetOversightReviewResponse
+            {
+                Id = result.Id,
+                Status = result.Status,
+                ApplicationDeterminedDate = result.ApplicationDeterminedDate,
+                InProgressDate = result.InProgressDate,
+                InProgressUserId = result.InProgressUserId,
+                InProgressUserName = result.InProgressUserName,
+                InProgressInternalComments = result.InProgressInternalComments,
+                InProgressExternalComments = result.InProgressExternalComments,
+                GatewayApproved = result.GatewayApproved,
+                ModerationApproved = result.ModerationApproved,
+                InternalComments = result.InternalComments,
+                ExternalComments = result.ExternalComments,
+                UserId = result.UserId,
+                UserName = result.UserName
+            };
         }
 
         [HttpPost]

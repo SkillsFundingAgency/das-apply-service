@@ -20,6 +20,7 @@ using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppealUpload;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightDetails;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightReview;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
 using SFA.DAS.ApplyService.Domain.QueryResults;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
@@ -336,6 +337,22 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.AreEqual(queryResult.Filename, result.Value.Filename);
             Assert.AreEqual(queryResult.Content, result.Value.Content);
             Assert.AreEqual(queryResult.ContentType, result.Value.ContentType);
+        }
+
+        [Test]
+        public async Task OversightReview_Gets_OversightReview_For_Application()
+        {
+            var request = new GetOversightReviewRequest();
+            var queryResult = AutoFixture.Create<GetOversightReviewQueryResult>();
+
+            _mediator.Setup(x => x.Send(It.IsAny<GetOversightReviewQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
+
+            var result = await _controller.OversightReview(request);
+            result.Should().BeOfType<ActionResult<GetOversightReviewResponse>>();
+
+            var compareLogic = new CompareLogic(new ComparisonConfig { IgnoreObjectTypes = true });
+            var comparisonResult = compareLogic.Compare(queryResult, result);
+            Assert.IsTrue(comparisonResult.AreEqual);
         }
 
         private static IFormFile GenerateFile()
