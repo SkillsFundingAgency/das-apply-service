@@ -66,9 +66,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                 case RoatpWorkflowPageIds.ReadinessToEngage.PriorLearningAssessment:
                     return "Process for initial assessments to recognise prior learning";
                 case RoatpWorkflowPageIds.ReadinessToEngage.EnglishAndMathsAssessments:
-                    return "English and maths assessments";
                 case RoatpWorkflowPageIds.ReadinessToEngage.EnglishAndMathsAssessmentsWhere:
-                    return "English and maths assessments where";
+                case RoatpWorkflowPageIds.ReadinessToEngage.EnglishAndMathsAssessmentsHowIfSignificantEvent:
+                    return "English and maths assessments";
                 case RoatpWorkflowPageIds.ReadinessToEngage.PriorLearningQualifications:
                     return "Process to assess English and maths";
                 case RoatpWorkflowPageIds.ReadinessToEngage.SubcontractorsUse:
