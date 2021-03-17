@@ -340,6 +340,7 @@
             public const string QualityProcessReviewing = "8230";
             public const string CollectApprenticeshipData = "8300";
             public const string IndividualisedLearnerRecordData = "8310";
+            public const string IndividualisedLearnerRecordDataPerson = "8320";
         }
 
         public static class Finish
