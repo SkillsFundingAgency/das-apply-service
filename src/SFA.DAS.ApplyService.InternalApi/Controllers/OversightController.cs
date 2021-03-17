@@ -91,7 +91,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [Route("Oversights/{applicationId}")]
         public async Task<ActionResult<ApplicationOversightDetails>> OversightDetails(Guid applicationId)
         {
-            return await _mediator.Send(new GetOversightDetailsRequest(applicationId));
+            return await _mediator.Send(new GetOversightApplicationDetailsRequest(applicationId));
         }
 
         [HttpGet]

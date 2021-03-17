@@ -124,7 +124,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             };
 
             _mediator
-                .Setup(x => x.Send(It.IsAny<GetOversightDetailsRequest>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.Send(It.IsAny<GetOversightApplicationDetailsRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(oversight);
 
             var actualResult = await _controller.OversightDetails(applicationId);

@@ -100,7 +100,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
         }
 
 
-        public async Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId)
+        public async Task<ApplicationOversightDetails> GetOversightApplicationDetails(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
