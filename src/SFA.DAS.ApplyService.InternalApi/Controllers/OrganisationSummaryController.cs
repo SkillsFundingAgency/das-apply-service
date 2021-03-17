@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -19,14 +20,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     [Route("organisation/")]
     public class OrganisationSummaryController : Controller
     {
+        private readonly IMediator _mediator;
         private readonly IInternalQnaApiClient _qnaApiClient;
-        private readonly IApplyRepository _applyRepository;
         private readonly ILogger<OrganisationSummaryController> _logger;
 
-        public OrganisationSummaryController(IInternalQnaApiClient qnaApiClient, IApplyRepository applyRepository, ILogger<OrganisationSummaryController> logger)
+        public OrganisationSummaryController(IMediator mediator, IInternalQnaApiClient qnaApiClient, ILogger<OrganisationSummaryController> logger)
         {
+            _mediator = mediator;
             _qnaApiClient = qnaApiClient;
-            _applyRepository = applyRepository;
             _logger = logger;
         } 
 
@@ -48,13 +49,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             {
                 return Ok(RoatpOrganisationTypes.CompanyAndCharity);
             }
-
-            if (companyVerification == TRUE)
+            else if (companyVerification == TRUE)
             {
                 return Ok(RoatpOrganisationTypes.Company);
             }
-
-            if (charityVerification == TRUE)
+            else if (charityVerification == TRUE)
             {
                 return Ok(RoatpOrganisationTypes.Charity);
             }
@@ -98,68 +97,63 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet]
-        [Route(("DirectorData/Submitted/{applicationId}"))]
+        [Route("DirectorData/Submitted/{applicationId}")]
         public async Task<IActionResult> GetDirectorsFromSubmitted(Guid applicationId)
         {
             _logger.LogInformation($"Retrieving submitted company directors for application {applicationId}");
             var peopleInControl = new List<PersonInControl>();
 
             var directorsData =
-                await _qnaApiClient.GetTabularDataByTag(applicationId,
-                    RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
+                await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
 
-            if (directorsData?.DataRows == null || !directorsData.DataRows.Any()) return Ok(peopleInControl);
-
-            foreach (var director in directorsData.DataRows.Where(x => x.Columns.Any()).OrderBy(x => x.Columns[0]))
+            if (directorsData?.DataRows != null)
             {
-                var directorName = director.Columns[0];
-                var directorDob = string.Empty;
-                if (director.Columns.Any() && director.Columns.Count >= 2)
+                foreach (var director in directorsData.DataRows.Where(x => x.Columns.Any()).OrderBy(x => x.Columns[0]))
                 {
-                    directorDob = director.Columns[1];
-                }
+                    var directorName = director.Columns[0];
+                    var directorDob = string.Empty;
+                    if (director.Columns.Any() && director.Columns.Count >= 2)
+                    {
+                        directorDob = director.Columns[1];
+                    }
 
-                peopleInControl.Add(new PersonInControl {Name = directorName, MonthYearOfBirth = directorDob});
+                    peopleInControl.Add(new PersonInControl { Name = directorName, MonthYearOfBirth = directorDob });
+                }
             }
             
             return Ok(peopleInControl);
         }
 
         [HttpGet]
-        [Route(("DirectorData/CompaniesHouse/{applicationId}"))]
+        [Route("DirectorData/CompaniesHouse/{applicationId}")]
         public async Task<IActionResult> GetDirectorsFromCompaniesHouse(Guid applicationId)
         {
             _logger.LogInformation($"Retrieving Apply Data - companies house - company directors for application {applicationId}");
             var peopleInControl = new List<PersonInControl>();
 
-            var applyData = await _applyRepository.GetApplyData(applicationId);
+            var applyGatewayDetails = await GetApplyGatewayDetails(applicationId);
 
-            if (applyData?.GatewayReviewDetails?.CompaniesHouseDetails == null)
+            var directors = applyGatewayDetails?.CompaniesHouseDetails?.Directors;
+            if (directors != null)
             {
-                return Ok(peopleInControl);
-            }
-
-            var companyData = applyData.GatewayReviewDetails.CompaniesHouseDetails;
-            if (companyData?.Directors == null || !companyData.Directors.Any())
-                return Ok(peopleInControl);
-
-            foreach (var director in companyData.Directors.OrderBy(x => x.Name))
-            {
-                var directorName = director?.Name;
-                var directorDob = string.Empty;
-
-                if (director.DateOfBirth!=null)
+                foreach (var director in directors.OrderBy(x => x.Name))
                 {
-                    directorDob = $"{director.DateOfBirth:MMM yyyy}";
+                    var directorName = director.Name;
+                    var directorDob = string.Empty;
+
+                    if (director.DateOfBirth != null)
+                    {
+                        directorDob = $"{director.DateOfBirth:MMM yyyy}";
+                    }
+                    peopleInControl.Add(new PersonInControl { Name = directorName, MonthYearOfBirth = directorDob });
                 }
-                peopleInControl.Add(new PersonInControl { Name = directorName, MonthYearOfBirth = directorDob });
             }
 
             return Ok(peopleInControl);
         }
 
         [HttpGet]
-        [Route(("PscData/Submitted/{applicationId}"))]
+        [Route("PscData/Submitted/{applicationId}")]
         public async Task<IActionResult> GetPscsFromSubmitted(Guid applicationId)
         {
             _logger.LogInformation($"Retrieving submitted Pscs for application {applicationId}");
@@ -168,58 +162,54 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             var pics =
                 await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHousePscs);
 
-            if (pics?.DataRows == null || !pics.DataRows.Any()) return Ok(peopleInControl);
-
-            foreach (var pic in pics.DataRows.Where(x => x.Columns.Any()).OrderBy(x => x.Columns[0]))
+            if (pics?.DataRows != null)
             {
-                var picName = pic.Columns[0];
-                var picDob = string.Empty;
-                if (pic.Columns.Any() && pic.Columns.Count >= 2)
+                foreach (var pic in pics.DataRows.Where(x => x.Columns.Any()).OrderBy(x => x.Columns[0]))
                 {
-                    picDob = pic.Columns[1];
-                }
+                    var picName = pic.Columns[0];
+                    var picDob = string.Empty;
+                    if (pic.Columns.Any() && pic.Columns.Count >= 2)
+                    {
+                        picDob = pic.Columns[1];
+                    }
 
-                peopleInControl.Add(new PersonInControl { Name = picName, MonthYearOfBirth = picDob });
+                    peopleInControl.Add(new PersonInControl { Name = picName, MonthYearOfBirth = picDob });
+                }
             }
 
             return Ok(peopleInControl);
         }
 
-
         [HttpGet]
-        [Route(("PscData/CompaniesHouse/{applicationId}"))]
+        [Route("PscData/CompaniesHouse/{applicationId}")]
         public async Task<IActionResult> GetPscsFromCompaniesHouse(Guid applicationId)
         {
             _logger.LogInformation($"Retrieving Apply Data - companies house - Pscs for application {applicationId}");
             var peopleInControl = new List<PersonInControl>();
 
-            var applyData = await _applyRepository.GetApplyData(applicationId);
+            var applyGatewayDetails = await GetApplyGatewayDetails(applicationId);
 
-            if (applyData?.GatewayReviewDetails?.CompaniesHouseDetails == null)
+            var peopleWithSignificantControl = applyGatewayDetails?.CompaniesHouseDetails?.PersonsWithSignificantControl;
+            if (peopleWithSignificantControl != null)
             {
-                return Ok(peopleInControl);
-            }
-
-            var companyData = applyData.GatewayReviewDetails.CompaniesHouseDetails;
-            if (companyData?.PersonsWithSignificantControl == null || !companyData.PersonsWithSignificantControl.Any())
-                return Ok(peopleInControl);
-
-            foreach (var pic in companyData.PersonsWithSignificantControl.OrderBy(x => x.Name))
-            {
-                var picName = pic?.Name;
-                var picDob = string.Empty;
-
-                if (pic.DateOfBirth != null)
+                foreach (var pic in peopleWithSignificantControl.OrderBy(x => x.Name))
                 {
-                    picDob = $"{pic.DateOfBirth:MMM yyyy}";
+                    var picName = pic.Name;
+                    var picDob = string.Empty;
+
+                    if (pic.DateOfBirth.HasValue)
+                    {
+                        picDob = $"{pic.DateOfBirth:MMM yyyy}";
+                    }
+                    peopleInControl.Add(new PersonInControl { Name = picName, MonthYearOfBirth = picDob });
                 }
-                peopleInControl.Add(new PersonInControl { Name = picName, MonthYearOfBirth = picDob });
             }
 
             return Ok(peopleInControl);
         }
+
         [HttpGet]
-        [Route(("TrusteeData/Submitted/{applicationId}"))]
+        [Route("TrusteeData/Submitted/{applicationId}")]
         public async Task<IActionResult> GetTrusteesFromSubmitted(Guid applicationId)
         {
             _logger.LogInformation($"Retrieving submitted trustees for application {applicationId}");
@@ -228,18 +218,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             var pics =
                 await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
 
-            if (pics?.DataRows == null || !pics.DataRows.Any()) return Ok(peopleInControl);
-
-            foreach (var pic in pics.DataRows.Where(x => x.Columns.Any()).OrderBy(x => x.Columns[0]))
+            if (pics?.DataRows != null)
             {
-                var picName = pic.Columns[0];
-                var picDob = string.Empty;
-                if (pic.Columns.Any() && pic.Columns.Count >= 2)
+                foreach (var pic in pics.DataRows.Where(x => x.Columns.Any()).OrderBy(x => x.Columns[0]))
                 {
-                    picDob = pic.Columns[1];
-                }
+                    var picName = pic.Columns[0];
+                    var picDob = string.Empty;
+                    if (pic.Columns.Any() && pic.Columns.Count >= 2)
+                    {
+                        picDob = pic.Columns[1];
+                    }
 
-                peopleInControl.Add(new PersonInControl { Name = picName, MonthYearOfBirth = picDob });
+                    peopleInControl.Add(new PersonInControl { Name = picName, MonthYearOfBirth = picDob });
+                }
             }
 
             return Ok(peopleInControl);
@@ -247,34 +238,30 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
 
         [HttpGet]
-        [Route(("TrusteeData/CharityCommission/{applicationId}"))]
+        [Route("TrusteeData/CharityCommission/{applicationId}")]
         public async Task<IActionResult> GetTrusteesFromCharityCommission(Guid applicationId)
         {
             _logger.LogInformation($"Retrieving Apply Data - charity commission - trustees for application {applicationId}");
             var peopleInControl = new List<PersonInControl>();
 
-            var applyData = await _applyRepository.GetApplyData(applicationId);
+            var applyGatewayDetails = await GetApplyGatewayDetails(applicationId);
 
-            if (applyData?.GatewayReviewDetails?.CharityCommissionDetails == null)
+            var trustees = applyGatewayDetails?.CharityCommissionDetails?.Trustees;
+
+            if (trustees != null)
             {
-                return Ok(peopleInControl);
-            }
-
-            var charityCommissionData = applyData.GatewayReviewDetails.CharityCommissionDetails;
-            if (charityCommissionData?.Trustees == null || !charityCommissionData.Trustees.Any())
-                return Ok(peopleInControl);
-
-            foreach (var pic in charityCommissionData.Trustees.OrderBy(x => x.Name))
-            {
-                var picName = pic?.Name;
-                peopleInControl.Add(new PersonInControl { Name = picName, MonthYearOfBirth = null });
+                foreach (var trustee in trustees.OrderBy(x => x.Name))
+                {
+                    var picName = trustee.Name;
+                    peopleInControl.Add(new PersonInControl { Name = picName, MonthYearOfBirth = null });
+                }
             }
 
             return Ok(peopleInControl);
         }
 
         [HttpGet]
-        [Route(("WhosInControlData/Submitted/{applicationId}"))]
+        [Route("WhosInControlData/Submitted/{applicationId}")]
         public async Task<IActionResult> GetWhosInControlFromSubmitted(Guid applicationId)
         {
             _logger.LogInformation($"Retrieving submitted who's in control for application {applicationId}");
@@ -290,22 +277,22 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 pics = await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.AddPartners);
             }
 
-
             if (pics != null)
             {
                 _logger.LogDebug($"Constructing list of who's in control from retrieved details for application {applicationId}");
-                if (pics?.DataRows == null || !pics.DataRows.Any()) return Ok(peopleInControl);
-
-                foreach (var pic in pics.DataRows.Where(x => x.Columns.Any()).OrderBy(x => x.Columns[0]))
+                if (pics?.DataRows != null)
                 {
-                    var picName = pic.Columns[0];
-                    var picDob = string.Empty;
-                    if (pic.Columns.Any() && pic.Columns.Count >= 2)
+                    foreach (var pic in pics.DataRows.Where(x => x.Columns.Any()).OrderBy(x => x.Columns[0]))
                     {
-                        picDob = pic.Columns[1];
-                    }
+                        var picName = pic.Columns[0];
+                        var picDob = string.Empty;
+                        if (pic.Columns.Any() && pic.Columns.Count >= 2)
+                        {
+                            picDob = pic.Columns[1];
+                        }
 
-                    AddPersonToPeopleInControl(peopleInControl, picName, picDob);
+                        AddPersonToPeopleInControl(peopleInControl, picName, picDob);
+                    }
                 }
             }
             else
@@ -327,6 +314,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private static void AddPersonToPeopleInControl(ICollection<PersonInControl> peopleInControl, string picName, string picDob)
         {
             peopleInControl.Add(new PersonInControl {Name = picName, MonthYearOfBirth = picDob});
+        }
+
+        private async Task<ApplyGatewayDetails> GetApplyGatewayDetails(Guid applicationId)
+        {
+            var application = await _mediator.Send(new GetApplicationRequest(applicationId));
+
+            return application?.ApplyData?.GatewayReviewDetails;
         }
     }
 }

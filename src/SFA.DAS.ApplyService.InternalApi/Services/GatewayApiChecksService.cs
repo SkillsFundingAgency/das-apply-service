@@ -7,7 +7,6 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Ukrlp;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -73,7 +72,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             }
             applyGatewayDetails.SourcesCheckedOn = DateTime.Now;
 
-            return await Task.FromResult(applyGatewayDetails);
+            return applyGatewayDetails;
         }
 
         private async Task LookupCompaniesHouseDetails(ApplyGatewayDetails applyGatewayDetails, string companyNumber)
@@ -90,9 +89,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
 
         private async Task LookupCharityCommissionDetails(ApplyGatewayDetails applyGatewayDetails, string charityNumberFromUkrlp)
         {
-            var charityNumber = 0;
-            int.TryParse(charityNumberFromUkrlp, out charityNumber);
-            if (charityNumber != 0)
+            if (int.TryParse(charityNumberFromUkrlp, out var charityNumber))
             {
                 var charityDetails = await _charityCommissionClient.GetCharity(charityNumber);
                 if (charityDetails == null)
