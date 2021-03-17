@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             try
             {
-                _repository.UpdateApplicationStatus(request.ApplicationId, request.ApplicationStatus, request.UserName);
+                _repository.UpdateApplicationStatus(request.ApplicationId, request.ApplicationStatus, request.UserId);
             }
             catch (Exception updateException)
             {

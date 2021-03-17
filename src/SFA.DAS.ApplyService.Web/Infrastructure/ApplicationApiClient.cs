@@ -158,9 +158,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await Get<List<RoatpApplicationStatus>>($"/Applications/Existing/{ukprn}");
         }
 
-        public async Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus, string userName)
+        public async Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus, string userId)
         {
-            return await Post<dynamic, bool>($"/Application/Status", new { applicationId, applicationStatus, userName });
+            return await Post<dynamic, bool>($"/Application/Status", new { applicationId, applicationStatus, userId });
         }
     }
 }
