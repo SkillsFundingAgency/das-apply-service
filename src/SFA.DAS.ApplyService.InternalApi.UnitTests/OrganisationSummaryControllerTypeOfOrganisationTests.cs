@@ -1,12 +1,11 @@
 ﻿using System;
-using FluentAssertions;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Types;
@@ -15,8 +14,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
     public class OrganisationSummaryControllerTypeOfOrganisationTests
     {
+        private Mock<IMediator> _mediator;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
-        private Mock<IApplyRepository> _applyRepository;
         private Mock<ILogger<OrganisationSummaryController>> _logger;
 
         private OrganisationSummaryController _controller;
@@ -26,62 +25,55 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [SetUp]
         public void Before_each_test()
         {
+            _mediator = new Mock<IMediator>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
-            _applyRepository = new Mock<IApplyRepository>();
             _logger = new Mock<ILogger<OrganisationSummaryController>>();
-            _controller = new OrganisationSummaryController(_qnaApiClient.Object,_applyRepository.Object, _logger.Object);
-            _qnaApiClient.Setup(x => x.GetQuestionTag(_applicationId, It.IsAny<string>())).ReturnsAsync((string)null);
+            _controller = new OrganisationSummaryController(_mediator.Object, _qnaApiClient.Object, _logger.Object);
         }
 
         [Test]
-        public void get_type_of_organisation_statutory_institute_when_no_tags_set()
+        public async Task get_type_of_organisation_statutory_institute_when_no_tags_set()
         {
-            var result = (OkObjectResult)_controller.GetTypeOfOrganisation(_applicationId).Result;
-            result.Should().BeOfType<OkObjectResult>();
-            Assert.AreEqual(RoatpOrganisationTypes.StatutoryInstitute, ((OkObjectResult)result).Value);
+            var result = await _controller.GetTypeOfOrganisation(_applicationId) as OkObjectResult;
+            Assert.AreEqual(RoatpOrganisationTypes.StatutoryInstitute, result.Value);
         }
 
         [Test]
-        public void get_type_of_organisation_company_when_company_tag_set()
+        public async Task get_type_of_organisation_company_when_company_tag_set()
         {
             _qnaApiClient.Setup(x => x.GetQuestionTag(_applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCompany)).ReturnsAsync("TRUE");
 
-            var result = (OkObjectResult)_controller.GetTypeOfOrganisation(_applicationId).Result;
-            result.Should().BeOfType<OkObjectResult>();
-            Assert.AreEqual(RoatpOrganisationTypes.Company, ((OkObjectResult)result).Value);
+            var result = await _controller.GetTypeOfOrganisation(_applicationId) as OkObjectResult;
+            Assert.AreEqual(RoatpOrganisationTypes.Company, result.Value);
         }
 
         [Test]
-        public void get_type_of_organisation_charity_when_charity_tag_set()
+        public async Task get_type_of_organisation_charity_when_charity_tag_set()
         {
             _qnaApiClient.Setup(x => x.GetQuestionTag(_applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCharity)).ReturnsAsync("TRUE");
 
-            var result = (OkObjectResult)_controller.GetTypeOfOrganisation(_applicationId).Result;
-            result.Should().BeOfType<OkObjectResult>();
-            Assert.AreEqual(RoatpOrganisationTypes.Charity, ((OkObjectResult)result).Value);
+            var result = await _controller.GetTypeOfOrganisation(_applicationId) as OkObjectResult;
+            Assert.AreEqual(RoatpOrganisationTypes.Charity, result.Value);
         }
 
         [Test]
-        public void get_type_of_organisation_company_and_charity_when_compnay_and_charity_tag_set()
+        public async Task get_type_of_organisation_company_and_charity_when_compnay_and_charity_tag_set()
         {
             _qnaApiClient.Setup(x => x.GetQuestionTag(_applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCharity)).ReturnsAsync("TRUE");
             _qnaApiClient.Setup(x => x.GetQuestionTag(_applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCompany)).ReturnsAsync("TRUE");
 
-            var result = (OkObjectResult)_controller.GetTypeOfOrganisation(_applicationId).Result;
-            result.Should().BeOfType<OkObjectResult>();
-            Assert.AreEqual(RoatpOrganisationTypes.CompanyAndCharity, ((OkObjectResult)result).Value);
+            var result = await _controller.GetTypeOfOrganisation(_applicationId) as OkObjectResult;
+            Assert.AreEqual(RoatpOrganisationTypes.CompanyAndCharity, result.Value);
         }
-
 
         [TestCase("Sole trader")]
         [TestCase("Partnership")]
-        public void get_type_of_organisation_sole_trader_when_sole_trader_or_partnership_tag_set(string soleTraderOrPartnershipDescription)
+        public async Task get_type_of_organisation_sole_trader_when_sole_trader_or_partnership_tag_set(string soleTraderOrPartnershipDescription)
         {
             _qnaApiClient.Setup(x => x.GetQuestionTag(_applicationId, RoatpWorkflowQuestionTags.SoleTraderOrPartnership)).ReturnsAsync(soleTraderOrPartnershipDescription);
 
-            var result = (OkObjectResult)_controller.GetTypeOfOrganisation(_applicationId).Result;
-            result.Should().BeOfType<OkObjectResult>();
-            Assert.AreEqual(soleTraderOrPartnershipDescription,((OkObjectResult)result).Value);
+            var result = await _controller.GetTypeOfOrganisation(_applicationId) as OkObjectResult;
+            Assert.AreEqual(soleTraderOrPartnershipDescription, result.Value);
         }
     }
 }

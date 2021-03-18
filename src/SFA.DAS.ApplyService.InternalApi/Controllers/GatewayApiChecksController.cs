@@ -1,95 +1,95 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using SFA.DAS.ApplyService.Domain.Interfaces;
-using SFA.DAS.ApplyService.InternalApi.Services;
+using MediatR;
+using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
     [Authorize]
     public class GatewayApiChecksController : Controller
     {
-        private readonly IApplyRepository _applyRepository;
-        private readonly ILogger<GatewayApiChecksController> _logger;
-        private readonly IGatewayApiChecksService _gatewayApiChecksService;
+        private readonly IMediator _mediator;
 
-        public GatewayApiChecksController(IApplyRepository applyRepository, ILogger<GatewayApiChecksController> logger, 
-                                          IGatewayApiChecksService gatewayApiChecksService)
+        public GatewayApiChecksController(IMediator mediator)
         {
-            _applyRepository = applyRepository;
-            _logger = logger;
-            _gatewayApiChecksService = gatewayApiChecksService;
+            _mediator = mediator;
         }        
 
         [HttpGet]
         [Route("Gateway/UkrlpData/{applicationId}")]
         public async Task<IActionResult> GetUkrlpData(Guid applicationId)
         {
-            var applyData = await GetApplyData(applicationId);
+            var applyGatewayDetails = await GetApplyGatewayDetails(applicationId);
 
-            if (applyData?.GatewayReviewDetails?.UkrlpDetails == null)
+            if (applyGatewayDetails?.UkrlpDetails == null)
             {
                 return NotFound();
             }
-
-            return Ok(applyData.GatewayReviewDetails.UkrlpDetails);
+            else
+            {
+                return Ok(applyGatewayDetails.UkrlpDetails);
+            }
         }
 
         [HttpGet]
         [Route("Gateway/CompaniesHouseData/{applicationId}")]
         public async Task<IActionResult> GetCompaniesHouseData(Guid applicationId)
         {
-            var applyData = await GetApplyData(applicationId);
+            var applyGatewayDetails = await GetApplyGatewayDetails(applicationId);
 
-            return Ok(applyData.GatewayReviewDetails.CompaniesHouseDetails);
+            return Ok(applyGatewayDetails?.CompaniesHouseDetails);
         }
 
         [HttpGet]
         [Route("Gateway/CharityCommissionData/{applicationId}")]
         public async Task<IActionResult> GetCharityCommissionData(Guid applicationId)
         {
-            var applyData = await GetApplyData(applicationId);
+            var applyGatewayDetails = await GetApplyGatewayDetails(applicationId);
 
-            return Ok(applyData.GatewayReviewDetails.CharityCommissionDetails);
+            return Ok(applyGatewayDetails?.CharityCommissionDetails);
         }
 
         [HttpGet]
         [Route("Gateway/RoatpRegisterData/{applicationId}")]
         public async Task<IActionResult> GetRoatpRegisterData(Guid applicationId)
         {
-            var applyData = await GetApplyData(applicationId);
+            var applyGatewayDetails = await GetApplyGatewayDetails(applicationId);
 
-            if (applyData?.GatewayReviewDetails?.RoatpRegisterDetails == null)
+            if (applyGatewayDetails?.RoatpRegisterDetails == null)
             {
                 return NotFound();
             }
-
-            return Ok(applyData.GatewayReviewDetails.RoatpRegisterDetails);
+            else
+            {
+                return Ok(applyGatewayDetails.RoatpRegisterDetails);
+            }
         }
 
         [HttpGet]
         [Route("Gateway/SourcesCheckedOn/{applicationId}")]
         public async Task<IActionResult> GetSourcesCheckedOnDate(Guid applicationId)
         {
-            var applyData = await GetApplyData(applicationId);
+            var applyGatewayDetails = await GetApplyGatewayDetails(applicationId);
 
-            if (applyData?.GatewayReviewDetails == null)
+            if (applyGatewayDetails?.SourcesCheckedOn == null)
             {
                 return NotFound();
             }
-
-            return Ok(applyData.GatewayReviewDetails.SourcesCheckedOn);
+            else
+            {
+                return Ok(applyGatewayDetails.SourcesCheckedOn);
+            }
         }
 
 
-        private async Task<ApplyData> GetApplyData(Guid applicationId)
+        private async Task<ApplyGatewayDetails> GetApplyGatewayDetails(Guid applicationId)
         {
-            return await _applyRepository.GetApplyData(applicationId);
-        }
+            var application = await _mediator.Send(new GetApplicationRequest(applicationId));
 
+            return application?.ApplyData?.GatewayReviewDetails;
+        }
     }
 }

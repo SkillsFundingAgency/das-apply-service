@@ -5,7 +5,6 @@
     [ExtractedDate] DATETIME2 NOT NULL,
 
     CONSTRAINT PK_ExtractedApplications PRIMARY KEY (Id),
-    CONSTRAINT [FK_ExtractedApplications_Apply] FOREIGN KEY([ApplicationId])
-    REFERENCES [dbo].[Apply]([ApplicationId])
+    INDEX IX_ExtractedApplications_ApplicationId (ApplicationId)
 )
 GO

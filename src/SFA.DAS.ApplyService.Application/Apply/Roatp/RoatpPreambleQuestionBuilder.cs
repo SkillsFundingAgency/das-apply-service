@@ -297,6 +297,9 @@
             public const string CommitmentStatementTemplate = "5400";
             public const string PriorLearningAssessment = "5500";
             public const string PriorLearningQualifications = "5510";
+            public const string EnglishAndMathsAssessments = "5550";
+            public const string EnglishAndMathsAssessmentsWhere = "5560";
+            public const string EnglishAndMathsAssessmentsHowIfSignificantEvent = "5570";
             public const string SubcontractorsUse = "5600";
             public const string SubcontractorsDueDiligence = "5610";
         }
@@ -324,6 +327,7 @@
             public const string ReadyToDeliverAgainstStarts = "6510";
             public const string RecruitNewStaff = "6520";
             public const string RatioOfStaffToApprentices = "6530";
+            public const string HowSupportIsAgreed = "6540";
             public const string OnTheJobTrainingTeachingMethods = "6600";
             public const string OnTheJobTrainingTeachingRelevance = "6610";
             public const string AddressWhereApprenticesWillBeTrained = "6700";
