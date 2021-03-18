@@ -1324,6 +1324,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private void RunCustomValidations(Page page, List<Answer> answers)
         {
+            var pagecustomValidators = _customValidatorFactory.GetCustomValidationsForPage(page, HttpContext.Request.Form.Files);
+            
+            foreach (var pageCustomValidation in pagecustomValidators)
+            {
+                var result = pageCustomValidation.Validate();
+
+                if (!result.IsValid)
+                {
+                    ModelState.AddModelError(result.QuestionId, result.ErrorMessage);
+                }
+            }
+
             foreach (var answer in answers)
             {
                 var customValidations = _customValidatorFactory.GetCustomValidationsForQuestion(page.PageId, answer.QuestionId, HttpContext.Request.Form.Files);
