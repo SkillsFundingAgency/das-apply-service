@@ -1250,3 +1250,20 @@
 .das-list--hint {
   color: #6f777b;
 }
+
+
+/* Panel colours */ 
+.app-panel--muted {
+  background: #505a5f;
+  color: #fff;
+}
+
+.app-panel--warning {
+  background: #b58840;
+  color: #fff;
+}
+
+.app-panel--error {
+  background:	#d4351c;
+  color: #fff;
+}
