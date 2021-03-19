@@ -2,7 +2,7 @@
 @model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
 
 @{
-    ViewBag.Title = "Application withdrawn";
+    ViewBag.Title = "Application rejected";
     Layout = "_Layout";
 }
 
@@ -24,7 +24,7 @@
 
             <div class="govuk-panel govuk-panel--confirmation">
                 <h1 class="govuk-panel__title">
-                    Application withdrawn
+                    Application rejected
                 </h1>
             </div>
 
@@ -78,9 +78,12 @@
                     </dd>
                 </div>
             </dl>
+
+            <h1 class="govuk-heading-l">Why your application was rejected</h1>
             <p class="govuk-body">
-                Your application to join the register has been withdrawn at your request.
+                @Model.ExternalComments
             </p>
+
             <h2 class="govuk-heading-m">How to reapply</h2>
             <p class="govuk-body">
                 Your withdrawn application does not count towards the 1 application within a 12-month period limit. To reapply, you'll need to <a class="govuk-link govuk-link--no-visited-state" asp-action="" asp-controller="RoatpApplication">start a new application.</a>

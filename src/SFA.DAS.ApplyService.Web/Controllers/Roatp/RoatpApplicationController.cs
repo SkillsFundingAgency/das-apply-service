@@ -143,7 +143,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 case ApplicationStatus.Approved:
                     return View("~/Views/Application/Approved.cshtml", application);
                 case ApplicationStatus.Rejected:
-                    return View("~/Views/Application/Rejected.cshtml", application);
+                    return RedirectToAction("ApplicationRejected", new { applicationId });
                 case ApplicationStatus.FeedbackAdded:
                     return View("~/Views/Application/FeedbackIntro.cshtml", applicationId);
                 case ApplicationStatus.Withdrawn:
@@ -161,7 +161,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var applications = await _apiClient.GetApplications(signinId, false);
 
-            var statusFilter = new[] { ApplicationStatus.Rejected, ApplicationStatus.Cancelled, ApplicationStatus.Removed };
+            var statusFilter = new[] { ApplicationStatus.Cancelled, ApplicationStatus.Removed };
 
             return applications.Where(app => !statusFilter.Contains(app.ApplicationStatus)).OrderByDescending(app => app.CreatedAt).ToList();
         }
@@ -1306,6 +1306,28 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             };
 
             return View("~/Views/Roatp/ApplicationWithdrawn.cshtml", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ApplicationRejected(Guid applicationId)
+        {
+            var application = await _apiClient.GetApplication(applicationId);
+            var applicationData = application.ApplyData.ApplyDetails;
+
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationId = application.ApplicationId,
+                UKPRN = applicationData.UKPRN,
+                OrganisationName = applicationData.OrganisationName,
+                TradingName = applicationData.TradingName,
+                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
+                ApplicationReference = applicationData.ReferenceNumber,
+                EmailAddress = User.GetEmail(),
+                SubmittedDate = applicationData.ApplicationSubmittedOn,
+                ExternalComments = application.ExternalComments
+            };
+
+            return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
         }
 
         private async Task SavePreambleInformation(Guid applicationId, ApplicationDetails applicationDetails)
