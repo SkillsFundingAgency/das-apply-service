@@ -1,0 +1,158 @@
+@using SFA.DAS.ApplyService.Domain.Entities;
+@model SFA.DAS.ApplyService.Web.ViewModels.PageViewModel
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + (@Model.Title ?? "Page not active");
+
+    var hasSectionTitle = !string.IsNullOrEmpty(Model.SectionTitle);
+    var hasModelTitle = !string.IsNullOrEmpty(Model.Title);
+    var hasBodyText = !string.IsNullOrEmpty(Model.BodyText);
+
+    var question = Model.Questions?.FirstOrDefault(q => q.Type == QuestionType.FileUpload);
+}
+
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (Model.Questions == null)
+            {
+                <h1 class="govuk-heading-xl">
+                    Page not active
+                </h1>
+            }
+            else
+            {
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                @foreach (var error in Model.ErrorMessages)
+                                {
+                                    <li>
+                                        <a href="#@error.Field">@Html.Raw(error.ErrorMessage)</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+                if (hasSectionTitle)
+                {
+                    <span class="govuk-caption-xl">@Model.SectionTitle</span>
+                }
+
+                if ((hasModelTitle || hasBodyText) && !string.IsNullOrEmpty(Model.PageContext))
+                {
+                    <span class="govuk-caption-xl">
+                        @Html.Raw(Model.PageContext)
+                    </span>
+                }
+
+                if (hasModelTitle)
+                {
+                    <h1 class="govuk-heading-xl">
+                        @Html.Raw(Model.Title)
+                    </h1>
+                }
+
+                @if (hasBodyText)
+                {
+                    @Html.Raw(Model.BodyText)
+                }
+            }
+
+            @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
+            <form method="post" enctype="multipart/form-data" asp-action="SaveAnswers" asp-route-applicationId="@Model.ApplicationId"
+                  asp-route-sectionId="@Model.SectionId" asp-route-sequenceId="@Model.SequenceId" asp-route-pageId="@Model.PageId" novalidate>
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="RedirectAction" />
+
+                <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
+                    <fieldset class="govuk-fieldset">
+                        @if (question != null)
+                        {
+                            <label class="govuk-label" for="@question.QuestionId">
+                                @Html.Raw(question.Label)
+                            </label>
+
+                            @if (!string.IsNullOrEmpty(question.QuestionBodyText))
+                            {
+                                @Html.Raw(question.QuestionBodyText)
+                            }
+
+                            @if (!string.IsNullOrEmpty(question.Hint))
+                            {
+                                <span class="govuk-hint">
+                                    @Html.Raw(question.Hint)
+                                </span>
+                            }
+                        }
+
+                        <partial name="@($"~/Views/QuestionPartials/_FileUploadsTable.cshtml")" for="@Model" />
+                    </fieldset>
+                </div>
+
+                @if (Model.InfoText != null)
+                {
+                    @Html.Raw(Model.InfoText)
+                }
+
+                <partial name="~/Views/Application/Pages/PeopleInControlComponent.cshtml" for="PeopleInControlDetails" />
+                <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
+
+                @if (!Model.HideCTA)
+                {
+                    <button class="govuk-button govuk-!-margin-right-3" data-module="govuk-button" data-disable-on-submit="true">
+                        @Model.CTAButtonText
+                    </button>
+                }
+
+                @foreach (var linksConfiguration in Model.LinksConfiguration)
+                {
+                    var pageId = Model.PageId;
+                    @foreach (var link in linksConfiguration.Links)
+                    {
+                        if (!string.IsNullOrEmpty(link.LinkPageId))
+                        {
+                            pageId = link.LinkPageId;
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(link.CssClasses))
+                        {
+                            if (link.Action == "TaskList")
+                            {
+                                <a class="govuk-link @link.CssClasses" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-fragment="@($"Sequence_{Model.SequenceId}")">@link.Caption</a>
+                            }
+                            else
+                            {
+                                <a class="govuk-link @link.CssClasses" asp-action="@link.Action" asp-controller="@link.Controller" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId">@link.Caption</a>
+                            }
+                        }
+                        else
+                        {
+                            <p class="govuk-body govuk-!-margin-bottom-6">
+                                @if (link.Action == "TaskList")
+                                {
+                                    <a class="govuk-link" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-fragment="@($"Sequence_{Model.SequenceId}")">@link.Caption</a>
+                                }
+                                else
+                                {
+                                    <a class="govuk-link" asp-action="@link.Action" asp-controller="@link.Controller" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId">@link.Caption</a>
+                                }
+                            </p>
+                        }
+                    }
+                }
+            </form>
+
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+        </div>
+    </div>
+</main>
+

@@ -407,14 +407,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             viewModel = await TokeniseViewModelProperties(viewModel);
 
+            PopulateGetHelpWithQuestion(viewModel, pageId);
+
             if (viewModel.AllowMultipleAnswers)
             {
                 return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
             }
-
-            PopulateGetHelpWithQuestion(viewModel, pageId);
-
-            return View("~/Views/Application/Pages/Index.cshtml", viewModel);
+            else if (viewModel.DisplayType == PageDisplayType.MultipleFileUpload)
+            {
+                return View("~/Views/Application/Pages/MultipleFileUpload.cshtml", viewModel);
+            }
+            else
+            {
+                return View("~/Views/Application/Pages/Index.cshtml", viewModel);
+            }
         }
 
         [HttpGet]
