@@ -148,8 +148,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return View("~/Views/Application/FeedbackIntro.cshtml", applicationId);
                 case ApplicationStatus.Withdrawn:
                     return RedirectToAction("ApplicationWithdrawn", new { applicationId });
-                case ApplicationStatus.Submitted:
                 case ApplicationStatus.GatewayAssessed:
+                    if(application.GatewayReviewStatus == GatewayReviewStatus.Reject)
+                        return RedirectToAction("ApplicationRejected", new { applicationId });
+                    else
+                        return RedirectToAction("ApplicationSubmitted", new { applicationId });
+                case ApplicationStatus.Submitted:
                 case ApplicationStatus.Resubmitted:
                     return RedirectToAction("ApplicationSubmitted", new { applicationId });
                 default:
@@ -1324,7 +1328,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ApplicationReference = applicationData.ReferenceNumber,
                 EmailAddress = User.GetEmail(),
                 SubmittedDate = applicationData.ApplicationSubmittedOn,
-                ExternalComments = application.ExternalComments
+                ExternalComments = application.ApplyData.GatewayReviewDetails.ExternalComments
             };
 
             return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
