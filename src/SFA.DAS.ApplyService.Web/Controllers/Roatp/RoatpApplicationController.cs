@@ -453,9 +453,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> SaveAnswers(PageViewModel vm, Guid applicationId)
+        public async Task<IActionResult> SaveAnswers(PageViewModel vm)
         {
-            vm.ApplicationId = applicationId; // why is this being assigned??? TODO: Fix in View so it's part of the ViewModel
+            var applicationId = vm.ApplicationId;
             var sequenceId = vm.SequenceId;
             var sectionId = vm.SectionId;
             var pageId = vm.PageId;
