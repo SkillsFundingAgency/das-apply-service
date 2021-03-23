@@ -713,6 +713,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             ApplyFormattingToAnswers(answers, page);
 
+            if(__formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
+            {
+                ValidateFileHasBeenSelectedForMultipleFileUpload(page, answers);
+            }
+
             RunCustomValidations(page, answers);
             if (!ModelState.IsValid)
             {
@@ -1342,6 +1347,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return viewModel;
+        }
+
+        private void ValidateFileHasBeenSelectedForMultipleFileUpload(Page page, List<Answer> answers)
+        {
+            if (page.DisplayType == PageDisplayType.MultipleFileUpload && !answers.Any())
+            {
+                var fileUploadQuestionIds = page.Questions.Where(p => p.Input.Type == QuestionType.FileUpload).Select(q => q.QuestionId);
+
+                var existingAnswers = page.PageOfAnswers?.SelectMany(poa => poa.Answers) ?? new List<Answer>();
+                var existingAnswersQuestionIds = existingAnswers.Select(x => x.QuestionId);
+
+                var questionIdForError = fileUploadQuestionIds.FirstOrDefault(x => !existingAnswersQuestionIds.Contains(x));
+                ModelState.AddModelError(questionIdForError, "The selected file is empty");
+            }
         }
 
         private void RunCustomValidations(Page page, List<Answer> answers)
