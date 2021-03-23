@@ -471,6 +471,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var selectedSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
+            // TODO: Do we have anything in the viewmodel that'll trigger this?
             if (!ModelState.IsValid)
             {
                 // when the model state has errors the page will be displayed with the values which failed validation
@@ -498,6 +499,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 if (viewModel.AllowMultipleAnswers)
                 {
                     return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
+                }
+                if (viewModel.DisplayType == PageDisplayType.MultipleFileUpload)
+                {
+                    return View("~/Views/Application/Pages/MultipleFileUpload.cshtml", viewModel);
                 }
                 else
                 {
