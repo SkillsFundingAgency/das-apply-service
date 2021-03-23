@@ -351,6 +351,48 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("ApplicationSubmitted");
         }
 
+        [Test]
+        public async Task Applications_shows_withdrawn_page_if_application_withdrawn()
+        {
+            var submittedApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.Withdrawn
+            };
+            var applications = new List<Domain.Entities.Apply>
+            {
+                submittedApp
+            };
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
+
+            var result = await _controller.Applications();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ApplicationWithdrawn");
+        }
+
+        [Test]
+        public async Task Applications_shows_rejected_page_if_application_rejected()
+        {
+            var submittedApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.GatewayAssessed,
+                GatewayReviewStatus = GatewayReviewStatus.Reject
+            };
+            var applications = new List<Domain.Entities.Apply>
+            {
+                submittedApp
+            };
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
+
+            var result = await _controller.Applications();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ApplicationRejected");
+        }
 
         [Test]
         public async Task Applications_shows_one_in_twelve_months_page_if_application_cancelled()
