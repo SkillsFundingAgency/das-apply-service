@@ -7,19 +7,26 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
+using KellermanSoftware.CompareNetObjects;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NPOI.OpenXmlFormats.Dml;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
-using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppeal;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppealUpload;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightDetails;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightReview;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
 using SFA.DAS.ApplyService.Domain.QueryResults;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.InternalApi.Types.Requests.Oversight;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
@@ -117,7 +124,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             };
 
             _mediator
-                .Setup(x => x.Send(It.IsAny<GetOversightDetailsRequest>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.Send(It.IsAny<GetOversightApplicationDetailsRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(oversight);
 
             var actualResult = await _controller.OversightDetails(applicationId);
@@ -262,14 +269,90 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task AppealUploads_Gets_Files_For_Application_Appeal()
         {
             var request = new GetStagedFilesRequest();
-            var queryResult = new AppealFiles();
+            var queryResult = new GetStagedFilesQueryResult
+            {
+                Files = new List<GetStagedFilesQueryResult.AppealFile>
+                {
+                    new GetStagedFilesQueryResult.AppealFile{ Id = Guid.NewGuid(), Filename = AutoFixture.Create<string>()}
+                }
+            };
 
-            _mediator.Setup(x => x.Send(request, It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
+            _mediator.Setup(x => x.Send(It.IsAny<GetStagedFilesQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
 
             var result = await _controller.StagedUploads(request);
-            result.Should().BeOfType<ActionResult<AppealFiles>>();
+            result.Should().BeOfType<ActionResult<GetStagedFilesResponse>>();
 
-            Assert.AreEqual(queryResult, result.Value);
+            var compareLogic = new CompareLogic(new ComparisonConfig { IgnoreObjectTypes = true });
+            var comparisonResult = compareLogic.Compare(queryResult, result);
+            Assert.IsTrue(comparisonResult.AreEqual);
+        }
+
+        [Test]
+        public async Task CreateAppeal_Adds_Appeal_To_Oversight_Review()
+        {
+            var applicationId = AutoFixture.Create<Guid>();
+            var oversightReviewId = AutoFixture.Create<Guid>();
+            var request = AutoFixture.Create<CreateAppealRequest>();
+
+            _mediator.Setup(x => x.Send(It.IsAny<CreateAppealCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
+
+            var result = await _controller.CreateAppeal(applicationId, oversightReviewId, request);
+            Assert.IsInstanceOf<OkResult>(result);
+
+            _mediator.Verify(x => x.Send(It.Is<CreateAppealCommand>(c =>
+                c.ApplicationId == applicationId &&
+                c.OversightReviewId == oversightReviewId &&
+                c.Message == request.Message &&
+                c.UserId == request.UserId &&
+                c.UserName == request.UserName), It.IsAny<CancellationToken>()));
+        }
+
+        [Test]
+        public async Task GetAppeal_Gets_Appeal_For_Application_And_OversightReview()
+        {
+            var request = new GetAppealRequest();
+            var queryResult = AutoFixture.Create<GetAppealQueryResult>();
+
+            _mediator.Setup(x => x.Send(It.IsAny<GetAppealQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
+
+            var result = await _controller.GetAppeal(request);
+            result.Should().BeOfType<ActionResult<GetAppealResponse>>();
+
+            var compareLogic = new CompareLogic(new ComparisonConfig { IgnoreObjectTypes = true });
+            var comparisonResult = compareLogic.Compare(queryResult, result);
+            Assert.IsTrue(comparisonResult.AreEqual);
+        }
+
+        [Test]
+        public async Task GetAppealUpload_Gets_AppealUpload_For_Application_Appeal()
+        {
+            var request = new GetAppealUploadRequest();
+            var queryResult = AutoFixture.Create<GetAppealUploadQueryResult>();
+
+            _mediator.Setup(x => x.Send(It.IsAny<GetAppealUploadQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
+
+            var result = await _controller.GetAppealUpload(request);
+            result.Should().BeOfType<ActionResult<GetAppealUploadResponse>>();
+
+            Assert.AreEqual(queryResult.Filename, result.Value.Filename);
+            Assert.AreEqual(queryResult.Content, result.Value.Content);
+            Assert.AreEqual(queryResult.ContentType, result.Value.ContentType);
+        }
+
+        [Test]
+        public async Task OversightReview_Gets_OversightReview_For_Application()
+        {
+            var request = new GetOversightReviewRequest();
+            var queryResult = AutoFixture.Create<GetOversightReviewQueryResult>();
+
+            _mediator.Setup(x => x.Send(It.IsAny<GetOversightReviewQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
+
+            var result = await _controller.OversightReview(request);
+            result.Should().BeOfType<ActionResult<GetOversightReviewResponse>>();
+
+            var compareLogic = new CompareLogic(new ComparisonConfig { IgnoreObjectTypes = true });
+            var comparisonResult = compareLogic.Compare(queryResult, result);
+            Assert.IsTrue(comparisonResult.AreEqual);
         }
 
         private static IFormFile GenerateFile()

@@ -38,6 +38,19 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<OversightReview> GetById(Guid entityId)
+        {
+            using (var connection = GetConnection())
+            {
+                return await connection.QuerySingleOrDefaultAsync<OversightReview>(
+                    "select * from OversightReview where Id = @entityId",
+                    new
+                    {
+                        entityId
+                    });
+            }
+        }
+
         public void Add(OversightReview entity)
         {
             _unitOfWork.Register(() => PersistAdd(entity));

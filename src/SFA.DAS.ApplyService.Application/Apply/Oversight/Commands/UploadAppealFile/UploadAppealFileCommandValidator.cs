@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace SFA.DAS.ApplyService.Application.Apply.Oversight
+namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile
 {
     public class UploadAppealFileCommandValidator : AbstractValidator<UploadAppealFileCommand>
     {

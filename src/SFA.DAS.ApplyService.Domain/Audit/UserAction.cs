@@ -11,6 +11,7 @@
         UpdateGatewayReviewStatus,
         UploadAppealFile,
         RemoveAppealFile,
-        WithdrawApplication
+        WithdrawApplication,
+        CreateAppeal
     }
 }
