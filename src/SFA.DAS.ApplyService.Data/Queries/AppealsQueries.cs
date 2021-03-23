@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,6 +39,45 @@ namespace SFA.DAS.ApplyService.Data.Queries
                 {
                     Files = files
                 };
+            }
+        }
+
+        public async Task<Appeal> GetAppeal(Guid applicationId, Guid oversightReviewId)
+        {
+            using (var connection = GetConnection())
+            {
+                Appeal result = null;
+
+                await connection.QueryAsync<Appeal, Appeal.AppealUpload, Appeal>(
+                    @"SELECT
+                        a.Id, a.Message, a.UserId, a.UserName, a.CreatedOn,
+                        u.Id, u.Filename, u.ContentType
+                        FROM [Appeal] a
+                        LEFT JOIN [AppealUpload] u on u.AppealId = a.Id
+                        JOIN [OversightReview] r ON r.Id = a.OversightReviewId
+                        where a.OversightReviewId = @oversightReviewId
+                        AND r.ApplicationId = @applicationId",
+                        (appeal, upload) =>
+                        {
+                            if (result == null)
+                            {
+                                result = appeal;
+                                result.Uploads = new List<Appeal.AppealUpload>();
+                            }
+
+                            if (upload != null)
+                            {
+                                result.Uploads.Add(upload);
+                            }
+
+                            return result;
+                        }, new
+                    {
+                        applicationId,
+                        oversightReviewId
+                    });
+
+                return result;
             }
         }
     }

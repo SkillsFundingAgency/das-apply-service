@@ -297,6 +297,9 @@
             public const string CommitmentStatementTemplate = "5400";
             public const string PriorLearningAssessment = "5500";
             public const string PriorLearningQualifications = "5510";
+            public const string EnglishAndMathsAssessments = "5550";
+            public const string EnglishAndMathsAssessmentsWhere = "5560";
+            public const string EnglishAndMathsAssessmentsHowIfSignificantEvent = "5570";
             public const string SubcontractorsUse = "5600";
             public const string SubcontractorsDueDiligence = "5610";
         }
@@ -316,13 +319,15 @@
             public const string EngagingWithAssessmentOrganisations = "6270";
             public const string EngagingWithAwardingBodies = "6280";
             public const string TrainingApprentices = "6300";
-            public const string EnsureApprenticesAreSupported = "6400";
+            public const string EnsureApprenticesAreSupportedEmployer = "6400";
+            public const string EnsureApprenticesAreSupportedMain = "6405";
             public const string EnsureApprenticesAreSupportedHow = "6410";
             public const string EnsureApprenticesAreSupportedOtherWays = "6420";
             public const string ForecastingStarts = "6500";
             public const string ReadyToDeliverAgainstStarts = "6510";
             public const string RecruitNewStaff = "6520";
             public const string RatioOfStaffToApprentices = "6530";
+            public const string HowSupportIsAgreed = "6540";
             public const string OnTheJobTrainingTeachingMethods = "6600";
             public const string OnTheJobTrainingTeachingRelevance = "6610";
             public const string AddressWhereApprenticesWillBeTrained = "6700";
@@ -338,6 +343,7 @@
             public const string QualityProcessReviewing = "8230";
             public const string CollectApprenticeshipData = "8300";
             public const string IndividualisedLearnerRecordData = "8310";
+            public const string IndividualisedLearnerRecordDataPerson = "8320";
         }
 
         public static class Finish

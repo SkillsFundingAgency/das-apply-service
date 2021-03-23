@@ -40,6 +40,7 @@ namespace SFA.DAS.ApplyService.Domain.QueryResults
         public DateTime? ModerationOutcomeMadeOn { get; set; }
         public string ModeratedBy { get; set; }
         public string ModerationComments { get; set; }
+        public Guid? OversightReviewId { get; set; }
         public DateTime? InProgressDate { get; set; }
         public string InProgressUserId { get; set; }
         public string InProgressUserName { get; set; }

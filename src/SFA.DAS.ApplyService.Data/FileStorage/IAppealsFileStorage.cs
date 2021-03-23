@@ -9,5 +9,6 @@ namespace SFA.DAS.ApplyService.Data.FileStorage
     {
         Task<Guid> Add(Guid applicationId, FileUpload file, CancellationToken cancellationToken);
         Task Remove(Guid applicationId, Guid reference, CancellationToken cancellationToken);
+        Task<byte[]> Get(Guid applicationId, Guid reference, CancellationToken cancellationToken);
     }
 }

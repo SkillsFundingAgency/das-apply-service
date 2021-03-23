@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Configuration;
@@ -21,17 +20,15 @@ using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
-using SFA.DAS.ApplyService.Types;
+using SFA.DAS.ApplyService.InternalApi.Types.Requests.Gateway;
+using SFA.DAS.ApplyService.Application.Apply.Gateway.ExternalApiCheckDetails;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
     [TestFixture]
     public class RoatpGatewayControllerTests
     {
-        private Mock<IApplyRepository> _applyRepository;
         private Mock<ILogger<RoatpGatewayController>> _logger;
         private Mock<IMediator> _mediator;
         private Mock<IGatewayApiChecksService> _gatewayApiChecksService;
@@ -74,7 +71,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var configurationService = new Mock<IConfigurationService>();
             configurationService.Setup(x => x.GetConfig()).ReturnsAsync(new ApplyConfig { RoatpApiAuthentication = new RoatpApiAuthentication { ApiBaseAddress = "https://localhost" } });
 
-            _applyRepository = new Mock<IApplyRepository>();
             _logger = new Mock<ILogger<RoatpGatewayController>>();
             _fileStorage = new Mock<IFileStorageService>();
             _mediator = new Mock<IMediator>();
@@ -86,7 +82,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _gatewayApiChecksService.Setup(x => x.GetExternalApiCheckDetails(_applicationId, _userName)).ReturnsAsync(new ApplyGatewayDetails());
 
 
-            _controller = new RoatpGatewayController(_applyRepository.Object, _logger.Object, _mediator.Object, _gatewayApiChecksService.Object, _fileStorage.Object)
+            _controller = new RoatpGatewayController(_logger.Object, _mediator.Object, _gatewayApiChecksService.Object, _fileStorage.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -160,7 +156,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
             _gatewayApiChecksService.Verify(x => x.GetExternalApiCheckDetails(_applicationId, _userName), Times.Once);
-            _applyRepository.Verify(x => x.UpdateApplyData(_applicationId, It.IsAny<ApplyData>(), _userName), Times.Once);
+            _mediator.Verify(x => x.Send(It.IsAny<UpdateExternalApiCheckDetailsRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
@@ -186,7 +182,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var formFileCollection = new FormFileCollection { file };
             _controller.HttpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>(), formFileCollection);
 
-            var command = new RoatpGatewayController.SubcontractorDeclarationClarificationFileCommand
+            var command = new SubcontractorDeclarationClarificationFileCommand
             {
                 UserId = "user id", UserName = "user name"
             };
@@ -209,7 +205,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var formFileCollection = new FormFileCollection();
             _controller.HttpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>(), formFileCollection);
 
-            var command = new RoatpGatewayController.SubcontractorDeclarationClarificationFileCommand
+            var command = new SubcontractorDeclarationClarificationFileCommand
             {
                 UserId = "user id",
                 UserName = "user name"
@@ -235,7 +231,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var formFileCollection = new FormFileCollection { file };
             _controller.HttpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>(), formFileCollection);
 
-            var command = new RoatpGatewayController.SubcontractorDeclarationClarificationFileCommand
+            var command = new SubcontractorDeclarationClarificationFileCommand
             {
                 UserId = "user id",
                 UserName = "user name"
@@ -259,7 +255,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         {
             var clarificationFileName = "file.pdf";
             
-            var command = new RoatpGatewayController.SubcontractorDeclarationClarificationFileCommand
+            var command = new SubcontractorDeclarationClarificationFileCommand
             {
                 UserId = "user id",
                 UserName = "user name",
@@ -284,7 +280,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         {
             var clarificationFileName = "file.pdf";
 
-            var command = new RoatpGatewayController.SubcontractorDeclarationClarificationFileCommand
+            var command = new SubcontractorDeclarationClarificationFileCommand
             {
                 UserId = "user id",
                 UserName = "user name",

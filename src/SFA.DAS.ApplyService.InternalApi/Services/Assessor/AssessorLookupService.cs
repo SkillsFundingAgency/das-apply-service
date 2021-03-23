@@ -65,6 +65,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                     return "Commitment statement template";
                 case RoatpWorkflowPageIds.ReadinessToEngage.PriorLearningAssessment:
                     return "Process for initial assessments to recognise prior learning";
+                case RoatpWorkflowPageIds.ReadinessToEngage.EnglishAndMathsAssessments:
+                case RoatpWorkflowPageIds.ReadinessToEngage.EnglishAndMathsAssessmentsWhere:
+                case RoatpWorkflowPageIds.ReadinessToEngage.EnglishAndMathsAssessmentsHowIfSignificantEvent:
+                    return "English and maths assessments";
                 case RoatpWorkflowPageIds.ReadinessToEngage.PriorLearningQualifications:
                     return "Process to assess English and maths";
                 case RoatpWorkflowPageIds.ReadinessToEngage.SubcontractorsUse:
@@ -99,7 +103,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                     return "Engaging with end-point assessment organisations (EPAO's)";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TrainingApprentices:
                     return "How apprentices will be trained";
-                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.EnsureApprenticesAreSupported:
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.EnsureApprenticesAreSupportedEmployer:
+                    return "Supporting apprentices during apprenticeship training";
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.EnsureApprenticesAreSupportedMain:
                     return "Supporting apprentices during apprenticeship training";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.EnsureApprenticesAreSupportedHow:
                     return "Ways of supporting apprentices";
@@ -113,6 +119,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                     return "Recruit new staff to deliver training against forecast";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.RatioOfStaffToApprentices:
                     return "Typical ratio of the staff delivering training to the apprentices";
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.HowSupportIsAgreed:
+                    return "How support is agreed between employer and apprentice";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnTheJobTrainingTeachingMethods:
                     return "Methods used to deliver 20% off the job training";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnTheJobTrainingTeachingRelevance:

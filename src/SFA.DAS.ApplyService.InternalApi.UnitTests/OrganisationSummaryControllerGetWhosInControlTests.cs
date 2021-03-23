@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 
@@ -17,8 +17,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
     public class OrganisationSummaryControllerGetWhosInControlTests
     {
+        private Mock<IMediator> _mediator;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
-        private Mock<IApplyRepository> _applyRepository;
         private Mock<ILogger<OrganisationSummaryController>> _logger;
 
         private OrganisationSummaryController _controller;
@@ -28,31 +28,28 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [SetUp]
         public void Before_each_test()
         {
+            _mediator = new Mock<IMediator>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
-            _applyRepository = new Mock<IApplyRepository>();
             _logger = new Mock<ILogger<OrganisationSummaryController>>();
-            _controller = new OrganisationSummaryController(_qnaApiClient.Object,_applyRepository.Object, _logger.Object);
+            _controller = new OrganisationSummaryController(_mediator.Object, _qnaApiClient.Object, _logger.Object);
             _qnaApiClient.Setup(x => x.GetTabularDataByTag(_applicationId, It.IsAny<string>())).ReturnsAsync((TabularData)null);
-            _applyRepository.Setup(x => x.GetApplyData(It.IsAny<Guid>())).ReturnsAsync((ApplyData) null);
         }
 
         [Test]
-        public void get_no_tags_if_tag_doesnt_exist()
+        public async Task get_no_tags_if_tag_doesnt_exist()
         {
-            var result = (OkObjectResult)_controller.GetWhosInControlFromSubmitted(_applicationId).Result;
-
-            result.Should().BeOfType<OkObjectResult>();
+            var result = await _controller.GetWhosInControlFromSubmitted(_applicationId) as OkObjectResult;
 
             result.Value.Should().BeOfType<List<PersonInControl>>();
             var peopleInControl = (List<PersonInControl>)result.Value;
 
-              Assert.AreEqual(0,peopleInControl.Count);
+            Assert.AreEqual(0, peopleInControl.Count);
         }
 
         [TestCase("name 1", "Jan 1990", "alphabetically first name", "Feb 1992")]
         [TestCase("name 2", "Jan 1990", "name 1", "Jan 1989")]
 
-        public void get_list_of_whos_in_control_submitted_when_AddPeopleInControl_tag_filled(string name1, string dateOfBirth1, string name2, string dateOfBirth2)
+        public async Task get_list_of_whos_in_control_submitted_when_AddPeopleInControl_tag_filled(string name1, string dateOfBirth1, string name2, string dateOfBirth2)
         {
             var expectedPersonInControl2 = new PersonInControl { Name = name1, MonthYearOfBirth = dateOfBirth1 };
             var expectedPersonInControl1 = new PersonInControl { Name = name2, MonthYearOfBirth = dateOfBirth2 };
@@ -73,21 +70,20 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _qnaApiClient
                 .Setup(x => x.GetTabularDataByTag(_applicationId, RoatpWorkflowQuestionTags.AddPartners))
                 .ReturnsAsync((TabularData)null);
-            
+
             _qnaApiClient
-                .Setup(x => x.GetAnswerByTag(_applicationId, RoatpWorkflowQuestionTags.SoleTradeDob,null))
+                .Setup(x => x.GetAnswerByTag(_applicationId, RoatpWorkflowQuestionTags.SoleTradeDob, null))
                 .ReturnsAsync((Answer)null);
 
             _qnaApiClient
                 .Setup(x => x.GetAnswerByTag(_applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName, null))
                 .ReturnsAsync((Answer)null);
 
-            var result = (OkObjectResult)_controller.GetWhosInControlFromSubmitted(_applicationId).Result;
-
-            result.Should().BeOfType<OkObjectResult>();
+            var result = await _controller.GetWhosInControlFromSubmitted(_applicationId) as OkObjectResult;
 
             result.Value.Should().BeOfType<List<PersonInControl>>();
             var peopleInControl = (List<PersonInControl>)result.Value;
+
             Assert.AreEqual(2, peopleInControl.Count);
             Assert.AreEqual(peopleInControl[0].Name, expectedPersonInControl1.Name);
             Assert.AreEqual(peopleInControl[0].MonthYearOfBirth, expectedPersonInControl1.MonthYearOfBirth);
@@ -95,7 +91,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.AreEqual(peopleInControl[1].MonthYearOfBirth, expectedPersonInControl2.MonthYearOfBirth);
 
             _qnaApiClient.Verify(x => x.GetTabularDataByTag(_applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl), Times.Once);
-            _qnaApiClient.Verify(x=>x.GetTabularDataByTag(It.IsAny<Guid>(),RoatpWorkflowQuestionTags.AddPartners), Times.Never);
+            _qnaApiClient.Verify(x => x.GetTabularDataByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners), Times.Never);
             _qnaApiClient.Verify(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.SoleTradeDob, null), Times.Never);
             _qnaApiClient.Verify(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpLegalName, null), Times.Never);
 
@@ -104,7 +100,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [TestCase("name 1", "Jan 1990", "alphabetically first name", "Feb 1992")]
         [TestCase("name 2", "Jan 1990", "name 1", "Jan 1989")]
 
-        public void get_list_of_whos_in_control_submitted_when_AddPartners_tag_filled(string name1, string dateOfBirth1, string name2, string dateOfBirth2)
+        public async Task get_list_of_whos_in_control_submitted_when_AddPartners_tag_filled(string name1, string dateOfBirth1, string name2, string dateOfBirth2)
         {
             var expectedPersonInControl2 = new PersonInControl { Name = name1, MonthYearOfBirth = dateOfBirth1 };
             var expectedPersonInControl1 = new PersonInControl { Name = name2, MonthYearOfBirth = dateOfBirth2 };
@@ -134,12 +130,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 .Setup(x => x.GetAnswerByTag(_applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName, null))
                 .ReturnsAsync((Answer)null);
 
-            var result = (OkObjectResult)_controller.GetWhosInControlFromSubmitted(_applicationId).Result;
-
-            result.Should().BeOfType<OkObjectResult>();
+            var result = await _controller.GetWhosInControlFromSubmitted(_applicationId) as OkObjectResult;
 
             result.Value.Should().BeOfType<List<PersonInControl>>();
             var peopleInControl = (List<PersonInControl>)result.Value;
+
             Assert.AreEqual(2, peopleInControl.Count);
             Assert.AreEqual(peopleInControl[0].Name, expectedPersonInControl1.Name);
             Assert.AreEqual(peopleInControl[0].MonthYearOfBirth, expectedPersonInControl1.MonthYearOfBirth);
@@ -156,33 +151,31 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [TestCase("name 1", "2,1991", "Feb 1991")]
         [TestCase("name 2", "1,1990", "Jan 1990")]
 
-        public void get_list_of_whos_in_control_submitted_when_SoleTradeDob_tag_filled(string legalName,
-            string soleTraderDob, string formattedDob)
+        public async Task get_list_of_whos_in_control_submitted_when_SoleTradeDob_tag_filled(string legalName, string soleTraderDob, string formattedDob)
         {
-            var expectedPersonInControl1 = new PersonInControl {Name = legalName, MonthYearOfBirth = soleTraderDob};
+            var expectedPersonInControl1 = new PersonInControl { Name = legalName, MonthYearOfBirth = soleTraderDob };
 
             _qnaApiClient
                 .Setup(x => x.GetTabularDataByTag(_applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl))
-                .ReturnsAsync((TabularData) null);
+                .ReturnsAsync((TabularData)null);
 
             _qnaApiClient
                 .Setup(x => x.GetTabularDataByTag(_applicationId, RoatpWorkflowQuestionTags.AddPartners))
-                .ReturnsAsync((TabularData) null);
+                .ReturnsAsync((TabularData)null);
 
             _qnaApiClient
                 .Setup(x => x.GetAnswerByTag(_applicationId, RoatpWorkflowQuestionTags.SoleTradeDob, null))
-                .ReturnsAsync(new Answer {Value = soleTraderDob});
+                .ReturnsAsync(new Answer { Value = soleTraderDob });
 
             _qnaApiClient
                 .Setup(x => x.GetAnswerByTag(_applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName, null))
-                .ReturnsAsync(new Answer {Value = legalName});
+                .ReturnsAsync(new Answer { Value = legalName });
 
-            var result = (OkObjectResult) _controller.GetWhosInControlFromSubmitted(_applicationId).Result;
-
-            result.Should().BeOfType<OkObjectResult>();
+            var result = await _controller.GetWhosInControlFromSubmitted(_applicationId) as OkObjectResult;
 
             result.Value.Should().BeOfType<List<PersonInControl>>();
-            var peopleInControl = (List<PersonInControl>) result.Value;
+            var peopleInControl = (List<PersonInControl>)result.Value;
+
             Assert.AreEqual(1, peopleInControl.Count);
             Assert.AreEqual(peopleInControl[0].Name, expectedPersonInControl1.Name);
             Assert.AreEqual(peopleInControl[0].MonthYearOfBirth, formattedDob);
@@ -199,7 +192,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
         [TestCase("name 1")]
         [TestCase("name 2")]
-        public void get_no_list_of_whos_in_control_submitted_when_SoleTradeDob_tag_not_filled(string legalName)
+        public async Task get_no_list_of_whos_in_control_submitted_when_SoleTradeDob_tag_not_filled(string legalName)
         {
             _qnaApiClient
                 .Setup(x => x.GetTabularDataByTag(_applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl))
@@ -217,12 +210,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 .Setup(x => x.GetAnswerByTag(_applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName, null))
                 .ReturnsAsync(new Answer { Value = legalName });
 
-            var result = (OkObjectResult)_controller.GetWhosInControlFromSubmitted(_applicationId).Result;
-
-            result.Should().BeOfType<OkObjectResult>();
+            var result = await _controller.GetWhosInControlFromSubmitted(_applicationId) as OkObjectResult;
 
             result.Value.Should().BeOfType<List<PersonInControl>>();
             var peopleInControl = (List<PersonInControl>)result.Value;
+
             Assert.AreEqual(0, peopleInControl.Count);
 
             _qnaApiClient.Verify(

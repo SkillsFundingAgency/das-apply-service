@@ -7,7 +7,7 @@ using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
-namespace SFA.DAS.ApplyService.Application.Apply.Oversight
+namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile
 {
     public class UploadAppealFileCommandHandler : IRequestHandler<UploadAppealFileCommand>
     {
