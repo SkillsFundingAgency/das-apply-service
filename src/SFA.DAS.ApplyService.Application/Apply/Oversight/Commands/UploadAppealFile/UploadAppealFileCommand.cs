@@ -2,7 +2,7 @@
 using MediatR;
 using SFA.DAS.ApplyService.Domain.Models;
 
-namespace SFA.DAS.ApplyService.Application.Apply.Oversight
+namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile
 {
     public class UploadAppealFileCommand : IRequest
     {

@@ -35,6 +35,11 @@ namespace SFA.DAS.ApplyService.Data.FileStorage
         {
             await RemoveFileFromContainer($"{applicationId}", reference);
         }
+
+        public async Task<byte[]> Get(Guid applicationId, Guid reference, CancellationToken cancellationToken)
+        {
+            return await GetFileFromContainer($"{applicationId}", reference);
+        }
     }
 }
 
