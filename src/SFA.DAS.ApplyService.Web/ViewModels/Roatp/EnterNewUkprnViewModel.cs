@@ -6,7 +6,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     {
         public string Title { get; set; }
         public Guid ApplicationId { get; set; }
-        public string SequenceId { get; set; }
+        public int SequenceId { get; set; }
         public int SectionId { get; set; }
         public string PageId { get; set; }
         public string GetHelpQuestion { get; set; }

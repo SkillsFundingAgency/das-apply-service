@@ -11,7 +11,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public List<TrusteeDateOfBirth> TrusteeDatesOfBirth { get; set; }
 
         public string Title { get { return "Enter the date of birth for trustees"; } set { } }
-        public string SequenceId { get { return RoatpWorkflowSequenceIds.YourOrganisation.ToString(); } set { } }
+        public int SequenceId { get { return RoatpWorkflowSequenceIds.YourOrganisation; } set { } }
         public int SectionId { get { return RoatpWorkflowSectionIds.YourOrganisation.WhosInControl; } set { } }
         public string PageId { get; set; }
         public string GetHelpQuestion { get; set; }

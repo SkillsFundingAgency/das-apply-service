@@ -456,7 +456,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> SaveAnswers(PageViewModel vm, Guid applicationId)
         {
             vm.ApplicationId = applicationId; // why is this being assigned??? TODO: Fix in View so it's part of the ViewModel
-            var sequenceId = int.Parse(vm.SequenceId); // TODO: SequenceId should be an int, not a string
+            var sequenceId = vm.SequenceId;
             var sectionId = vm.SectionId;
             var pageId = vm.PageId;
             var redirectAction = vm.RedirectAction;

@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
                              string sectionTitle, List<TabularData> peopleInControlDetails)
         {
             ApplicationId = applicationId;
-            SequenceId = sequenceId.ToString();
+            SequenceId = sequenceId;
             SectionId = sectionId;
             PageId = pageId;
             PageContext = pageContext;
@@ -59,7 +59,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
 
         public List<QuestionViewModel> Questions { get; set; }
 
-        public string SequenceId { get; set; } // Note in Assessor & Config Preview this is SequenceNo and an integer
+        public int SequenceId { get; set; } // Note in Assessor & Config Preview this is SequenceNo and an integer
         public int SectionId { get; set; } // Note in Assessor & Config Preview this is SectionNo
 
         public bool AllowMultipleAnswers { get; set; }
@@ -143,7 +143,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
                 Value = page.AllowMultipleAnswers ? GetMultipleValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
                 JsonValue = page.AllowMultipleAnswers ? GetMultipleJsonValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : GetJsonValue(answers, q),
                 ErrorMessages = errorMessages?.Where(f => f.Field.Split("_Key_")[0] == q.QuestionId).ToList(),
-                SequenceId = int.Parse(SequenceId),
+                SequenceId = SequenceId,
                 SectionId = SectionId,
                 ApplicationId = ApplicationId,
                 PageId = PageId,
