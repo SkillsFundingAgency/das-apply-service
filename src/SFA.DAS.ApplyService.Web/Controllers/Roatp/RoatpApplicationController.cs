@@ -453,7 +453,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> SaveAnswers(PageViewModel vm, string formAction)
+        public async Task<IActionResult> SaveAnswers(PageViewModel vm, string __formAction)
         {
             var applicationId = vm.ApplicationId;
             var sequenceId = vm.SequenceId;
@@ -518,12 +518,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 RedirectToAction("TaskList", "RoatpApplication", new {applicationId}, $"Sequence_{sequenceId}");
             }
 
-            if ("upload".Equals(formAction, StringComparison.InvariantCultureIgnoreCase))
-            {
-                throw new NotImplementedException("This is test code. The real checks will be done in SaveAnswersGiven");
-            }
-
-            return await SaveAnswersGiven(applicationId, selectedSection.Id, selectedSection.SectionId, selectedSection.SequenceId, pageId, page, redirectAction, string.Empty);
+            return await SaveAnswersGiven(applicationId, selectedSection.Id, selectedSection.SectionId, selectedSection.SequenceId, pageId, page, redirectAction, __formAction);
         }
 
         [Route("apply-training-provider-tasklist")]
@@ -778,6 +773,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         sequenceId = sequenceNo,
                         sectionId = sectionNo,
                         pageId = nextActionId,
+                        redirectAction
+                    });
+                }
+                else if(__formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
+                {
+                    return RedirectToAction("Page", new
+                    {
+                        applicationId,
+                        sequenceId = sequenceNo,
+                        sectionId = sectionNo,
+                        pageId = pageId,
                         redirectAction
                     });
                 }
