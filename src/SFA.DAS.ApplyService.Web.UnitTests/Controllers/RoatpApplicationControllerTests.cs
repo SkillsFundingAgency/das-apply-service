@@ -184,7 +184,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var applications = new List<Domain.Entities.Apply>
             {
                 new Apply { ApplicationStatus = ApplicationStatus.Cancelled },
-                new Apply { ApplicationStatus = ApplicationStatus.Withdrawn },
                 new Apply { ApplicationStatus = ApplicationStatus.Removed }
             };
 
