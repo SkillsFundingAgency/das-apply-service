@@ -409,11 +409,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             PopulateGetHelpWithQuestion(viewModel, pageId);
 
-            if (viewModel.AllowMultipleAnswers)
-            {
-                return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
-            }
-            else if (viewModel.DisplayType == PageDisplayType.MultipleFileUpload)
+            if (viewModel.DisplayType == PageDisplayType.MultipleFileUpload)
             {
                 return View("~/Views/Application/Pages/MultipleFileUpload.cshtml", viewModel);
             }
@@ -496,10 +492,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 viewModel = await TokeniseViewModelProperties(viewModel);
 
-                if (viewModel.AllowMultipleAnswers)
-                {
-                    return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
-                }
                 if (viewModel.DisplayType == PageDisplayType.MultipleFileUpload)
                 {
                     return View("~/Views/Application/Pages/MultipleFileUpload.cshtml", viewModel);
@@ -770,18 +762,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 // Any answer that is saved will affect the NotRequiredOverrides
                 await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
 
-                if (formAction == "Add" && page.AllowMultipleAnswers)
-                {
-                    return RedirectToAction("Page", new
-                    {
-                        applicationId,
-                        sequenceId = sequenceNo,
-                        sectionId = sectionNo,
-                        pageId = nextActionId,
-                        redirectAction
-                    });
-                }
-                else if(formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
+                if(formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
                 {
                     return RedirectToAction("Page", new
                     {
