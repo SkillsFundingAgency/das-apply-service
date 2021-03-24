@@ -453,7 +453,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> SaveAnswers(PageViewModel vm, string __formAction)
+        public async Task<IActionResult> SaveAnswers(PageViewModel vm, string formAction)
         {
             var applicationId = vm.ApplicationId;
             var sequenceId = vm.SequenceId;
@@ -518,7 +518,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 RedirectToAction("TaskList", "RoatpApplication", new {applicationId}, $"Sequence_{sequenceId}");
             }
 
-            return await SaveAnswersGiven(applicationId, selectedSection.Id, selectedSection.SectionId, selectedSection.SequenceId, pageId, page, redirectAction, __formAction);
+            return await SaveAnswersGiven(applicationId, selectedSection.Id, selectedSection.SectionId, selectedSection.SequenceId, pageId, page, redirectAction, formAction);
         }
 
         [Route("apply-training-provider-tasklist")]
@@ -705,7 +705,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return page;
         }
 
-        private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, Guid sectionId, int sectionNo, int sequenceNo, string pageId, Page page, string redirectAction, string __formAction)
+        private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, Guid sectionId, int sectionNo, int sequenceNo, string pageId, Page page, string redirectAction, string formAction)
         {
             var isFileUploadPage = page.Questions.Any(q => QuestionType.FileUpload.Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase));
 
@@ -713,7 +713,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             ApplyFormattingToAnswers(answers, page);
 
-            if(__formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
+            if(formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
             {
                 ValidateFileHasBeenSelectedForMultipleFileUpload(page, answers);
             }
@@ -770,7 +770,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 // Any answer that is saved will affect the NotRequiredOverrides
                 await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
 
-                if (__formAction == "Add" && page.AllowMultipleAnswers)
+                if (formAction == "Add" && page.AllowMultipleAnswers)
                 {
                     return RedirectToAction("Page", new
                     {
@@ -781,7 +781,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         redirectAction
                     });
                 }
-                else if(__formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
+                else if(formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
                 {
                     return RedirectToAction("Page", new
                     {
@@ -898,7 +898,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             List<Answer> answers = new List<Answer>();
 
             // These are special in that they drive other things and thus should not be deemed as an answer
-            var excludedInputs = new List<string> { "postcodeSearch", "checkAll", "ApplicationId", "RedirectAction" };
+            var excludedInputs = new List<string> { "formAction", "postcodeSearch", "checkAll", "ApplicationId", "RedirectAction" };
 
             // Add answers from the Form post
             foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !excludedInputs.Contains(f.Key, StringComparer.InvariantCultureIgnoreCase)))
