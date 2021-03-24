@@ -20,6 +20,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
 using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Interfaces;
@@ -135,7 +136,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .AddFluentValidation(fv =>
             {
-                fv.RegisterValidatorsFromAssemblyContaining<GetStagedFilesRequestValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<GetStagedFilesQueryValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<Startup>();
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -270,6 +271,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IOversightReviewRepository, OversightReviewRepository>();
             services.AddTransient<IOversightReviewQueries, OversightReviewQueries>();
             services.AddTransient<IAppealUploadRepository, AppealUploadRepository>();
+            services.AddTransient<IAppealRepository, AppealRepository>();
             services.AddTransient<IAppealsQueries, AppealsQueries>();
 
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
+using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Data.FileStorage;
 using SFA.DAS.ApplyService.Domain.Audit;

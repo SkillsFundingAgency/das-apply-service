@@ -76,6 +76,7 @@
     <Build Include="Tables\Audit.sql" />
     <Build Include="Tables\OversightReview.sql" />
     <Build Include="Tables\AppealUpload.sql" />
+    <Build Include="Tables\Appeal.sql" />
     <Build Include="Tables\ExtractedApplications.sql" />
     <Build Include="Tables\SubmittedApplicationAnswers.sql" />
   </ItemGroup>
