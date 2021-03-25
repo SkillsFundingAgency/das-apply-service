@@ -3,10 +3,6 @@
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + (@Model.Title ?? "Page not active");
 
-    var hasSectionTitle = !string.IsNullOrEmpty(Model.SectionTitle);
-    var hasModelTitle = !string.IsNullOrEmpty(Model.Title);
-    var hasBodyText = !string.IsNullOrEmpty(Model.BodyText);
-
     var question = Model.Questions?.FirstOrDefault(q => q.Type == QuestionType.FileUpload);
 }
 
@@ -42,28 +38,16 @@
                     </div>
                 }
 
-                if (hasSectionTitle)
+                if (!string.IsNullOrEmpty(Model.SectionTitle))
                 {
                     <span class="govuk-caption-xl">@Model.SectionTitle</span>
                 }
 
-                if ((hasModelTitle || hasBodyText) && !string.IsNullOrEmpty(Model.PageContext))
-                {
-                    <span class="govuk-caption-xl">
-                        @Html.Raw(Model.PageContext)
-                    </span>
-                }
-
-                if (hasModelTitle)
+                if (!string.IsNullOrEmpty(Model.Title))
                 {
                     <h1 class="govuk-heading-xl">
                         @Html.Raw(Model.Title)
                     </h1>
-                }
-
-                @if (hasBodyText)
-                {
-                    @Html.Raw(Model.BodyText)
                 }
             }
 
@@ -77,10 +61,6 @@
                     <fieldset class="govuk-fieldset">
                         @if (question != null)
                         {
-                            <label class="govuk-label" for="@question.QuestionId">
-                                @Html.Raw(question.Label)
-                            </label>
-
                             @if (!string.IsNullOrEmpty(question.QuestionBodyText))
                             {
                                 @Html.Raw(question.QuestionBodyText)
@@ -98,7 +78,7 @@
                     </fieldset>
                 </div>
 
-                @if (Model.InfoText != null)
+                @if (!string.IsNullOrEmpty(Model.InfoText))
                 {
                     @Html.Raw(Model.InfoText)
                 }
