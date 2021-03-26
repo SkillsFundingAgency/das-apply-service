@@ -1,0 +1,82 @@
+@using SFA.DAS.ApplyService.Domain.Entities;
+@model SFA.DAS.ApplyService.Web.ViewModels.PageViewModel
+
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="col">Uploaded files</th>
+            <th class="govuk-table__header" scope="col"></th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        @if (Model.PageOfAnswers == null || Model.PageOfAnswers.Count == 0)
+        {
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell govuk-table__cell--break-word" scope="row">
+                    No files added
+                </td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var answer in Model.PageOfAnswers.SelectMany(answers => answers.Answers))
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell govuk-table__cell--break-word" scope="row">
+                        <a class="govuk-link" href="@Url.Action("Download", "Application", new { Id = Model.ApplicationId, sequenceNo = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId, questionId = answer.QuestionId, filename = answer.Value })">
+                            @answer.Value
+                        </a>
+                    </td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">
+                        <a class="govuk-link" href="@Url.Action("DeleteFile", "Application", new { Id = Model.ApplicationId, sequenceNo = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId, questionId = answer.QuestionId, filename = answer.Value, __redirectAction = Model.RedirectAction })">
+                            Remove
+                            <span class="govuk-visually-hidden"> file</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@{
+    var fileUploadQuestions = Model.Questions.Where(q => q.Type == QuestionType.FileUpload).ToList();
+
+    if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+    {
+        foreach (var errorMessage in Model.ErrorMessages)
+        {
+            var uploadQuestionIds = fileUploadQuestions.Select(q => q.QuestionId);
+
+            if (uploadQuestionIds.Contains(errorMessage.Field))
+            {
+                <span class="govuk-error-message">@Html.Raw(errorMessage.ErrorMessage)</span>
+            }
+        }
+    }
+
+    foreach (var question in fileUploadQuestions)
+    {
+        var isQuestionAlreadyAnswered = false;
+
+        if (Model.PageOfAnswers.Count > 0)
+        {
+            var answersToQuestion = Model.PageOfAnswers.SelectMany(poa => poa.Answers.Where(answer => answer.QuestionId == question.QuestionId));
+            isQuestionAlreadyAnswered = answersToQuestion.Any();
+        }
+
+        if (!isQuestionAlreadyAnswered)
+        {
+            <input type="file"
+                   class="govuk-file-upload"
+                   id="@question.QuestionId"
+                   name="@question.QuestionId"
+                   accept=".pdf,application/pdf" />
+
+            <button class="govuk-button govuk-button--secondary govuk-!-margin-right-3" data-module="govuk-button" data-disable-on-submit="true" name="formAction" value="Upload">
+                Upload file
+            </button>
+            break; @* Only show the first FileUpload *@
+        }
+    }
+}
