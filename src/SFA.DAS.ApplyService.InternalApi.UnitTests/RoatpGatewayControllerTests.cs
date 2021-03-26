@@ -102,12 +102,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var request = new Types.Requests.GatewayCommonDetailsRequest
             {
-                ApplicationId = _applicationId,
                 UserId = _userId,
                 UserName = _userName,
                 PageId = _pageId
             };
-            await _controller.GetGatewayPageCommonDetails(request);
+            await _controller.GetGatewayCommonDetails(_applicationId, request);
 
             _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.AtLeastOnce);
             _mediator.Verify(x => x.Send(It.IsAny<StartGatewayReviewRequest>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -120,12 +119,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var request = new Types.Requests.GatewayCommonDetailsRequest
             {
-                ApplicationId = _applicationId,
                 UserId = _userId,
                 UserName = _userName,
                 PageId = _pageId
             };
-            await _controller.GetGatewayPageCommonDetails(request);
+            await _controller.GetGatewayCommonDetails(_applicationId, request);
 
             _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.AtLeastOnce);
             _gatewayApiChecksService.Verify(x => x.GetExternalApiCheckDetails(_applicationId, _userName), Times.Once);
@@ -139,12 +137,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var request = new Types.Requests.GatewayCommonDetailsRequest
             {
-                ApplicationId = _applicationId,
                 UserId = _userId,
                 UserName = _userName,
                 PageId = _pageId
             };
-            await _controller.GetGatewayPageCommonDetails(request);
+            await _controller.GetGatewayCommonDetails(_applicationId, request);
 
             _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.AtLeastOnce);
             _mediator.Verify(x => x.Send(It.IsAny<StartGatewayReviewRequest>(), It.IsAny<CancellationToken>()), Times.Never);
