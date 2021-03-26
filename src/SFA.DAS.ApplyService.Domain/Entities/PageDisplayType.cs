@@ -6,5 +6,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Pages = "Pages";
         public const string PagesWithSections = "PagesWithSections";
         public const string OtherPagesInPagesWithSections = "OtherPagesInPagesWithSections";
+        public const string MultipleFileUpload = "MultipleFileUpload";
     }
 }

@@ -407,14 +407,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             viewModel = await TokeniseViewModelProperties(viewModel);
 
-            if (viewModel.AllowMultipleAnswers)
-            {
-                return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
-            }
-
             PopulateGetHelpWithQuestion(viewModel, pageId);
 
-            return View("~/Views/Application/Pages/Index.cshtml", viewModel);
+            if (viewModel.DisplayType == PageDisplayType.MultipleFileUpload)
+            {
+                return View("~/Views/Application/Pages/MultipleFileUpload.cshtml", viewModel);
+            }
+            else
+            {
+                return View("~/Views/Application/Pages/Index.cshtml", viewModel);
+            }
         }
 
         [HttpGet]
@@ -447,10 +449,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> SaveAnswers(PageViewModel vm, Guid applicationId)
+        public async Task<IActionResult> SaveAnswers(PageViewModel vm, string formAction)
         {
-            vm.ApplicationId = applicationId; // why is this being assigned??? TODO: Fix in View so it's part of the ViewModel
-            var sequenceId = int.Parse(vm.SequenceId); // TODO: SequenceId should be an int, not a string
+            var applicationId = vm.ApplicationId;
+            var sequenceId = vm.SequenceId;
             var sectionId = vm.SectionId;
             var pageId = vm.PageId;
             var redirectAction = vm.RedirectAction;
@@ -465,6 +467,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var selectedSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
+            // TODO: Do we have anything in the viewmodel that'll trigger this?
             if (!ModelState.IsValid)
             {
                 // when the model state has errors the page will be displayed with the values which failed validation
@@ -489,9 +492,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 viewModel = await TokeniseViewModelProperties(viewModel);
 
-                if (viewModel.AllowMultipleAnswers)
+                if (viewModel.DisplayType == PageDisplayType.MultipleFileUpload)
                 {
-                    return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
+                    return View("~/Views/Application/Pages/MultipleFileUpload.cshtml", viewModel);
                 }
                 else
                 {
@@ -507,7 +510,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 RedirectToAction("TaskList", "RoatpApplication", new {applicationId}, $"Sequence_{sequenceId}");
             }
 
-            return await SaveAnswersGiven(applicationId, selectedSection.Id, selectedSection.SectionId, selectedSection.SequenceId, pageId, page, redirectAction, string.Empty);
+            return await SaveAnswersGiven(applicationId, selectedSection.Id, selectedSection.SectionId, selectedSection.SequenceId, pageId, page, redirectAction, formAction);
         }
 
         [Route("apply-training-provider-tasklist")]
@@ -585,7 +588,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     UkrlpLookupDetails = ukrlpLookupResults.Results.FirstOrDefault()
                 };
 
-                await _applicationApiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled);
+                var userId  = User.GetUserId().ToString();
+                await _applicationApiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled, userId);
                 _sessionService.Remove(ApplicationDetailsKey);
 
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
@@ -694,13 +698,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return page;
         }
 
-        private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, Guid sectionId, int sectionNo, int sequenceNo, string pageId, Page page, string redirectAction, string __formAction)
+        private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, Guid sectionId, int sectionNo, int sequenceNo, string pageId, Page page, string redirectAction, string formAction)
         {
             var isFileUploadPage = page.Questions.Any(q => QuestionType.FileUpload.Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase));
 
             var answers = isFileUploadPage ? GetAnswersFromFiles() : GetAnswersFromForm(page);
 
             ApplyFormattingToAnswers(answers, page);
+
+            if(formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
+            {
+                ValidateFileHasBeenSelectedForMultipleFileUpload(page, answers);
+            }
 
             RunCustomValidations(page, answers);
             if (!ModelState.IsValid)
@@ -754,14 +763,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 // Any answer that is saved will affect the NotRequiredOverrides
                 await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
 
-                if (__formAction == "Add" && page.AllowMultipleAnswers)
+                if(formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
                 {
                     return RedirectToAction("Page", new
                     {
                         applicationId,
                         sequenceId = sequenceNo,
                         sectionId = sectionNo,
-                        pageId = nextActionId,
+                        pageId = pageId,
                         redirectAction
                     });
                 }
@@ -871,7 +880,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             List<Answer> answers = new List<Answer>();
 
             // These are special in that they drive other things and thus should not be deemed as an answer
-            var excludedInputs = new List<string> { "postcodeSearch", "checkAll", "ApplicationId", "RedirectAction" };
+            var excludedInputs = new List<string> { "formAction", "postcodeSearch", "checkAll", "ApplicationId", "RedirectAction" };
 
             // Add answers from the Form post
             foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !excludedInputs.Contains(f.Key, StringComparer.InvariantCultureIgnoreCase)))
@@ -1322,8 +1331,34 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return viewModel;
         }
 
+        private void ValidateFileHasBeenSelectedForMultipleFileUpload(Page page, List<Answer> answers)
+        {
+            if (page.DisplayType == PageDisplayType.MultipleFileUpload && !answers.Any())
+            {
+                var fileUploadQuestionIds = page.Questions.Where(p => p.Input.Type == QuestionType.FileUpload).Select(q => q.QuestionId);
+
+                var existingAnswers = page.PageOfAnswers?.SelectMany(poa => poa.Answers) ?? new List<Answer>();
+                var existingAnswersQuestionIds = existingAnswers.Select(x => x.QuestionId);
+
+                var questionIdForError = fileUploadQuestionIds.FirstOrDefault(x => !existingAnswersQuestionIds.Contains(x));
+                ModelState.AddModelError(questionIdForError, "The selected file is empty");
+            }
+        }
+
         private void RunCustomValidations(Page page, List<Answer> answers)
         {
+            var pagecustomValidators = _customValidatorFactory.GetCustomValidationsForPage(page, HttpContext.Request.Form.Files);
+            
+            foreach (var pageCustomValidation in pagecustomValidators)
+            {
+                var result = pageCustomValidation.Validate();
+
+                if (!result.IsValid)
+                {
+                    ModelState.AddModelError(result.QuestionId, result.ErrorMessage);
+                }
+            }
+
             foreach (var answer in answers)
             {
                 var customValidations = _customValidatorFactory.GetCustomValidationsForQuestion(page.PageId, answer.QuestionId, HttpContext.Request.Form.Files);
