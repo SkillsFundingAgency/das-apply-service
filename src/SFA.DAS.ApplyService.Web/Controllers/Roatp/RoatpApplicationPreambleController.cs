@@ -399,7 +399,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-            if (applicationDetails?.RoatpRegisterStatus?.ProviderTypeId!=null)
+            if (applicationDetails?.RoatpRegisterStatus?.ProviderTypeId!=null && applicationDetails?.RoatpRegisterStatus?.StatusId != OrganisationStatus.Removed)
             {
                 var vm = new SelectApplicationRouteViewModel {ApplicationRouteId = applicationDetails.RoatpRegisterStatus.ProviderTypeId.Value};
                 return await ProcessRoute(vm);

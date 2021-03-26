@@ -1216,9 +1216,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(registerStatus);
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ProviderAlreadyOnRegister");
+            var viewResult = result as ViewResult;
+            viewResult.ViewName.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("TermsAndConditions");
 
         }
 
@@ -1398,7 +1398,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase(OrganisationStatus.Active)]
         [TestCase(OrganisationStatus.ActiveNotTakingOnApprentices)]
         [TestCase(OrganisationStatus.Onboarding)]
-        public void Provider_already_on_register_changes_route_and_cannot_select_current_route(int statusId)
+        public void Provider_already_on_register_goes_straight_to_conditions_of_acceptance(int statusId)
         {
             var registerStatus = new OrganisationRegisterStatus
             {
@@ -1423,11 +1423,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = _controller.SelectApplicationRoute().GetAwaiter().GetResult();
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            var model = viewResult.Model as SelectApplicationRouteViewModel;
+            var model = viewResult.Model as ConditionsOfAcceptanceViewModel;
 
-            var currentApplicationRoute = model.ApplicationRoutes.FirstOrDefault(x => x.Id == registerStatus.ProviderTypeId);
-
-            currentApplicationRoute.Should().BeNull();
+            model.Should().NotBeNull();
         }
 
         [Test]
