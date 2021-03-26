@@ -585,7 +585,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     UkrlpLookupDetails = ukrlpLookupResults.Results.FirstOrDefault()
                 };
 
-                await _applicationApiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled);
+                var userId  = User.GetUserId().ToString();
+                await _applicationApiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled, userId);
                 _sessionService.Remove(ApplicationDetailsKey);
 
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
