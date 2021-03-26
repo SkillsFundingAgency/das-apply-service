@@ -1216,9 +1216,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(registerStatus);
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
-            var viewResult = result as ViewResult;
-            viewResult.ViewName.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("TermsAndConditions");
+            var redirectToActionResult = result as RedirectToActionResult;
+            redirectToActionResult.Should().NotBeNull();
+            redirectToActionResult.ActionName.Should().Contain("TermsAndConditions");
 
         }
 

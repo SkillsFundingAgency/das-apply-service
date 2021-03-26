@@ -533,8 +533,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 if (applicationDetails?.RoatpRegisterStatus?.ProviderTypeId != null)
                 {
-                    return await TermsAndConditions(new SelectApplicationRouteViewModel { ApplicationRouteId = applicationDetails.RoatpRegisterStatus.ProviderTypeId.Value });
-
+                    return RedirectToAction("TermsAndConditions", new { applicationRouteId = applicationDetails.RoatpRegisterStatus.ProviderTypeId.Value });
                 }
 
                 return RedirectToAction("ProviderAlreadyOnRegister");
