@@ -31,7 +31,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             _logger = logger;
         }
 
-        public async Task<ApplyGatewayDetails> GetExternalApiCheckDetails(Guid applicationId, string userRequestedChecks)
+        public async Task<ApplyGatewayDetails> GetExternalApiCheckDetails(Guid applicationId)
         {
             var applyGatewayDetails = new ApplyGatewayDetails();
 

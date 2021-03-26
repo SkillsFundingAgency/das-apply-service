@@ -112,7 +112,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 await _mediator.Send(new StartGatewayReviewRequest(application.ApplicationId, request.UserName));
 
                 _logger.LogInformation($"Getting external API checks data for application {application.ApplicationId}");
-                var gatewayExternalApiCheckDetails = await _gatewayApiChecksService.GetExternalApiCheckDetails(application.ApplicationId, request.UserName);
+                var gatewayExternalApiCheckDetails = await _gatewayApiChecksService.GetExternalApiCheckDetails(application.ApplicationId);
                 await _mediator.Send(new UpdateExternalApiCheckDetailsRequest(application.ApplicationId, gatewayExternalApiCheckDetails, request.UserId, request.UserName));
 
                 // must refresh to get latest information

@@ -83,7 +83,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 .ReturnsAsync(() => Unit.Value);
 
             _gatewayApiChecksService = new Mock<IGatewayApiChecksService>();
-            _gatewayApiChecksService.Setup(x => x.GetExternalApiCheckDetails(_applicationId, _userName)).ReturnsAsync(new ApplyGatewayDetails());
+            _gatewayApiChecksService.Setup(x => x.GetExternalApiCheckDetails(_applicationId)).ReturnsAsync(new ApplyGatewayDetails());
 
 
             _controller = new RoatpGatewayController(_logger.Object, _mediator.Object, _gatewayApiChecksService.Object, _fileStorage.Object)
@@ -126,7 +126,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             await _controller.GetGatewayCommonDetails(_applicationId, request);
 
             _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.AtLeastOnce);
-            _gatewayApiChecksService.Verify(x => x.GetExternalApiCheckDetails(_applicationId, _userName), Times.Once);
+            _gatewayApiChecksService.Verify(x => x.GetExternalApiCheckDetails(_applicationId), Times.Once);
             _mediator.Verify(x => x.Send(It.IsAny<UpdateExternalApiCheckDetailsRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 

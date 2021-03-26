@@ -14,6 +14,7 @@ using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
 using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -91,9 +92,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public void Service_returns_ukrlp_and_roatp_details()
+        public async Task Service_returns_ukrlp_and_roatp_details()
         {
-            var result = _service.GetExternalApiCheckDetails(_applicationId, "test user").GetAwaiter().GetResult();
+            var result = await _service.GetExternalApiCheckDetails(_applicationId);
 
             result.SourcesCheckedOn.Should().NotBeNull();
             result.UkrlpDetails.UKPRN.Should().Be(_ukrlpDetails.Results[0].UKPRN);
@@ -103,7 +104,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public void Service_returns_companies_house_details()
+        public async Task Service_returns_companies_house_details()
         {
             var companyNumber = "12345678";
 
@@ -130,7 +131,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _companiesHouseApiClient.Setup(x => x.GetCompany(companyNumber)).ReturnsAsync(companyDetails);
 
-            var result = _service.GetExternalApiCheckDetails(_applicationId, "test user").GetAwaiter().GetResult();
+            var result = await _service.GetExternalApiCheckDetails(_applicationId);
 
             result.CompaniesHouseDetails.Should().NotBeNull();
             result.CompaniesHouseDetails.CompanyNumber.Should().Be(companyDetails.Response.CompanyNumber);
@@ -138,7 +139,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public void Service_returns_charity_commission_details()
+        public async Task Service_returns_charity_commission_details()
         {
             int charityNumber = 112233;
 
@@ -161,7 +162,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _charityCommissionApiClient.Setup(x => x.GetCharity(charityNumber)).ReturnsAsync(charityDetails);
 
-            var result = _service.GetExternalApiCheckDetails(_applicationId, "test user").GetAwaiter().GetResult();
+            var result = await _service.GetExternalApiCheckDetails(_applicationId);
 
             result.CharityCommissionDetails.Should().NotBeNull();
             result.CharityCommissionDetails.CharityNumber.Should().Be(charityDetails.CharityNumber);
@@ -174,7 +175,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _ukrlpDetails = null;
             _roatpApiClient.Setup(x => x.GetUkrlpDetails(_ukprn)).ReturnsAsync(_ukrlpDetails);
 
-            Action serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId, "test user").GetAwaiter().GetResult();
+            Action serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId).GetAwaiter().GetResult();
             serviceCall.Should().Throw<ServiceUnavailableException>();
         }
 
@@ -183,7 +184,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         {
             _registerStatus = null;
             _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(_ukprn)).ReturnsAsync(_registerStatus);
-            Action serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId, "test user").GetAwaiter().GetResult();
+            Action serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId).GetAwaiter().GetResult();
             serviceCall.Should().Throw<ServiceUnavailableException>();
         }
 
@@ -206,7 +207,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             ApiResponse<Company> apiResponse = null;
             _companiesHouseApiClient.Setup(x => x.GetCompany(companyNumber)).ReturnsAsync(apiResponse);
 
-            Action serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId, "test user").GetAwaiter().GetResult();
+            Action serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId).GetAwaiter().GetResult();
             serviceCall.Should().Throw<ServiceUnavailableException>();
         }
 
@@ -229,7 +230,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Charity charityDetails = null;
             _charityCommissionApiClient.Setup(x => x.GetCharity(charityNumber)).ReturnsAsync(charityDetails);
 
-            Action serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId, "test user").GetAwaiter().GetResult();
+            Action serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId).GetAwaiter().GetResult();
             serviceCall.Should().Throw<ServiceUnavailableException>();
         }
     }
