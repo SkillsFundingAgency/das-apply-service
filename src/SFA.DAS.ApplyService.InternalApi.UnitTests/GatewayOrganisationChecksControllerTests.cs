@@ -25,36 +25,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _controller = new GatewayOrganisationChecksController(_qnaApiClient.Object, _logger.Object);
         }
 
-        [Test]
-        public void get_one_in_twelve_months_returns_expected_value_when_present()
-        {
-            _qnaApiClient
-                .Setup(x => x.GetAnswerValue(_applicationId,
-                    RoatpWorkflowSequenceIds.Preamble,
-                    RoatpWorkflowSectionIds.Preamble,
-                    RoatpWorkflowPageIds.Preamble,
-                    RoatpPreambleQuestionIdConstants.OneInTwelveMonths)).ReturnsAsync(ValueOfQuestion);
-
-            var actualResult = _controller.GetOneInTwelveMonths(_applicationId).Result;
-
-            Assert.AreEqual(ValueOfQuestion, actualResult);
-        }
-
-
-        [Test]
-        public void get_one_in_twelve_months_returns_no_value_when_not_present()
-        {
-            _qnaApiClient
-                .Setup(x => x.GetAnswerValue(_applicationId,
-                    RoatpWorkflowSequenceIds.Preamble,
-                    RoatpWorkflowSectionIds.Preamble,
-                    RoatpWorkflowPageIds.Preamble,
-                    RoatpPreambleQuestionIdConstants.OneInTwelveMonths)).ReturnsAsync((string)null);
-
-            var actualResult = _controller.GetOneInTwelveMonths(_applicationId).Result;
-
-            Assert.IsNull(actualResult);
-        }
 
         [Test]
         public void get_trading_name_returns_expected_value_when_present()

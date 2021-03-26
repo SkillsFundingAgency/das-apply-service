@@ -136,33 +136,6 @@
             }
         }
 
-        [HttpGet("one-in-twelve-months")]
-        public IActionResult OneInTwelveMonths()
-        {
-            var model = new OneInTwelveMonthsViewModel();
-            PopulateGetHelpWithQuestion(model, "OneApplicationWithinTwelveMonths");
-
-            return View("~/Views/Roatp/OneInTwelveMonths.cshtml", model);
-        }
-
-        [HttpPost("one-in-twelve-months")]
-        public IActionResult OneInTwelveMonths(OneInTwelveMonthsViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View("~/Views/Roatp/OneInTwelveMonths.cshtml", model);
-            }
-
-            if (model.HasOneInTwelveMonths is true)
-            {
-                return RedirectToAction("OneApplicationWithinTwelveMonths", "RoatpShutterPages");
-            }
-            else
-            {
-                return RedirectToAction("EnterApplicationUkprn");
-            }
-        }
-
         [Route("enter-uk-provider-reference-number")]
         public IActionResult EnterApplicationUkprn(string ukprn)
         {

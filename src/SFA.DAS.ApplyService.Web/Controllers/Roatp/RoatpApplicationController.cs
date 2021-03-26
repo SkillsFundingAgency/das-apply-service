@@ -129,7 +129,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 if (applicationId == Guid.Empty)
                 {
-                    return RedirectToAction("OneInTwelveMonths", "RoatpApplicationPreamble");
+                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
                 }
             }
             

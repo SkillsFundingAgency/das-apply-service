@@ -10,7 +10,6 @@
 
     public static class RoatpPreambleQuestionIdConstants
     {
-        public const string OneInTwelveMonths = "PRE-1";
         public const string UKPRN = "PRE-10";
         public const string UkrlpLegalName = "PRE-20";
         public const string UkrlpWebsite = "PRE-30";
@@ -406,12 +405,6 @@
         public static List<PreambleAnswer> CreatePreambleQuestions(ApplicationDetails applicationDetails)
         {
             var questions = new List<PreambleAnswer>();
-
-            questions.Add(new PreambleAnswer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.OneInTwelveMonths,
-                Value = "No"
-            });
 
             questions.Add(new PreambleAnswer
             {
