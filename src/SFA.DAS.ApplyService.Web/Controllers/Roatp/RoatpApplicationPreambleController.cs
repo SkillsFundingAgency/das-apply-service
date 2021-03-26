@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
+﻿using System.Diagnostics;
+
+namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     using System;
     using System.Linq;
@@ -395,18 +397,19 @@
         [Route("choose-provider-route")]
         public async Task<IActionResult> SelectApplicationRoute()
         {
+            
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            if (applicationDetails?.RoatpRegisterStatus?.ProviderTypeId!=null)
+            {
+                var vm = new SelectApplicationRouteViewModel {ApplicationRouteId = applicationDetails.RoatpRegisterStatus.ProviderTypeId.Value};
+                return await ProcessRoute(vm);
+            }
+
             var model = new SelectApplicationRouteViewModel();
 
             var applicationRoutes = await GetApplicationRoutesForOrganisation();
 
             model.ApplicationRoutes = applicationRoutes;
-
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-            if (applicationDetails?.ApplicationRoute != null)
-            {
-                model.ApplicationRouteId = applicationDetails.ApplicationRoute.Id;
-            }
-
             PopulateGetHelpWithQuestion(model, "ApplicationRoute");
 
             return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
@@ -528,12 +531,16 @@
 
             if (ProviderEligibleToChangeRoute(roatpRegisterStatus))
             {
+                if (applicationDetails?.RoatpRegisterStatus?.ProviderTypeId != null)
+                {
+                    return await TermsAndConditions(new SelectApplicationRouteViewModel { ApplicationRouteId = applicationDetails.RoatpRegisterStatus.ProviderTypeId.Value });
+
+                }
+
                 return RedirectToAction("ProviderAlreadyOnRegister");
             }
-            else
-            {
-                return RedirectToAction("SelectApplicationRoute");
-            }
+
+            return RedirectToAction("SelectApplicationRoute");
         }
 
         private async Task<IActionResult> StartRoatpApplication(SelectApplicationRouteViewModel model)
