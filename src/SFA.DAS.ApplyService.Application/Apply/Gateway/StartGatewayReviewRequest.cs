@@ -6,12 +6,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
     public class StartGatewayReviewRequest : IRequest
     {
         public Guid ApplicationId { get; }
-        public string Reviewer { get; }
+        public string UserId { get; }
+        public string UserName { get; }
 
-        public StartGatewayReviewRequest(Guid applicationId, string reviewer)
+        public StartGatewayReviewRequest(Guid applicationId, string userId, string userName)
         {
             ApplicationId = applicationId;
-            Reviewer = reviewer;
+            UserId = userId;
+            UserName = userName;
         }
     }
 }

@@ -109,7 +109,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             if (application.GatewayReviewStatus == GatewayReviewStatus.New)
             {
                 _logger.LogInformation($"Starting Gateway Review for application {application.ApplicationId}");
-                await _mediator.Send(new StartGatewayReviewRequest(application.ApplicationId, request.UserName));
+                await _mediator.Send(new StartGatewayReviewRequest(application.ApplicationId, request.UserId, request.UserName));
 
                 _logger.LogInformation($"Getting external API checks data for application {application.ApplicationId}");
                 var gatewayExternalApiCheckDetails = await _gatewayApiChecksService.GetExternalApiCheckDetails(application.ApplicationId);
