@@ -1218,7 +1218,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             var redirectToActionResult = result as RedirectToActionResult;
             redirectToActionResult.Should().NotBeNull();
-            redirectToActionResult.ActionName.Should().Contain("TermsAndConditions");
+            redirectToActionResult.ActionName.Should().Contain("ProviderAlreadyOnRegister");
 
         }
 
@@ -1398,7 +1398,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase(OrganisationStatus.Active)]
         [TestCase(OrganisationStatus.ActiveNotTakingOnApprentices)]
         [TestCase(OrganisationStatus.Onboarding)]
-        public void Provider_already_on_register_goes_straight_to_conditions_of_acceptance(int statusId)
+        public void Provider_already_on_register_goes_straight_to_select_application_route(int statusId)
         {
             var registerStatus = new OrganisationRegisterStatus
             {
@@ -1423,7 +1423,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = _controller.SelectApplicationRoute().GetAwaiter().GetResult();
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            var model = viewResult.Model as ConditionsOfAcceptanceViewModel;
+            var model = viewResult.Model as SelectApplicationRouteViewModel;
 
             model.Should().NotBeNull();
         }
@@ -1501,7 +1501,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             redirectResult.Should().NotBeNull();
 
-            redirectResult.ActionName.Should().Be("ChosenToRemainOnRegister");
+            redirectResult.ActionName.Should().Be("TermsAndConditions");
         }
 
         [Ignore("clearing of data will be done later")]
