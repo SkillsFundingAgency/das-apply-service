@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
                              string sectionTitle, List<TabularData> peopleInControlDetails)
         {
             ApplicationId = applicationId;
-            SequenceId = sequenceId.ToString();
+            SequenceId = sequenceId;
             SectionId = sectionId;
             PageId = pageId;
             PageContext = pageContext;
@@ -59,10 +59,9 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
 
         public List<QuestionViewModel> Questions { get; set; }
 
-        public string SequenceId { get; set; } // Note in Assessor & Config Preview this is SequenceNo and an integer
+        public int SequenceId { get; set; } // Note in Assessor & Config Preview this is SequenceNo and an integer
         public int SectionId { get; set; } // Note in Assessor & Config Preview this is SectionNo
 
-        public bool AllowMultipleAnswers { get; set; }
         public List<PageOfAnswers> PageOfAnswers { get; set; }
         public string BodyText { get; set; }
         public string InfoText { get; set; }
@@ -101,14 +100,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
             BodyText = page.BodyText;
             Details = page.Details;
 
-            AllowMultipleAnswers = page.AllowMultipleAnswers;
             PageOfAnswers = page.PageOfAnswers ?? new List<PageOfAnswers>();
-
-            // MultipleAnswer questions stores the last failed attempt as a previous answer so it needs to be removed
-            if (AllowMultipleAnswers && errorMessages != null && errorMessages.Any())
-            {
-                PageOfAnswers = page.PageOfAnswers.Take(page.PageOfAnswers.Count - 1).ToList();
-            }
 
             var answers = new List<Answer>();
 
@@ -140,10 +132,10 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
                 Hint = q.Hint,
                 Options = q.Input.Options,
                 Validations = q.Input.Validations,
-                Value = page.AllowMultipleAnswers ? GetMultipleValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
-                JsonValue = page.AllowMultipleAnswers ? GetMultipleJsonValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : GetJsonValue(answers, q),
+                Value = answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
+                JsonValue = GetJsonValue(answers, q),
                 ErrorMessages = errorMessages?.Where(f => f.Field.Split("_Key_")[0] == q.QuestionId).ToList(),
-                SequenceId = int.Parse(SequenceId),
+                SequenceId = SequenceId,
                 SectionId = SectionId,
                 ApplicationId = ApplicationId,
                 PageId = PageId,
@@ -193,16 +185,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
             if (errorMessages != null && errorMessages.Any())
             {
                 return answers?.LastOrDefault(a => a?.QuestionId == question.QuestionId)?.Value;
-            }
-
-            return null;
-        }
-
-        private dynamic GetMultipleJsonValue(List<Answer> answers, Question question, List<ValidationErrorDetail> errorMessages)
-        {
-            if (errorMessages != null && errorMessages.Any())
-            {
-                return JsonConvert.SerializeObject(answers?.LastOrDefault(a => a?.QuestionId == question.QuestionId)?.Value);
             }
 
             return null;

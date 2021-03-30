@@ -52,6 +52,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Organisation> GetOrganisationByName(string name);
         Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn);
 
-        Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus);
+        Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus, string userId);
     }
 }

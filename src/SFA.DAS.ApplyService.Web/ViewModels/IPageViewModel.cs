@@ -6,7 +6,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
     {
         string Title { get; set; }
         Guid ApplicationId { get; }
-        string SequenceId { get; set; }
+        int SequenceId { get; set; }
         int SectionId { get; set; }
         string PageId { get; set; }
         string GetHelpQuestion { get; set; }

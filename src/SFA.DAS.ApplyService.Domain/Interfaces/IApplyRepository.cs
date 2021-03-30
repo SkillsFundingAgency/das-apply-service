@@ -69,7 +69,7 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
 
         Task<bool> IsUkprnWhitelisted(int ukprn);
 
-        Task UpdateApplicationStatus(Guid applicationId, string status);
+        Task UpdateApplicationStatus(Guid applicationId, string status, string userId);
 
         Task<bool> WithdrawApplication(Guid applicationId, string comments, string userId, string userName);
         Task<bool> RemoveApplication(Guid applicationId, string comments, string externalComments, string userId, string userName);
