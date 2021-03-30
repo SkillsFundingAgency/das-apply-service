@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
+﻿using System.Diagnostics;
+
+namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     using System;
     using System.Linq;
@@ -395,12 +397,13 @@
         [Route("choose-provider-route")]
         public async Task<IActionResult> SelectApplicationRoute()
         {
+            
+
             var model = new SelectApplicationRouteViewModel();
 
             var applicationRoutes = await GetApplicationRoutesForOrganisation();
 
             model.ApplicationRoutes = applicationRoutes;
-
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             if (applicationDetails?.ApplicationRoute != null)
             {
@@ -530,10 +533,8 @@
             {
                 return RedirectToAction("ProviderAlreadyOnRegister");
             }
-            else
-            {
-                return RedirectToAction("SelectApplicationRoute");
-            }
+
+            return RedirectToAction("SelectApplicationRoute");
         }
 
         private async Task<IActionResult> StartRoatpApplication(SelectApplicationRouteViewModel model)
@@ -679,10 +680,9 @@
         [HttpPost]
         public async Task<IActionResult> ChangeProviderRoute(ChangeProviderRouteViewModel model)
         {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             if (!ModelState.IsValid)
             {
-                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
                 var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
 
                 var existingProviderRoute = providerRoutes.FirstOrDefault(x => x.Id == applicationDetails.RoatpRegisterStatus.ProviderTypeId);
@@ -709,12 +709,11 @@
 
             if (model.ChangeApplicationRoute != "Y")
             {
-                return RedirectToAction("ChosenToRemainOnRegister", model);
+                return RedirectToAction("TermsAndConditions", new { applicationRouteId = applicationDetails?.RoatpRegisterStatus?.ProviderTypeId.Value });
             }
-            else
-            {
+            
                 return RedirectToAction("SelectApplicationRoute");
-            }
+            
         }
 
         [Route("chosen-stay-on-roatp")]
