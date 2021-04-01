@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         Task<List<RoatpGatewaySummaryItem>> GetNewGatewayApplications();
         Task<List<RoatpGatewaySummaryItem>> GetInProgressGatewayApplications();
         Task<List<RoatpGatewaySummaryItem>> GetClosedGatewayApplications();
-        Task StartGatewayReview(Guid applicationId, string reviewer);
+        Task StartGatewayReview(Guid applicationId, string userId, string userName);
         Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
 
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();

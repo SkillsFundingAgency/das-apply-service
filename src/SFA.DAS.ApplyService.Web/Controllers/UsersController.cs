@@ -106,7 +106,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
             else if (user.ApplyOrganisationId is null)
             {
-                return RedirectToAction("OneInTwelveMonths", "RoatpApplicationPreamble");
+                return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
             }
 
             var selectedApplicationType = ApplicationTypes.RegisterTrainingProviders;

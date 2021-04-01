@@ -22,8 +22,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     [Authorize]
     public class RoatpGatewayController: Controller
     {
-        private const string OneInTwelveMonthsPageId = "OneInTwelveMonths";
-
         private readonly IGatewayApiChecksService _gatewayApiChecksService;
         private readonly ILogger<RoatpGatewayController> _logger;
         private readonly IMediator _mediator;
@@ -41,11 +39,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost]
          public async Task GatewayPageSubmit([FromBody] Types.Requests.UpdateGatewayPageAnswerRequest request)
         {
-            if(request.PageId == OneInTwelveMonthsPageId)
-            {
-                await UpdateOneInTwelveMonthApplyData(request);
-            }
-
             _logger.LogInformation($"Submitting Gateway page submit for ApplicationId '{request.ApplicationId}' for PageId '{request.PageId}', Status '{request.Status}', " +
                                    $"Comments '{request.Comments}', Clarification answer '{request.ClarificationAnswer}'");
 
@@ -62,11 +55,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
          [HttpPost]
          public async Task GatewayPageSubmitClarification([FromBody] Types.Requests.UpdateGatewayPageAnswerRequest request)
          {
-             if (request.PageId == OneInTwelveMonthsPageId)
-             {
-                 await UpdateOneInTwelveMonthApplyData(request);
-             }
-
              _logger.LogInformation($"Submitting Gateway page submit clarification for ApplicationId '{request.ApplicationId}' for PageId '{request.PageId}', Status '{request.Status}', " +
                                     $"Comments '{request.Comments}'");
 
@@ -83,11 +71,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
          [HttpPost]
          public async Task GatewayPageSubmitPostClarification([FromBody] Types.Requests.UpdateGatewayPageAnswerRequest request)
          {
-             if (request.PageId == OneInTwelveMonthsPageId)
-             {
-                 await UpdateOneInTwelveMonthApplyData(request);
-             }
-
              _logger.LogInformation($"Submitting Gateway page post clarification for ApplicationId '{request.ApplicationId}' for PageId '{request.PageId}', Status '{request.Status}', " +
                                     $"Comments '{request.Comments}', Clarification answer '{request.ClarificationAnswer}'");
 
@@ -113,9 +96,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new UpdateGatewayReviewStatusAsClarificationRequest(request.ApplicationId, request.UserId, request.UserName));
         }
 
-        [Route("Gateway/{applicationId}/Pages/{pageId}/CommonDetails")]
-        [HttpGet]
-        public async Task<ActionResult<GatewayCommonDetails>> GetGatewayCommonDetails(Guid applicationId, string pageId)
+        [HttpPost("Gateway/{applicationId}/CommonDetails")]
+        public async Task<ActionResult<GatewayCommonDetails>> GetGatewayCommonDetails(Guid applicationId, [FromBody] Types.Requests.GatewayCommonDetailsRequest request)
         {
             var application = await _mediator.Send(new GetApplicationRequest(applicationId));
 
@@ -123,18 +105,32 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             {
                 return NotFound();
             }
+            
+            if (application.GatewayReviewStatus == GatewayReviewStatus.New)
+            {
+                _logger.LogInformation($"Starting Gateway Review for application {application.ApplicationId}");
+                await _mediator.Send(new StartGatewayReviewRequest(application.ApplicationId, request.UserId, request.UserName));
 
-            var gatewayPage = await _mediator.Send(new GetGatewayPageAnswerRequest(application.ApplicationId, pageId));
+                _logger.LogInformation($"Getting external API checks data for application {application.ApplicationId}");
+                var gatewayExternalApiCheckDetails = await _gatewayApiChecksService.GetExternalApiCheckDetails(application.ApplicationId);
+                await _mediator.Send(new UpdateExternalApiCheckDetailsRequest(application.ApplicationId, gatewayExternalApiCheckDetails, request.UserId, request.UserName));
+
+                // must refresh to get latest information
+                application = await _mediator.Send(new GetApplicationRequest(application.ApplicationId));
+            }
+
+            var gatewayPage = await _mediator.Send(new GetGatewayPageAnswerRequest(application.ApplicationId, request.PageId));
             if(gatewayPage is null)
             {
+                _logger.LogWarning($"Could not find page details for application {application.ApplicationId} | pageId {request.PageId}");
                 gatewayPage = new GatewayPageAnswer
                 {
                     ApplicationId = application.ApplicationId,
-                    PageId = pageId
+                    PageId = request.PageId
                 };
             }
 
-            var newDetails = new GatewayCommonDetails
+            return new GatewayCommonDetails
             {
                 ApplicationId = gatewayPage.ApplicationId,
                 Ukprn = application.ApplyData.ApplyDetails.UKPRN,
@@ -157,18 +153,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 ClarificationDate = gatewayPage.ClarificationDate,
                 ClarificationAnswer = gatewayPage.ClarificationAnswer
             };
-
-            var logging =
-                $"Getting common page details for applcationId [{applicationId}] for PageId [{pageId}]: {Newtonsoft.Json.JsonConvert.SerializeObject(newDetails)}";
-            _logger.LogInformation(logging);
-
-            return newDetails;
         }
 
         [Route("Gateway/{applicationId}/Pages")]
         [HttpGet]
         public async Task<ActionResult<List<GatewayPageAnswerSummary>>> GetGatewayPages(Guid applicationId)
         {
+            // here
             return await _mediator.Send(new GetGatewayPagesRequest(applicationId));
         }
 
@@ -208,29 +199,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             await _mediator.Send(new RemoveSubcontractorDeclarationFileRequest(applicationId, clarificationFileName, command.UserId, command.UserName));
             
             return Ok();
-        }
-
-
-        private async Task UpdateOneInTwelveMonthApplyData(Types.Requests.UpdateGatewayPageAnswerRequest request)
-        {
-            var application = await _mediator.Send(new GetApplicationRequest(request.ApplicationId));
-
-            if (application.GatewayReviewStatus == GatewayReviewStatus.New)
-            {
-                _logger.LogInformation(
-                    $"{OneInTwelveMonthsPageId} - Starting Gateway Review for application {application.ApplicationId}");
-                await _mediator.Send(new StartGatewayReviewRequest(application.ApplicationId, request.UserName));
-            }
-
-            if (request.Status == GatewayAnswerStatus.Pass)
-            {
-                _logger.LogInformation(
-                    $"{OneInTwelveMonthsPageId} - Getting external API checks data for application {application.ApplicationId}");
-
-                var gatewayExternalApiCheckDetails = await _gatewayApiChecksService.GetExternalApiCheckDetails(application.ApplicationId, request.UserName);
-
-                await _mediator.Send(new UpdateExternalApiCheckDetailsRequest(application.ApplicationId, gatewayExternalApiCheckDetails, request.UserId, request.UserName));
-            }
         }
     }
 }

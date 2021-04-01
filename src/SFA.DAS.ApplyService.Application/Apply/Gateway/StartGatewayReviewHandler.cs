@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 
         public async Task<Unit> Handle(StartGatewayReviewRequest request, CancellationToken cancellationToken)
         {
-            await _applyRepository.StartGatewayReview(request.ApplicationId, request.Reviewer);
+            await _applyRepository.StartGatewayReview(request.ApplicationId, request.UserId, request.UserName);
 
             return Unit.Value;
         }

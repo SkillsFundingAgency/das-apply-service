@@ -6,6 +6,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
 {
     public interface IGatewayApiChecksService
     {
-        Task<ApplyGatewayDetails> GetExternalApiCheckDetails(Guid applicationId, string userRequestedChecks);
+        Task<ApplyGatewayDetails> GetExternalApiCheckDetails(Guid applicationId);
     }
 }

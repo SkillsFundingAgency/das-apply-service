@@ -488,23 +488,21 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task StartGatewayReview(Guid applicationId, string reviewer)
+        public async Task StartGatewayReview(Guid applicationId, string userId, string userName)
         {
-            var application = await GetApplication(applicationId);
-
-            if (application != null && application.GatewayReviewStatus == GatewayReviewStatus.New)
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
-                application.UpdatedBy = reviewer;
-                application.UpdatedAt = DateTime.UtcNow;
-
-                using (var connection = new SqlConnection(_config.SqlConnectionString))
-                {
-                    await connection.ExecuteAsync(@"UPDATE Apply
-                                                    SET  GatewayReviewStatus = @GatewayReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
-                                                    WHERE Apply.ApplicationId = @ApplicationId",
-                                                    new { application.ApplicationId, application.ApplyData, application.GatewayReviewStatus, application.UpdatedBy });
-                }
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET  GatewayReviewStatus = @gatewayReviewStatusInProgress,
+                                                     UpdatedBy = @userName, UpdatedAt = GETUTCDATE(),
+                                                     GatewayUserId = @userId, GatewayUserName = @userName
+                                                WHERE ApplicationId = @applicationId AND GatewayReviewStatus = @gatewayReviewStatusNew",
+                                                new 
+                                                { 
+                                                    applicationId, userId, userName,
+                                                    gatewayReviewStatusNew = GatewayReviewStatus.New,
+                                                    gatewayReviewStatusInProgress = GatewayReviewStatus.InProgress,
+                                                });
             }
         }
 
