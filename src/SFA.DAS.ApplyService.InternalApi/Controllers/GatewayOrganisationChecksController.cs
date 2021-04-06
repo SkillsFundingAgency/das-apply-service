@@ -21,16 +21,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet("/Gateway/{applicationId}/OneInTwelveMonths")]
-        public async Task<string> GetOneInTwelveMonths(Guid applicationId)
-        {
-            return await _qnaApiClient.GetAnswerValue(applicationId,
-                RoatpWorkflowSequenceIds.Preamble,
-                RoatpWorkflowSectionIds.Preamble,
-                RoatpWorkflowPageIds.Preamble,
-                RoatpPreambleQuestionIdConstants.OneInTwelveMonths);
-        }
-
         [HttpGet("/Gateway/{applicationId}/TradingName")]
         public async Task<string> GetTradingName(Guid applicationId)
         {

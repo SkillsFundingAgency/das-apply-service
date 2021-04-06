@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<IMediator> _mediator;
         private Mock<IGatewayApiChecksService> _gatewayApiChecksService;
         private Mock<IFileStorageService> _fileStorage;
-        private const string _oneInTwelveMonthsPageId = "OneInTwelveMonths";
+        private const string _pageId = "Page1";
         private const string _userName = "John Smith";
         private const string _userId = "user id 123";
 
@@ -65,7 +65,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             {
                 ApplicationId = _applicationId,
                 GatewayReviewStatus = GatewayReviewStatus.New,
-                ApplyData = new ApplyData()
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails(),
+                    GatewayReviewDetails = new ApplyGatewayDetails()
+                }
             };
 
             var configurationService = new Mock<IConfigurationService>();
@@ -79,7 +83,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 .ReturnsAsync(() => Unit.Value);
 
             _gatewayApiChecksService = new Mock<IGatewayApiChecksService>();
-            _gatewayApiChecksService.Setup(x => x.GetExternalApiCheckDetails(_applicationId, _userName)).ReturnsAsync(new ApplyGatewayDetails());
+            _gatewayApiChecksService.Setup(x => x.GetExternalApiCheckDetails(_applicationId)).ReturnsAsync(new ApplyGatewayDetails());
 
 
             _controller = new RoatpGatewayController(_logger.Object, _mediator.Object, _gatewayApiChecksService.Object, _fileStorage.Object)
@@ -92,71 +96,56 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public async Task GatewayPageSubmit_When_OneInTwelveMonths_and_GatewayReviewStatus_New_Starts_GatewayReview()
+        public async Task GetGatewayPageCommonDetails_When_GatewayReviewStatus_New_Starts_GatewayReview()
         {
-            var gatewayReviewStatus = GatewayReviewStatus.Pass;
-            var gatewayReviewComment = "Some comment";
+            _application.GatewayReviewStatus = GatewayReviewStatus.New;
 
-            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
+            var request = new Types.Requests.GatewayCommonDetailsRequest
             {
-                ApplicationId = _applicationId,
-                Comments = gatewayReviewComment,
-                Status = gatewayReviewStatus,
                 UserId = _userId,
                 UserName = _userName,
-                PageId = _oneInTwelveMonthsPageId
+                PageId = _pageId
             };
-            await _controller.GatewayPageSubmit(request);
+            await _controller.GetGatewayCommonDetails(_applicationId, request);
 
-            _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.AtLeastOnce);
             _mediator.Verify(x => x.Send(It.IsAny<StartGatewayReviewRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
-        public async Task GatewayPageSubmit_When_OneInTwelveMonths_and_GatewayReviewStatus_InProgress_Does_Not_Start_GatewayReview()
+        public async Task GetGatewayPageCommonDetails_When_GatewayReviewStatus_New_Saves_ExternalApi_Checks()
         {
-            _application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
+            _application.GatewayReviewStatus = GatewayReviewStatus.New;
 
-            var gatewayReviewStatus = GatewayReviewStatus.Pass;
-            var gatewayReviewComment = "Some comment";
-
-            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
+            var request = new Types.Requests.GatewayCommonDetailsRequest
             {
-                ApplicationId = _applicationId,
-                Comments = gatewayReviewComment,
-                Status = gatewayReviewStatus,
                 UserId = _userId,
                 UserName = _userName,
-                PageId = _oneInTwelveMonthsPageId
+                PageId = _pageId
             };
+            await _controller.GetGatewayCommonDetails(_applicationId, request);
 
-            await _controller.GatewayPageSubmit(request);
-
-            _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mediator.Verify(x => x.Send(It.IsAny<StartGatewayReviewRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+            _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+            _gatewayApiChecksService.Verify(x => x.GetExternalApiCheckDetails(_applicationId), Times.Once);
+            _mediator.Verify(x => x.Send(It.IsAny<UpdateExternalApiCheckDetailsRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
-        public async Task GatewayPageSubmit_When_Pass_OneInTwelveMonths_And_GatewayReviewDetails_Null_Saves_ExternalApi_Checks()
+        public async Task GetGatewayPageCommonDetails_When_GatewayReviewStatus_InProgress_Does_Not_Start_GatewayReview()
         {
-            var gatewayReviewStatus = GatewayReviewStatus.Pass;
-            var gatewayReviewComment = "Some comment";
+            _application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
 
-            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
+            var request = new Types.Requests.GatewayCommonDetailsRequest
             {
-                ApplicationId = _applicationId,
-                Comments = gatewayReviewComment,
-                Status = gatewayReviewStatus,
                 UserId = _userId,
                 UserName = _userName,
-                PageId = _oneInTwelveMonthsPageId
+                PageId = _pageId
             };
+            await _controller.GetGatewayCommonDetails(_applicationId, request);
 
-            await _controller.GatewayPageSubmit(request);
-
-            _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
-            _gatewayApiChecksService.Verify(x => x.GetExternalApiCheckDetails(_applicationId, _userName), Times.Once);
-            _mediator.Verify(x => x.Send(It.IsAny<UpdateExternalApiCheckDetailsRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+            _mediator.Verify(x => x.Send(It.IsAny<StartGatewayReviewRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+            _mediator.Verify(x => x.Send(It.IsAny<UpdateExternalApiCheckDetailsRequest>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         [Test]
@@ -299,79 +288,5 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.AreEqual(expectedResult.ToString(), result.ToString());
             _mediator.Verify(x => x.Send(It.IsAny<RemoveSubcontractorDeclarationFileRequest>(), It.IsAny<CancellationToken>()), Times.Never);
         }
-
-
-        [Test]
-        public async Task GatewayPageSubmitClarification_When_GatewayReviewStatus_New_Starts_GatewayReview()
-        {
-            var gatewayReviewStatus = GatewayReviewStatus.Pass;
-            var gatewayReviewComment = "Some comment";
-
-            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
-            {
-                ApplicationId = _applicationId,
-                Comments = gatewayReviewComment,
-                Status = gatewayReviewStatus,
-                UserId = _userId,
-                UserName = _userName,
-                PageId = _oneInTwelveMonthsPageId
-            };
-            await _controller.GatewayPageSubmitClarification(request);
-
-            _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mediator.Verify(x => x.Send(It.IsAny<StartGatewayReviewRequest>(), It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-
-        [Test]
-        public async Task GatewayPageSubmitClarification_When_GatewayReviewStatus_InProgress_Does_Not_Start_GatewayReview()
-        {
-            _application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
-
-            var gatewayReviewStatus = GatewayReviewStatus.Pass;
-            var gatewayReviewComment = "Some comment";
-
-            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
-            {
-                ApplicationId = _applicationId,
-                Comments = gatewayReviewComment,
-                Status = gatewayReviewStatus,
-                UserId = _userId,
-                UserName = _userName,
-                PageId = _oneInTwelveMonthsPageId
-            };
-
-            await _controller.GatewayPageSubmitClarification(request);
-
-            _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mediator.Verify(x => x.Send(It.IsAny<StartGatewayReviewRequest>(), It.IsAny<CancellationToken>()), Times.Never);
-        }
-
-
-        [Test]
-        public async Task GatewayPageSubmitPostClarification_When_GatewayReviewStatus_InProgress_Does_Not_Start_GatewayReview()
-        {
-            _application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
-
-            var gatewayReviewStatus = GatewayReviewStatus.Pass;
-            var gatewayReviewComment = "Some comment";
-
-            var request = new Types.Requests.UpdateGatewayPageAnswerRequest
-            {
-                ApplicationId = _applicationId,
-                Comments = gatewayReviewComment,
-                Status = gatewayReviewStatus,
-                UserId = _userId,
-                UserName = _userName,
-                PageId = _oneInTwelveMonthsPageId,
-                ClarificationAnswer = "answer"
-            };
-
-            await _controller.GatewayPageSubmitPostClarification(request);
-
-            _mediator.Verify(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mediator.Verify(x => x.Send(It.IsAny<StartGatewayReviewRequest>(), It.IsAny<CancellationToken>()), Times.Never);
-        }
-
     }
 }

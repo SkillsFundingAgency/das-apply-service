@@ -861,6 +861,7 @@
     line-height: 1.25;
     width: auto;
     margin-bottom: 0;
+    position: relative;
   }
 
   .roatp__navigation-item--signout {
@@ -873,6 +874,21 @@
   .roatp__navigation-item--inactive a {
     margin-left: 20px;
   }
+}
+
+.roatp__navigation-link--current {
+  text-decoration: none;
+}
+
+.roatp__navigation-link--current:after {
+  content: "";
+  height: 5px;
+  display: block;
+  position: absolute;
+  bottom: -12px;
+  left: 0;
+  right: 0;
+  background:#1d70b8;
 }
 
 .govuk-details--get-help {
@@ -1249,4 +1265,21 @@
 .das-body--hint,
 .das-list--hint {
   color: #6f777b;
+}
+
+
+/* Panel colours */ 
+.app-panel--muted {
+  background: #505a5f;
+  color: #fff;
+}
+
+.app-panel--warning {
+  background: #b58840;
+  color: #fff;
+}
+
+.app-panel--error {
+  background:	#d4351c;
+  color: #fff;
 }

@@ -38,6 +38,9 @@
                                     case ApplicationStatus.InProgress:
                                         <a class="govuk-link" asp-action="TaskList" asp-controller="RoatpApplication" asp-route-applicationId="@application.ApplicationId">View</a>
                                         break;
+                                    case ApplicationStatus.Withdrawn:
+                                        <a class="govuk-link" asp-action="ApplicationWithdrawn" asp-controller="RoatpApplication" asp-route-applicationId="@application.ApplicationId">View</a>
+                                        break;
                                     case ApplicationStatus.Submitted:
                                     case ApplicationStatus.GatewayAssessed:
                                     case ApplicationStatus.Resubmitted:

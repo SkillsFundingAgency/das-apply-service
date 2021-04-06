@@ -1216,9 +1216,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(registerStatus);
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ProviderAlreadyOnRegister");
+            var redirectToActionResult = result as RedirectToActionResult;
+            redirectToActionResult.Should().NotBeNull();
+            redirectToActionResult.ActionName.Should().Contain("ProviderAlreadyOnRegister");
 
         }
 
@@ -1398,7 +1398,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase(OrganisationStatus.Active)]
         [TestCase(OrganisationStatus.ActiveNotTakingOnApprentices)]
         [TestCase(OrganisationStatus.Onboarding)]
-        public void Provider_already_on_register_changes_route_and_cannot_select_current_route(int statusId)
+        public void Provider_already_on_register_goes_straight_to_select_application_route(int statusId)
         {
             var registerStatus = new OrganisationRegisterStatus
             {
@@ -1425,9 +1425,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             var model = viewResult.Model as SelectApplicationRouteViewModel;
 
-            var currentApplicationRoute = model.ApplicationRoutes.FirstOrDefault(x => x.Id == registerStatus.ProviderTypeId);
-
-            currentApplicationRoute.Should().BeNull();
+            model.Should().NotBeNull();
         }
 
         [Test]
@@ -1503,7 +1501,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             redirectResult.Should().NotBeNull();
 
-            redirectResult.ActionName.Should().Be("ChosenToRemainOnRegister");
+            redirectResult.ActionName.Should().Be("TermsAndConditions");
         }
 
         [Ignore("clearing of data will be done later")]
