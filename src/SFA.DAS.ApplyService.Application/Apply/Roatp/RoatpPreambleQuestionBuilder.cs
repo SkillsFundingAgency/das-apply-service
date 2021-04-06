@@ -391,6 +391,8 @@
         public const string Liabilities = "FHALiabilities";
         public const string ShareholderFunds = "FHAShareholderFunds";
         public const string Borrowings = "FHABorrowings";
+        public const string AccountingReferenceDate = "FHAAccountingReferenceDate";
+        public const string AccountingPeriod = "FHAAccountingPeriod";
     }
 
     public static class RoatpClarificationUpload

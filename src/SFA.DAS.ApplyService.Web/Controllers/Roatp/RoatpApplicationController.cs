@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -1534,13 +1535,22 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     Liabilities = applicationData.GetValue(RoatpWorkflowQuestionTags.Liabilities).Value<long>(),
                     Borrowings = applicationData.GetValue(RoatpWorkflowQuestionTags.Borrowings).Value<long>(),
                     ShareholderFunds = applicationData.GetValue(RoatpWorkflowQuestionTags.ShareholderFunds).Value<long>(),
-                    IntangibleAssets = applicationData.GetValue(RoatpWorkflowQuestionTags.IntangibleAssets).Value<long>()
+                    IntangibleAssets = applicationData.GetValue(RoatpWorkflowQuestionTags.IntangibleAssets).Value<long>(),
+                    AccountingReferenceDate = AccountingReferenceDate(applicationData),
+                    AccountingPeriod = applicationData.GetValue(RoatpWorkflowQuestionTags.AccountingPeriod).Value<byte>()
                 };
             }
             catch
             {
                 return new FinancialData { ApplicationId = applicationId };
             }            
+        }
+
+        private static DateTime? AccountingReferenceDate(JObject applicationData)
+        {
+            var rawDate = applicationData.GetValue(RoatpWorkflowQuestionTags.AccountingReferenceDate).Value<string>();
+
+            return DateTime.TryParseExact(rawDate, new[] { @"dd,MM,yyyy" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) ? date.Date : default(DateTime?);
         }
     }
 }
