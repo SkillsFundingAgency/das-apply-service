@@ -1550,7 +1550,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var rawDate = applicationData.GetValue(RoatpWorkflowQuestionTags.AccountingReferenceDate).Value<string>();
 
-            return DateTime.TryParseExact(rawDate, new[] { @"dd,MM,yyyy" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) ? date.Date : default(DateTime?);
+            return DateTime.TryParseExact(rawDate, new[] { @"d,M,yyyy" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) ? date.Date : default(DateTime?);
         }
     }
 }
