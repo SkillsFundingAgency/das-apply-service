@@ -34,6 +34,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class AgricultureEnvironmentalAndAnimalCare
             {
                 public const string Name = "Agriculture, environmental and animal care";
+                public const string WhatStandardsOffered = "7610AA";
                 public const string HowManyStarts = "7610A";
                 public const string HowManyEmployees = "7610B";
                 public const string MostExperiencedEmployee = "7610";
@@ -44,6 +45,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7610AA-1",
                         HowManyStarts = "DAT-7610A-1",
                         HowManyEmployees = "DAT-7610B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7610-4",
@@ -66,6 +68,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class BusinessAndAdministration
             {
                 public const string Name = "Business and administration";
+                public const string WhatStandardsOffered = "7615AA";
                 public const string HowManyStarts = "7615A";
                 public const string HowManyEmployees = "7615B";
                 public const string MostExperiencedEmployee = "7615";
@@ -76,6 +79,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7615AA-1",
                         HowManyStarts = "DAT-7615A-1",
                         HowManyEmployees = "DAT-7615B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7615-4",
@@ -98,6 +102,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class CareServices
             {
                 public const string Name = "Care Services";
+                public const string WhatStandardsOffered = "7620AA"; 
                 public const string HowManyStarts = "7620A";
                 public const string HowManyEmployees = "7620B";
                 public const string MostExperiencedEmployee = "7620";
@@ -108,6 +113,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7620AA-1",
                         HowManyStarts = "DAT-7620A-1",
                         HowManyEmployees = "DAT-7620B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7620-4",
@@ -130,6 +136,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class CateringAndHospitality
             {
                 public const string Name = "Catering and hospitality";
+                public const string WhatStandardsOffered = "7625AA";
                 public const string HowManyStarts = "7625A";
                 public const string HowManyEmployees = "7625B";
                 public const string MostExperiencedEmployee = "7625";
@@ -140,6 +147,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7625AA-1",
                         HowManyStarts = "DAT-7625A-1",
                         HowManyEmployees = "DAT-7625B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7625-4",
@@ -162,6 +170,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class Construction
             {
                 public const string Name = "Construction";
+                public const string WhatStandardsOffered = "7630AA";
                 public const string HowManyStarts = "7630A";
                 public const string HowManyEmployees = "7630B";
                 public const string MostExperiencedEmployee = "7630";
@@ -172,6 +181,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7630AA-1",
                         HowManyStarts = "DAT-7630A-1",
                         HowManyEmployees = "DAT-7630B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7630-4",
@@ -194,6 +204,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class CreativeAndDesign
             {
                 public const string Name = "Creative and design";
+                public const string WhatStandardsOffered = "7635AA"; 
                 public const string HowManyStarts = "7635A";
                 public const string HowManyEmployees = "7635B";
                 public const string MostExperiencedEmployee = "7635";
@@ -204,6 +215,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7635AA-1",
                         HowManyStarts = "DAT-7635A-1",
                         HowManyEmployees = "DAT-7635B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7635-4",
@@ -226,6 +238,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class Digital
             {
                 public const string Name = "Digital";
+                public const string WhatStandardsOffered = "7640AA";
                 public const string HowManyStarts = "7640A";
                 public const string HowManyEmployees = "7640B";
                 public const string MostExperiencedEmployee = "7640";
@@ -236,6 +249,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7640AA-1",
                         HowManyStarts = "DAT-7640A-1",
                         HowManyEmployees = "DAT-7640B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7640-4",
@@ -258,6 +272,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class EducationAndChildcare
             {
                 public const string Name = "Education and childcare";
+                public const string WhatStandardsOffered = "7645AA";
                 public const string HowManyStarts = "7645A";
                 public const string HowManyEmployees = "7645B";
                 public const string MostExperiencedEmployee = "7645";
@@ -268,6 +283,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7645AA-1",
                         HowManyStarts = "DAT-7645A-1",
                         HowManyEmployees = "DAT-7645B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7645-4",
@@ -290,6 +306,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class EngineeringAndManufacturing
             {
                 public const string Name = "Engineering and manufacturing";
+                public const string WhatStandardsOffered = "7650AA";
                 public const string HowManyStarts = "7650A";
                 public const string HowManyEmployees = "7650B";
                 public const string MostExperiencedEmployee = "7650";
@@ -300,6 +317,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7650AA-1",
                         HowManyStarts = "DAT-7650A-1",
                         HowManyEmployees = "DAT-7650B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7650-4",
@@ -322,6 +340,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class HairAndBeauty
             {
                 public const string Name = "Hair and Beauty";
+                public const string WhatStandardsOffered = "7655AA";
                 public const string HowManyStarts = "7655A";
                 public const string HowManyEmployees = "7655B";
                 public const string MostExperiencedEmployee = "7655";
@@ -332,6 +351,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7655AA-1",
                         HowManyStarts = "DAT-7655A-1",
                         HowManyEmployees = "DAT-7655B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7655-4",
@@ -354,6 +374,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class HealthAndScience
             {
                 public const string Name = "Health and Science";
+                public const string WhatStandardsOffered = "7660AA";
                 public const string HowManyStarts = "7660A";
                 public const string HowManyEmployees = "7660B";
                 public const string MostExperiencedEmployee = "7660";
@@ -364,6 +385,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7660AA-1",
                         HowManyStarts = "DAT-7660A-1",
                         HowManyEmployees = "DAT-7660B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7660-4",
@@ -386,6 +408,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class LegalFinanceAndAccounting
             {
                 public const string Name = "Legal, finance and accounting";
+                public const string WhatStandardsOffered = "7665AA";
                 public const string HowManyStarts = "7665A";
                 public const string HowManyEmployees = "7665B";
                 public const string MostExperiencedEmployee = "7665";
@@ -396,6 +419,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7665AA-1",
                         HowManyStarts = "DAT-7665A-1",
                         HowManyEmployees = "DAT-7665B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7665-4",
@@ -418,6 +442,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class ProtectiveServices
             {
                 public const string Name = "Protective services";
+                public const string WhatStandardsOffered = "7670AA";
                 public const string HowManyStarts = "7670A";
                 public const string HowManyEmployees = "7670B";
                 public const string MostExperiencedEmployee = "7670";
@@ -428,6 +453,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7670AA-1",
                         HowManyStarts = "DAT-7670A-1",
                         HowManyEmployees = "DAT-7670B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7670-4",
@@ -450,6 +476,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class SalesMarketingAndProcurement
             {
                 public const string Name = "Sales, marketing and procurement";
+                public const string WhatStandardsOffered = "7675AA";
                 public const string HowManyStarts = "7675A";
                 public const string HowManyEmployees = "7675B";
                 public const string MostExperiencedEmployee = "7675";
@@ -460,6 +487,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7675AA-1",
                         HowManyStarts = "DAT-7675A-1",
                         HowManyEmployees = "DAT-7675B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7675-4",
@@ -482,6 +510,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static class TransportAndLogistics
             {
                 public const string Name = "Transport and logistics";
+                public const string WhatStandardsOffered = "7680AA";
                 public const string HowManyStarts = "7680A";
                 public const string HowManyEmployees = "7680B";
                 public const string MostExperiencedEmployee = "7680";
@@ -492,6 +521,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
+                        WhatStandardsOffered = "DAT-7680AA-1",
                         HowManyStarts = "DAT-7680A-1",
                         HowManyEmployees = "DAT-7680B-1",
                         IsPartOfAnyOtherOrganisations = "DAT-7680-4",
