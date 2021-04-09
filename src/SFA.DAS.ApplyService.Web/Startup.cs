@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +38,7 @@ namespace SFA.DAS.ApplyService.Web
     using SFA.DAS.ApplyService.EmailService.Infrastructure;
     using SFA.DAS.ApplyService.EmailService.Interfaces;
     using SFA.DAS.ApplyService.Web.Configuration;
+    using SFA.DAS.ApplyService.Web.Extensions;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
     using SFA.DAS.ApplyService.Web.Validators;
@@ -280,11 +284,21 @@ namespace SFA.DAS.ApplyService.Web
 
         protected virtual void ConfigureAuth(IServiceCollection services)
         {
+            services.AddStubAuthe(options => options.CookieManager = new ChunkingCookieManager(),
+                new OpenIdConnectEvents{ OnTokenValidated = async context =>
+                    {
+                        var client = context.HttpContext.RequestServices.GetRequiredService<IUsersApiClient>();
+                        var signInId = context.Principal.FindFirst(IdentityConstants.Subject).Value;
+                        var user = await client.GetUserBySignInId(signInId);
+                        var identity = new ClaimsIdentity(new List<Claim>() {new Claim("UserId", user.Id.ToString())});
+                        context.Principal.AddIdentity(identity);
+                    }
+                });
 
-            var configService = new ConfigurationService(_hostingEnvironment, _configuration["EnvironmentName"],
-                _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService");
-            
-            services.AddDfeSignInAuthorization(configService.GetConfig().Result, _logger, _hostingEnvironment);
+            //var configService = new ConfigurationService(_hostingEnvironment, _configuration["EnvironmentName"],
+            //    _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService");
+
+            //services.AddDfeSignInAuthorization(configService.GetConfig().Result, _logger, _hostingEnvironment);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)

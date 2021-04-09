@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Claims;
+using SFA.DAS.ApplyService.Web.Extensions;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -24,7 +25,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public static string GetSignInId(this ClaimsPrincipal principal)
         {
-            string value = principal.FindFirstValue("sub");
+            string value = principal.FindFirstValue(IdentityConstants.Subject);
 
             return value;
         }
