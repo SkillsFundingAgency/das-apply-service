@@ -10,9 +10,8 @@ namespace SFA.DAS.ApplyService.Data.FileStorage
     public class AppealsFileStorage : FileStorage, IAppealsFileStorage
     {
         public AppealsFileStorage(BlobServiceClient blobServiceClient,
-            IByteArrayEncryptionService byteArrayEncryptionService,
             IConfigurationService configurationService)
-            : base(blobServiceClient, byteArrayEncryptionService)
+            : base(blobServiceClient)
         {
             var config = configurationService.GetConfig().GetAwaiter().GetResult();
 
