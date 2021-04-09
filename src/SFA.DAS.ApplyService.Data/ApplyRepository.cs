@@ -279,9 +279,9 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var application = await GetApplication(applicationId);
-                var invalidApplicationStatuses = new List<string> { ApplicationStatus.Approved, ApplicationStatus.Rejected };
+                var invalidApplicationStatuses = new List<string> { ApplicationStatus.Approved, ApplicationStatus.Rejected, ApplicationStatus.Removed, ApplicationStatus.Withdrawn, ApplicationStatus.Cancelled };
 
-                // Application must exist and has not already been Approved or Rejected
+                // Application must exist and has not already been Approved, Rejected, Removed, Widthdrawn or Cancelled
                 if (application != null && !invalidApplicationStatuses.Contains(application.ApplicationStatus))
                 {
                     var otherAppsInProgress = await connection.QueryAsync<Domain.Entities.Apply>(@"
@@ -291,12 +291,15 @@ namespace SFA.DAS.ApplyService.Data
 														INNER JOIN Contacts con ON a.OrganisationId = con.ApplyOrganisationID
                                                         WHERE a.OrganisationId = (SELECT OrganisationId FROM Apply WHERE ApplicationId = @applicationId)
 														AND a.CreatedBy <> (SELECT CreatedBy FROM Apply WHERE ApplicationId = @applicationId)
-                                                        AND a.ApplicationStatus NOT IN (@applicationStatusApproved, @applicationStatusApprovedRejected)",
+                                                        AND a.ApplicationStatus NOT IN (@applicationStatusApproved, @applicationStatusRejected, @applicationStatusRemoved, @applicationStatusWithdrawn, @applicationStatusCancelled)",
                                                             new
                                                             {
                                                                 applicationId,
                                                                 applicationStatusApproved = ApplicationStatus.Approved,
-                                                                applicationStatusApprovedRejected = ApplicationStatus.Rejected
+                                                                applicationStatusRejected = ApplicationStatus.Rejected,
+                                                                applicationStatusRemoved = ApplicationStatus.Removed,
+                                                                applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
+                                                                applicationStatusCancelled = ApplicationStatus.Cancelled
                                                             });
 
                     canSubmit = !otherAppsInProgress.Any();
