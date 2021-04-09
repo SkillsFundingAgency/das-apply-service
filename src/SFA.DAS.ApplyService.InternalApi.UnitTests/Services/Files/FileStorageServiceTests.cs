@@ -39,12 +39,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Files
             var _configurationService = new Mock<IConfigurationService>();
             _configurationService.Setup(x => x.GetConfig()).ReturnsAsync(config);
 
-            var _fileEncryptionService = new Mock<IFileEncryptionService>();
-            _fileEncryptionService.Setup(x => x.Decrypt(It.IsAny<Stream>())).Returns<Stream>(x => x); // Don't Decrypt stream
-            _fileEncryptionService.Setup(x => x.Encrypt(It.IsAny<Stream>())).Returns<Stream>(x => x); // Don't Encrypt stream
-
             var logger = Mock.Of<ILogger<FileStorageService>>();
-            _fileStorageService = new FileStorageService(logger, _configurationService.Object, _fileEncryptionService.Object);
+            _fileStorageService = new FileStorageService(logger, _configurationService.Object);
         }
 
         [SetUp]
