@@ -1256,7 +1256,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 SubmittingContactId = User.GetUserId(),
                 ApplyData = application.ApplyData,
                 OrganisationType = ExtractOrganisationType(applicationData),
-                FinancialData = ExtractFinancialData(model.ApplicationId, applicationData),
+                FinancialData = ExtractFinancialData(_logger, model.ApplicationId, applicationData),
                 Address = ExtractAddress(address)
             };
 
@@ -1520,7 +1520,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return address;
         }
 
-        private static FinancialData ExtractFinancialData(Guid applicationId, JObject applicationData)
+        private static FinancialData ExtractFinancialData(ILogger<RoatpApplicationController> _logger, Guid applicationId, JObject applicationData)
         {
             try
             {
@@ -1540,8 +1540,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     AccountingPeriod = applicationData.GetValue(RoatpWorkflowQuestionTags.AccountingPeriod).Value<byte>()
                 };
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to extract finanical data");
                 return new FinancialData { ApplicationId = applicationId };
             }            
         }
