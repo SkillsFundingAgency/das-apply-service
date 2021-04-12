@@ -100,7 +100,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.EngagingWithAwardingBodies:
                     return "Engaging and work with awarding bodies";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.EngagingWithAssessmentOrganisations:
-                    return "Engaging with end-point assessment organisations (EPAO's)";
+                    return "Engaging with end-point assessment organisations (EPAOs)";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TrainingApprentices:
                     return "How apprentices will be trained";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.EnsureApprenticesAreSupportedEmployer:

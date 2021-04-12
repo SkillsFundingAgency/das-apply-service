@@ -96,7 +96,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitApplicationH
                     Assets = 6,
                     Liabilities = 7,
                     ShareholderFunds = 8,
-                    Borrowings = 9
+                    Borrowings = 9,
+                    AccountingReferenceDate = new DateTime(2021, 1, 1),
+                    AccountingPeriod = 10
                 }
             };
 
@@ -113,6 +115,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitApplicationH
                      && x.Liabilities == 7
                      && x.ShareholderFunds == 8
                      && x.Borrowings == 9
+                     && x.AccountingReferenceDate == new DateTime(2021, 1, 1)
+                     && x.AccountingPeriod == 10
                 ), It.IsAny<Guid>()), Times.Once);
         }
     }
