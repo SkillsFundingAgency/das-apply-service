@@ -11,6 +11,8 @@
 	Liabilities BIGINT NULL,
 	ShareholderFunds BIGINT NULL,
 	Borrowings BIGINT NULL,
+	AccountingReferenceDate DATE NULL,
+	AccountingPeriod TINYINT NULL,
 	CONSTRAINT PK_FinancialData PRIMARY KEY CLUSTERED ([Id] ASC)
 )
 GO
