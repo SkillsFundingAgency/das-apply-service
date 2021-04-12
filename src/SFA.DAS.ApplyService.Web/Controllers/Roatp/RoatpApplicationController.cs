@@ -1524,7 +1524,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             try
             {
-                var fundingTurnover5pc = applicationData.GetValue(RoatpWorkflowQuestionTags.FundingTurnover5Percent).Value<string>();
+                var fundingTurnover5pc = applicationData.GetValue(RoatpWorkflowQuestionTags.FundingTurnover5Percent)?.Value<string>();
 
                 if ("Yes".Equals(fundingTurnover5pc, StringComparison.OrdinalIgnoreCase))
                 {
