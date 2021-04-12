@@ -1524,25 +1524,39 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             try
             {
-                return new FinancialData
+                var fundingTurnover5pc = applicationData.GetValue(RoatpWorkflowQuestionTags.FundingTurnover5Percent).Value<string>();
+
+                if ("Yes".Equals(fundingTurnover5pc, StringComparison.OrdinalIgnoreCase))
                 {
-                    ApplicationId = applicationId,
-                    TurnOver = applicationData.GetValue(RoatpWorkflowQuestionTags.Turnover).Value<long>(),
-                    Depreciation = applicationData.GetValue(RoatpWorkflowQuestionTags.Depreciation).Value<long>(),
-                    ProfitLoss = applicationData.GetValue(RoatpWorkflowQuestionTags.ProfitLoss).Value<long>(),
-                    Dividends = applicationData.GetValue(RoatpWorkflowQuestionTags.Dividends).Value<long>(),
-                    Assets = applicationData.GetValue(RoatpWorkflowQuestionTags.Assets).Value<long>(),
-                    Liabilities = applicationData.GetValue(RoatpWorkflowQuestionTags.Liabilities).Value<long>(),
-                    Borrowings = applicationData.GetValue(RoatpWorkflowQuestionTags.Borrowings).Value<long>(),
-                    ShareholderFunds = applicationData.GetValue(RoatpWorkflowQuestionTags.ShareholderFunds).Value<long>(),
-                    IntangibleAssets = applicationData.GetValue(RoatpWorkflowQuestionTags.IntangibleAssets).Value<long>(),
-                    AccountingReferenceDate = AccountingReferenceDate(applicationData),
-                    AccountingPeriod = applicationData.GetValue(RoatpWorkflowQuestionTags.AccountingPeriod).Value<byte>()
-                };
+                    return new FinancialData
+                    {
+                        ApplicationId = applicationId,
+                        AccountingReferenceDate = AccountingReferenceDate(applicationData),
+                        AccountingPeriod = applicationData.GetValue(RoatpWorkflowQuestionTags.AccountingPeriod).Value<byte>()
+                    };
+                }
+                else
+                {
+                    return new FinancialData
+                    {
+                        ApplicationId = applicationId,
+                        TurnOver = applicationData.GetValue(RoatpWorkflowQuestionTags.Turnover).Value<long>(),
+                        Depreciation = applicationData.GetValue(RoatpWorkflowQuestionTags.Depreciation).Value<long>(),
+                        ProfitLoss = applicationData.GetValue(RoatpWorkflowQuestionTags.ProfitLoss).Value<long>(),
+                        Dividends = applicationData.GetValue(RoatpWorkflowQuestionTags.Dividends).Value<long>(),
+                        Assets = applicationData.GetValue(RoatpWorkflowQuestionTags.Assets).Value<long>(),
+                        Liabilities = applicationData.GetValue(RoatpWorkflowQuestionTags.Liabilities).Value<long>(),
+                        Borrowings = applicationData.GetValue(RoatpWorkflowQuestionTags.Borrowings).Value<long>(),
+                        ShareholderFunds = applicationData.GetValue(RoatpWorkflowQuestionTags.ShareholderFunds).Value<long>(),
+                        IntangibleAssets = applicationData.GetValue(RoatpWorkflowQuestionTags.IntangibleAssets).Value<long>(),
+                        AccountingReferenceDate = AccountingReferenceDate(applicationData),
+                        AccountingPeriod = applicationData.GetValue(RoatpWorkflowQuestionTags.AccountingPeriod).Value<byte>()
+                    };
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unable to extract finanical data");
+                _logger.LogError(ex, $"Unable to extract finanical data for application: {applicationId}");
                 return new FinancialData { ApplicationId = applicationId };
             }            
         }

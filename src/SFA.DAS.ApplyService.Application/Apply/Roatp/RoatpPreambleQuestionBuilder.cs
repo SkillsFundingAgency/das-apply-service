@@ -382,6 +382,7 @@
         public const string UKRLPPrimaryVerificationSource = "UKRLPPrimaryVerificationSource";
         public const string UKRLPVerificationCompanyNumber = "UKRLPVerificationCompanyNumber";
         public const string UKRLPVerificationCharityRegNumber = "UKRLPVerificationCharityRegNumber";
+        public const string FundingTurnover5Percent = "FHAFundingTurnover5pc";
         public const string Turnover = "FHATurnover";
         public const string Depreciation = "FHADepreciation";
         public const string ProfitLoss = "FHAProfitLoss";
