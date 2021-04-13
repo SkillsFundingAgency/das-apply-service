@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
 
         Task<bool> StartGatewayReview(Guid applicationId, string userId, string userName);
 
-        Task<bool> EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
+        Task<bool> EvaluateGateway(Guid applicationId, bool isGatewayApproved, string userId, string userName);
 
         Task<bool> UpdateGatewayApplyData(Guid applicationId, ApplyData applyData, string userId, string userName);
 

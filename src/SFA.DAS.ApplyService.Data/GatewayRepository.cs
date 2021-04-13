@@ -260,7 +260,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<bool> EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy)
+        public async Task<bool> EvaluateGateway(Guid applicationId, bool isGatewayApproved, string userId, string userName)
         {
             var applicationStatus = isGatewayApproved ? ApplicationStatus.GatewayAssessed : ApplicationStatus.Rejected;
             var gatewayReviewStatus = isGatewayApproved ? GatewayReviewStatus.Pass : GatewayReviewStatus.Fail;
@@ -268,14 +268,17 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var rowsAffected = await connection.ExecuteAsync(@"UPDATE Apply
-                                                    SET  ApplicationStatus = @applicationStatus, GatewayReviewStatus = @gatewayReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                                                    SET  ApplicationStatus = @applicationStatus, GatewayReviewStatus = @gatewayReviewStatus,
+                                                         UpdatedBy = @userName, UpdatedAt = GETUTCDATE(),
+                                                         GatewayUserId = @userId, GatewayUserName = @userName
                                                     WHERE ApplicationId = @applicationId AND GatewayReviewStatus = @gatewayReviewStatusInProgress",
                                                 new
                                                 {
                                                     applicationId,
                                                     applicationStatus,
                                                     gatewayReviewStatus,
-                                                    UpdatedBy = evaluatedBy,
+                                                    userId,
+                                                    userName,
                                                     gatewayReviewStatusInProgress = GatewayReviewStatus.InProgress
                                                 });
 

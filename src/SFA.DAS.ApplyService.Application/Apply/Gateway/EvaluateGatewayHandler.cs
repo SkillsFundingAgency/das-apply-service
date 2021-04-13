@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 
         public async Task<bool> Handle(EvaluateGatewayRequest request, CancellationToken cancellationToken)
         {
-            return await _repository.EvaluateGateway(request.ApplicationId, request.IsGatewayApproved, request.EvaluatedBy);
+            return await _repository.EvaluateGateway(request.ApplicationId, request.IsGatewayApproved, request.UserId, request.UserName);
         }
     }
 }
