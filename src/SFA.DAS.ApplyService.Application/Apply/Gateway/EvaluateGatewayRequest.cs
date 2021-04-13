@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             ApplicationId = applicationId;
             IsGatewayApproved = isGatewayApproved;
             UserId = userId;
-            UserName = UserName;
+            UserName = userName;
         }
     }
 }
