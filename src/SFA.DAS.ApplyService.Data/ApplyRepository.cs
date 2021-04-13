@@ -330,9 +330,9 @@ namespace SFA.DAS.ApplyService.Data
 
                 await connection.ExecuteAsync(@"insert into FinancialData ([ApplicationId]
                ,[TurnOver],[Depreciation],[ProfitLoss],[Dividends],[IntangibleAssets]
-               ,[Assets],[Liabilities],[ShareholderFunds],[Borrowings])
+               ,[Assets],[Liabilities],[ShareholderFunds],[Borrowings],[AccountingReferenceDate],[AccountingPeriod])
                 values (@ApplicationId, @TurnOver,@Depreciation, @ProfitLoss,@Dividends,@IntangibleAssets
-               ,@Assets,@Liabilities,@ShareholderFunds,@Borrowings)",
+               ,@Assets,@Liabilities,@ShareholderFunds,@Borrowings,@AccountingReferenceDate,@AccountingPeriod)",
                financialData);
 
                 connection.Close();
@@ -638,7 +638,9 @@ namespace SFA.DAS.ApplyService.Data
                             fd.Assets,
                             fd.Liabilities,
                             fd.ShareholderFunds,
-                            fd.Borrowings
+                            fd.Borrowings,
+                            fd.AccountingReferenceDate,
+                            fd.AccountingPeriod
 	                      FROM Apply apply
                           LEFT JOIN FinancialData fd on fd.ApplicationId = apply.ApplicationId
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
