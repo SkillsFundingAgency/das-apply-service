@@ -1,5 +1,4 @@
 using Dapper;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -10,7 +9,6 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Domain.Apply.Gateway;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Types;
 
