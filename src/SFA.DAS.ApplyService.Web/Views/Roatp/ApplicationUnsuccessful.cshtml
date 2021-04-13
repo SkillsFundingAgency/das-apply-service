@@ -1,0 +1,67 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
+
+@{
+    ViewBag.Title = "Application unsuccessful";
+    Layout = "_Layout";
+}
+
+<partial name="~/Views/Roatp/ApplicationHeaderReadOnly.cshtml" />
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel app-panel--error">
+                <h1 class="govuk-panel__title">
+                    Application unsuccessful
+                </h1>
+            </div>
+
+            <partial name="~/Views/Roatp/_ApplicationDetailsTable.cshtml" model="@Model" />
+
+            <p class="govuk-body">
+                Your application to join the Register for apprenticeship training providers (RoATP) has been unsuccessful.
+            </p>
+
+            <h1 class="govuk-heading-m">Why your application was unsuccessful</h1>
+            <p class="govuk-body">
+                @Model.ExternalComments
+            </p>
+
+            <h2 class="govuk-heading-m">What happens next</h2>
+            <p class="govuk-body">
+                Your organisation can only apply once to join RoATP within a 12-month period. You can next apply on @Model.SubmittedDate.Value.AddMonths(12).ToShortDateString().
+                <br><br>
+                <a href="">Start a new application here</a> when you are ready to reapply.
+            </p>
+
+            <h2 class="govuk-heading-m">How to make an appeal</h2>
+            <p class="govuk-body">
+                You can make an appeal by emailing <a href="mailto:roatp.appeals@education.gov.uk">roatp.appeals@education.gov.uk.</a> You'll need to explain why your organisation is making an appeal and on what grounds.
+                <br><br>
+                Your organisation can make an appeal within 10 working days of receiving this notification. ESFA will aim to review and respond within 15 working days.
+                <br><br>
+                If your appeal is successful, your organisation will be published on the register.
+                <br><br>
+                If your appeal is unsuccessful or you decide not to make an appeal, ESFA will take action as explained in <a>the Consequences section</a> of the new policy.
+                <br><br>
+                You can also <a href="https://www.gov.uk/guidance/application-guidance-for-the-register-of-apprenticeship-training-providers-version-3-august-2019#next-steps">read the 7.4: Unsuccessful applicants - make an appeal</a> section in the application guidance to find out more.
+            </p>
+
+            <h2 class="govuk-heading-m">How to make a complaint</h2>
+            <p class="govuk-body">
+                Your organisation can make a complaint by following <a href="https://www.gov.uk/government/organisations/department-for-education/about/complaints-procedure" target="_blank">DFE complaints procedure</a>.
+            </p>
+
+            <h2 class="govuk-heading-m">How to make an appeal</h2>
+            <p class="govuk-body">
+                You can contact the Manage apprenticeships service helpdesk on:
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>08000 150 600</li>
+                    <li><a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk" target="_blank">helpdesk@manage-apprenticeships.service.gov.uk</a></li>
+                </ul>
+            </p>
+        </div>
+    </div>
+</main>

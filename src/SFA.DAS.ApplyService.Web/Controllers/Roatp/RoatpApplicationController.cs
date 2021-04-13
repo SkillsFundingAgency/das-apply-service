@@ -150,7 +150,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 case ApplicationStatus.Withdrawn:
                     return RedirectToAction("ApplicationWithdrawn", new { applicationId });
                 case ApplicationStatus.GatewayAssessed:
-                    if(application.GatewayReviewStatus == GatewayReviewStatus.Reject)
+                    if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
+                        return RedirectToAction("ApplicationUnsuccessful", new { applicationId });
+                    else if(application.GatewayReviewStatus == GatewayReviewStatus.Reject)
                         return RedirectToAction("ApplicationRejected", new { applicationId });
                     else
                         return RedirectToAction("ApplicationSubmitted", new { applicationId });
@@ -1342,6 +1344,28 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             };
 
             return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ApplicationUnsuccessful(Guid applicationId)
+        {
+            var application = await _apiClient.GetApplication(applicationId);
+            var applicationData = application.ApplyData.ApplyDetails;
+
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationId = application.ApplicationId,
+                UKPRN = applicationData.UKPRN,
+                OrganisationName = applicationData.OrganisationName,
+                TradingName = applicationData.TradingName,
+                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
+                ApplicationReference = applicationData.ReferenceNumber,
+                EmailAddress = User.GetEmail(),
+                SubmittedDate = applicationData.ApplicationSubmittedOn,
+                ExternalComments = "test"//application.ApplyData.GatewayReviewDetails.ExternalComments
+            };
+
+            return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
         }
 
         private async Task SavePreambleInformation(Guid applicationId, ApplicationDetails applicationDetails)
