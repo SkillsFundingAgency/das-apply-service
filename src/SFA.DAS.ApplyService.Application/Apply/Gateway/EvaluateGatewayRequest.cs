@@ -3,7 +3,7 @@ using System;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 {
-    public class EvaluateGatewayRequest : IRequest
+    public class EvaluateGatewayRequest : IRequest<bool>
     {
         public Guid ApplicationId { get; }
         public bool IsGatewayApproved { get; }

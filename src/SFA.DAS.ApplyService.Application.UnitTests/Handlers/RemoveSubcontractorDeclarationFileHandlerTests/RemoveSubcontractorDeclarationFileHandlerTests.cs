@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.Clarification;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
@@ -16,13 +14,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.RemoveSubcontracto
     public class AddSubcontractorDeclarationFileUploadHandlerTests
     {
         private Mock<IApplyRepository> _repository;
+        private Mock<IGatewayRepository> _gatewayRepository;
         private RemoveSubcontractorDeclarationFileHandler _handler;
 
         [SetUp]
         public void TestSetup()
         {
             _repository = new Mock<IApplyRepository>();
-            _handler = new RemoveSubcontractorDeclarationFileHandler(_repository.Object, Mock.Of<ILogger<RemoveSubcontractorDeclarationFileHandler>>());
+            _gatewayRepository = new Mock<IGatewayRepository>();
+            _handler = new RemoveSubcontractorDeclarationFileHandler(_repository.Object, _gatewayRepository.Object, Mock.Of<ILogger<RemoveSubcontractorDeclarationFileHandler>>());
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.RemoveSubcontracto
 
             await _handler.Handle(new RemoveSubcontractorDeclarationFileRequest(applicationId, clarificationFile, userId, userName), new CancellationToken());
 
-            _repository.Verify(x => x.UpdateGatewayApplyData(applicationId, It.IsAny<ApplyData>(), userId, userName), Times.Once);
+            _gatewayRepository.Verify(x => x.UpdateGatewayApplyData(applicationId, It.IsAny<ApplyData>(), userId, userName), Times.Once);
         }
 
 
@@ -71,7 +71,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.RemoveSubcontracto
 
             await _handler.Handle(new RemoveSubcontractorDeclarationFileRequest(applicationId, clarificationFile, userId, userName), new CancellationToken());
 
-            _repository.Verify(x => x.UpdateGatewayApplyData(applicationId, It.IsAny<ApplyData>(), userId, userName), Times.Never);
+            _gatewayRepository.Verify(x => x.UpdateGatewayApplyData(applicationId, It.IsAny<ApplyData>(), userId, userName), Times.Never);
         }
     }
 }
