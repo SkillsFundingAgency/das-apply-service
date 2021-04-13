@@ -28,7 +28,6 @@ namespace SFA.DAS.ApplyService.Data
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
         }
 
-        // TODO: May need to bin this and redirect to apply repository
         private async Task<ApplyData> GetApplyData(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
