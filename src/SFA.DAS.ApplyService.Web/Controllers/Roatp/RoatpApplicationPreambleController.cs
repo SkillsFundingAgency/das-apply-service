@@ -67,8 +67,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _resetRouteQuestionsService = resetRouteQuestionsService;
         }
 
-        [Route("terms-conditions-making-application")]
-        public async Task<IActionResult> TermsAndConditions(SelectApplicationRouteViewModel routeViewModel)
+        [Route("conditions-of-acceptance")]
+        public async Task<IActionResult> ConditionsOfAcceptance(SelectApplicationRouteViewModel routeViewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -91,18 +91,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
             }
 
-            if (routeViewModel.ApplicationRouteId == ApplicationRoute.SupportingProviderApplicationRoute)
-            {
-                return View("~/Views/Roatp/TermsAndConditionsSupporting.cshtml", new ConditionsOfAcceptanceViewModel { ApplicationId = routeViewModel.ApplicationId, ApplicationRouteId = routeViewModel.ApplicationRouteId });
-            }
-            else
-            {
-                return View("~/Views/Roatp/TermsAndConditions.cshtml", new ConditionsOfAcceptanceViewModel { ApplicationId = routeViewModel.ApplicationId, ApplicationRouteId = routeViewModel.ApplicationRouteId });
-            }
+            return View("~/Views/Roatp/ConditionsOfAcceptance.cshtml", new ConditionsOfAcceptanceViewModel { ApplicationId = routeViewModel.ApplicationId, ApplicationRouteId = routeViewModel.ApplicationRouteId });
         }
 
         [HttpPost]
-        public async Task<IActionResult> ConfirmTermsAndConditions(ConditionsOfAcceptanceViewModel model)
+        public async Task<IActionResult> ConfirmConditionsOfAcceptance(ConditionsOfAcceptanceViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -116,12 +109,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         ErrorMessage = modelError.ErrorMessage
                     });
                 }
-                return View("~/Views/Roatp/TermsAndConditions.cshtml", model);
+                return View("~/Views/Roatp/ConditionsOfAcceptance.cshtml", model);
             }
 
             if (model.ConditionsAccepted != "Y")
             {
-                return RedirectToAction("TermsAndConditionsNotAgreed", "RoatpShutterPages", model);
+                return RedirectToAction("ConditionsOfAcceptanceNotAgreed", "RoatpShutterPages", model);
             }
             else if (model.ApplicationId == Guid.Empty)
             {
@@ -313,7 +306,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                 if (selectApplicationRouteModel.ApplicationId == Guid.Empty)
                 {
-                    return await TermsAndConditions(new SelectApplicationRouteViewModel { ApplicationRouteId = model.ApplicationRouteId });
+                    return await ConditionsOfAcceptance(new SelectApplicationRouteViewModel { ApplicationRouteId = model.ApplicationRouteId });
                 }
                 else
                 {
@@ -401,7 +394,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
             else
             {
-                return await TermsAndConditions(new SelectApplicationRouteViewModel { ApplicationRouteId = model.ApplicationRouteId });
+                return await ConditionsOfAcceptance(new SelectApplicationRouteViewModel { ApplicationRouteId = model.ApplicationRouteId });
             }
         }
 
@@ -627,7 +620,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 
                 await _resetRouteQuestionsService.ResetRouteQuestions(model.ApplicationId, model.ApplicationRouteId);
             }
-            return RedirectToAction("TermsAndConditions", new { applicationId = model.ApplicationId, applicationRouteId = model.ApplicationRouteId });
+            return RedirectToAction("ConditionsOfAcceptance", new { applicationId = model.ApplicationId, applicationRouteId = model.ApplicationRouteId });
         }
 
         [Route("already-on-roatp")]
@@ -682,7 +675,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             if (model.ChangeApplicationRoute != "Y")
             {
-                return RedirectToAction("TermsAndConditions", new { applicationRouteId = applicationDetails?.RoatpRegisterStatus?.ProviderTypeId.Value });
+                return RedirectToAction("ConditionsOfAcceptance", new { applicationRouteId = applicationDetails?.RoatpRegisterStatus?.ProviderTypeId.Value });
             }
             
                 return RedirectToAction("SelectApplicationRoute");
