@@ -1,0 +1,59 @@
+﻿@using System.Web
+@using NPOI.SS.Formula.Functions
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
+
+@{
+    ViewBag.Title = "Application withdrawn";
+    Layout = "_Layout";
+}
+
+<partial name="~/Views/Roatp/ApplicationHeaderReadOnly.cshtml" />
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel app-panel--muted">
+                <h1 class="govuk-panel__title">
+                    Application withdrawn
+                </h1>
+            </div>
+
+            <partial name="~/Views/Roatp/_ApplicationDetailsTable.cshtml" model="@Model" />
+
+            <h1 class="govuk-heading-m">Why your application was withdrawn</h1>
+            <p class="govuk-body das-multiline-text">
+            @Model.ExternalComments
+            </p>
+            <h2 class="govuk-heading-m">How to make an appeal</h2>
+            <p class="govuk-body">
+                You can make an appeal by emailing <a href="mailto:roatp.appeals@education.gov.uk" target="_blank">roatp.appeals@education.gov.uk</a>. You’ll need to explain why your organisation is making an appeal and on what grounds.
+            </p>
+            <p class="govuk-body">
+                Your organisation can make an appeal within 10 working days of receiving this notification. ESFA will aim to review and respond within 15 working days.
+            </p>
+            <p class="govuk-body">
+                If your appeal is successful, your organisation will be published on the register.
+            </p>
+            <p class="govuk-body">
+                If your appeal is unsuccessful or you decide not to make an appeal, ESFA will take action as explained in <a href="https://www.gov.uk/guidance/meeting-new-application-requirements-and-removal-from-register-of-apprenticeship-training-providers-roatp#consequences" target="_blank">the Consequences section</a> of the new policy.
+            </p>
+            <p class="govuk-body">
+                You can also read <a href="https://www.gov.uk/guidance/application-guidance-for-the-register-of-apprenticeship-training-providers-version-3-august-2019#next-steps" target="_blank">section 7.4 Unsuccessful applicants – make an appeal</a> in the application guidance to find out more.
+            </p>
+            <h2 class="govuk-heading-m">How to make a complaint</h2>
+            <p class="govuk-body">
+                Your organisation can make a complaint by following DFE complaints procedure.
+            </p>
+            <h2 class="govuk-heading-m">How to contact us</h2>
+            <p class="govuk-body">
+                You can contact the Manage apprenticeships service helpdesk on:
+            </p>
+            <ul  class="govuk-list govuk-list--bullet">
+                    <li>08000 150 600</li>
+                    <li><a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk" target="_blank">helpdesk@manage-apprenticeships.service.gov.uk</a></li>
+                </ul>
+        </div>
+    </div>
+</main>

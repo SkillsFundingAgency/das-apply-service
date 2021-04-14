@@ -1280,6 +1280,10 @@
 }
 
 .app-panel--error {
-  background:	#d4351c;
-  color: #fff;
+    background: #d4351c;
+    color: #fff;
+}
+
+.das-multiline-text {
+    white-space: pre-line;
 }
