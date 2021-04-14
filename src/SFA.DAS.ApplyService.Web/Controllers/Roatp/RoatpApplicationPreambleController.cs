@@ -112,7 +112,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/ConditionsOfAcceptance.cshtml", model);
             }
 
-            if (model.ConditionsAccepted != "Y")
+            if (model.ConditionsAccepted != "YES")
             {
                 return RedirectToAction("ConditionsOfAcceptanceNotAgreed", "RoatpShutterPages", model);
             }
