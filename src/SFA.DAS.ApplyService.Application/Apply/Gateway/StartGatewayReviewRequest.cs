@@ -3,7 +3,7 @@ using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 {
-    public class StartGatewayReviewRequest : IRequest
+    public class StartGatewayReviewRequest : IRequest<bool>
     {
         public Guid ApplicationId { get; }
         public string UserId { get; }
