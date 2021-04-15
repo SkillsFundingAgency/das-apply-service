@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.Domain.Apply.Gateway;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 
@@ -16,34 +15,13 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         Task<Domain.Entities.Apply> GetApplicationByUserId(Guid applicationId, Guid signinId);
         Task<List<Domain.Entities.Apply>> GetUserApplications(Guid signinId);
         Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid signinId);
-
-        Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
-        Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
-
-        Task<string> GetGatewayPageStatus(Guid applicationId, string pageId);
-        Task<string> GetGatewayPageComments(Guid applicationId, string pageId);
-       
-        Task InsertGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName);
-        Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName);
-        Task InsertGatewayPageAnswerClarification(GatewayPageAnswer pageAnswer, string userId, string userName);
-
-        Task UpdateGatewayPageAnswerClarification(GatewayPageAnswer pageAnswer, string userId, string userName);
-        Task UpdateGatewayPageAnswerPostClarification(GatewayPageAnswer pageAnswer, string userId, string userName);
-        
+               
         Task UpdateApplication(Domain.Entities.Apply application);
-
-        Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, ApplyData applyData, string gatewayReviewStatus, string userId, string userName);
-        Task<bool> UpdateGatewayApplyData(Guid applicationId, ApplyData applyData, string userId, string userName);
+        
         Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplication(Guid applicationId, ApplyData applyData, FinancialData financialData, Guid submittedBy);
 
         Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<ApplySequence> newSequences);
-
-        Task<List<RoatpGatewaySummaryItem>> GetNewGatewayApplications();
-        Task<List<RoatpGatewaySummaryItem>> GetInProgressGatewayApplications();
-        Task<List<RoatpGatewaySummaryItem>> GetClosedGatewayApplications();
-        Task StartGatewayReview(Guid applicationId, string userId, string userName);
-        Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
 
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
         Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload();
@@ -71,13 +49,10 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
 
         Task UpdateApplicationStatus(Guid applicationId, string status, string userId);
 
-        Task<bool> WithdrawApplication(Guid applicationId, string comments, string userId, string userName);
-        Task<bool> RemoveApplication(Guid applicationId, string comments, string externalComments, string userId, string userName);
-
         Task<Contact> GetContactForApplication(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
         Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload(DateTime dateFrom, DateTime dateTo);
         
-        Task<IEnumerable<GatewayApplicationStatusCount>> GetGatewayApplicationStatusCounts();
+        
     }
 }

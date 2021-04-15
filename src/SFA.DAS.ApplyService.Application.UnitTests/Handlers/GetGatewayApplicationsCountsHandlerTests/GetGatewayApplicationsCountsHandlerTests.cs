@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetGatewayApplicat
     public class GetGatewayApplicationsCountsHandlerTests
     {
         private GetGatewayApplicationsCountsHandler _handler;
-        private Mock<IApplyRepository> _repository;
+        private Mock<IGatewayRepository> _repository;
 
         [SetUp]
         public void TestSetup()
@@ -36,7 +36,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetGatewayApplicat
                     {GatewayReviewStatus = GatewayReviewStatus.Reject, ApplicationStatus = ApplicationStatus.GatewayAssessed, Count = 32}
             };
 
-            _repository = new Mock<IApplyRepository>();
+            _repository = new Mock<IGatewayRepository>();
             _repository.Setup(x => x.GetGatewayApplicationStatusCounts()).ReturnsAsync(data);
 
             _handler = new GetGatewayApplicationsCountsHandler(_repository.Object);
