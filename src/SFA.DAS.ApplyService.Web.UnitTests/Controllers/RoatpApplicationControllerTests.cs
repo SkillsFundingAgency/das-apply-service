@@ -501,6 +501,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationId = application.ApplicationId,
                 ConfirmSubmitApplication = true,
                 ConfirmFurtherInfoSubmitApplication = true,
+                ConfirmChangeOfOwnershipSubmitApplication = true,
                 ConfirmFurtherCommunicationSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
@@ -577,6 +578,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationId = application.ApplicationId,
                 ConfirmSubmitApplication = true,
                 ConfirmFurtherInfoSubmitApplication = true,
+                ConfirmChangeOfOwnershipSubmitApplication = true,
                 ConfirmFurtherCommunicationSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
@@ -667,6 +669,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationId = application.ApplicationId,
                 ConfirmSubmitApplication = true,
                 ConfirmFurtherInfoSubmitApplication = true,
+                ConfirmChangeOfOwnershipSubmitApplication = true,
                 ConfirmFurtherCommunicationSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
@@ -768,6 +771,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationId = application.ApplicationId,
                 ConfirmSubmitApplication = true,
                 ConfirmFurtherInfoSubmitApplication = true,
+                ConfirmChangeOfOwnershipSubmitApplication = true,
                 ConfirmFurtherCommunicationSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
