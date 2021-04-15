@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         [Range(typeof(bool), "true", "true", ErrorMessage = "Tell us if you agree to give further information on any application answers within 5 working days when requested by ESFA")]
         public bool ConfirmFurtherInfoSubmitApplication { get; set; }
 
-        [Range(typeof(bool), "true", "true", ErrorMessage = "Tell us if you understand that you must inform ESFA 12 weeks before there is any change of control within your organisation")]
+        [Range(typeof(bool), "true", "true", ErrorMessage = "Tell us if you understand that you must notify ESFA 12 weeks before there is any change of control within your organisation")]
         public bool ConfirmChangeOfOwnershipSubmitApplication { get; set; }
 
         [Range(typeof(bool), "true", "true", ErrorMessage = "Tell us if you understand where communication about this application will be sent to")]
