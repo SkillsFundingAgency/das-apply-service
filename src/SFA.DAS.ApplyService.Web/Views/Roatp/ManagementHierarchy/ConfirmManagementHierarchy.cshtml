@@ -6,7 +6,7 @@
     Layout = "_Layout";
 
     bool showErrors = TempData["ShowErrors"] as bool? ?? false;
-    int numberOfTitles = 2;
+    int numberOfTitles = 3;
 }
 
 <partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
@@ -24,12 +24,12 @@
     <table class="govuk-table govuk-!-margin-bottom-3">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                @foreach (var title in Model.ManagementHierarchyData.HeadingTitles.Take(numberOfTitles))
-                {
-                    <th class="govuk-table__header" scope="col">
-                        @title
+                <th class="govuk-table__header" scope="col">
+                        Name
                     </th>
-                }
+                <th class="govuk-table__header" scope="col">
+                   Job role
+                </th>
                 <th class="govuk-table__header" scope="col"></th>
                 <th class="govuk-table__header" scope="col"></th>
             </tr>
@@ -38,10 +38,14 @@
             @for (var index = 0; index < Model.ManagementHierarchyData.DataRows.Count; index++)
             {
                 <tr class="govuk-table__row">
-                    @foreach (var column in Model.ManagementHierarchyData.DataRows[index].Columns.Take(numberOfTitles))
-                    {
-                        <td class="govuk-table__cell">@column</td>
+                    @{
+                        var columns = new List<string>();
+                        columns = Model.ManagementHierarchyData.DataRows[index].Columns;
+                        var name = columns[0] + " " + columns[1];
+                        var jobRole = columns[2];
                     }
+                    <td class="govuk-table__cell">@name</td>
+                        <td class="govuk-table__cell">@jobRole</td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">
                         <a class="govuk-link govuk-link--no-visited-state" asp-action="EditManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Change<span class="govuk-visually-hidden"> @Model.ManagementHierarchyData.DataRows[index].Columns[0]</span></a>
                     </td>

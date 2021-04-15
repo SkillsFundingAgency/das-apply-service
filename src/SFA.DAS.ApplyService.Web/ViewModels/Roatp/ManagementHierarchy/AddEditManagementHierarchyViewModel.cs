@@ -10,9 +10,13 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public string Identifier { get; set; }
 
-        [Required(ErrorMessage = "Enter a full name")]
-        [MaxLength(255, ErrorMessage = "Enter a full name using 255 characters or less")]
-        public string FullName { get; set; }
+        [Required(ErrorMessage = "Enter a first name")]
+        [MaxLength(255, ErrorMessage = "Enter a first name using 255 characters or less")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Enter a last name")]
+        [MaxLength(255, ErrorMessage = "Enter a last name using 255 characters or less")]
+        public string LastName { get; set; }
 
         [Required(ErrorMessage = "Enter a job role")]
         [MaxLength(255, ErrorMessage = "Enter a job role using 255 characters or less")]
@@ -25,6 +29,13 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public string OtherOrgName { get; set; }
 
+
+        public string DobMonth { get; set; }
+        public string DobYear { get; set; }
+
+        public string Email { get; set; }
+
+        public string ContactNumber { get; set; }
         public string Title { get; set; }
         public int SequenceId { get; set; }
         public int SectionId { get; set; }

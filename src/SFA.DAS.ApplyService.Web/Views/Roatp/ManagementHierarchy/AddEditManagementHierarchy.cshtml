@@ -4,36 +4,69 @@
 @{
     bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 
-    var nameError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "FullName") != null ? "govuk-input--error" : "";
-    var showNameError = !String.IsNullOrEmpty(nameError);
+    var firstNameError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "FirstName") != null ? "govuk-input--error" : "";
+    var showFirstNameError = !String.IsNullOrEmpty(firstNameError);
+
+    var lastNameError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "LastName") != null ? "govuk-input--error" : "";
+    var showLastNameError = !String.IsNullOrEmpty(lastNameError);
+
 
     var jobRoleError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "JobRole") != null ? "govuk-input--error" : "";
     var showJobRoleError = !String.IsNullOrEmpty(jobRoleError);
 
     var timeInRoleError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "TimeInRole") != null ? "govuk-input--error" : "";
     var showTimeInRoleError = !String.IsNullOrEmpty(timeInRoleError);
-    
+
     var isPartOfOtherOrgError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "IsPartOfOtherOrgThatGetsFunding") != null ? "govuk-input--error" : "";
     var showIsPartOfOtherOrgError = !String.IsNullOrEmpty(isPartOfOtherOrgError);
- 
+
     var errorMessages = Model.ErrorMessages != null ? Model.ErrorMessages.DistinctBy(x => x.ErrorMessage) : null;
 
     var checkedOtherOrgYes = Model.IsPartOfOtherOrgThatGetsFunding=="Yes" ? "checked": null;
     var checkedOtherOrgNo = Model.IsPartOfOtherOrgThatGetsFunding =="No" ? "checked": null;
+
+
+
+    var dobMonthError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "DobMonth") != null ? "govuk-input--error" : "";
+    var showDobMonthError = !String.IsNullOrEmpty(dobMonthError);
+    var dobYearError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "DobYear") != null ? "govuk-input--error" : "";
+    var showDobYearError = !String.IsNullOrEmpty(dobYearError);
+
+
+    var emailError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "Email") != null ? "govuk-input--error" : "";
+    var showEmailError = !String.IsNullOrEmpty(emailError);
+
+    var contactNumberError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "ContactNumber") != null ? "govuk-input--error" : "";
+    var showContactNumberError = !String.IsNullOrEmpty(contactNumberError);
 }
 
-<div class="govuk-form-group @(showNameError ? "govuk-form-group--error" : "")" sfa-validation-for="FullName" sfa-validationerror-class="form-group-error">
-    <label for="FullName" class="govuk-label">Full name</label>
+<div class="govuk-form-group @(showFirstNameError ? "govuk-form-group--error" : "")" sfa-validation-for="FirstName" sfa-validationerror-class="form-group-error">
+    <label for="FirstName" class="govuk-label">First name</label>
     @if (showErrors)
     {
-            @foreach(var nameErrorMessage in errorMessages.Where(x => x.Field == "FullName"))
-            {
-                <span class="govuk-error-message">
-                    @nameErrorMessage.ErrorMessage
-                </span>
-            }
+        @foreach(var nameErrorMessage in errorMessages.Where(x => x.Field == "FirstName"))
+        {
+            <span class="govuk-error-message">
+                @nameErrorMessage.ErrorMessage
+            </span>
+        }
     }
-    <input type="text" class="govuk-input @nameError" asp-for="FullName" sfa-validation-for="PersonName" sfa-validationerror-class="form-control-error" />
+    <input type="text" class="govuk-input @firstNameError" asp-for="FirstName" sfa-validation-for="FirstName" sfa-validationerror-class="form-control-error" />
+</div>
+
+
+<div class="govuk-form-group @(showLastNameError ? "govuk-form-group--error" : "")" sfa-validation-for="LastName" sfa-validationerror-class="form-group-error">
+    <label for="LastName" class="govuk-label">Last name</label>
+    @if (showErrors)
+    {
+        @foreach(var nameErrorMessage in errorMessages.Where(x => x.Field == "LastName"))
+        {
+            <span class="govuk-error-message">
+                @nameErrorMessage.ErrorMessage
+            </span>
+        }
+    }
+    <input type="text" class="govuk-input @lastNameError" asp-for="LastName" sfa-validation-for="LastName" sfa-validationerror-class="form-control-error" />
 </div>
 
 <div class="govuk-form-group @(showJobRoleError ? "govuk-form-group--error" : "")" sfa-validation-for="JobRole" sfa-validationerror-class="form-group-error">
@@ -97,12 +130,12 @@
     <p class="govuk-label">Is this person part of any other organisations?</p>
     @if (showErrors)
     {
-            @foreach(var errorMessage in errorMessages.Where(x => x.Field == "IsPartOfOtherOrgThatGetsFunding"))
-            {
-                <span class="govuk-error-message">
-                    @errorMessage.ErrorMessage
-                </span>
-            }
+        @foreach (var errorMessage in errorMessages.Where(x => x.Field == "IsPartOfOtherOrgThatGetsFunding"))
+        {
+            <span class="govuk-error-message">
+                @errorMessage.ErrorMessage
+            </span>
+        }
     }
     <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
         <div class="govuk-radios__item">
@@ -112,8 +145,7 @@
                    name="IsPartOfOtherOrgThatGetsFunding"
                    value="Yes"
                    data-aria-controls="conditional-IsPartOfOtherOrgThatGetsFunding"
-                   @checkedOtherOrgYes
-                   />
+                   @checkedOtherOrgYes />
             <label class="govuk-label govuk-radios__label" for="IsPartOfOtherOrgThatGetsFunding">Yes</label>
         </div>
         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-IsPartOfOtherOrgThatGetsFunding">
@@ -137,11 +169,82 @@
                    name="IsPartOfOtherOrgThatGetsFunding"
                    value="No"
                    data-aria-controls="conditional-IsPartOfOtherOrgThatGetsFunding_1"
-                   @checkedOtherOrgNo
-                    />
+                   @checkedOtherOrgNo />
             <label class="govuk-label govuk-radios__label" for="IsPartOfOtherOrgThatGetsFunding_1">No</label>
         </div>
         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-IsPartOfOtherOrgThatGetsFunding_1">
         </div>
     </div>
 </div>
+    <div class="govuk-form-group @((showDobMonthError || showDobYearError) ? "govuk-form-group--error" : "")" sfa-validation-for="PersonInControlDobMonth" sfa-validationerror-class="form-group-error">
+
+        <p class="govuk-label">Date of birth</p>
+        <span class="govuk-hint" id="dob-hint">
+            For example, 3 1980
+        </span>
+        @if (showErrors)
+        {
+            <span class="govuk-error-message">
+                @foreach (var dobMonthErrorMessage in errorMessages.Where(x => x.Field == "PersonInControlDobMonth"))
+                {
+                    @Html.Raw(dobMonthErrorMessage.ErrorMessage) <br />
+                }
+                @foreach (var dobYearErrorMessage in errorMessages.Where(x => x.Field == "PersonInControlDobYear"))
+                {
+                    @Html.Raw(dobYearErrorMessage.ErrorMessage) <br />
+                }
+            </span>
+        }
+        <div class="govuk-date-input" id="dob">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group" sfa-validation-for="DobMonth">
+                    <label class="govuk-label govuk-date-input__label" for="DobMonth">Month</label>
+                    <input value="@Model.DobMonth"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2 @dobMonthError"
+                           id="DobMonth"
+                           name="DobMonth"
+                           type="number"
+                           pattern="[0-9]*"
+                           sfa-validation-for="DobMonth" />
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group" sfa-validation-for="DobYear">
+                    <label class="govuk-label govuk-date-input__label" for="DobYear">Year</label>
+                    <input value="@Model.DobYear"
+                           class="govuk-input govuk-date-input__input govuk-input--width-4 @dobYearError"
+                           id="DobYear"
+                           name="DobYear"
+                           type="number"
+                           pattern="[0-9]*"
+                           sfa-validation-for="DobYear" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="govuk-form-group @(showJobRoleError ? "govuk-form-group--error" : "")" sfa-validation-for="Email" sfa-validationerror-class="form-group-error">
+        <label for="Email" class="govuk-label">Email</label>
+        @if (showErrors)
+        {
+            @foreach (var errorMessage in errorMessages.Where(x => x.Field == "Email"))
+            {
+                <span class="govuk-error-message">
+                    @errorMessage.ErrorMessage
+                </span>
+            }
+        }
+        <input type="text" class="govuk-input @emailError" asp-for="Email" sfa-validation-for="Email" sfa-validationerror-class="form-control-error" />
+    </div>
+    <div class="govuk-form-group @(showJobRoleError ? "govuk-form-group--error" : "")" sfa-validation-for="ContactNumber" sfa-validationerror-class="form-group-error">
+        <label for="ContactNumber" class="govuk-label">Contact number</label>
+        @if (showErrors)
+        {
+            @foreach (var errorMessage in errorMessages.Where(x => x.Field == "ContactNumber"))
+            {
+                <span class="govuk-error-message">
+                    @errorMessage.ErrorMessage
+                </span>
+            }
+        }
+        <input type="text" class="govuk-input @contactNumberError" asp-for="ContactNumber" sfa-validation-for="ContactNumber" sfa-validationerror-class="form-control-error" />
+    </div>

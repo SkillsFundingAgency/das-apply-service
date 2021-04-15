@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.ApplyService.Domain.Apply;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace SFA.DAS.ApplyService.Web.Validators
 {
@@ -61,6 +62,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
                             ErrorMessage = InvalidIncompleteDateOfBirthErrorMessage
                         };
                         errorMessages.Add(errorMessage);
+                        return errorMessages;
                     }
                 }
                 if (dobYear != null)
@@ -75,6 +77,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
                             ErrorMessage = InvalidIncompleteDateOfBirthErrorMessage
                         };
                         errorMessages.Add(errorMessage);
+                        return errorMessages;
                     }
                     if (yearValue > 0 && yearValue < 1000)
                     {
@@ -84,6 +87,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
                             ErrorMessage = DateOfBirthYearLengthErrorMessage
                         };
                         errorMessages.Add(errorMessage);
+                        return errorMessages;
                     }
                     if (yearValue > DateTime.Now.Year)
                     {
@@ -93,6 +97,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
                             ErrorMessage = DateOfBirthInFutureErrorMessage
                         };
                         errorMessages.Add(errorMessage);
+                        return errorMessages;
                     }
                 }
                 if (dobMonth != null && dobYear != null)
@@ -110,7 +115,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
                         };
                         errorMessages.Add(errorMessage);
                     }
-                    if (monthValue > DateTime.Now.Month && yearValue == DateTime.Now.Year || monthValue == 1 && yearValue == (DateTime.Now.Year + 1))
+                    else if (monthValue > DateTime.Now.Month && yearValue == DateTime.Now.Year || monthValue == 1 && yearValue == (DateTime.Now.Year + 1))
                     {
                         var errorMessage = new ValidationErrorDetail
                         {
