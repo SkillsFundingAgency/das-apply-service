@@ -9,10 +9,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ExternalApiCheckDetails
     public class UpdateExternalApiCheckDetailsHandler : IRequestHandler<UpdateExternalApiCheckDetailsRequest, bool>
     {
         private readonly IApplyRepository _applyRepository;
+        private readonly IGatewayRepository _gatewayRepository;
 
-        public UpdateExternalApiCheckDetailsHandler(IApplyRepository applyRepository)
+        public UpdateExternalApiCheckDetailsHandler(IApplyRepository applyRepository, IGatewayRepository gatewayRepository)
         {
             _applyRepository = applyRepository;
+            _gatewayRepository = gatewayRepository;
         }
 
         public async Task<bool> Handle(UpdateExternalApiCheckDetailsRequest request, CancellationToken cancellationToken)
@@ -32,7 +34,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ExternalApiCheckDetails
             application.ApplyData.GatewayReviewDetails.CharityCommissionDetails = request.ApplyGatewayDetails.CharityCommissionDetails;
             application.ApplyData.GatewayReviewDetails.SourcesCheckedOn         = request.ApplyGatewayDetails.SourcesCheckedOn;
 
-            return await _applyRepository.UpdateGatewayApplyData(request.ApplicationId, application.ApplyData, request.UserId, request.UserName);
+            return await _gatewayRepository.UpdateGatewayApplyData(request.ApplicationId, application.ApplyData, request.UserId, request.UserName);
         }
     }
 }

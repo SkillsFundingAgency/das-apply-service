@@ -18,6 +18,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
     {
         private UpdateGatewayReviewStatusAndCommentCommandHandler _handler;
         private Mock<IApplyRepository> _applyRepository;
+        private Mock<IGatewayRepository> _gatewayRepository;
         private Mock<IOversightReviewRepository> _oversightReviewRepository;
         private Mock<IApplicationUpdatedEmailService> _applicationUpdatedEmailService;
         private const string _userName = "John Smith";
@@ -40,12 +41,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
             _applyRepository = new Mock<IApplyRepository>();
             _applyRepository.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(() => _application);
 
+            _gatewayRepository = new Mock<IGatewayRepository>();
+
             _oversightReviewRepository = new Mock<IOversightReviewRepository>();
             _oversightReviewRepository.Setup(x => x.Add(It.IsAny<OversightReview>()));
 
             _applicationUpdatedEmailService = new Mock<IApplicationUpdatedEmailService>();
 
             _handler = new UpdateGatewayReviewStatusAndCommentCommandHandler(_applyRepository.Object,
+                _gatewayRepository.Object,
                 _oversightReviewRepository.Object,
                 Mock.Of<IAuditService>(),
                 _applicationUpdatedEmailService.Object,
@@ -59,12 +63,12 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
             var gatewayReviewComment = "Some comment";
             var gatewayReviewExternalComment = "Some external comment";
 
-            _applyRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
+            _gatewayRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
 
             await _handler.Handle(new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus,
                 gatewayReviewComment, gatewayReviewExternalComment, _userId, _userName), CancellationToken.None);
 
-            _applyRepository.Verify(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName), Times.Once);
+            _gatewayRepository.Verify(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName), Times.Once);
         }
 
         [Test]
@@ -74,7 +78,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
             var gatewayReviewComment = "Some comment";
             var gatewayReviewExternalComment = "Some external comment";
 
-            _applyRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
+            _gatewayRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
 
             var request = new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, _userId, _userName);
 
@@ -90,7 +94,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
             var gatewayReviewComment = "Some comment";
             var gatewayReviewExternalComment = "Some external comment";
 
-            _applyRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
+            _gatewayRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
 
             var request = new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, _userId, _userName);
 
@@ -112,7 +116,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
             var gatewayReviewComment = "Some comment";
             var gatewayReviewExternalComment = "Some external comment";
 
-            _applyRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
+            _gatewayRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
 
             var request = new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, _userId, _userName);
 
