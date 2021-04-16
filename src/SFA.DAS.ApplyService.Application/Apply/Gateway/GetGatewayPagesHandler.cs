@@ -9,16 +9,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 {
     public class GetGatewayPagesHandler : IRequestHandler<GetGatewayPagesRequest, List<GatewayPageAnswerSummary>>
     {
-        private readonly IApplyRepository _applyRepository;
+        private readonly IGatewayRepository _repository;
 
-        public GetGatewayPagesHandler(IApplyRepository applyRepository)
+        public GetGatewayPagesHandler(IGatewayRepository repository)
         {
-            _applyRepository = applyRepository;
+            _repository = repository;
         }
 
         public async Task<List<GatewayPageAnswerSummary>> Handle(GetGatewayPagesRequest request, CancellationToken cancellationToken)
         {
-            return await _applyRepository.GetGatewayPageAnswers(request.ApplicationId);
+            return await _repository.GetGatewayPageAnswers(request.ApplicationId);
         }
     }
 }

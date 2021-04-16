@@ -9,23 +9,25 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 {
-    public class UpdateGatewayPageAnswerPostClarificationRequestHandler : IRequestHandler<UpdateGatewayPageAnswerPostClarificationRequest>
+    public class UpdateGatewayPageAnswerPostClarificationRequestHandler : IRequestHandler<UpdateGatewayPageAnswerPostClarificationRequest, bool>
     {
         private readonly IApplyRepository _applyRepository;
+        private readonly IGatewayRepository _gatewayRepository;
         private readonly IAuditService _auditService;
 
-        public UpdateGatewayPageAnswerPostClarificationRequestHandler(IApplyRepository applyRepository, IAuditService auditService)
+        public UpdateGatewayPageAnswerPostClarificationRequestHandler(IApplyRepository applyRepository, IGatewayRepository gatewayRepository, IAuditService auditService)
         {
             _applyRepository = applyRepository;
+            _gatewayRepository = gatewayRepository;
             _auditService = auditService;
         }
 
-        public async Task<Unit> Handle(UpdateGatewayPageAnswerPostClarificationRequest request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateGatewayPageAnswerPostClarificationRequest request, CancellationToken cancellationToken)
         {
             _auditService.StartTracking(UserAction.UpdateGatewayPagePostClarification, request.UserId, request.UserName);
 
             var application = await _applyRepository.GetApplication(request.ApplicationId);
-            var answer = await _applyRepository.GetGatewayPageAnswer(request.ApplicationId, request.PageId);
+            var answer = await _gatewayRepository.GetGatewayPageAnswer(request.ApplicationId, request.PageId);
             var isNew = answer == null;
 
             if (isNew)
@@ -47,14 +49,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 answer.ClarificationAnswer = request.ClarificationAnswer;
             }
 
-
+            bool updatedSuccessfully;
             if (isNew)
             {
-                await _applyRepository.InsertGatewayPageAnswer(answer, request.UserId, request.UserName);
+                updatedSuccessfully = await _gatewayRepository.InsertGatewayPageAnswer(answer, request.UserId, request.UserName);
             }
             else
             {
-                await _applyRepository.UpdateGatewayPageAnswerPostClarification(answer, request.UserId, request.UserName);
+                updatedSuccessfully = await _gatewayRepository.UpdateGatewayPageAnswerPostClarification(answer, request.UserId, request.UserName);
             }
 
             if (application.GatewayUserId != request.UserId || application.GatewayUserName != request.UserName)
@@ -69,7 +71,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 
             _auditService.Save();
 
-            return Unit.Value;
+            return updatedSuccessfully;
         }
 
         private GatewayPageAnswer CreateNewGatewayPageAnswer(Guid applicationId, string pageId)
