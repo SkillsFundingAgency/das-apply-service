@@ -153,7 +153,7 @@
                 <div class="govuk-form-group">
                     <label class="govuk-label" for="IsPartOfOtherOrgThatGetsFunding_1">Enter the names of all these organisations</label>
                     <span id="OtherOrgName-hint" class="govuk-hint">
-                        You also need to include which of these organisations may receive funding directly from ESFA or as a subcontractor.
+                        Tell us which of these organisations receive funding directly from ESFA or as a subcontractor. Include the UKPRN if they have one and how many years you have been with the organisations.
                     </span>
                     <textarea class="govuk-textarea govuk-js-character-count" id="OtherOrgName" name="OtherOrgName" rows="5" aria-describedby="with-hint-info OtherOrgName-hint">@Model.OtherOrgName</textarea>
                     <div id="OtherOrgName-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
@@ -185,11 +185,11 @@
         @if (showErrors)
         {
             <span class="govuk-error-message">
-                @foreach (var dobMonthErrorMessage in errorMessages.Where(x => x.Field == "PersonInControlDobMonth"))
+                @foreach (var dobMonthErrorMessage in errorMessages.Where(x => x.Field == "DobMonth"))
                 {
                     @Html.Raw(dobMonthErrorMessage.ErrorMessage) <br />
                 }
-                @foreach (var dobYearErrorMessage in errorMessages.Where(x => x.Field == "PersonInControlDobYear"))
+                @foreach (var dobYearErrorMessage in errorMessages.Where(x => x.Field == "DobYear"))
                 {
                     @Html.Raw(dobYearErrorMessage.ErrorMessage) <br />
                 }
