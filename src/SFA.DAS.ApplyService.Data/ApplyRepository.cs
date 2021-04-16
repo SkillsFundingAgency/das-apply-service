@@ -1,5 +1,4 @@
 using Dapper;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -10,7 +9,6 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Domain.Apply.Gateway;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Types;
 
@@ -19,11 +17,9 @@ namespace SFA.DAS.ApplyService.Data
     public class ApplyRepository : IApplyRepository
     {
         private readonly IApplyConfig _config;
-        private readonly ILogger<ApplyRepository> _logger;
 
-        public ApplyRepository(IConfigurationService configurationService, ILogger<ApplyRepository> logger)
+        public ApplyRepository(IConfigurationService configurationService)
         {
-            _logger = logger;
             _config = configurationService.GetConfig().Result;
             
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
@@ -84,126 +80,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync<Domain.Entities.GatewayPageAnswerSummary>(@"SELECT ApplicationId, PageId, Status, Comments FROM GatewayAnswer
-                                                    WHERE ApplicationId = @applicationId", new { applicationId })).ToList();
-            }
-        }
-
-        public async Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId)
-        {
-
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QuerySingleOrDefaultAsync<GatewayPageAnswer>(@"SELECT * from GatewayAnswer
-                                                    WHERE applicationId = @applicationId and pageid = @pageId",
-                    new {applicationId, pageId}));
-            }
-        }
-
-        public async Task<string> GetGatewayPageStatus(Guid applicationId, string pageId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QuerySingleOrDefaultAsync<string>(@"SELECT Status from GatewayAnswer WHERE applicationId = @applicationId and pageid = @pageId",
-                    new { applicationId, pageId }));
-            }
-        }
-
-        public async Task<string> GetGatewayPageComments(Guid applicationId, string pageId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QuerySingleOrDefaultAsync<string>(@"SELECT Comments from GatewayAnswer WHERE applicationId = @applicationId and pageid = @pageId",
-                    new { applicationId, pageId }));
-            }
-        }
-
-        public async Task InsertGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(
-                    @"INSERT INTO GatewayAnswer ([Id],[ApplicationId],[PageId],[Status],[comments],[UpdatedAt],[UpdatedBy])
-														values (@id, @applicationId, @pageId,@status,@comments,@updatedAt,@updatedBy)"
-                    ,pageAnswer);
-            }
-        }
-
-        public async Task InsertGatewayPageAnswerClarification(GatewayPageAnswer pageAnswer, string userId, string userName)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(
-                    @"INSERT INTO GatewayAnswer ([Id],[ApplicationId],[PageId],[Status],[comments],[UpdatedAt],[UpdatedBy], ClarificationComments, ClarificationDate, ClarificationBy)
-														values (@id, @applicationId, @pageId,@status,@comments,@updatedAt,@updatedBy, @ClarificationComments, @ClarificationDate, @ClarificationBy)"
-                    , pageAnswer);
-            }
-        }
-
-
-        public async Task UpdateGatewayPageAnswer(GatewayPageAnswer pageAnswer, string userId, string userName)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for non-clarification responses");
-                        await connection.ExecuteAsync(
-                    @"UPDATE GatewayAnswer
-                            SET  Status = @status, Comments = @comments, 
-                                ClarificationDate = 
-								CASE WHEN ClarificationAnswer IS NULL THEN NULL ELSE ClarificationDate END,
-                                ClarificationBy = 
-								CASE WHEN ClarificationAnswer IS NULL THEN NULL ELSE ClarificationBy END,
-                                ClarificationComments = 
-								CASE WHEN ClarificationAnswer IS NULL THEN NULL ELSE ClarificationComments END,
-                                UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
-                                WHERE [Id] = @id",
-                            pageAnswer);
-                    
-            }
-        }
-
-        
-
-        public async Task UpdateGatewayPageAnswerPostClarification(GatewayPageAnswer pageAnswer, string userId, string userName)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-
-
-                _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for non-clarification responses");
-                await connection.ExecuteAsync(
-                    @"UPDATE GatewayAnswer
-                            SET  Status = @status, Comments = @comments, 
-                                ClarificationAnswer = @clarificationAnswer,
-                                UpdatedBy = @updatedBy, UpdatedAt = @updatedAt
-                                WHERE [Id] = @id",
-                    pageAnswer);
-
-            }
-        }
-
-        public async Task UpdateGatewayPageAnswerClarification(GatewayPageAnswer pageAnswer, string userId, string userName)
-        {
-            _logger.LogInformation($"updating Gateway answer for applicationID [{pageAnswer.ApplicationId}], Status: {pageAnswer.Status}, Clarification answer '{pageAnswer.ClarificationAnswer}'");
-            _logger.LogInformation($"updating Gateway answer for page answer: {Newtonsoft.Json.JsonConvert.SerializeObject(pageAnswer)}");
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-
-                    _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for clarification");
-                    await connection.ExecuteAsync(
-                        @"UPDATE GatewayAnswer
-                            SET  Status = @status, comments = @clarificationComments, ClarificationComments =@clarificationComments, 
-                            UpdatedBy = @updatedBy, UpdatedAt = @updatedAt, 
-                            ClarificationDate=@updatedAt, ClarificationBy = @updatedBy
-                            WHERE [Id] = @id",
-                        pageAnswer);
-            }
-        }
-
         public async Task UpdateApplication(Apply application)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -229,47 +105,6 @@ namespace SFA.DAS.ApplyService.Data
                         WHERE [Id] = @id",
                     application);
             }
-        }
-
-        public async Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, ApplyData applyData, string gatewayReviewStatus, string userId, string userName)
-        {
-            var applicationStatus = ApplicationStatus.GatewayAssessed;
-            if(gatewayReviewStatus.Equals(GatewayReviewStatus.ClarificationSent))
-                applicationStatus = ApplicationStatus.Submitted;
-
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE [Apply]
-                                                   SET [ApplicationStatus] = @applicationStatus
-                                                      ,[GatewayReviewStatus] = @gatewayReviewStatus
-                                                      ,[ApplyData] = @applyData
-                                                      ,[UpdatedAt] = GetUTCDATE()
-                                                      ,[UpdatedBy] = @userName 
-                                                      ,[GatewayUserId] = @userId
-                                                      ,[GatewayUsername] = @userName
-                                                 WHERE [ApplicationId] = @applicationId",
-                    new { applicationId, applicationStatus, gatewayReviewStatus, applyData, userId, userName });
-            }
-
-            return await Task.FromResult(true);
-        }
-
-        public async Task<bool> UpdateGatewayApplyData(Guid applicationId, ApplyData applyData, string userId, string userName)
-        {
-           
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE [Apply]
-                                                   SET [ApplyData] = @applyData
-                                                      ,[UpdatedAt] = GetUTCDATE()
-                                                      ,[UpdatedBy] = @userName 
-                                                      ,[GatewayUserId] = @userId
-                                                      ,[GatewayUsername] = @userName
-                                                 WHERE [ApplicationId] = @applicationId",
-                    new { applicationId, applyData, userId, userName });
-            }
-
-            return await Task.FromResult(true);
         }
 
         public async Task<bool> CanSubmitApplication(Guid applicationId)
@@ -330,9 +165,9 @@ namespace SFA.DAS.ApplyService.Data
 
                 await connection.ExecuteAsync(@"insert into FinancialData ([ApplicationId]
                ,[TurnOver],[Depreciation],[ProfitLoss],[Dividends],[IntangibleAssets]
-               ,[Assets],[Liabilities],[ShareholderFunds],[Borrowings])
+               ,[Assets],[Liabilities],[ShareholderFunds],[Borrowings],[AccountingReferenceDate],[AccountingPeriod])
                 values (@ApplicationId, @TurnOver,@Depreciation, @ProfitLoss,@Dividends,@IntangibleAssets
-               ,@Assets,@Liabilities,@ShareholderFunds,@Borrowings)",
+               ,@Assets,@Liabilities,@ShareholderFunds,@Borrowings,@AccountingReferenceDate,@AccountingPeriod)",
                financialData);
 
                 connection.Close();
@@ -373,138 +208,7 @@ namespace SFA.DAS.ApplyService.Data
             }
 
             return Guid.Empty;
-        }
-
-        public async Task<List<RoatpGatewaySummaryItem>> GetNewGatewayApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync<RoatpGatewaySummaryItem>(
-                        @"SELECT 
-                            apply.Id AS Id,
-                            apply.ApplicationId AS ApplicationId,
-                            apply.ApplicationStatus AS ApplicationStatus,
-                            apply.GatewayReviewStatus AS GatewayReviewStatus,
-                            apply.AssessorReviewStatus AS AssessorReviewStatus,
-                            apply.FinancialReviewStatus AS FinancialReviewStatus,
-                            org.Name AS OrganisationName,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
-	                      FROM Apply apply
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
-	                        AND apply.GatewayReviewStatus = @gatewayReviewStatusNew
-                          ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC",
-                        new
-                        {
-                            applicationStatusSubmitted = ApplicationStatus.Submitted,
-                            gatewayReviewStatusNew = GatewayReviewStatus.New
-                        })).ToList();
-            }
-        }
-
-        public async Task<List<RoatpGatewaySummaryItem>> GetInProgressGatewayApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync<RoatpGatewaySummaryItem>(
-                        @"SELECT 
-                            apply.Id AS Id,
-                            apply.ApplicationId AS ApplicationId,
-                            apply.ApplicationStatus AS ApplicationStatus,
-                            apply.GatewayReviewStatus AS GatewayReviewStatus,
-                            apply.AssessorReviewStatus AS AssessorReviewStatus,
-                            apply.FinancialReviewStatus AS FinancialReviewStatus,
-                            apply.GatewayUserName AS LastCheckedBy,
-                            org.Name AS OrganisationName,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
-                            JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.ClarificationRequestedOn') AS ClarificationRequestedDate
-	                      FROM Apply apply
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
-	                        AND apply.GatewayReviewStatus in (@gatewayReviewStatusInProgress, @gatewayReviewStatusClarificationSent)
-                          ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC",
-                        new
-                        {
-                            applicationStatusSubmitted = ApplicationStatus.Submitted,
-                            gatewayReviewStatusInProgress = GatewayReviewStatus.InProgress,
-                            gatewayReviewStatusClarificationSent = GatewayReviewStatus.ClarificationSent
-                        })).ToList();
-            }
-        }
-
-        public async Task<List<RoatpGatewaySummaryItem>> GetClosedGatewayApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync<RoatpGatewaySummaryItem>(
-                        @"SELECT 
-                            apply.Id AS Id,
-                            apply.ApplicationId AS ApplicationId,
-                            apply.ApplicationStatus AS ApplicationStatus,
-                            apply.GatewayReviewStatus AS GatewayReviewStatus,
-                            apply.AssessorReviewStatus AS AssessorReviewStatus,
-                            apply.FinancialReviewStatus AS FinancialReviewStatus,
-                            apply.GatewayUserName AS LastCheckedBy,                            
-                            org.Name AS OrganisationName,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
-                            CASE 
-                                WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
-                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
-                                ELSE JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime')
-                            END AS OutcomeMadeDate,
-                            CASE 
-                                WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
-                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-                                ELSE apply.GatewayUserName
-                            END AS OutcomeMadeBy
-	                      FROM Apply apply
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                      WHERE apply.DeletedAt IS NULL
-                            AND (
-                                    apply.ApplicationStatus in (@applicationStatusWithdrawn, @applicationStatusRemoved)
-                                    OR apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusFailed, @gatewayReviewStatusRejected)
-                                )
-                          ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC",
-                        new
-                        {
-                            applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
-                            applicationStatusRemoved = ApplicationStatus.Removed,
-                            gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
-                            gatewayReviewStatusFailed = GatewayReviewStatus.Fail,
-                            gatewayReviewStatusRejected = GatewayReviewStatus.Reject
-                        })).ToList();
-            }
-        }
-
-        public async Task StartGatewayReview(Guid applicationId, string userId, string userName)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE Apply
-                                                SET  GatewayReviewStatus = @gatewayReviewStatusInProgress,
-                                                     UpdatedBy = @userName, UpdatedAt = GETUTCDATE(),
-                                                     GatewayUserId = @userId, GatewayUserName = @userName
-                                                WHERE ApplicationId = @applicationId AND GatewayReviewStatus = @gatewayReviewStatusNew",
-                                                new 
-                                                { 
-                                                    applicationId, userId, userName,
-                                                    gatewayReviewStatusNew = GatewayReviewStatus.New,
-                                                    gatewayReviewStatusInProgress = GatewayReviewStatus.InProgress,
-                                                });
-            }
-        }
+        }      
 
         public async Task<bool> ChangeProviderRoute(Guid applicationId, int providerRoute, string providerRouteName)
         {
@@ -530,35 +234,7 @@ namespace SFA.DAS.ApplyService.Data
             return false;
         }
         
-        public async Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy)
-        {
-            var application = await GetApplication(applicationId);
 
-            if (application != null && application.GatewayReviewStatus == GatewayReviewStatus.InProgress)
-            {
-                application.UpdatedBy = evaluatedBy;
-                application.UpdatedAt = DateTime.UtcNow;
-
-                if(isGatewayApproved)
-                {
-                    application.ApplicationStatus = ApplicationStatus.GatewayAssessed;
-                    application.GatewayReviewStatus = GatewayReviewStatus.Pass;
-                }
-                else
-                {
-                    application.ApplicationStatus = ApplicationStatus.Rejected;
-                    application.GatewayReviewStatus = GatewayReviewStatus.Fail;
-                }
-
-                using (var connection = new SqlConnection(_config.SqlConnectionString))
-                {
-                    await connection.ExecuteAsync(@"UPDATE Apply
-                                                    SET  ApplicationStatus = @ApplicationStatus, GatewayReviewStatus = @GatewayReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
-                                                    WHERE Apply.ApplicationId = @ApplicationId",
-                                                    new { application.ApplicationId, application.ApplyData, application.ApplicationStatus, application.GatewayReviewStatus, application.UpdatedBy });
-                }
-            }
-        }
 
         public async Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications()
         {
@@ -638,7 +314,9 @@ namespace SFA.DAS.ApplyService.Data
                             fd.Assets,
                             fd.Liabilities,
                             fd.ShareholderFunds,
-                            fd.Borrowings
+                            fd.Borrowings,
+                            fd.AccountingReferenceDate,
+                            fd.AccountingPeriod
 	                      FROM Apply apply
                           LEFT JOIN FinancialData fd on fd.ApplicationId = apply.ApplicationId
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
@@ -905,74 +583,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<bool> WithdrawApplication(Guid applicationId, string comments, string userId, string userName)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var applyData = await GetApplyData(applicationId);
-
-                if(applyData?.ApplyDetails != null)
-                {
-                    applyData.ApplyDetails.ApplicationWithdrawnOn = DateTime.UtcNow;
-                    applyData.ApplyDetails.ApplicationWithdrawnBy = userName;
-                }
-
-                var rowsAffected = await connection.ExecuteAsync(@"UPDATE app
-                                                SET  app.ApplicationStatus = @applicationStatusWithdrawn,
-                                                     app.Comments = @comments,
-                                                     app.ApplyData = @applyData,
-                                                     app.UpdatedAt = GETUTCDATE(),
-                                                     app.UpdatedBy = @updatedBy
-                                                FROM Apply app
-                                                LEFT JOIN OversightReview outcome on outcome.ApplicationId = app.ApplicationId
-                                                WHERE app.ApplicationId = @applicationId
-                                                AND outcome.[Status] IS NULL",
-                                                new { 
-                                                        applicationId,
-                                                        comments,
-                                                        applyData,
-                                                        updatedBy = userName,
-                                                        applicationStatusWithdrawn = ApplicationStatus.Withdrawn
-                                                        });
-
-                return rowsAffected > 0;
-            }
-        }
-
-        public async Task<bool> RemoveApplication(Guid applicationId, string comments, string externalComments, string userId, string userName)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var applyData = await GetApplyData(applicationId);
-
-                if (applyData?.ApplyDetails != null)
-                {
-                    applyData.ApplyDetails.ApplicationRemovedOn = DateTime.UtcNow;
-                    applyData.ApplyDetails.ApplicationRemovedBy = userName;
-                }
-
-                var rowsAffected = await connection.ExecuteAsync(@"UPDATE Apply
-                                                SET  ApplicationStatus = @applicationStatusRemoved,
-                                                     Comments = @comments,
-                                                     ExternalComments = @externalComments,
-                                                     ApplyData = @applyData,
-                                                     UpdatedAt = GETUTCDATE(),
-                                                     UpdatedBy = @updatedBy
-                                                WHERE ApplicationId = @applicationId",
-                                                new
-                                                {
-                                                    applicationId,
-                                                    comments,
-                                                    externalComments,
-                                                    applyData,
-                                                    updatedBy = userName,
-                                                    applicationStatusRemoved = ApplicationStatus.Removed
-                                                });
-
-                return rowsAffected > 0;
-            }
-        }
-
         public async Task<Contact> GetContactForApplication(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -1042,24 +652,6 @@ namespace SFA.DAS.ApplyService.Data
                     financialGradeInadequate = Domain.Roatp.FinancialApplicationSelectedGrade.Inadequate,
                     dateFrom = dateFrom.ToString("yyyy-MM-dd"), dateTo = dateTo.AddDays(1).Date.ToString("yyyy-MM-dd")
                 })).ToList();
-            }
-        }
-
-        public async Task<IEnumerable<GatewayApplicationStatusCount>> GetGatewayApplicationStatusCounts()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var applicationStatuses = await connection.QueryAsync<GatewayApplicationStatusCount>(
-                    @"SELECT
-                        GatewayReviewStatus,
-                        ApplicationStatus,
-                        COUNT(1) as 'Count'
-                        FROM Apply
-                        WHERE DeletedAt IS NULL
-                        GROUP BY GatewayReviewStatus, ApplicationStatus
-                        ");
-
-                return applicationStatuses;
             }
         }
 
