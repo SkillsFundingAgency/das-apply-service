@@ -15,13 +15,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.AddSubcontractorDe
     public class AddSubcontractorDeclarationFileUploadHandlerTests
     {
         private Mock<IApplyRepository> _repository;
+        private Mock<IGatewayRepository> _gatewayRepository;
         private Apply.Gateway.AddSubcontractorDeclarationFileUploadHandler _handler;
 
         [SetUp]
         public void TestSetup()
         {
             _repository = new Mock<IApplyRepository>();
-            _handler = new Apply.Gateway.AddSubcontractorDeclarationFileUploadHandler(_repository.Object, Mock.Of<ILogger<Apply.Gateway.AddSubcontractorDeclarationFileUploadHandler>>());
+            _gatewayRepository = new Mock<IGatewayRepository>();
+            _handler = new Apply.Gateway.AddSubcontractorDeclarationFileUploadHandler(_repository.Object, _gatewayRepository.Object, Mock.Of<ILogger<Apply.Gateway.AddSubcontractorDeclarationFileUploadHandler>>());
         }
 
         [Test]
@@ -42,7 +44,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.AddSubcontractorDe
 
             await _handler.Handle(new AddSubcontractorDeclarationFileUploadRequest(applicationId, clarificationFile, userId, userName), new CancellationToken());
 
-            _repository.Verify(x => x.UpdateGatewayApplyData(applicationId, It.IsAny<ApplyData>(), userId, userName), Times.Once);
+            _gatewayRepository.Verify(x => x.UpdateGatewayApplyData(applicationId, It.IsAny<ApplyData>(), userId, userName), Times.Once);
         }
 
 
@@ -70,7 +72,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.AddSubcontractorDe
             await _handler.Handle(new AddSubcontractorDeclarationFileUploadRequest(applicationId, clarificationFile, userId, userName), new CancellationToken());
 
             _repository.Verify(x => x.GetApplication(applicationId), Times.Never);
-            _repository.Verify(x => x.UpdateGatewayApplyData(applicationId, It.IsAny<ApplyData>(), userId, userName), Times.Never);
+            _gatewayRepository.Verify(x => x.UpdateGatewayApplyData(applicationId, It.IsAny<ApplyData>(), userId, userName), Times.Never);
         }
     }
 }

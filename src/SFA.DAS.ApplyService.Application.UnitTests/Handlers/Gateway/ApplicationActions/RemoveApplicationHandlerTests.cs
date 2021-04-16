@@ -13,7 +13,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.Applicatio
     public class RemoveApplicationHandlerTests
     {
         private RemoveApplicationHandler _handler;
-        private Mock<IApplyRepository> _repository;
+        private Mock<IGatewayRepository> _repository;
 
         private Guid _applicationId;
         private const string _comments = "comments";
@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.Applicatio
         {
             _applicationId = Guid.NewGuid();
 
-            _repository = new Mock<IApplyRepository>();
+            _repository = new Mock<IGatewayRepository>();
             var logger = Mock.Of<ILogger<RemoveApplicationHandler>>();
             
             _handler = new RemoveApplicationHandler(_repository.Object, logger);
