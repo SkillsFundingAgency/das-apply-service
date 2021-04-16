@@ -98,7 +98,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitApplicationH
                     ShareholderFunds = 8,
                     Borrowings = 9,
                     AccountingReferenceDate = new DateTime(2021, 1, 1),
-                    AccountingPeriod = 10
+                    AccountingPeriod = 10,
+                    AverageNumberofFTEEmployees = 11
                 }
             };
 
@@ -117,6 +118,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitApplicationH
                      && x.Borrowings == 9
                      && x.AccountingReferenceDate == new DateTime(2021, 1, 1)
                      && x.AccountingPeriod == 10
+                     && x.AverageNumberofFTEEmployees == 11
                 ), It.IsAny<Guid>()), Times.Once);
         }
     }
