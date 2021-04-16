@@ -56,7 +56,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("GatewayReview/{applicationId}/Evaluate")]
         public async Task EvaluateGateway(Guid applicationId, [FromBody] EvaluateGatewayApplicationRequest request)
         {
-            await _mediator.Send(new EvaluateGatewayRequest(applicationId, request.IsGatewayApproved, request.EvaluatedBy));
+            await _mediator.Send(new EvaluateGatewayRequest(applicationId, request.IsGatewayApproved, request.UserId, request.UserName));
         }
 
         [HttpPost("GatewayReview/{applicationId}/Withdraw")]

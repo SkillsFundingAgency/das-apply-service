@@ -12,46 +12,50 @@ using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 {
-    public class UpdateGatewayReviewStatusAndCommentCommandHandler : IRequestHandler<UpdateGatewayReviewStatusAndCommentCommand>
+    public class UpdateGatewayReviewStatusAndCommentCommandHandler : IRequestHandler<UpdateGatewayReviewStatusAndCommentCommand, bool>
     {
         private readonly IApplyRepository _applyRepository;
+        private readonly IGatewayRepository _gatewayRepository;
         private readonly IOversightReviewRepository _oversightReviewRepository;
         private readonly IAuditService _auditService;
         private readonly IApplicationUpdatedEmailService _applicationUpdatedEmailService;
         private readonly IUnitOfWork _unitOfWork;
 
         public UpdateGatewayReviewStatusAndCommentCommandHandler(IApplyRepository applyRepository,
+            IGatewayRepository gatewayRepository,
             IOversightReviewRepository oversightReviewRepository,
             IAuditService auditService,
             IApplicationUpdatedEmailService applicationUpdatedEmailService,
             IUnitOfWork unitOfWork)
         {
             _applyRepository = applyRepository;
+            _gatewayRepository = gatewayRepository;
             _oversightReviewRepository = oversightReviewRepository;
             _auditService = auditService;
             _applicationUpdatedEmailService = applicationUpdatedEmailService;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Unit> Handle(UpdateGatewayReviewStatusAndCommentCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateGatewayReviewStatusAndCommentCommand request, CancellationToken cancellationToken)
         {
             var application = await _applyRepository.GetApplication(request.ApplicationId);
 
-            if (application == null)
+            if (application?.ApplyData == null)
             {
                 throw new InvalidOperationException($"Application {request.ApplicationId} not found");
             }
-
-            if (application.ApplyData.GatewayReviewDetails == null)
+            else if (application.ApplyData.GatewayReviewDetails == null)
+            {
                 application.ApplyData.GatewayReviewDetails = new ApplyGatewayDetails();
+            }
 
             application.ApplyData.GatewayReviewDetails.OutcomeDateTime = DateTime.UtcNow;
             application.ApplyData.GatewayReviewDetails.Comments = request.GatewayReviewComment;
             application.ApplyData.GatewayReviewDetails.ExternalComments = request.GatewayReviewExternalComment;
 
-            var result = await _applyRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, request.GatewayReviewStatus, request.UserId, request.UserName);
+            var updatedSuccessfully = await _gatewayRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, request.GatewayReviewStatus, request.UserId, request.UserName);
 
-            if (result && request.GatewayReviewStatus == GatewayReviewStatus.Reject)
+            if (updatedSuccessfully && request.GatewayReviewStatus == GatewayReviewStatus.Reject)
             {
                 var oversightReview = new OversightReview
                 {
@@ -72,7 +76,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 await _applicationUpdatedEmailService.SendEmail(request.ApplicationId);
             }
 
-            return Unit.Value;
+            return updatedSuccessfully;
         }
     }
 }

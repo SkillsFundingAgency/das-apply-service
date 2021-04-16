@@ -3,7 +3,7 @@ using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 {
-    public class UpdateGatewayPageAnswerClarificationRequest : IRequest
+    public class UpdateGatewayPageAnswerClarificationRequest : IRequest<bool>
     {
         public Guid ApplicationId { get; }
         public string PageId { get; }
