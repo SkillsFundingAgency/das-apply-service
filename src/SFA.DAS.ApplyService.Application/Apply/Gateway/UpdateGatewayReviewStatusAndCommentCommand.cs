@@ -3,7 +3,7 @@ using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 {
-    public class UpdateGatewayReviewStatusAndCommentCommand : IRequest
+    public class UpdateGatewayReviewStatusAndCommentCommand : IRequest<bool>
     {
         public Guid ApplicationId { get; }
         public string GatewayReviewStatus { get; }

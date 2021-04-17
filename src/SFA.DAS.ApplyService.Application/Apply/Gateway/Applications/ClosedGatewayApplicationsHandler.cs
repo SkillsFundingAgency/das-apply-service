@@ -9,9 +9,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
 {
     public class ClosedGatewayApplicationsHandler : IRequestHandler<ClosedGatewayApplicationsRequest, List<RoatpGatewaySummaryItem>>
     {
-        private readonly IApplyRepository _repository;
+        private readonly IGatewayRepository _repository;
 
-        public ClosedGatewayApplicationsHandler(IApplyRepository repository)
+        public ClosedGatewayApplicationsHandler(IGatewayRepository repository)
         {
             _repository = repository;
         }

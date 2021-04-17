@@ -16,15 +16,17 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
     public class UpdateGatewayReviewStatusAsClarificationHandlerTests
     {
         private Mock<IApplyRepository> _repository;
+        private Mock<IGatewayRepository> _gatewayRepository;
         private UpdateGatewayReviewStatusAsClarificationHandler _handler;
 
         [SetUp]
         public void TestSetup()
         {
             _repository = new Mock<IApplyRepository>();
-            _handler = new UpdateGatewayReviewStatusAsClarificationHandler(_repository.Object);
+            _gatewayRepository = new Mock<IGatewayRepository>();
+            _handler = new UpdateGatewayReviewStatusAsClarificationHandler(_repository.Object, _gatewayRepository.Object);
 
-            _repository.Setup(x => x.UpdateGatewayReviewStatusAndComment(It.IsAny<Guid>(), It.IsAny<ApplyData>(), 
+            _gatewayRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(It.IsAny<Guid>(), It.IsAny<ApplyData>(), 
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
         }
 
@@ -40,7 +42,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
             var result = await _handler.Handle(new UpdateGatewayReviewStatusAsClarificationRequest(applicationId, userId, userName), new CancellationToken());
 
             Assert.IsFalse(result);
-            _repository.Verify(x => x.UpdateGatewayReviewStatusAndComment(applicationId,It.IsAny<Domain.Entities.ApplyData>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<string>()), Times.Never);
+            _gatewayRepository.Verify(x => x.UpdateGatewayReviewStatusAndComment(applicationId,It.IsAny<Domain.Entities.ApplyData>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<string>()), Times.Never);
         }
 
         [Test]
@@ -54,7 +56,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
             var result = await _handler.Handle(new UpdateGatewayReviewStatusAsClarificationRequest(applicationId, userId, userName), new CancellationToken());
 
             Assert.IsTrue(result);
-            _repository.Verify(x => x.UpdateGatewayReviewStatusAndComment(applicationId, It.IsAny<Domain.Entities.ApplyData>(), GatewayReviewStatus.ClarificationSent, userId, userName), Times.Once);
+            _gatewayRepository.Verify(x => x.UpdateGatewayReviewStatusAndComment(applicationId, It.IsAny<Domain.Entities.ApplyData>(), GatewayReviewStatus.ClarificationSent, userId, userName), Times.Once);
         }
     }
 }

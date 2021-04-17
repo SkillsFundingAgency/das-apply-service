@@ -10,8 +10,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
 {
     public class GetGatewayApplicationsCountsHandler : IRequestHandler<GetGatewayApplicationCountsRequest, GetGatewayApplicationCountsResponse>
     {
-        private readonly IApplyRepository _repository;
-        public GetGatewayApplicationsCountsHandler(IApplyRepository repository)
+        private readonly IGatewayRepository _repository;
+
+        public GetGatewayApplicationsCountsHandler(IGatewayRepository repository)
         {
             _repository = repository;
         }
