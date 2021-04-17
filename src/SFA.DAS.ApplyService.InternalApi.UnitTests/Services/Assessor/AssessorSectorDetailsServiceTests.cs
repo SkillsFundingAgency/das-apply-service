@@ -116,11 +116,14 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         [Test]
         public async Task Get_sector_details_for_page4_answers()
         {
-            _sectorQuestionIds.FirstName = "FullNameQuestionId";
+            _sectorQuestionIds.FirstName = "FirstNameQuestionId";
+            _sectorQuestionIds.LastName = "LastNameQuestionId";
             _sectorQuestionIds.JobRole = "JobRoleId";
             _sectorQuestionIds.TimeInRole = "TimeInRoleId";
             _sectorQuestionIds.IsPartOfAnyOtherOrganisations = "PartOfOtherOrgsId";
-            var fullName = "FullName Answer";
+            var firstName = "FirstName Answer";
+            var lastName = "LastName Answer";
+
             var jobRole = "Job Role Description";
             var timeInRole = "Time in role";
             var isPartOfOtherOrgs = "Yes";
@@ -128,7 +131,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         
             _extractAnswerValueService
                 .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.FirstName))
-                .Returns(fullName);
+                .Returns(firstName);
+            _extractAnswerValueService
+                .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.LastName))
+                .Returns(lastName);
             _extractAnswerValueService
                 .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.JobRole))
                 .Returns(jobRole);
@@ -143,7 +149,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
                 .Returns(organisationDetails);
             
             var actualSectorDetails = await _service.GetSectorDetails(_applicationId, _firstPageId);
-            Assert.AreEqual(fullName, actualSectorDetails.FirstName);
+            Assert.AreEqual(firstName, actualSectorDetails.FirstName);
+            Assert.AreEqual(lastName, actualSectorDetails.LastName);
             Assert.AreEqual(jobRole, actualSectorDetails.JobRole);
             Assert.AreEqual(timeInRole, actualSectorDetails.TimeInRole);
             Assert.AreEqual(isPartOfOtherOrgs, actualSectorDetails.IsPartOfAnyOtherOrganisations);
