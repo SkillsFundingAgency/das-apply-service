@@ -5,20 +5,18 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 {
-    public class StartGatewayReviewHandler : IRequestHandler<StartGatewayReviewRequest>
+    public class StartGatewayReviewHandler : IRequestHandler<StartGatewayReviewRequest, bool>
     {
-        private readonly IApplyRepository _applyRepository;
+        private readonly IGatewayRepository _repository;
 
-        public StartGatewayReviewHandler(IApplyRepository applyRepository)
+        public StartGatewayReviewHandler(IGatewayRepository applyRepository)
         {
-            _applyRepository = applyRepository;
+            _repository = applyRepository;
         }
 
-        public async Task<Unit> Handle(StartGatewayReviewRequest request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(StartGatewayReviewRequest request, CancellationToken cancellationToken)
         {
-            await _applyRepository.StartGatewayReview(request.ApplicationId, request.UserId, request.UserName);
-
-            return Unit.Value;
+            return await _repository.StartGatewayReview(request.ApplicationId, request.UserId, request.UserName);
         }
     }
 }
