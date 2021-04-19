@@ -1305,8 +1305,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("ApplicationInProgress");
         }
 
-        [Test]
-        public void Application_already_submitted_for_UKPRN()
+        [TestCase(ApplicationStatus.Submitted)]
+        [TestCase(ApplicationStatus.GatewayAssessed)]
+        public void Application_already_submitted_for_UKPRN(string submittedStatus)
         {
             var providerDetails = new ProviderDetails
             {
@@ -1324,7 +1325,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 new RoatpApplicationStatus
                 {
                     ApplicationId = Guid.NewGuid(),
-                    Status = ApplicationStatus.Submitted
+                    Status = submittedStatus
                 }
             };
             _applicationApiClient.Setup(x => x.GetExistingApplicationStatus(It.IsAny<string>())).ReturnsAsync(existingApplicationStatuses);

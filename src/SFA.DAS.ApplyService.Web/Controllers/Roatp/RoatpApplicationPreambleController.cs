@@ -416,7 +416,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 return RedirectToAction("ApplicationInProgress", "RoatpShutterPages", new ExistingApplicationViewModel { UKPRN = providerDetails.UKPRN });
             }
-            else if (existingApplicationStatuses.Any(x => x.Status == ApplicationStatus.Submitted))
+            else if (existingApplicationStatuses.Any(x => x.Status == ApplicationStatus.Submitted || x.Status == ApplicationStatus.GatewayAssessed))
             {
                 return RedirectToAction("ApplicationPreviouslySubmitted", "RoatpShutterPages", new ExistingApplicationViewModel { UKPRN = providerDetails.UKPRN });
             }
