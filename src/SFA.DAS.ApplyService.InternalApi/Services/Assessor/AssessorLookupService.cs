@@ -259,35 +259,35 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
         {
             switch (pageId)
             {
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.Name;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.BusinessAndAdministration.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.BusinessAndAdministration.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.BusinessAndAdministration.Name;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CareServices.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CareServices.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CareServices.Name;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CateringAndHospitality.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CateringAndHospitality.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CateringAndHospitality.Name;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Construction.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Construction.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Construction.Name;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CreativeAndDesign.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CreativeAndDesign.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CreativeAndDesign.Name;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Digital.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Digital.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Digital.Name;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EducationAndChildcare.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EducationAndChildcare.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EducationAndChildcare.Name;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EngineeringAndManufacturing.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EngineeringAndManufacturing.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EngineeringAndManufacturing.Name;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HairAndBeauty.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HairAndBeauty.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HairAndBeauty.Name;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HealthAndScience.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HealthAndScience.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HealthAndScience.Name;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.LegalFinanceAndAccounting.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.LegalFinanceAndAccounting.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.LegalFinanceAndAccounting.Name;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ProtectiveServices.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ProtectiveServices.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ProtectiveServices.Name;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.SalesMarketingAndProcurement.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.SalesMarketingAndProcurement.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.SalesMarketingAndProcurement.Name;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.TransportAndLogistics.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.TransportAndLogistics.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.TransportAndLogistics.Name;
                 default:
                     return null;
@@ -298,35 +298,35 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
         {
              switch (pageId)
             {
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.SectorQuestionIds;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.BusinessAndAdministration.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.BusinessAndAdministration.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.BusinessAndAdministration.SectorQuestionIds;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CareServices.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CareServices.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CareServices.SectorQuestionIds;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CateringAndHospitality.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CateringAndHospitality.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CateringAndHospitality.SectorQuestionIds;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Construction.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Construction.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Construction.SectorQuestionIds;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CreativeAndDesign.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CreativeAndDesign.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CreativeAndDesign.SectorQuestionIds;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Digital.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Digital.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Digital.SectorQuestionIds;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EducationAndChildcare.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EducationAndChildcare.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EducationAndChildcare.SectorQuestionIds;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EngineeringAndManufacturing.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EngineeringAndManufacturing.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EngineeringAndManufacturing.SectorQuestionIds;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HairAndBeauty.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HairAndBeauty.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HairAndBeauty.SectorQuestionIds;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HealthAndScience.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HealthAndScience.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HealthAndScience.SectorQuestionIds;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.LegalFinanceAndAccounting.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.LegalFinanceAndAccounting.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.LegalFinanceAndAccounting.SectorQuestionIds;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ProtectiveServices.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ProtectiveServices.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ProtectiveServices.SectorQuestionIds;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.SalesMarketingAndProcurement.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.SalesMarketingAndProcurement.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.SalesMarketingAndProcurement.SectorQuestionIds;
-                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.TransportAndLogistics.HowManyStarts:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.TransportAndLogistics.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.TransportAndLogistics.SectorQuestionIds;
                 default:
                     return null;

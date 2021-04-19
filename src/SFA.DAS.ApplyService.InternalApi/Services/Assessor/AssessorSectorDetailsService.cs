@@ -34,56 +34,65 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
 
             var sequenceNumber = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining;
             var sectionNumber = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees;
-            var page4ExperienceQualificationsMemberships = new AssessorPage();
-            var page5TypeOfTraining = new AssessorPage();
+            var pageExperienceQualificationsMemberships = new AssessorPage();
+            var pageTypeOfTraining = new AssessorPage();
 
-            var page1HowManyStarts = await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber, pageId);
-            if (page1HowManyStarts == null)
+            var pageWhatStandardsOffered = await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber, pageId);
+            if (pageWhatStandardsOffered == null)
                 return null;
 
-            HydrateSectorDetailsWithHowManyStarts(page1HowManyStarts,sectorDetails,sectorPageIds);
-
-            var page2HowManyEmployees = await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber, page1HowManyStarts.NextPageId);
-
-            HydrateSectorDetailsWithHowManyEmployees(page2HowManyEmployees,sectorDetails,sectorPageIds);
-
-            var page3NameRoleExperience = await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber, page2HowManyEmployees.NextPageId);
+            HydrateSectorDetailsWithWhatStandardsOffered(pageWhatStandardsOffered, sectorDetails, sectorPageIds);
             
-            HydrateSectorDetailsWithFullNameJobRoleTimeInRole(page3NameRoleExperience, sectorDetails, sectorPageIds);
+            var pageHowManyStarts= await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber, pageWhatStandardsOffered.NextPageId);
 
-            if (!string.IsNullOrEmpty(page3NameRoleExperience.NextPageId))
+            HydrateSectorDetailsWithHowManyStarts(pageHowManyStarts, sectorDetails,sectorPageIds);
+
+            var pageHowManyEmployees = await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber, pageHowManyStarts.NextPageId);
+
+            HydrateSectorDetailsWithHowManyEmployees(pageHowManyEmployees,sectorDetails,sectorPageIds);
+
+            var pageNameRoleExperience = await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber, pageHowManyEmployees.NextPageId);
+            
+            HydrateSectorDetailsWithFullNameJobRoleTimeInRole(pageNameRoleExperience, sectorDetails, sectorPageIds);
+
+            if (!string.IsNullOrEmpty(pageNameRoleExperience.NextPageId))
             {
-                page4ExperienceQualificationsMemberships = await _pageService.GetPage(applicationId, sequenceNumber,
-                    sectionNumber, page3NameRoleExperience.NextPageId);
+                pageExperienceQualificationsMemberships = await _pageService.GetPage(applicationId, sequenceNumber,
+                    sectionNumber, pageNameRoleExperience.NextPageId);
 
-                HydrateSectorDetailsWithQualificationsAwardingBodiesAndTradeMemberships(sectorDetails, page4ExperienceQualificationsMemberships, sectorPageIds);
+                HydrateSectorDetailsWithQualificationsAwardingBodiesAndTradeMemberships(sectorDetails, pageExperienceQualificationsMemberships, sectorPageIds);
             }
 
-            if (!string.IsNullOrEmpty(page4ExperienceQualificationsMemberships.NextPageId))
+            if (!string.IsNullOrEmpty(pageExperienceQualificationsMemberships.NextPageId))
             {
-                page5TypeOfTraining = await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber,
-                    page4ExperienceQualificationsMemberships.NextPageId);
+                pageTypeOfTraining = await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber,
+                    pageExperienceQualificationsMemberships.NextPageId);
 
-                HydrateSectorDetailsWhatTypeOfTrainingDelivered(sectorDetails, page5TypeOfTraining, sectorPageIds);
+                HydrateSectorDetailsWhatTypeOfTrainingDelivered(sectorDetails, pageTypeOfTraining, sectorPageIds);
             }
 
-            if (!string.IsNullOrEmpty(page5TypeOfTraining.NextPageId))
+            if (!string.IsNullOrEmpty(pageTypeOfTraining.NextPageId))
             {
-                var page4HowDeliveredAndDuration = await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber,
-                    page5TypeOfTraining.NextPageId);
+                var pageHowDeliveredAndDuration = await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber,
+                    pageTypeOfTraining.NextPageId);
 
-                HydrateSectorDetailsWithHowTrainingIsDeliveredDetails(page4HowDeliveredAndDuration, sectorPageIds, sectorDetails);
+                HydrateSectorDetailsWithHowTrainingIsDeliveredDetails(pageHowDeliveredAndDuration, sectorPageIds, sectorDetails);
             }
 
             return sectorDetails;
         }
 
-
-
-        private void HydrateSectorDetailsWithHowManyStarts(AssessorPage page1HowManyStarts, AssessorSectorDetails sectorDetails, SectorQuestionIds sectorPageIds)
+        private void HydrateSectorDetailsWithWhatStandardsOffered(AssessorPage pageWhatStandardsOffered, AssessorSectorDetails sectorDetails, SectorQuestionIds sectorPageIds)
         {
-            if (page1HowManyStarts?.Answers == null || !page1HowManyStarts.Answers.Any()) return; 
-            sectorDetails.HowManyStarts = _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page1HowManyStarts.Answers,
+            if (pageWhatStandardsOffered?.Answers == null || !pageWhatStandardsOffered.Answers.Any()) return;
+            sectorDetails.WhatStandardsOffered = _extractAnswerValueService.ExtractAnswerValueFromQuestionId(pageWhatStandardsOffered.Answers,
+                sectorPageIds.WhatStandardsOffered);
+        }
+
+        private void HydrateSectorDetailsWithHowManyStarts(AssessorPage pageHowManyStarts, AssessorSectorDetails sectorDetails, SectorQuestionIds sectorPageIds)
+        {
+            if (pageHowManyStarts?.Answers == null || !pageHowManyStarts.Answers.Any()) return; 
+            sectorDetails.HowManyStarts = _extractAnswerValueService.ExtractAnswerValueFromQuestionId(pageHowManyStarts.Answers,
                 sectorPageIds.HowManyStarts);
         }
 
@@ -94,67 +103,67 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                 sectorPageIds.HowManyEmployees);
         }
 
-        private void HydrateSectorDetailsWithFullNameJobRoleTimeInRole(AssessorPage page3NameRoleExperience,
+        private void HydrateSectorDetailsWithFullNameJobRoleTimeInRole(AssessorPage page4NameRoleExperience,
          AssessorSectorDetails sectorDetails, SectorQuestionIds sectorPageIds)
         {
-            if (page3NameRoleExperience?.Answers == null || !page3NameRoleExperience.Answers.Any()) return;
+            if (page4NameRoleExperience?.Answers == null || !page4NameRoleExperience.Answers.Any()) return;
             sectorDetails.FullName =
-                _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page3NameRoleExperience.Answers,
+                _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page4NameRoleExperience.Answers,
                     sectorPageIds.FullName);
             sectorDetails.JobRole =
-                _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page3NameRoleExperience.Answers,
+                _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page4NameRoleExperience.Answers,
                     sectorPageIds.JobRole);
             sectorDetails.TimeInRole =
-                _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page3NameRoleExperience.Answers,
+                _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page4NameRoleExperience.Answers,
                     sectorPageIds.TimeInRole);
 
             sectorDetails.IsPartOfAnyOtherOrganisations =
-                _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page3NameRoleExperience.Answers,
+                _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page4NameRoleExperience.Answers,
                     sectorPageIds.IsPartOfAnyOtherOrganisations);
 
-                sectorDetails.OtherOrganisations = _extractAnswerValueService.ExtractFurtherQuestionAnswerValueFromQuestionId(page3NameRoleExperience,
+                sectorDetails.OtherOrganisations = _extractAnswerValueService.ExtractFurtherQuestionAnswerValueFromQuestionId(page4NameRoleExperience,
                 sectorPageIds.IsPartOfAnyOtherOrganisations);
 
         }
 
         private void HydrateSectorDetailsWithQualificationsAwardingBodiesAndTradeMemberships(AssessorSectorDetails sectorDetails,
-          AssessorPage page4ExperienceQualificationsMemberships, SectorQuestionIds sectorPageIds)
+          AssessorPage page5ExperienceQualificationsMemberships, SectorQuestionIds sectorPageIds)
         {
-            if (page4ExperienceQualificationsMemberships?.Answers == null || !page4ExperienceQualificationsMemberships.Answers.Any()) return;
+            if (page5ExperienceQualificationsMemberships?.Answers == null || !page5ExperienceQualificationsMemberships.Answers.Any()) return;
             sectorDetails.ExperienceOfDelivering =
                 _extractAnswerValueService.ExtractAnswerValueFromQuestionId(
-                    page4ExperienceQualificationsMemberships.Answers,
+                    page5ExperienceQualificationsMemberships.Answers,
                     sectorPageIds.ExperienceOfDelivering);
 
             sectorDetails.WhereDidTheyGainThisExperience =
                 _extractAnswerValueService.ExtractFurtherQuestionAnswerValueFromQuestionId(
-                    page4ExperienceQualificationsMemberships,
+                    page5ExperienceQualificationsMemberships,
                     sectorPageIds.ExperienceOfDelivering);
 
             sectorDetails.DoTheyHaveQualifications = _extractAnswerValueService.ExtractAnswerValueFromQuestionId(
-                page4ExperienceQualificationsMemberships.Answers, sectorPageIds.DoTheyHaveQualifications);
+                page5ExperienceQualificationsMemberships.Answers, sectorPageIds.DoTheyHaveQualifications);
 
             sectorDetails.WhatQualificationsDoTheyHave =
                 _extractAnswerValueService.ExtractFurtherQuestionAnswerValueFromQuestionId(
-                    page4ExperienceQualificationsMemberships,
+                    page5ExperienceQualificationsMemberships,
                     sectorPageIds.DoTheyHaveQualifications);
 
             sectorDetails.ApprovedByAwardingBodies = _extractAnswerValueService.ExtractAnswerValueFromQuestionId(
-                page4ExperienceQualificationsMemberships.Answers, sectorPageIds.AwardingBodies);
+                page5ExperienceQualificationsMemberships.Answers, sectorPageIds.AwardingBodies);
 
             sectorDetails.NamesOfAwardingBodies =
                 _extractAnswerValueService.ExtractFurtherQuestionAnswerValueFromQuestionId(
-                    page4ExperienceQualificationsMemberships,
+                    page5ExperienceQualificationsMemberships,
                     sectorPageIds.AwardingBodies);
 
 
             sectorDetails.DoTheyHaveTradeBodyMemberships =
                 _extractAnswerValueService.ExtractAnswerValueFromQuestionId(
-                    page4ExperienceQualificationsMemberships.Answers, sectorPageIds.TradeMemberships);
+                    page5ExperienceQualificationsMemberships.Answers, sectorPageIds.TradeMemberships);
 
             sectorDetails.NamesOfTradeBodyMemberships =
                 _extractAnswerValueService.ExtractFurtherQuestionAnswerValueFromQuestionId(
-                    page4ExperienceQualificationsMemberships,
+                    page5ExperienceQualificationsMemberships,
                     sectorPageIds.TradeMemberships);
         }
 
