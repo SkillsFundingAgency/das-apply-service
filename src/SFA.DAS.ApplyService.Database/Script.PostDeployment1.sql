@@ -19,6 +19,12 @@ BEGIN
 	VALUES (NEWID(), 'Live', N'RoATPGetHelpWithQuestion', N'9d1e1a7e-3557-4781-8901-ea627ae70ec2', N'RoATP.SUPPORT@education.gov.uk', GETDATE(), 'System')
 END
 
+IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPGetHelpWithQuestionConfirmation')
+BEGIN
+	INSERT INTO EmailTemplates ([Id], [Status],[TemplateName],[TemplateId],[CreatedAt],[CreatedBy]) 
+	VALUES (NEWID(), 'Live', N'RoATPGetHelpWithQuestionConfirmation', N'f048cfc1-96bc-418b-94d2-711c3d5bab38', GETDATE(), 'System')
+END
+
 IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPApplicationSubmitted')
 BEGIN
 	INSERT INTO EmailTemplates ([Id], [Status],[TemplateName],[TemplateId],[CreatedAt],[CreatedBy]) 

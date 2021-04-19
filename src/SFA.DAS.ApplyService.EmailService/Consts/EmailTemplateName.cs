@@ -8,6 +8,11 @@
         public const string ROATP_GET_HELP_WITH_QUESTION = "RoATPGetHelpWithQuestion";
 
         /// <summary>
+        /// Requires tokens: { ApplicantEmail, ApplicantFullName, UKPRN, OrganisationName, PageTitle, GetHelpQuery }
+        /// </summary>
+        public const string ROATP_GET_HELP_WITH_QUESTION_CONFIRMATION = "RoATPGetHelpWithQuestionConfirmation";
+
+        /// <summary>
         /// Requires tokens: { ApplicantFullName }
         /// </summary>
         public const string ROATP_APPLICATION_SUBMITTED = "RoATPApplicationSubmitted";

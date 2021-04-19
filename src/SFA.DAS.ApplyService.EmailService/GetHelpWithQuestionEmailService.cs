@@ -12,6 +12,7 @@ namespace SFA.DAS.ApplyService.EmailService
     public class GetHelpWithQuestionEmailService : NotificationApiEmailService, IGetHelpWithQuestionEmailService
     {
         protected override string SUBJECT => "RoATP – Get help with this question";
+        private string SUBJECT_CONFIRMATION => "Get help with this question – RoATP service team";
 
         public GetHelpWithQuestionEmailService(ILogger<NotificationApiEmailService> logger, IConfigurationService configurationService,
                                                IEmailTemplateClient emailTemplateClient, INotificationsApi notificationsApi)
@@ -24,6 +25,16 @@ namespace SFA.DAS.ApplyService.EmailService
             var personalisationTokens = GetPersonalisationTokens(getHelpWithQuestion);
 
             await SendEmail(emailTemplate.TemplateName, emailTemplate.Recipients, getHelpWithQuestion.EmailAddress, SUBJECT, personalisationTokens);
+            await SendGetHelpWithQuestionConfirmationEmail(getHelpWithQuestion);
+        }
+
+        private async Task SendGetHelpWithQuestionConfirmationEmail(GetHelpWithQuestion getHelpWithQuestion)
+        {
+            var emailTemplate = await _emailTemplateClient.GetEmailTemplate(EmailTemplateName.ROATP_GET_HELP_WITH_QUESTION_CONFIRMATION);
+
+            var personalisationTokens = GetPersonalisationTokens(getHelpWithQuestion);
+
+            await SendEmail(emailTemplate.TemplateName, getHelpWithQuestion.EmailAddress, REPLY_TO_ADDRESS, SUBJECT_CONFIRMATION, personalisationTokens);
         }
 
         private Dictionary<string, string> GetPersonalisationTokens(GetHelpWithQuestion getHelpWithQuestion)

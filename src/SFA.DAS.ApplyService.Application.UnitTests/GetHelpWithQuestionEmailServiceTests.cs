@@ -9,6 +9,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.EmailService.Consts;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests
 {
@@ -34,16 +35,23 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         }
 
         [Test]
-        public async Task Service_sends_email_to_notifications_api_with_tokens_for_template()
+        public async Task Service_sends_emails_to_notifications_api_with_tokens_for_template()
         {
             var emailTemplate = new EmailTemplate
             {
                 TemplateId = Guid.NewGuid().ToString(),
-                TemplateName = "Template Name",
+                TemplateName = EmailTemplateName.ROATP_GET_HELP_WITH_QUESTION,
                 Recipients = "recipients@test.com"
             };
+            _emailTemplateClient.Setup(x => x.GetEmailTemplate(EmailTemplateName.ROATP_GET_HELP_WITH_QUESTION)).ReturnsAsync(emailTemplate).Verifiable();
 
-            _emailTemplateClient.Setup(x => x.GetEmailTemplate(It.IsAny<string>())).ReturnsAsync(emailTemplate).Verifiable();
+            var confirmationEmailTemplate = new EmailTemplate
+            {
+                TemplateId = Guid.NewGuid().ToString(),
+                TemplateName = EmailTemplateName.ROATP_GET_HELP_WITH_QUESTION_CONFIRMATION,
+                Recipients = "recipients@test.com"
+            };
+            _emailTemplateClient.Setup(x => x.GetEmailTemplate(EmailTemplateName.ROATP_GET_HELP_WITH_QUESTION_CONFIRMATION)).ReturnsAsync(confirmationEmailTemplate).Verifiable();
 
             _notificationsApi.Setup(x => x.SendEmail(It.IsAny<Notifications.Api.Types.Email>())).Verifiable();
 
