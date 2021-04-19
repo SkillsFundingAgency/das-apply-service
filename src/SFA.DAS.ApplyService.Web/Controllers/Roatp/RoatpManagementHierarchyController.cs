@@ -89,12 +89,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 Id = Guid.NewGuid().ToString(),
                 Columns = new List<string>
                 {
-                    model.FullName,
+                    model.FirstName,
+                    model.LastName,
                    model.JobRole,
                    model.TimeInRoleYears,
                    model.TimeInRoleMonths,
                    model.IsPartOfOtherOrgThatGetsFunding,
-                   model.IsPartOfOtherOrgThatGetsFunding=="Yes"? model.OtherOrgName : string.Empty
+                   model.IsPartOfOtherOrgThatGetsFunding=="Yes"? model.OtherOrgName : string.Empty,
+                   model.DobMonth,
+                   model.DobYear,
+                   model.Email,
+                   model.ContactNumber
                 }
             };
 
@@ -102,7 +107,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 managementHierarchyData = new TabularData
                 {
-                    HeadingTitles = new List<string> { "Name", "Job role","Years in role","Months in role","Part of another organisation","Organisation details"},
+                    HeadingTitles = new List<string> { "First Name", "Last Name","Job role","Years in role","Months in role","Part of another organisation","Organisation details","Month","Year","Email","Contact number"},
                     DataRows = new List<TabularDataRow>
                     {
                         managementHierarchyPerson
@@ -198,17 +203,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
 
                 var person = personTableData.DataRows[index];
-                var name = person.Columns[0];
-                var jobRole = person.Columns[1];
+                var firstName = person.Columns[0];
+                var lastName = person.Columns[1];
+                var jobRole = person.Columns[2];
 
-                var timeInRoleMonths = person.Columns[3];
-                var timeInRoleYears = person.Columns[2];
-                var isPartOfOtherOrg = person.Columns[4];
-                var otherOrgName = person.Columns[5];
+                var timeInRoleMonths = person.Columns[4];
+                var timeInRoleYears = person.Columns[3];
+                var isPartOfOtherOrg = person.Columns[5];
+                var otherOrgName = person.Columns[6];
+                var dobMonth = person.Columns[7];
+                var dobYear = person.Columns[8];
+                var email = person.Columns[9];
+                var contactNumber = person.Columns[10];
                 var model = new AddEditManagementHierarchyViewModel
                 {
                     ApplicationId = applicationId,
-                    FullName = name,
+                    FirstName = firstName,
+                    LastName = lastName,
                     Index = index,
                     Identifier = "person",
                     JobRole = jobRole,
@@ -216,6 +227,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     TimeInRoleYears = timeInRoleYears,
                     IsPartOfOtherOrgThatGetsFunding = isPartOfOtherOrg,
                     OtherOrgName = otherOrgName,
+                    DobMonth = dobMonth,
+                    DobYear = dobYear,
+                    Email = email,
+                    ContactNumber = contactNumber,
                     GetHelpAction = "EditManagementHierarchy"
                 };
                 PopulateGetHelpWithQuestion(model, "EditManagementHierarchy");
@@ -242,12 +257,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 {
                     Columns = new List<string>
                     {
-                        model.FullName,
+                        model.FirstName,
+                        model.LastName,
                         model.JobRole,
                         model.TimeInRoleYears,
                         model.TimeInRoleMonths,
                         model.IsPartOfOtherOrgThatGetsFunding,
-                        model.IsPartOfOtherOrgThatGetsFunding=="Yes"? model.OtherOrgName : string.Empty
+                        model.IsPartOfOtherOrgThatGetsFunding=="Yes"? model.OtherOrgName : string.Empty,
+                        model.DobMonth,
+                        model.DobYear,
+                        model.Email,
+                        model.ContactNumber
                     }
                 };
 
@@ -276,7 +296,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction("ConfirmManagementHierarchy", new { applicationId });
             }
 
-            var personName = personTableData.DataRows[index].Columns[0];
+            var personName = personTableData.DataRows[index].Columns[0] + " " + personTableData.DataRows[index].Columns[1];
 
             return ConfirmRemovalOfManagementHierarchy(applicationId, personName, "RemoveManagementHierarchy", "ConfirmManagementHierarchy");
         }

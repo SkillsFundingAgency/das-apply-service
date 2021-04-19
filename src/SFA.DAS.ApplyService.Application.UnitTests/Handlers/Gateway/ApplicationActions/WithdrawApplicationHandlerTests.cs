@@ -18,7 +18,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.Applicatio
     public class WithdrawApplicationHandlerTests
     {
         private WithdrawApplicationHandler _handler;
-        private Mock<IApplyRepository> _applyRepository;
+        private Mock<IGatewayRepository> _gatewayRepository;
         private Mock<IOversightReviewRepository> _oversightReviewRepository;
         private Mock<IAuditService> _auditService;
         private Mock<IApplicationUpdatedEmailService> _emailService;
@@ -33,20 +33,20 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.Applicatio
         {
             _applicationId = Guid.NewGuid();
 
-            _applyRepository = new Mock<IApplyRepository>();
+            _gatewayRepository = new Mock<IGatewayRepository>();
             _oversightReviewRepository = new Mock<IOversightReviewRepository>();
             _auditService = new Mock<IAuditService>();
             _emailService = new Mock<IApplicationUpdatedEmailService>();
             var logger = Mock.Of<ILogger<WithdrawApplicationHandler>>();
             
-            _handler = new WithdrawApplicationHandler(_applyRepository.Object, logger, _oversightReviewRepository.Object, _auditService.Object, _emailService.Object);
+            _handler = new WithdrawApplicationHandler(_gatewayRepository.Object, logger, _oversightReviewRepository.Object, _auditService.Object, _emailService.Object);
         }
 
         [Test]
         public async Task Handler_withdraws_application()
         {
             await _handler.Handle(new WithdrawApplicationCommand(_applicationId, _comments, _userId, _userName), CancellationToken.None);
-            _applyRepository.Verify(x => x.WithdrawApplication(_applicationId, _comments, _userId, _userName), Times.Once);
+            _gatewayRepository.Verify(x => x.WithdrawApplication(_applicationId, _comments, _userId, _userName), Times.Once);
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway.Applicatio
         [Test]
         public async Task Handler_sends_updated_email()
         {
-            _applyRepository.Setup(x => x.WithdrawApplication(_applicationId, _comments, _userId, _userName)).Returns(Task.FromResult(true));
+            _gatewayRepository.Setup(x => x.WithdrawApplication(_applicationId, _comments, _userId, _userName)).Returns(Task.FromResult(true));
 
             await _handler.Handle(new WithdrawApplicationCommand(_applicationId, _comments, _userId, _userName), CancellationToken.None);
 
