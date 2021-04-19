@@ -183,8 +183,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var applications = new List<Domain.Entities.Apply>
             {
-                new Apply { ApplicationStatus = ApplicationStatus.Cancelled },
-                new Apply { ApplicationStatus = ApplicationStatus.Removed }
+                new Apply { ApplicationStatus = ApplicationStatus.Cancelled }
             };
 
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
@@ -501,6 +500,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationId = application.ApplicationId,
                 ConfirmSubmitApplication = true,
                 ConfirmFurtherInfoSubmitApplication = true,
+                ConfirmChangeOfOwnershipSubmitApplication = true,
                 ConfirmFurtherCommunicationSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
@@ -577,6 +577,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationId = application.ApplicationId,
                 ConfirmSubmitApplication = true,
                 ConfirmFurtherInfoSubmitApplication = true,
+                ConfirmChangeOfOwnershipSubmitApplication = true,
                 ConfirmFurtherCommunicationSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
@@ -667,6 +668,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationId = application.ApplicationId,
                 ConfirmSubmitApplication = true,
                 ConfirmFurtherInfoSubmitApplication = true,
+                ConfirmChangeOfOwnershipSubmitApplication = true,
                 ConfirmFurtherCommunicationSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
@@ -768,6 +770,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationId = application.ApplicationId,
                 ConfirmSubmitApplication = true,
                 ConfirmFurtherInfoSubmitApplication = true,
+                ConfirmChangeOfOwnershipSubmitApplication = true,
                 ConfirmFurtherCommunicationSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
