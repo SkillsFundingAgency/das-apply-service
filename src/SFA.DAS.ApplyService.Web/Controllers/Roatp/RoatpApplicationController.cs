@@ -162,6 +162,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> NewApplication()
+        {
+            var signinId = await _userService.GetSignInId();
+
+            Guid applicationId = await StartApplication(signinId);
+
+            var viewModel = await _taskListOrchestrator.GetTaskListViewModel(applicationId, User.GetUserId());
+            return View("~/Views/Roatp/TaskList.cshtml", viewModel);
+        }
+
         private async Task<List<Apply>> GetInFlightApplicationsForSignInId(Guid signinId)
         {
             var applications = await _apiClient.GetApplications(signinId, false);
@@ -174,14 +185,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private async Task<Guid> StartApplication(Guid signinId)
         {
             _logger.LogDebug("StartApplication method invoked");
-
-            var applications = await GetInFlightApplicationsForSignInId(signinId);
-
-            if (applications.Any())
-            {
-                _logger.LogError($"Multiple in flight applications found for userId: {signinId}");
-                return applications.First().ApplicationId;
-            }
 
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             if (applicationDetails is null)
