@@ -382,6 +382,7 @@
         public const string UKRLPPrimaryVerificationSource = "UKRLPPrimaryVerificationSource";
         public const string UKRLPVerificationCompanyNumber = "UKRLPVerificationCompanyNumber";
         public const string UKRLPVerificationCharityRegNumber = "UKRLPVerificationCharityRegNumber";
+        public const string FundingTurnover5Percent = "FHAFundingTurnover5pc";
         public const string Turnover = "FHATurnover";
         public const string Depreciation = "FHADepreciation";
         public const string ProfitLoss = "FHAProfitLoss";
@@ -391,6 +392,8 @@
         public const string Liabilities = "FHALiabilities";
         public const string ShareholderFunds = "FHAShareholderFunds";
         public const string Borrowings = "FHABorrowings";
+        public const string AccountingReferenceDate = "FHAAccountingReferenceDate";
+        public const string AccountingPeriod = "FHAAccountingPeriod";
     }
 
     public static class RoatpClarificationUpload

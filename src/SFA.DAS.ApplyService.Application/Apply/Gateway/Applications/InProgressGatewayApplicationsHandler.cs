@@ -9,9 +9,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
 {
     public class InProgressGatewayApplicationsHandler : IRequestHandler<InProgressGatewayApplicationsRequest, List<RoatpGatewaySummaryItem>>
     {
-        private readonly IApplyRepository _repository;
+        private readonly IGatewayRepository _repository;
 
-        public InProgressGatewayApplicationsHandler(IApplyRepository repository)
+        public InProgressGatewayApplicationsHandler(IGatewayRepository repository)
         {
             _repository = repository;
         }

@@ -80,7 +80,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _mediator = new Mock<IMediator>();
             _mediator.Setup(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_application);
             _mediator.Setup(x => x.Send(It.IsAny<UpdateGatewayReviewStatusAndCommentCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => Unit.Value);
+                .ReturnsAsync(true);
 
             _gatewayApiChecksService = new Mock<IGatewayApiChecksService>();
             _gatewayApiChecksService.Setup(x => x.GetExternalApiCheckDetails(_applicationId)).ReturnsAsync(new ApplyGatewayDetails());
