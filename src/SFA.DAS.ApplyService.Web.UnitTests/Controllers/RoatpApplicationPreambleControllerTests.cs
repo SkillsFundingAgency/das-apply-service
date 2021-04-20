@@ -276,7 +276,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase("1234567A")]
         public void Validation_error_is_triggered_if_UKPRN_not_in_correct_format(string ukprn)
         {
-            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(It.IsAny<long>())).ReturnsAsync(true);
+            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(It.IsAny<int>())).ReturnsAsync(true);
 
             var model = new SearchByUkprnViewModel
             {

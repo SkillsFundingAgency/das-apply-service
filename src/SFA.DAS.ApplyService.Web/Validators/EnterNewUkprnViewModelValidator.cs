@@ -10,12 +10,13 @@ namespace SFA.DAS.ApplyService.Web.Validators
         {
             RuleFor(x => x.Ukprn)
                 .Cascade(CascadeMode.StopOnFirstFailure)
-                .NotEmpty().WithMessage(UkprnValidationMessages.MissingUkprn)
-                .Must(x => UkprnValidator.IsValidUkprn(x, out _)).WithMessage(UkprnValidationMessages.InvalidUkprn)
-                .Must(((model, s) => s.Trim() != model.CurrentUkprn))
+                .NotEmpty()
+                    .WithMessage(UkprnValidationMessages.MissingUkprn)
+                .Must(x => UkprnValidator.IsValidUkprn(x, out _))
+                    .WithMessage(UkprnValidationMessages.InvalidUkprn)
+                .Must((model, ukprn) => ukprn.Trim() != model.CurrentUkprn)
                     .WithMessage(UkprnValidationMessages.NewUkprnMustNotBeSame)
-                .MustAsync(async (s,
-                    token) => await ukprnWhitelistValidator.IsWhitelistedUkprn(long.Parse(s)))
+                .MustAsync(async (ukprn, token) => await ukprnWhitelistValidator.IsWhitelistedUkprn(int.Parse(ukprn)))
                     .WithMessage(UkprnValidationMessages.NotWhitelistedUkprn);
         }
     }

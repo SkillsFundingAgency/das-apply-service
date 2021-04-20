@@ -17,7 +17,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
         public void Arrange()
         {
             _ukrpnWhitelistValidator = new Mock<IUkprnWhitelistValidator>();
-            _ukrpnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(It.Is<long>(l => l == 10037482)))
+            _ukrpnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(It.Is<int>(l => l == 10037482)))
                 .ReturnsAsync(true);
 
             _validator = new EnterNewUkprnViewModelValidator(_ukrpnWhitelistValidator.Object);
