@@ -394,6 +394,7 @@
         public const string Borrowings = "FHABorrowings";
         public const string AccountingReferenceDate = "FHAAccountingReferenceDate";
         public const string AccountingPeriod = "FHAAccountingPeriod";
+        public const string AverageNumberofFTEEmployees = "FHAAverageNumberofFTEEmployees";
     }
 
     public static class RoatpClarificationUpload
