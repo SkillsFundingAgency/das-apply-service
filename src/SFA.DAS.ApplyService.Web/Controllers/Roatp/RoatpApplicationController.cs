@@ -122,6 +122,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 application = applications.Single();
                 applicationId = application.ApplicationId;
                 applicationStatus = application.ApplicationStatus;
+                
             }
             else
             {
@@ -149,6 +150,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return View("~/Views/Application/FeedbackIntro.cshtml", applicationId);
                 case ApplicationStatus.Withdrawn:
                     return RedirectToAction("ApplicationWithdrawn", new { applicationId });
+                case ApplicationStatus.Removed:
+                    return RedirectToAction("ApplicationRemoved", new { applicationId });
                 case ApplicationStatus.GatewayAssessed:
                     if(application.GatewayReviewStatus == GatewayReviewStatus.Reject)
                         return RedirectToAction("ApplicationRejected", new { applicationId });
@@ -166,7 +169,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var applications = await _apiClient.GetApplications(signinId, false);
 
-            var statusFilter = new[] { ApplicationStatus.Cancelled, ApplicationStatus.Removed };
+            var statusFilter = new[] { ApplicationStatus.Cancelled };
 
             return applications.Where(app => !statusFilter.Contains(app.ApplicationStatus)).OrderByDescending(app => app.CreatedAt).ToList();
         }
@@ -1322,6 +1325,30 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View("~/Views/Roatp/ApplicationWithdrawn.cshtml", model);
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> ApplicationRemoved(Guid applicationId)
+        {
+            var application = await _apiClient.GetApplication(applicationId);
+            var applicationData = application.ApplyData.ApplyDetails;
+
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationId = application.ApplicationId,
+                UKPRN = applicationData.UKPRN,
+                OrganisationName = applicationData.OrganisationName,
+                TradingName = applicationData.TradingName,
+                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
+                ApplicationReference = applicationData.ReferenceNumber,
+                EmailAddress = User.GetEmail(),
+                SubmittedDate = applicationData.ApplicationSubmittedOn,
+                ExternalComments = application.ExternalComments,
+                HideEmailAddress = true
+            };
+
+            return View("~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", model);
+        }
+
         [HttpGet]
         public async Task<IActionResult> ApplicationRejected(Guid applicationId)
         {
@@ -1550,7 +1577,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         ShareholderFunds = applicationData.GetValue(RoatpWorkflowQuestionTags.ShareholderFunds).Value<long>(),
                         IntangibleAssets = applicationData.GetValue(RoatpWorkflowQuestionTags.IntangibleAssets).Value<long>(),
                         AccountingReferenceDate = AccountingReferenceDate(applicationData),
-                        AccountingPeriod = applicationData.GetValue(RoatpWorkflowQuestionTags.AccountingPeriod).Value<byte>()
+                        AccountingPeriod = applicationData.GetValue(RoatpWorkflowQuestionTags.AccountingPeriod).Value<byte>(),
+                        AverageNumberofFTEEmployees = applicationData.GetValue(RoatpWorkflowQuestionTags.AverageNumberofFTEEmployees).Value<long>()
                     };
                 }
             }

@@ -14,6 +14,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public DateTime? SubmittedDate { get; set; }
         public string ExternalComments { get; set; }
 
+        public bool HideEmailAddress { get; set; }
+
         public string ApplicationRouteShortText
         {
             get

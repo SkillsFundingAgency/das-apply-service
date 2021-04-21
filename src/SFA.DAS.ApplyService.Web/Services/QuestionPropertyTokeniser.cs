@@ -23,7 +23,9 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return string.Empty;
             }
 
-            if (ContainsTokens(tokenisedValue))
+            int maxCounter = 5;
+            int startCounter = 0;
+            while (ContainsTokens(tokenisedValue) && startCounter < maxCounter)
             {
                 var questionTagName = GetTokenIdentifier(tokenisedValue);
 
@@ -34,8 +36,10 @@ namespace SFA.DAS.ApplyService.Web.Services
                 if (questionValue != null)
                 {
                     var tokenReplacementValue = tokenisedValue.Replace(stringToReplace, WebUtility.HtmlEncode(questionValue.Value));
-                    return  tokenReplacementValue;
+                    tokenisedValue=  tokenReplacementValue;
                 }
+
+                startCounter++;
             }
 
             return tokenisedValue;
