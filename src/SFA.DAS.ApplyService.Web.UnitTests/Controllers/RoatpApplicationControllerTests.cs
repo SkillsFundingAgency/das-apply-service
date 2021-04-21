@@ -28,6 +28,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
+using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Orchestrators;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
@@ -90,7 +92,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _roatpOrganisationVerificationService = new Mock<IRoatpOrganisationVerificationService>();
             _taskListOrchestrator = new Mock<ITaskListOrchestrator>();
             _ukrlpApiClient = new Mock<IUkrlpApiClient>();
-            _applicationApiClient = new Mock<IApplicationApiClient>();
 
             _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
                                                          _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, 
@@ -100,7 +101,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                          _roatpApiClient.Object,
                                                          _submitApplicationEmailService.Object, _tabularDataRepository.Object,
                                                          _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object, _taskListOrchestrator.Object,
-                                                         _ukrlpApiClient.Object, _applicationApiClient.Object)
+                                                         _ukrlpApiClient.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -368,6 +369,75 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
             redirectResult.ActionName.Should().Be("ApplicationWithdrawn");
+        }
+
+        [Test]
+        public async Task Applications_shows_active_with_success_page_if_application_approved_and_oversight_review_status_already_active()
+        {
+            var submittedApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.Approved
+            };
+            var applications = new List<Apply>
+            {
+                submittedApp
+            };
+
+            var oversightReview = new GetOversightReviewResponse
+            {
+                Status = OversightReviewStatus.SuccessfulAlreadyActive
+            };
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
+            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
+
+            var result = await _controller.Applications();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ApplicationApprovedAlreadyActive");
+        }
+
+        [Test]
+        public async Task Applications_shows_active_with_success_page_if_application_approved_and_oversight_review_status_not_set()
+        {
+            var submittedApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.Approved
+            };
+            var applications = new List<Apply>
+            {
+                submittedApp
+            };
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
+       
+            var result = await _controller.Applications();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ApplicationApproved");
+        }
+
+        [Test]
+        public async Task Applications_shows_feedback_added_page_if_application_status_matches()
+        {
+            var submittedApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.FeedbackAdded
+            };
+            var applications = new List<Apply>
+            {
+                submittedApp
+            };
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
+
+            var result = await _controller.Applications();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("FeedbackAdded");
         }
 
         [Test]

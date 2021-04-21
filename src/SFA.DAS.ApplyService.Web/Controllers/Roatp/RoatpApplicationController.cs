@@ -55,7 +55,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IRoatpOrganisationVerificationService _organisationVerificationService;
         private readonly ITaskListOrchestrator _taskListOrchestrator;
         private readonly IUkrlpApiClient _ukrlpApiClient;
-        private readonly IApplicationApiClient _applicationApiClient;
 
         private const string InputClassUpperCase = "app-uppercase";
         private const string NotApplicableAnswerText = "None of the above";
@@ -70,7 +69,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ICustomValidatorFactory customValidatorFactory,  
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
-            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator, IUkrlpApiClient ukrlpApiClient, IApplicationApiClient applicationApiClient)
+            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator, IUkrlpApiClient ukrlpApiClient)
             :base(sessionService)
         {
             _apiClient = apiClient;
@@ -93,7 +92,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _organisationVerificationService = organisationVerificationService;
             _taskListOrchestrator = taskListOrchestrator;
             _ukrlpApiClient = ukrlpApiClient;
-            _applicationApiClient = applicationApiClient;
         }
 
         [HttpGet]
@@ -145,8 +143,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return RedirectToAction("TaskList", new { applicationId });
                 case ApplicationStatus.Approved:
                 {
-                    var oversightReview = await _applicationApiClient.GetOversightReview(applicationId);
-                    if (oversightReview.Status== OversightReviewStatus.SuccessfulAlreadyActive)
+                    var oversightReview = await _apiClient.GetOversightReview(applicationId);
+                    if (oversightReview?.Status== OversightReviewStatus.SuccessfulAlreadyActive)
                         return RedirectToAction("ApplicationApprovedAlreadyActive", new { applicationId });
 
                     return RedirectToAction("ApplicationApproved", new { applicationId });
@@ -581,7 +579,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 };
 
                 var userId  = User.GetUserId().ToString();
-                await _applicationApiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled, userId);
+                await _apiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled, userId);
                 _sessionService.Remove(ApplicationDetailsKey);
 
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
