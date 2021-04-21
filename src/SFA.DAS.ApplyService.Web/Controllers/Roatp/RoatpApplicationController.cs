@@ -145,6 +145,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 case ApplicationStatus.Approved:
                     return View("~/Views/Application/Approved.cshtml", application);
                 case ApplicationStatus.Rejected:
+                    if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
+                        return RedirectToAction("ApplicationUnsuccessful", new { applicationId });
                     return RedirectToAction("ApplicationRejected", new { applicationId });
                 case ApplicationStatus.FeedbackAdded:
                     return View("~/Views/Application/FeedbackIntro.cshtml", applicationId);
@@ -153,12 +155,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 case ApplicationStatus.Removed:
                     return RedirectToAction("ApplicationRemoved", new { applicationId });
                 case ApplicationStatus.GatewayAssessed:
-                    if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
-                        return RedirectToAction("ApplicationUnsuccessful", new { applicationId });
-                    else if(application.GatewayReviewStatus == GatewayReviewStatus.Reject)
+                    if(application.GatewayReviewStatus == GatewayReviewStatus.Reject)
                         return RedirectToAction("ApplicationRejected", new { applicationId });
-                    else
-                        return RedirectToAction("ApplicationSubmitted", new { applicationId });
+                    return RedirectToAction("ApplicationSubmitted", new { applicationId });
                 case ApplicationStatus.Submitted:
                 case ApplicationStatus.Resubmitted:
                     return RedirectToAction("ApplicationSubmitted", new { applicationId });
