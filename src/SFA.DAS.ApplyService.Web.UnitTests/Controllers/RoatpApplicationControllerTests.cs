@@ -422,7 +422,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public async Task Applications_shows_feedback_added_page_if_application_status_matches()
         {
-            var submittedApp = new Domain.Entities.Apply
+            var submittedApp = new Apply
             {
                 ApplicationStatus = ApplicationStatus.FeedbackAdded
             };
