@@ -1284,6 +1284,23 @@
     color: #fff;
 }
 
+.app-panel--success {
+    background: #00703c;
+    color: #fff;
+}
+
+
 .das-multiline-text {
     white-space: pre-line;
+}
+
+.hint--no-color {
+    font-family: GDS Transport, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.25;
+    display: block;
+    margin-bottom: 15px;
 }

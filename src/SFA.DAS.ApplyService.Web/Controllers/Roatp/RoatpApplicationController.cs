@@ -15,6 +15,7 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Session;
+using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Orchestrators;
@@ -143,11 +144,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 case ApplicationStatus.InProgress:
                     return RedirectToAction("TaskList", new { applicationId });
                 case ApplicationStatus.Approved:
-                    return View("~/Views/Application/Approved.cshtml", application);
+                {
+                    var oversightReview = await _applicationApiClient.GetOversightReview(applicationId);
+                    if (oversightReview.Status== OversightReviewStatus.SuccessfulAlreadyActive)
+                        return RedirectToAction("ApplicationApprovedAlreadyActive", new { applicationId });
+
+                    return RedirectToAction("ApplicationApproved", new { applicationId });
+                    }
                 case ApplicationStatus.Rejected:
                     return RedirectToAction("ApplicationRejected", new { applicationId });
                 case ApplicationStatus.FeedbackAdded:
-                    return View("~/Views/Application/FeedbackIntro.cshtml", applicationId);
+                    return RedirectToAction("FeedbackAdded", new { applicationId });
                 case ApplicationStatus.Withdrawn:
                     return RedirectToAction("ApplicationWithdrawn", new { applicationId });
                 case ApplicationStatus.Removed:
@@ -164,6 +171,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return RedirectToAction("TaskList", new { applicationId });
             }
         }
+
 
         private async Task<List<Apply>> GetInFlightApplicationsForSignInId(Guid signinId)
         {
@@ -296,32 +304,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             };
         }
 
-        [HttpGet]
-        public async Task<IActionResult> SequenceSignPost(Guid applicationId)
-        {
-            var application = await _apiClient.GetApplication(applicationId);
-            if (application is null)
-            {
-                return RedirectToAction("Applications");
-            }
-
-            if (application.ApplicationStatus == ApplicationStatus.Approved)
-            {
-                return View("~/Views/Application/Approved.cshtml", application);
-            }
-
-            if (application.ApplicationStatus == ApplicationStatus.Rejected)
-            {
-                return View("~/Views/Application/Rejected.cshtml", application);
-            }
-
-            if (application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
-            {
-                return View("~/Views/Application/FeedbackIntro.cshtml", application.ApplicationId);
-            }
-
-            return RedirectToAction("TaskList", new { applicationId = application.ApplicationId });
-        }
 
         [HttpGet]
         public async Task<IActionResult> Back(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
@@ -1109,32 +1091,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId, redirectAction });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Feedback(Guid applicationId)
-        {
-            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-            var sequenceVm = new SequenceViewModel(sequence, applicationId, null);
-            return View("~/Views/Application/Feedback.cshtml", sequenceVm);
-        }
-
-        public async Task<IActionResult> Submitted(Guid applicationId)
-        {
-            var application = await _apiClient.GetApplication(applicationId);
-            return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel
-            {
-                ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber
-            });
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> NotSubmitted(Guid applicationId)
-        {
-            var application = await _apiClient.GetApplication(applicationId);
-            return View("~/Views/Application/NotSubmitted.cshtml", new SubmittedViewModel
-            {
-                ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber
-            });
-        }
 
         private async Task UpdateQuestionsWithinQnA(Guid applicationId, List<PreambleAnswer> questions)
         {
@@ -1287,41 +1243,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> ApplicationSubmitted(Guid applicationId)
         {
-            var application = await _apiClient.GetApplication(applicationId);
-            var applicationData = application.ApplyData.ApplyDetails;
-
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationId = application.ApplicationId,
-                UKPRN = applicationData.UKPRN,
-                OrganisationName = applicationData.OrganisationName,
-                TradingName = applicationData.TradingName,
-                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
-                ApplicationReference = applicationData.ReferenceNumber,
-                EmailAddress = User.GetEmail()
-            };
-
+            var model = await BuildApplicationSummaryViewModel(applicationId);
             return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
         }
 
         [HttpGet]
         public async Task<IActionResult> ApplicationWithdrawn(Guid applicationId)
         {
-            var application = await _apiClient.GetApplication(applicationId);
-            var applicationData = application.ApplyData.ApplyDetails;
-
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationId = application.ApplicationId,
-                UKPRN = applicationData.UKPRN,
-                OrganisationName = applicationData.OrganisationName,
-                TradingName = applicationData.TradingName,
-                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
-                ApplicationReference = applicationData.ReferenceNumber,
-                EmailAddress = User.GetEmail(),
-                SubmittedDate = applicationData.ApplicationSubmittedOn
-            };
-
+            var model = await BuildApplicationSummaryViewModel(applicationId);
             return View("~/Views/Roatp/ApplicationWithdrawn.cshtml", model);
         }
 
@@ -1329,46 +1258,37 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> ApplicationRemoved(Guid applicationId)
         {
-            var application = await _apiClient.GetApplication(applicationId);
-            var applicationData = application.ApplyData.ApplyDetails;
-
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationId = application.ApplicationId,
-                UKPRN = applicationData.UKPRN,
-                OrganisationName = applicationData.OrganisationName,
-                TradingName = applicationData.TradingName,
-                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
-                ApplicationReference = applicationData.ReferenceNumber,
-                EmailAddress = User.GetEmail(),
-                SubmittedDate = applicationData.ApplicationSubmittedOn,
-                ExternalComments = application.ExternalComments,
-                HideEmailAddress = true
-            };
-
+            var model = await BuildApplicationSummaryViewModel(applicationId);
             return View("~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", model);
         }
 
         [HttpGet]
         public async Task<IActionResult> ApplicationRejected(Guid applicationId)
         {
-            var application = await _apiClient.GetApplication(applicationId);
-            var applicationData = application.ApplyData.ApplyDetails;
-
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationId = application.ApplicationId,
-                UKPRN = applicationData.UKPRN,
-                OrganisationName = applicationData.OrganisationName,
-                TradingName = applicationData.TradingName,
-                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
-                ApplicationReference = applicationData.ReferenceNumber,
-                EmailAddress = User.GetEmail(),
-                SubmittedDate = applicationData.ApplicationSubmittedOn,
-                ExternalComments = application.ApplyData.GatewayReviewDetails.ExternalComments
-            };
-
+            var model = await BuildApplicationSummaryViewModel(applicationId);
             return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ApplicationApprovedAlreadyActive(Guid applicationId)
+        {
+            var model = await BuildApplicationSummaryViewModel(applicationId);
+            return View("~/Views/Roatp/ApplicationApprovedAlreadyActive.cshtml", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ApplicationApproved(Guid applicationId)
+        {
+            var model = await BuildApplicationSummaryViewModel(applicationId);
+            return View("~/Views/Roatp/ApplicationApproved.cshtml", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FeedbackAdded(Guid applicationId)
+        {
+            var model = await BuildApplicationSummaryViewModel(applicationId);
+            return View("~/Views/Roatp/FeedbackAdded.cshtml", model);
         }
 
         private async Task SavePreambleInformation(Guid applicationId, ApplicationDetails applicationDetails)
@@ -1586,6 +1506,27 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 _logger.LogError(ex, $"Unable to extract finanical data for application: {applicationId}");
                 return new FinancialData { ApplicationId = applicationId };
             }            
+        }
+
+        private async Task<ApplicationSummaryViewModel> BuildApplicationSummaryViewModel(Guid applicationId)
+        {
+            var application = await _apiClient.GetApplication(applicationId);
+            var applicationData = application.ApplyData.ApplyDetails;
+
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationId = application.ApplicationId,
+                UKPRN = applicationData.UKPRN,
+                OrganisationName = applicationData.OrganisationName,
+                TradingName = applicationData.TradingName,
+                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
+                ApplicationReference = applicationData.ReferenceNumber,
+                SubmittedDate = applicationData?.ApplicationSubmittedOn,
+                ExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
+                EmailAddress = User.GetEmail(),
+                FinancialGrade = application?.FinancialGrade?.SelectedGrade
+            };
+            return model;
         }
 
         private static DateTime? AccountingReferenceDate(JObject applicationData)

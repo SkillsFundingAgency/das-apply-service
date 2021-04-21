@@ -1,0 +1,34 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
+
+@{
+    ViewBag.Title = "Application rejected";
+    Layout = "_Layout";
+}
+
+<partial name="~/Views/Roatp/ApplicationHeaderReadOnly.cshtml" />
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel app-panel--warning">
+                <h1 class="govuk-panel__title">
+                    FEEDBACK ADDED - HOLDING PAGE
+                </h1>
+            </div>
+
+            <partial name="~/Views/Roatp/_ApplicationDetailsTable.cshtml" model="@Model" />
+
+            <h1 class="govuk-heading-l">Why your application was ??</h1>
+            <p class="govuk-body">
+                @Model.ExternalComments
+            </p>
+
+            <h2 class="govuk-heading-m">How to reapply</h2>
+            <p class="govuk-body">
+                HOLDING PAGE
+            </p>
+        </div>
+    </div>
+</main>
