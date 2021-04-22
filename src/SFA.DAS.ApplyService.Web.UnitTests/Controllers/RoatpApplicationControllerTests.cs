@@ -183,8 +183,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var applications = new List<Domain.Entities.Apply>
             {
-                new Apply { ApplicationStatus = ApplicationStatus.Cancelled },
-                new Apply { ApplicationStatus = ApplicationStatus.Removed }
+                new Apply { ApplicationStatus = ApplicationStatus.Cancelled }
             };
 
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
@@ -501,6 +500,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationId = application.ApplicationId,
                 ConfirmSubmitApplication = true,
                 ConfirmFurtherInfoSubmitApplication = true,
+                ConfirmChangeOfOwnershipSubmitApplication = true,
                 ConfirmFurtherCommunicationSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
@@ -577,6 +577,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationId = application.ApplicationId,
                 ConfirmSubmitApplication = true,
                 ConfirmFurtherInfoSubmitApplication = true,
+                ConfirmChangeOfOwnershipSubmitApplication = true,
                 ConfirmFurtherCommunicationSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
@@ -613,7 +614,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     new JProperty(RoatpWorkflowQuestionTags.ShareholderFunds, "8"),
                     new JProperty(RoatpWorkflowQuestionTags.IntangibleAssets, "9"),
                     new JProperty(RoatpWorkflowQuestionTags.AccountingReferenceDate, "01,01,2021"),
-                    new JProperty(RoatpWorkflowQuestionTags.AccountingPeriod, "10")
+                    new JProperty(RoatpWorkflowQuestionTags.AccountingPeriod, "10"),
+                    new JProperty(RoatpWorkflowQuestionTags.AverageNumberofFTEEmployees, "11")
                 });
 
             var providerRouteAnswer = new Answer
@@ -644,6 +646,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     && r.FinancialData.IntangibleAssets == 9
                     && r.FinancialData.AccountingReferenceDate == new DateTime(2021, 1, 1)
                     && r.FinancialData.AccountingPeriod == 10
+                    && r.FinancialData.AverageNumberofFTEEmployees == 11
                     )));
         }
 
@@ -667,6 +670,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationId = application.ApplicationId,
                 ConfirmSubmitApplication = true,
                 ConfirmFurtherInfoSubmitApplication = true,
+                ConfirmChangeOfOwnershipSubmitApplication = true,
                 ConfirmFurtherCommunicationSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
@@ -768,6 +772,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationId = application.ApplicationId,
                 ConfirmSubmitApplication = true,
                 ConfirmFurtherInfoSubmitApplication = true,
+                ConfirmChangeOfOwnershipSubmitApplication = true,
                 ConfirmFurtherCommunicationSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
