@@ -11,7 +11,10 @@
 	Liabilities BIGINT NULL,
 	ShareholderFunds BIGINT NULL,
 	Borrowings BIGINT NULL,
-	CONSTRAINT PK_FinancialData PRIMARY KEY CLUSTERED ([Id] ASC)
+	AccountingReferenceDate DATE NULL,
+	AccountingPeriod TINYINT NULL,
+	AverageNumberofFTEEmployees BIGINT NULL, 
+    CONSTRAINT PK_FinancialData PRIMARY KEY CLUSTERED ([Id] ASC)
 )
 GO
 CREATE INDEX [IX_FinancialData_ApplicationId] ON [FinancialData] ([ApplicationId])

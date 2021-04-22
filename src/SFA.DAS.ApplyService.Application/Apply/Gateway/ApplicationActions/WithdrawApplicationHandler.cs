@@ -14,15 +14,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions
 {
     public class WithdrawApplicationHandler : IRequestHandler<WithdrawApplicationCommand, bool>
     {
-        private readonly IApplyRepository _applyRepository;
+        private readonly IGatewayRepository _gatewayRepository;
         private readonly IOversightReviewRepository _oversightReviewRepository;
         private readonly IAuditService _auditService;
         private readonly ILogger<WithdrawApplicationHandler> _logger;
         private readonly IApplicationUpdatedEmailService _applicationUpdatedEmailService;
 
-        public WithdrawApplicationHandler(IApplyRepository applyRepository, ILogger<WithdrawApplicationHandler> logger, IOversightReviewRepository oversightReviewRepository, IAuditService auditService, IApplicationUpdatedEmailService applicationUpdatedEmailService)
+        public WithdrawApplicationHandler(IGatewayRepository gatewayRepository, ILogger<WithdrawApplicationHandler> logger, IOversightReviewRepository oversightReviewRepository, IAuditService auditService, IApplicationUpdatedEmailService applicationUpdatedEmailService)
         {
-            _applyRepository = applyRepository;
+            _gatewayRepository = gatewayRepository;
             _oversightReviewRepository = oversightReviewRepository;
             _auditService = auditService;
             _logger = logger;
@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions
                 UserName = request.UserName
             };
 
-            var result = await _applyRepository.WithdrawApplication(request.ApplicationId, request.Comments, request.UserId, request.UserName);
+            var result = await _gatewayRepository.WithdrawApplication(request.ApplicationId, request.Comments, request.UserId, request.UserName);
 
             try
             {

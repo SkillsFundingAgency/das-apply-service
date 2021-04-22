@@ -18,10 +18,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _sessionService = sessionService;
         }
 
-        [Route("not-accepted-terms-and-conditions")]
-        public IActionResult TermsAndConditionsNotAgreed(ConditionsOfAcceptanceViewModel model)
+        [Route("not-accepted-conditions-of-acceptance")]
+        public IActionResult ConditionsOfAcceptanceNotAgreed(ConditionsOfAcceptanceViewModel model)
         {
-            return View("~/Views/Roatp/ShutterPages/TermsAndConditionsNotAgreed.cshtml", model);
+            return View("~/Views/Roatp/ShutterPages/ConditionsOfAcceptanceNotAgreed.cshtml", model);
         }
 
         [Route("uk-provider-reference-number-not-found")]

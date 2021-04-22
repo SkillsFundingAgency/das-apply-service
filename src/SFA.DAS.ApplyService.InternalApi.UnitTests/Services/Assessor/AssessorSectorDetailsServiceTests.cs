@@ -19,12 +19,13 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         private Mock<IExtractAnswerValueService> _extractAnswerValueService;
         private SectorQuestionIds _sectorQuestionIds;
 
-        private readonly string _firstPageId = "57610A"; 
-        private readonly string _secondPageId = "57610B";
-        private readonly string _thirdPageId = "57610";
-        private readonly string _fourthPageId = "57611";
-        private readonly string _fifthPageId = "57612";
-        private readonly string _sixthPageId = "57613";
+        private readonly string _firstPageId = "57610AA";
+        private readonly string _secondPageId = "57610A"; 
+        private readonly string _thirdPageId = "57610B";
+        private readonly string _fourthPageId = "57610";
+        private readonly string _fifthPageId = "57611";
+        private readonly string _sixthPageId = "57612";
+        private readonly string _seventhPageId = "57613";
         private readonly Guid _applicationId = Guid.NewGuid();
         private readonly int _sequenceId = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining;
 
@@ -44,15 +45,17 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             _assessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _secondPageId))
                 .ReturnsAsync(new AssessorPage { PageId = _secondPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() }, NextPageId = _thirdPageId });
             _assessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _thirdPageId))
-                .ReturnsAsync(new AssessorPage { PageId = _thirdPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() }, NextPageId = _fourthPageId});
+                .ReturnsAsync(new AssessorPage { PageId = _thirdPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() }, NextPageId = _fourthPageId });
             _assessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _fourthPageId))
-                .ReturnsAsync(new AssessorPage { PageId = _fourthPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() }, NextPageId = _fifthPageId });
-
+                .ReturnsAsync(new AssessorPage { PageId = _fourthPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() }, NextPageId = _fifthPageId});
             _assessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _fifthPageId))
                 .ReturnsAsync(new AssessorPage { PageId = _fifthPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() }, NextPageId = _sixthPageId });
 
             _assessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _sixthPageId))
-                .ReturnsAsync(new AssessorPage { PageId = _sixthPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() } });
+                .ReturnsAsync(new AssessorPage { PageId = _sixthPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() }, NextPageId = _seventhPageId });
+
+            _assessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _seventhPageId))
+                .ReturnsAsync(new AssessorPage { PageId = _seventhPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() } });
             _assessorLookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(It.IsAny<string>())).Returns(_sectorQuestionIds);
 
             _sectorQuestionIds.HowHaveTheyDeliveredTraining = "HowHaveTheyDeliveredId";
@@ -64,8 +67,24 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             _service = new AssessorSectorDetailsService(_assessorLookupService.Object,_assessorPageService.Object,_extractAnswerValueService.Object);
         }
 
+
         [Test]
         public async Task Get_sector_details_for_page1_answers()
+        {
+            _sectorQuestionIds.WhatStandardsOffered = "WhatStandardsOfferedQuestionId";
+
+            var whatStandardsOffered = "standards offered";
+
+            _extractAnswerValueService
+                .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.WhatStandardsOffered))
+                .Returns(whatStandardsOffered);
+
+            var actualSectorDetails = await _service.GetSectorDetails(_applicationId, _firstPageId);
+            Assert.AreEqual(whatStandardsOffered, actualSectorDetails.WhatStandardsOffered);
+        }
+
+        [Test]
+        public async Task Get_sector_details_for_page2_answers()
         {
             _sectorQuestionIds.HowManyStarts = "HowManyStartsQuestionId";
             
@@ -80,7 +99,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         }
 
         [Test]
-        public async Task Get_sector_details_for_page2_answers()
+        public async Task Get_sector_details_for_page3_answers()
         {
             _sectorQuestionIds.HowManyStarts = "HowManyEmployeesQuestionId";
 
@@ -95,21 +114,27 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         }
 
         [Test]
-        public async Task Get_sector_details_for_page3_answers()
+        public async Task Get_sector_details_for_page4_answers()
         {
-            _sectorQuestionIds.FullName = "FullNameQuestionId";
+            _sectorQuestionIds.FirstName = "FirstNameQuestionId";
+            _sectorQuestionIds.LastName = "LastNameQuestionId";
             _sectorQuestionIds.JobRole = "JobRoleId";
             _sectorQuestionIds.TimeInRole = "TimeInRoleId";
             _sectorQuestionIds.IsPartOfAnyOtherOrganisations = "PartOfOtherOrgsId";
-            var fullName = "FullName Answer";
+            var firstName = "FirstName Answer";
+            var lastName = "LastName Answer";
+
             var jobRole = "Job Role Description";
             var timeInRole = "Time in role";
             var isPartOfOtherOrgs = "Yes";
             var organisationDetails = "other organisations";
         
             _extractAnswerValueService
-                .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.FullName))
-                .Returns(fullName);
+                .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.FirstName))
+                .Returns(firstName);
+            _extractAnswerValueService
+                .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.LastName))
+                .Returns(lastName);
             _extractAnswerValueService
                 .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.JobRole))
                 .Returns(jobRole);
@@ -123,8 +148,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
                 .Setup(a => a.ExtractFurtherQuestionAnswerValueFromQuestionId(It.IsAny<AssessorPage>(), _sectorQuestionIds.IsPartOfAnyOtherOrganisations))
                 .Returns(organisationDetails);
             
-            var actualSectorDetails = await _service.GetSectorDetails(_applicationId, _thirdPageId);
-            Assert.AreEqual(fullName, actualSectorDetails.FullName);
+            var actualSectorDetails = await _service.GetSectorDetails(_applicationId, _firstPageId);
+            Assert.AreEqual(firstName, actualSectorDetails.FirstName);
+            Assert.AreEqual(lastName, actualSectorDetails.LastName);
             Assert.AreEqual(jobRole, actualSectorDetails.JobRole);
             Assert.AreEqual(timeInRole, actualSectorDetails.TimeInRole);
             Assert.AreEqual(isPartOfOtherOrgs, actualSectorDetails.IsPartOfAnyOtherOrganisations);
@@ -132,7 +158,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         }
 
         [Test]
-        public async Task Get_sector_details_for_page4_answers()
+        public async Task Get_sector_details_for_page5_answers()
         {
             _sectorQuestionIds.ExperienceOfDelivering = "ExperienceOfDeliveringId";
             _sectorQuestionIds.DoTheyHaveQualifications = "qualificationsId";
@@ -177,7 +203,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
                 .Setup(a => a.ExtractFurtherQuestionAnswerValueFromQuestionId(It.IsAny<AssessorPage>(), _sectorQuestionIds.TradeMemberships))
                 .Returns(namesOfTradeBodyMemberships);
 
-            var actualSectorDetails = await _service.GetSectorDetails(_applicationId, _thirdPageId);
+            var actualSectorDetails = await _service.GetSectorDetails(_applicationId, _firstPageId);
             Assert.AreEqual(experienceOfDelivering, actualSectorDetails.ExperienceOfDelivering);
             Assert.AreEqual(experienceOfDeliveringFurther, actualSectorDetails.WhereDidTheyGainThisExperience);
             Assert.AreEqual(doTheyHaveQualifications, actualSectorDetails.DoTheyHaveQualifications);
@@ -189,13 +215,13 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         }
 
         [Test]
-        public async Task Get_sector_details_for_page5_answers()
+        public async Task Get_sector_details_for_page6_answers()
         {
             _sectorQuestionIds.WhatTypeOfTrainingDelivered = "WhatTypeOfTrainingId";
 
             var typeOfTraining = "type of training";
 
-            _assessorLookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_fifthPageId)).Returns(_sectorQuestionIds);
+            _assessorLookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_sixthPageId)).Returns(_sectorQuestionIds);
 
             _extractAnswerValueService
                 .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(),
@@ -207,7 +233,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         }
 
         [Test]
-        public async Task Get_sector_details_for_page6_answers()
+        public async Task Get_sector_details_for_page7_answers()
         {
             _sectorQuestionIds.HowHaveTheyDeliveredTraining = "HowHaveTheyDeliveredId";
             _sectorQuestionIds.ExperienceOfDeliveringTraining = "ExperienceId";
@@ -216,7 +242,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             var howHaveTheyDelivered = "delivery mechanism";
             var experienceOfDelivering = "experience of delivering";
             var typicalDuration = "typical duration";
-            _assessorLookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_thirdPageId)).Returns(_sectorQuestionIds);
+            _assessorLookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_fourthPageId)).Returns(_sectorQuestionIds);
 
             _extractAnswerValueService
                 .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.HowHaveTheyDeliveredTraining))
@@ -237,7 +263,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         }
 
         [Test]
-        public async Task Get_sector_details_for_page6_answers_other()
+        public async Task Get_sector_details_for_page7_answers_other()
         {
             _sectorQuestionIds.HowHaveTheyDeliveredTraining = "HowHaveTheyDeliveredId";
             _sectorQuestionIds.ExperienceOfDeliveringTraining = "ExperienceId";
@@ -248,7 +274,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             var typicalDuration = "typical duration";
             var otherHowHaveTheyDelivered = "delivery mechanism other";
 
-            _assessorLookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_thirdPageId)).Returns(_sectorQuestionIds);
+            _assessorLookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_fourthPageId)).Returns(_sectorQuestionIds);
 
             _extractAnswerValueService
                 .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.HowHaveTheyDeliveredTraining))
