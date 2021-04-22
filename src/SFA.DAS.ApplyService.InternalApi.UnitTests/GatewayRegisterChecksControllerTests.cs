@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
@@ -28,6 +29,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         {
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RoatpGatewayController>>();
+            _gatewayApiChecksService = new Mock<IGatewayApiChecksService>();
+            _gatewayApiChecksService.Setup(x => x.GetExternalApiCheckDetails(_applicationId)).ReturnsAsync(new ApplyGatewayDetails());
+            _fileStorage = new Mock<IFileStorageService>();
             _controller = new RoatpGatewayController(_logger.Object, _mediator.Object, _gatewayApiChecksService.Object,
                 _fileStorage.Object);
         }
