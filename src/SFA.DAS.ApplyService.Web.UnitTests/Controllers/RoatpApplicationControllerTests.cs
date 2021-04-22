@@ -614,7 +614,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     new JProperty(RoatpWorkflowQuestionTags.ShareholderFunds, "8"),
                     new JProperty(RoatpWorkflowQuestionTags.IntangibleAssets, "9"),
                     new JProperty(RoatpWorkflowQuestionTags.AccountingReferenceDate, "01,01,2021"),
-                    new JProperty(RoatpWorkflowQuestionTags.AccountingPeriod, "10")
+                    new JProperty(RoatpWorkflowQuestionTags.AccountingPeriod, "10"),
+                    new JProperty(RoatpWorkflowQuestionTags.AverageNumberofFTEEmployees, "11")
                 });
 
             var providerRouteAnswer = new Answer
@@ -645,6 +646,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     && r.FinancialData.IntangibleAssets == 9
                     && r.FinancialData.AccountingReferenceDate == new DateTime(2021, 1, 1)
                     && r.FinancialData.AccountingPeriod == 10
+                    && r.FinancialData.AverageNumberofFTEEmployees == 11
                     )));
         }
 
