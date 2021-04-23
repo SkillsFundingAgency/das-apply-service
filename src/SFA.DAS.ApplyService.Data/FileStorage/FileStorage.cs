@@ -13,12 +13,10 @@ namespace SFA.DAS.ApplyService.Data.FileStorage
     public abstract class FileStorage
     {
         private readonly BlobServiceClient _blobServiceClient;
-        private readonly IByteArrayEncryptionService _byteArrayEncryptionService;
 
-        protected FileStorage(BlobServiceClient blobServiceClient, IByteArrayEncryptionService byteArrayEncryptionService)
+        protected FileStorage(BlobServiceClient blobServiceClient)
         {
             _blobServiceClient = blobServiceClient;
-            _byteArrayEncryptionService = byteArrayEncryptionService;
         }
 
         protected abstract string ContainerName { get; }
@@ -40,9 +38,7 @@ namespace SFA.DAS.ApplyService.Data.FileStorage
 
             var blobName = string.IsNullOrWhiteSpace(path) ? reference.ToString() : $"{path}/{reference}";
 
-            var encryptedBytes = _byteArrayEncryptionService.Encrypt(file.Data);
-
-            await client.UploadBlobAsync(blobName, new MemoryStream(encryptedBytes), cancellationToken);
+            await client.UploadBlobAsync(blobName, new MemoryStream(file.Data), cancellationToken);
 
             return reference;
         }
@@ -71,8 +67,7 @@ namespace SFA.DAS.ApplyService.Data.FileStorage
             using (MemoryStream s = new MemoryStream())
             {
                 await blobClient.DownloadToAsync(s);
-                var decoded = _byteArrayEncryptionService.Decrypt(s.ToArray());
-                return decoded;
+                return s.ToArray();
             }
         }
 
