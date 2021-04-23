@@ -1319,7 +1319,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ApplicationRouteId = applicationData.ProviderRoute.ToString(),
                 ApplicationReference = applicationData.ReferenceNumber,
                 EmailAddress = User.GetEmail(),
-                SubmittedDate = applicationData.ApplicationSubmittedOn
+                SubmittedDate = applicationData.ApplicationSubmittedOn,
+                HideEmailAddress = true
             };
 
             return View("~/Views/Roatp/ApplicationWithdrawn.cshtml", model);
