@@ -165,17 +165,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> NewApplication()
-        {
-            var signinId = await _userService.GetSignInId();
-
-            Guid applicationId = await StartApplication(signinId);
-
-            var viewModel = await _taskListOrchestrator.GetTaskListViewModel(applicationId, User.GetUserId());
-            return View("~/Views/Roatp/TaskList.cshtml", viewModel);
-        }
-
         private async Task<List<Apply>> GetInFlightApplicationsForSignInId(Guid signinId)
         {
             var applications = await _apiClient.GetApplications(signinId, false);

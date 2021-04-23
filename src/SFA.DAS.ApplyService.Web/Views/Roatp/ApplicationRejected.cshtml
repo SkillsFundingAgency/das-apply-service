@@ -30,7 +30,7 @@
                 Your rejected application does not count towards the 1 application within a 12-month period.
             </p>
             <p class="govuk-body">
-                To reapply, you'll need to <a class="govuk-link govuk-link--no-visited-state" asp-action="NewApplication" asp-controller="RoatpApplication">start a new application.</a>
+                To reapply, you'll need to <a class="govuk-link govuk-link--no-visited-state" asp-action="NewApplication" asp-controller="RoatpApplication" asp-route-ukprn="@Model.UKPRN" asp-route-applicationRouteId="@Model.ApplicationRouteId">start a new application.</a>
             </p>
 
             <h1 class="govuk-heading-m">How to contact us</h1>
