@@ -178,6 +178,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             _logger.LogDebug("StartApplication method invoked");
 
+            var applications = await GetInFlightApplicationsForSignInId(signinId);
+
+            if (applications.Any())
+            {
+                _logger.LogError($"Multiple in flight applications found for userId: {signinId}");
+                return applications.First().ApplicationId;
+            }
+
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             if (applicationDetails is null)
             {
