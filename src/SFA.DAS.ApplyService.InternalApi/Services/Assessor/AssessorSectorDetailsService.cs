@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Sectors;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
@@ -107,9 +108,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
          AssessorSectorDetails sectorDetails, SectorQuestionIds sectorPageIds)
         {
             if (page4NameRoleExperience?.Answers == null || !page4NameRoleExperience.Answers.Any()) return;
-            sectorDetails.FullName =
+            sectorDetails.FirstName =
                 _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page4NameRoleExperience.Answers,
-                    sectorPageIds.FullName);
+                    sectorPageIds.FirstName);
+            sectorDetails.LastName =
+                _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page4NameRoleExperience.Answers,
+                    sectorPageIds.LastName);
             sectorDetails.JobRole =
                 _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page4NameRoleExperience.Answers,
                     sectorPageIds.JobRole);
@@ -121,8 +125,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                 _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page4NameRoleExperience.Answers,
                     sectorPageIds.IsPartOfAnyOtherOrganisations);
 
-                sectorDetails.OtherOrganisations = _extractAnswerValueService.ExtractFurtherQuestionAnswerValueFromQuestionId(page4NameRoleExperience,
+            sectorDetails.OtherOrganisations = _extractAnswerValueService.ExtractFurtherQuestionAnswerValueFromQuestionId(page4NameRoleExperience,
                 sectorPageIds.IsPartOfAnyOtherOrganisations);
+            var dateOfBirth =
+                _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page4NameRoleExperience.Answers,
+                    sectorPageIds.DateOfBirth);
+
+            sectorDetails.DateOfBirth = DateOfBirthFormatter.GetMonthYearDescription(dateOfBirth);
+            sectorDetails.Email =
+                _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page4NameRoleExperience.Answers,
+                    sectorPageIds.Email);
+            sectorDetails.ContactNumber =
+                _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page4NameRoleExperience.Answers,
+                    sectorPageIds.ContactNumber);
 
         }
 
