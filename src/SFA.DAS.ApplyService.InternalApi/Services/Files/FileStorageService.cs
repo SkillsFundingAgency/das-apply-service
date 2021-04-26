@@ -16,15 +16,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
     {
         private readonly ILogger<FileStorageService> _logger;
         private readonly FileStorageConfig _fileStorageConfig;
-        private readonly IFileEncryptionService _fileEncryptionService;
-
-        public FileStorageService(ILogger<FileStorageService> logger, IConfigurationService configurationService, IFileEncryptionService encryptionService)
+        public FileStorageService(ILogger<FileStorageService> logger, IConfigurationService configurationService)
         {
             _logger = logger;
 
             var config = configurationService.GetConfig().GetAwaiter().GetResult();
             _fileStorageConfig = config.FileStorage;
-            _fileEncryptionService = encryptionService;
         }
 
         public async Task<IEnumerable<string>> GetPageFileList(Guid applicationId, int? sequenceNumber, int? sectionNumber, string pageId, ContainerType containerType, CancellationToken cancellationToken)
@@ -70,9 +67,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
                             var blob = questionDirectory.GetBlockBlobReference(file.FileName);
                             blob.Properties.ContentType = file.ContentType;
 
-                            var encryptedFileStream = _fileEncryptionService.Encrypt(file.OpenReadStream());
-
-                            await blob.UploadFromStreamAsync(encryptedFileStream, cancellationToken);
+                            await blob.UploadFromStreamAsync(file.OpenReadStream(), cancellationToken);
                         }
 
                         success = true;
@@ -161,9 +156,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
             await blob.DownloadToStreamAsync(blobStream, null, new BlobRequestOptions() { DisableContentMD5Validation = true }, null, cancellationToken);
             blobStream.Position = 0;
 
-            var decryptedStream = _fileEncryptionService.Decrypt(blobStream);
-
-            return new DownloadFile { FileName = Path.GetFileName(blob.Name), ContentType = blob.Properties.ContentType, Stream = decryptedStream };
+            return new DownloadFile { FileName = Path.GetFileName(blob.Name), ContentType = blob.Properties.ContentType, Stream = blobStream };
         }
 
         private async Task<List<DownloadFile>> DownloadFilesFromDirectory(CloudBlobDirectory directory, CancellationToken cancellationToken)

@@ -1,8 +1,7 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.SubmitApplicationViewModel
 
 @{
-    var title = $"Submit application on behalf of {Model.OrganisationName}";
-    ViewBag.Title = title;
+    ViewBag.Title = Model.Title;
     Layout = "_Layout";
 
     bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
@@ -23,6 +22,7 @@
                         <ul class="govuk-list govuk-error-summary__list">
                             <li><a sfa-validation-for="ConfirmSubmitApplication"></a></li>
                             <li><a sfa-validation-for="ConfirmFurtherInfoSubmitApplication"></a></li>
+                            <li><a sfa-validation-for="ConfirmChangeOfOwnershipSubmitApplication"></a></li>
                             <li><a sfa-validation-for="ConfirmFurtherCommunicationSubmitApplication"></a></li>
                         </ul>
                     </div>
@@ -30,7 +30,7 @@
             }
 
             <span class="govuk-caption-l">Submit application</span>
-            <h1 class="govuk-heading-xl">@title</h1>
+            <h1 class="govuk-heading-xl">@Model.Title</h1>
 
             <p class="govuk-body">
                 Before you submit your application, you must check that all of your answers and file uploads are correct.
@@ -39,23 +39,30 @@
                 You can check your answers and file uploads by going into each section on your <a asp-action="TaskList" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">application overview</a>.
             </p>
             <p class="govuk-body">
-                You will not be able to view them once you submit your application.
-            </p>
-            <p class="govuk-body">
                 If your answers or file uploads are unclear, we may ask for clarification. If they are misleading or inaccurate, we may fail your application.
             </p>
             <p class="govuk-body">
-                We will send all communication about this application to <span class="govuk-!-font-weight-bold">@Model.EmailAddress</span>.
+                This includes:
+                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
+                    <li>clarification requests on answers or file uploads</li>
+                    <li>overall outcome of the application</li>
+                    <li>general and post application queries</li>
+                </ul>
             </p>
             <p class="govuk-body">
-                This includes:
+                <a class="govuk-link" href="https://www.gov.uk/government/publications/conditions-of-acceptance-for-apprenticeship-training-providers" target="_blank">Review the RoATP Conditions of Acceptance (opens in new tab)</a>
             </p>
-            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
-                <li>clarification requests on answers or file uploads</li>
-                <li>overall outcome of the application</li>
-                <li>general and post application queries</li>
-            </ul>
+        </div>
 
+        <div class="govuk-grid-column-two-thirds govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+                <span class="govuk-warning-text__assistive">Warning</span>
+                Save a copy of your answers before you submit them as you will not be able to view them again after they've been submitted
+            </strong>
+        </div>
+
+        <div class="govuk-grid-column-two-thirds">
             <form method="post" asp-action="ConfirmSubmitApplication" asp-controller="RoatpApplication" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="OrganisationName" />
@@ -82,13 +89,24 @@
                         </div>
                     </div>
                 </div>
+                <div class="govuk-form-group" sfa-validation-for="ConfirmChangeOfOwnershipSubmitApplication" sfa-validationerror-class="govuk-form-group--error">
+                    <span class="govuk-error-message" asp-validation-for="ConfirmChangeOfOwnershipSubmitApplication"></span>
+                    <div class="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" type="checkbox" asp-for="ConfirmChangeOfOwnershipSubmitApplication" />
+                            <label class="govuk-label govuk-checkboxes__label" asp-for="ConfirmChangeOfOwnershipSubmitApplication">
+                                I understand that I must notify ESFA 12 weeks before there is any change of ownership or control within my organisation.
+                            </label>
+                        </div>
+                    </div>
+                </div>
                 <div class="govuk-form-group" sfa-validation-for="ConfirmFurtherCommunicationSubmitApplication" sfa-validationerror-class="govuk-form-group--error">
                     <span class="govuk-error-message" asp-validation-for="ConfirmFurtherCommunicationSubmitApplication"></span>
                     <div class="govuk-checkboxes">
                         <div class="govuk-checkboxes__item">
                             <input class="govuk-checkboxes__input" type="checkbox" asp-for="ConfirmFurtherCommunicationSubmitApplication" />
                             <label class="govuk-label govuk-checkboxes__label" asp-for="ConfirmFurtherCommunicationSubmitApplication">
-                                I understand that all communication about this application will be sent to <span class="govuk-!-font-weight-bold">@Model.EmailAddress</span>.
+                                I understand that all communication about this application will be sent to <span class="govuk-!-font-weight-bold">@Model.EmailAddress</span>
                             </label>
                         </div>
                     </div>
