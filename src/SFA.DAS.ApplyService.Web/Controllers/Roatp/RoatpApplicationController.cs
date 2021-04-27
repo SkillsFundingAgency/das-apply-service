@@ -1319,7 +1319,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ApplicationRouteId = applicationData.ProviderRoute.ToString(),
                 ApplicationReference = applicationData.ReferenceNumber,
                 EmailAddress = User.GetEmail(),
-                SubmittedDate = applicationData.ApplicationSubmittedOn
+                SubmittedDate = applicationData.ApplicationSubmittedOn,
+                HideEmailAddress = true
             };
 
             return View("~/Views/Roatp/ApplicationWithdrawn.cshtml", model);
@@ -1577,7 +1578,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         ShareholderFunds = applicationData.GetValue(RoatpWorkflowQuestionTags.ShareholderFunds).Value<long>(),
                         IntangibleAssets = applicationData.GetValue(RoatpWorkflowQuestionTags.IntangibleAssets).Value<long>(),
                         AccountingReferenceDate = AccountingReferenceDate(applicationData),
-                        AccountingPeriod = applicationData.GetValue(RoatpWorkflowQuestionTags.AccountingPeriod).Value<byte>()
+                        AccountingPeriod = applicationData.GetValue(RoatpWorkflowQuestionTags.AccountingPeriod).Value<byte>(),
+                        AverageNumberofFTEEmployees = applicationData.GetValue(RoatpWorkflowQuestionTags.AverageNumberofFTEEmployees).Value<long>()
                     };
                 }
             }
