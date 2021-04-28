@@ -19,10 +19,6 @@ namespace SFA.DAS.ApplyService.EmailService
         public async Task SendSubmitConfirmationEmail(ApplicationSubmitConfirmation applicationSubmitConfirmation)
         {
             var templateName = EmailTemplateName.ROATP_APPLICATION_SUBMITTED;
-            if (applicationSubmitConfirmation.ApplicationRouteId == ApplicationRoute.MainProviderApplicationRoute.ToString())
-            {
-                templateName = EmailTemplateName.ROATP_APPLICATION_SUBMITTED_MAIN;
-            }
             
             var personalisationTokens = GetPersonalisationTokens(applicationSubmitConfirmation);
 
@@ -34,7 +30,8 @@ namespace SFA.DAS.ApplyService.EmailService
             var personalisationTokens = new Dictionary<string, string>
             {
                 { "ApplicantEmail", applicationSubmitConfirmation.EmailAddress },
-                { "ApplicantFullName", applicationSubmitConfirmation.ApplicantFullName }
+                { "ApplicantFullName", applicationSubmitConfirmation.ApplicantFullName },
+                { "ApplicationReferenceNumber", applicationSubmitConfirmation.ApplicationReferenceNumber }
             };
 
             return personalisationTokens;
