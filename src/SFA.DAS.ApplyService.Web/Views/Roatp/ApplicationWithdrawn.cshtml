@@ -23,8 +23,13 @@
             <p class="govuk-body">
                 Your application to join the register has been withdrawn at your request.
             </p>
+
             <p class="govuk-body">
-                Contact <a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk">helpdesk@manage-apprenticeships.service.gov.uk</a> to arrange a new time slot. You will be re-invited to apply.
+                Your withdrawn application does not count towards the 1 application within a 12-month period.
+            </p>
+
+            <p class="govuk-body">
+                If you want to reapply, you'll need to <a class="govuk-link govuk-link--no-visited-state" asp-action="EnterNewUkprn" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">start a new application.</a>
             </p>
         </div>
     </div>
