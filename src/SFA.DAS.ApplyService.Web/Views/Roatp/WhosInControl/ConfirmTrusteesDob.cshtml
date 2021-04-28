@@ -23,7 +23,7 @@
                         <ul class="govuk-list govuk-error-summary__list">
                             @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
                             {
-                                <li><a href="#@(Model.TrusteeDatesOfBirth.First().Id + "_Month")" sfa-validation-for="@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                                <li><a href="#@(errorMessage.Field)" sfa-validation-for="@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
                             }
                         </ul>
                     </div>
