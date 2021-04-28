@@ -303,10 +303,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IAuditService, AuditService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            services.AddTransient<IFileEncryptionService, FileEncryptionService>();
             services.AddTransient<IFileStorageService, FileStorageService>();
             services.AddTransient<IAppealsFileStorage, AppealsFileStorage>();
-            services.AddTransient<IByteArrayEncryptionService, ByteArrayEncryptionService>();
             
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkBehaviour<,>));

@@ -27,7 +27,19 @@
 
             <h2 class="govuk-heading-m">How to reapply</h2>
             <p class="govuk-body">
-                Your withdrawn application does not count towards the 1 application within a 12-month period limit. To reapply, you'll need to <a class="govuk-link govuk-link--no-visited-state" asp-action="" asp-controller="RoatpApplication">start a new application.</a>
+                Your rejected application does not count towards the 1 application within a 12-month period.
+            </p>
+            <p class="govuk-body">
+                To reapply, you'll need to <a class="govuk-link govuk-link--no-visited-state" asp-action="EnterNewUkprn" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">start a new application.</a>
+            </p>
+
+            <h1 class="govuk-heading-m">How to contact us</h1>
+            <p class="govuk-body">
+                If you have any questions, you can contact the Manage apprenticeships service helpdesk on:
+                <ul class="govuk-list govuk-list--bullet">
+                    <li><a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk">helpdesk@manage-apprenticeships.service.gov.uk</a></li>
+                    <li>08000 150 600</li>
+                </ul>
             </p>
         </div>
     </div>
