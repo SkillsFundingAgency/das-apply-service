@@ -22,13 +22,7 @@ END
 IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPApplicationSubmitted')
 BEGIN
 	INSERT INTO EmailTemplates ([Id], [Status],[TemplateName],[TemplateId],[CreatedAt],[CreatedBy]) 
-	VALUES (NEWID(), 'Live', N'RoATPApplicationSubmitted', N'7e7a46e1-d203-486a-ac1b-40e8a617ef0d', GETDATE(), 'System')
-END
-
-IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPApplicationSubmittedMain')
-BEGIN
-	INSERT INTO EmailTemplates ([Id], [Status],[TemplateName],[TemplateId],[CreatedAt],[CreatedBy]) 
-	VALUES (NEWID(), 'Live', N'RoATPApplicationSubmittedMain', N'68008288-6497-4de2-be3c-e1409538aad9', GETDATE(), 'System')
+	VALUES (NEWID(), 'Live', N'RoATPApplicationSubmitted', N'4a44e79d-1e98-4b90-9d67-f575be97def6', GETDATE(), 'System')
 END
 
 IF EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPApplicationWithdrawn')
