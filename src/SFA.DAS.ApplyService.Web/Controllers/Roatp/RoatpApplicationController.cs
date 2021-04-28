@@ -1307,8 +1307,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ApplicationReference = applicationData.ReferenceNumber,
                 EmailAddress = User.GetEmail(),
                 SubmittedDate = applicationData.ApplicationSubmittedOn,
-                ExternalComments = application.ApplyData.GatewayReviewDetails.ExternalComments,
-                HideEmailAddress = true
+                ExternalComments = application.ApplyData.GatewayReviewDetails.ExternalComments
             };
 
             return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
