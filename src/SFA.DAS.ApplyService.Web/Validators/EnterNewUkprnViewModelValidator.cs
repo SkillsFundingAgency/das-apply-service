@@ -14,8 +14,6 @@ namespace SFA.DAS.ApplyService.Web.Validators
                     .WithMessage(UkprnValidationMessages.MissingUkprn)
                 .Must(x => UkprnValidator.IsValidUkprn(x, out _))
                     .WithMessage(UkprnValidationMessages.InvalidUkprn)
-                .Must((model, ukprn) => ukprn.Trim() != model.CurrentUkprn)
-                    .WithMessage(UkprnValidationMessages.NewUkprnMustNotBeSame)
                 .MustAsync(async (ukprn, token) => await ukprnWhitelistValidator.IsWhitelistedUkprn(int.Parse(ukprn)))
                     .WithMessage(UkprnValidationMessages.NotWhitelistedUkprn);
         }
