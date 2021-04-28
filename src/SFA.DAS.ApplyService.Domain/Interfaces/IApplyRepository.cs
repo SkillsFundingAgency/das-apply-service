@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         Task UpdateApplication(Domain.Entities.Apply application);
         
         Task<bool> CanSubmitApplication(Guid applicationId);
-        Task SubmitApplication(Guid applicationId, ApplyData applyData, FinancialData financialData, Guid submittedBy);
+        Task<bool> SubmitApplication(Guid applicationId, ApplyData applyData, FinancialData financialData, Guid submittedBy);
 
         Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<ApplySequence> newSequences);
 
