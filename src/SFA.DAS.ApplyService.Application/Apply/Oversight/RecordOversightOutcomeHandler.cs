@@ -46,7 +46,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             ApplyChanges(oversightReview, request, isNew);
             SaveChanges(oversightReview, application, isNew);
 
-            if(request.OversightStatus == OversightReviewStatus.SuccessfulAlreadyActive)
             try
             {
                 await _applicationUpdatedEmailService.SendEmail(request.ApplicationId);

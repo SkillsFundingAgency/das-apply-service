@@ -153,12 +153,12 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             }
         }
 
-        [TestCase(OversightReviewStatus.SuccessfulAlreadyActive, true)]
-        [TestCase(OversightReviewStatus.Successful, false)]
-        [TestCase(OversightReviewStatus.SuccessfulFitnessForFunding, false)]
-        [TestCase(OversightReviewStatus.Unsuccessful, false)]
+        [TestCase(OversightReviewStatus.SuccessfulAlreadyActive)]
+        [TestCase(OversightReviewStatus.Successful)]
+        [TestCase(OversightReviewStatus.SuccessfulFitnessForFunding)]
+        [TestCase(OversightReviewStatus.Unsuccessful)]
 
-        public async Task Handler_sends_updated_email_when_status_successful_already_active(OversightReviewStatus newOversightReviewStatus, bool expectEmailSent)
+        public async Task Handler_sends_application_updated_email_for_all_status_changes(OversightReviewStatus newOversightReviewStatus)
         {
             var applicationId = Guid.NewGuid();
 
@@ -190,10 +190,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             var handler = new RecordOversightOutcomeHandler(logger.Object, oversightReviewRepository.Object, repository.Object, Mock.Of<IAuditService>(), applicationUpdatedEmailService.Object);
             await handler.Handle(command, new CancellationToken());
 
-            if (expectEmailSent)
-                applicationUpdatedEmailService.Verify(x => x.SendEmail(It.Is<Guid>(id => id == command.ApplicationId)), Times.Once);
-            else
-                applicationUpdatedEmailService.Verify(x => x.SendEmail(It.Is<Guid>(id => id == command.ApplicationId)), Times.Never);
+            applicationUpdatedEmailService.Verify(x => x.SendEmail(It.Is<Guid>(id => id == command.ApplicationId)), Times.Once);
         }
     }   
 }
