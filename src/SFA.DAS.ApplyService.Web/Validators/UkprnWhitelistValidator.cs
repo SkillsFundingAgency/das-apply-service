@@ -1,8 +1,4 @@
-﻿using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Web.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using SFA.DAS.ApplyService.Web.Infrastructure;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Validators
@@ -16,17 +12,9 @@ namespace SFA.DAS.ApplyService.Web.Validators
             _whitelistedProvidersApiClient = whitelistedProvidersApiClient;
         }
 
-        public async Task<bool> IsWhitelistedUkprn(long longUkprnToCheck)
+        public async Task<bool> IsWhitelistedUkprn(int ukprn)
         {
-            int ukprn;
-            if (int.TryParse(longUkprnToCheck.ToString(), out ukprn))
-            {
-                return await _whitelistedProvidersApiClient.CheckIsWhitelistedUkprn(ukprn); 
-            }
-            else
-            {
-                return await Task.FromResult(false);
-            }
+            return await _whitelistedProvidersApiClient.CheckIsWhitelistedUkprn(ukprn);
         }
     }
 }

@@ -566,7 +566,8 @@ namespace SFA.DAS.ApplyService.Data
                 return await connection.QuerySingleAsync<bool>(@"SELECT
                                                                       CASE WHEN EXISTS 
                                                                       (
-                                                                            SELECT UKPRN FROM dbo.WhitelistedProviders WHERE UKPRN = @ukprn
+                                                                            SELECT UKPRN FROM WhitelistedProviders WHERE UKPRN = @ukprn
+                                                                                AND GETUTCDATE() BETWEEN StartDateTime and EndDateTime
                                                                       )
                                                                       THEN 'TRUE'
                                                                       ELSE 'FALSE'
