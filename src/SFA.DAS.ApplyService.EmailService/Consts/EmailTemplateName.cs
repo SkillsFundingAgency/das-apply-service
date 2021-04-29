@@ -8,14 +8,9 @@
         public const string ROATP_GET_HELP_WITH_QUESTION = "RoATPGetHelpWithQuestion";
 
         /// <summary>
-        /// Requires tokens: { ApplicantFullName }
+        /// Requires tokens: { ApplicantEmail, ApplicantFullName, ApplicationReferenceNumber }
         /// </summary>
         public const string ROATP_APPLICATION_SUBMITTED = "RoATPApplicationSubmitted";
-
-        /// <summary>
-        /// Requires tokens: { ApplicantFullName }
-        /// </summary>
-        public const string ROATP_APPLICATION_SUBMITTED_MAIN = "RoATPApplicationSubmittedMain";
 
         /// <summary>
         /// Requires tokens: { ApplicantFullName, LoginLink }

@@ -10,15 +10,17 @@ using System;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
     [TestFixture]
-    public class RoatpGatewayCriminalComplianceChecksControllerTests
+    public class GatewayChecksControllerCriminalComplianceTests
     {
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<ICriminalComplianceChecksQuestionLookupService> _lookupService;
-        private RoatpGatewayCriminalComplianceChecksController _controller;
+        private Mock<ILogger<GatewayChecksController>> _logger;
+        private GatewayChecksController _controller;
         private Guid _applicationId;
         private string _gatewayPageId;
         private Page _qnaPageWithQuestion;
@@ -29,7 +31,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _applicationId = Guid.NewGuid();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _lookupService = new Mock<ICriminalComplianceChecksQuestionLookupService>();
-            _controller = new RoatpGatewayCriminalComplianceChecksController(_qnaApiClient.Object, _lookupService.Object);
+            _logger = new Mock<ILogger<GatewayChecksController>>();
+            _controller = new GatewayChecksController(_qnaApiClient.Object, _logger.Object,_lookupService.Object);
 
             _gatewayPageId = "Page1";
 
