@@ -311,7 +311,8 @@
             public const string ApprenticeshipStandards = "6230";
             public const string ApplicationFrameworks_MainEmployer = "6250";
             public const string ApplicationFrameworks_Supporting = "6260";
-            public const string OrganisationTransition_MainEmployer = "6252";
+            public const string OrganisationTransition_Main = "6252";
+            public const string OrganisationTransition_Employer = "6253";
             public const string OrganisationTransition_Supporting = "6262";
             public const string OnlyDeliveringApprenticeshipFrameworks_MainEmployer = "6254";
             public const string OnlyDeliveringApprenticeshipFrameworks_Supporting = "6264";
