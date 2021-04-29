@@ -1222,12 +1222,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (submitResult)
             {
+                var submittedApplication = await _apiClient.GetApplication(submitApplicationRequest.ApplicationId);
                 var userDetails = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
                 var applicationSubmitConfirmation = new ApplicationSubmitConfirmation
                 {
                     ApplicantFullName = $"{userDetails.GivenNames} {userDetails.FamilyName}",
-                    ApplicationRouteId = providerRoute.Value,
-                    EmailAddress = User.GetEmail()
+                    EmailAddress = userDetails.Email,
+                    ApplicationReferenceNumber = submittedApplication.ApplyData.ApplyDetails.ReferenceNumber
                 };
 
                 await _submitApplicationEmailService.SendSubmitConfirmationEmail(applicationSubmitConfirmation);
