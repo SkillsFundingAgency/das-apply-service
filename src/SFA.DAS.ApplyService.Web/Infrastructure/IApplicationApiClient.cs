@@ -9,7 +9,7 @@ using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
-
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
@@ -53,5 +53,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn);
 
         Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus, string userId);
+
+        Task<GetOversightReviewResponse> GetOversightReview(Guid applicationId);
     }
 }

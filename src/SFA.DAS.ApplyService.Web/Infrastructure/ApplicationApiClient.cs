@@ -15,6 +15,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -161,6 +162,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus, string userId)
         {
             return await Post<dynamic, bool>($"/Application/Status", new { applicationId, applicationStatus, userId });
+        }
+
+        public async Task<GetOversightReviewResponse> GetOversightReview(Guid applicationId)
+        {
+            return await Get<GetOversightReviewResponse>($"/Oversight/{applicationId}/review");
         }
     }
 }
