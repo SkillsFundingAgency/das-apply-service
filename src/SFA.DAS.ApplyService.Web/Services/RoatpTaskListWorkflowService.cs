@@ -227,7 +227,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             PopulateAdditionalSequenceFields(sequences);
 
-            var filteredSequences = sequences.Where(x => x.SequenceId != RoatpWorkflowSequenceIds.Preamble && x.SequenceId != RoatpWorkflowSequenceIds.ConditionsOfAcceptance).OrderBy(y => y.SequenceId);
+            var filteredSequences = sequences.Where(x => x.SequenceId != RoatpWorkflowSequenceIds.Preamble).OrderBy(y => y.SequenceId);
 
             foreach (var sequence in filteredSequences)
             {
