@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Security.Claims;
 
-
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public static class ClaimsPrincipalExtensions
