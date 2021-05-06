@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Session;
-using SFA.DAS.ApplyService.Web.Extensions;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -93,7 +92,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     "http://schemas.portal.com/orgname");
                 if (!string.IsNullOrEmpty(orgName))
                 {
-                    var signInId = await GetClaim(IdentityConstants.Subject);
+                    var signInId = await GetClaim("sub");
                     var contact = await _usersApiClient.GetUserBySignInId(signInId);
                     if (contact != null)
                     {
@@ -131,7 +130,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             var signInId = Guid.Empty;
             try
             {
-                var value = await GetClaim(IdentityConstants.Subject);
+                var value = await GetClaim("sub");
                 Guid.TryParse(value, out signInId);
 
             }
