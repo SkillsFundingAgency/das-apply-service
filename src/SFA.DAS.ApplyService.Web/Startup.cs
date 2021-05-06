@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -21,8 +22,10 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web;
+using SFA.DAS.ApplyService.Web.Authorization;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Infrastructure.Services;
@@ -70,7 +73,18 @@ namespace SFA.DAS.ApplyService.Web
             IdentityModelEventSource.ShowPII = true;
         
             ConfigureAuth(services);
-            
+
+            services.AddSingleton<IAuthorizationHandler, AuthorizationHandler>();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AccessInProgressApplication", policy =>
+                {
+                    policy.Requirements.Add(new AccessApplicationRequirement());
+                    policy.Requirements.Add(new ApplicationStatusRequirement(ApplicationStatus.InProgress, ApplicationStatus.New));
+                });
+            });
+
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
             ConfigHttpClients(services);
