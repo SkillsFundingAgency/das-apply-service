@@ -46,16 +46,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             ApplyChanges(oversightReview, request, isNew);
             SaveChanges(oversightReview, application, isNew);
 
-            try
-            {
-                await _applicationUpdatedEmailService.SendEmail(request.ApplicationId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Unable to oversight update confirmation email for application: {request.ApplicationId}");
-            }
-
             _auditService.Save();
+
+            await _applicationUpdatedEmailService.SendEmail(request.ApplicationId);
 
             return true;
         }
