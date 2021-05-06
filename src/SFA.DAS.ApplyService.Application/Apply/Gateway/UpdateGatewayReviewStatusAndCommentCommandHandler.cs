@@ -52,6 +52,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             application.ApplyData.GatewayReviewDetails.OutcomeDateTime = DateTime.UtcNow;
             application.ApplyData.GatewayReviewDetails.Comments = request.GatewayReviewComment;
             application.ApplyData.GatewayReviewDetails.ExternalComments = request.GatewayReviewExternalComment;
+            application.ApplyData.GatewayReviewDetails.SubcontractingLimit = request.SubcontractingLimit;
 
             var updatedSuccessfully = await _gatewayRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, request.GatewayReviewStatus, request.UserId, request.UserName);
 

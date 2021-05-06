@@ -42,7 +42,18 @@
             <p class="govuk-body">
                 <a class="govuk-link" href="https://www.gov.uk/government/publications/conditions-of-acceptance-for-apprenticeship-training-providers" target="_blank">Read the Conditions of Acceptance (opens in new tab)</a>
             </p>
+        </div>
+        <div class="govuk-grid-column-two-thirds govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+                <span class="govuk-warning-text__assistive">Warning</span>
+                This will mark the start of your application.  Make sure you have read and understood the Conditions of Acceptance before you continue.
+            </strong>
+        </div>
+    </div>
 
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
             <form method="post" asp-action="ConfirmConditionsOfAcceptance" asp-controller="RoatpApplicationPreamble" novalidate>
                 <div id="TermsConditions" class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ConditionsAccepted">
                     <input type="hidden" asp-for="ApplicationRouteId" />
@@ -92,6 +103,19 @@
                     Save and continue
                 </button>
             </form>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">
+                The Education and Skills Funding Agency (ESFA) will use information:
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>in the public domain to support the assessment of application answers.</li>
+                <li>they already have on your organisation to support the assessment of application questions.</li>
+                <li>from your application to verify the people in control of your organisation. This is defined in the Persons with Significant Control Regs 2016.</li>
+            </ul>
         </div>
     </div>
 </main>

@@ -144,12 +144,12 @@ namespace SFA.DAS.ApplyService.Data
             return canSubmit;
         }
 
-        public async Task SubmitApplication(Guid applicationId, ApplyData applyData, FinancialData financialData, Guid submittedBy)
+        public async Task<bool> SubmitApplication(Guid applicationId, ApplyData applyData, FinancialData financialData, Guid submittedBy)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.OpenAsync();
-                await connection.ExecuteAsync(@"UPDATE Apply
+                var rowsAffected = await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET ApplicationStatus = @ApplicationStatus, 
                                                     ApplyData = @applyData, 
                                                     AssessorReviewStatus = @AssessorReviewStatus, 
@@ -174,6 +174,8 @@ namespace SFA.DAS.ApplyService.Data
                financialData);
 
                 connection.Close();
+
+                return rowsAffected > 0;
             }
         }
 

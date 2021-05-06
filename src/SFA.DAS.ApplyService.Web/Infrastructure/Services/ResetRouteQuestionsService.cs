@@ -55,19 +55,22 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting);
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_Supporting);
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Supporting);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Employer);
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_Supporting);
                     break;
                 case ApplicationRoute.SupportingProviderApplicationRoute:
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main);
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer);
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_MainEmployer);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_MainEmployer);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Employer);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Main);
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_MainEmployer);
                     break;
                 case ApplicationRoute.EmployerProviderApplicationRoute:
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main);
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting);
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_Supporting);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Main);
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Supporting);
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_Supporting);
                     break;
