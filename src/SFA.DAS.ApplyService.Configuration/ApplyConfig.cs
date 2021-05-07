@@ -13,7 +13,7 @@ namespace SFA.DAS.ApplyService.Configuration
 
         public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
         public AssessorServiceApiAuthentication AssessorServiceApiAuthentication { get; set; }
-        public ProviderRegisterApiAuthentication ProviderRegisterApiAuthentication { get; set; }
+
         public ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
 
         public CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }

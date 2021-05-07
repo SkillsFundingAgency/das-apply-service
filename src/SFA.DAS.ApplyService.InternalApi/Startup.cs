@@ -207,12 +207,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             var acceptHeaderValue = "application/json";
             var handlerLifeTime = TimeSpan.FromMinutes(5);
 
-            services.AddHttpClient<ProviderRegisterApiClient, ProviderRegisterApiClient>(config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.ProviderRegisterApiAuthentication.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
-            })
-            .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<ReferenceDataApiClient, ReferenceDataApiClient>(config =>
             {
