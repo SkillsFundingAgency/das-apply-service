@@ -83,6 +83,18 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Authorisation
             Assert.AreEqual(expectSucceeds, handlerContext.HasSucceeded);
         }
 
+        [TestCase("/Application/Download")]
+        [TestCase("/Application/DeleteFile")]
+        public async Task Handler_Falls_Back_To_ApplicationId_From_Route_For_ApplicationController(string route)
+        {
+            _httpContextAccessor.Setup(x => x.HttpContext.Request.Query).Returns(() => new QueryCollection());
+            _httpContextAccessor.Setup(x => x.HttpContext.Request.Path).Returns(() => new PathString($"{route}/{_applicationId}"));
+
+            var handlerContext = CreateHandlerContext(new AccessApplicationRequirement());
+            await _handler.HandleAsync(handlerContext);
+            Assert.IsTrue(handlerContext.HasSucceeded);
+        }
+
         private AuthorizationHandlerContext CreateHandlerContext(IAuthorizationRequirement requirement)
         {
             var handlerContext = new AuthorizationHandlerContext(new[]{ requirement }, new ClaimsPrincipal(), "");

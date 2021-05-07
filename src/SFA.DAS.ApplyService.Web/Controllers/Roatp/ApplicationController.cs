@@ -20,11 +20,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _apiClient = apiClient;
         }
 
-        public async Task<IActionResult> Download(Guid applicationId, int sequenceNo, int sectionId, string pageId, string questionId, string filename)
+        public async Task<IActionResult> Download(Guid Id, int sequenceNo, int sectionId, string pageId, string questionId, string filename)
         {
-            var selectedSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNo, sectionId);
+            var selectedSection = await _qnaApiClient.GetSectionBySectionNo(Id, sequenceNo, sectionId);
 
-            var response = await _qnaApiClient.DownloadFile(applicationId, selectedSection.Id, pageId, questionId, filename);
+            var response = await _qnaApiClient.DownloadFile(Id, selectedSection.Id, pageId, questionId, filename);
             var fileStream = await response.Content.ReadAsStreamAsync();
 
             return File(fileStream, response.Content.Headers.ContentType.MediaType, filename);
@@ -32,13 +32,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
 
-        public async Task<IActionResult> DeleteFile(Guid applicationId, int sequenceNo, int sectionId, string pageId, string questionId, string filename, string __redirectAction)
+        public async Task<IActionResult> DeleteFile(Guid Id, int sequenceNo, int sectionId, string pageId, string questionId, string filename, string __redirectAction)
         {
-            var selectedSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNo, sectionId);
+            var selectedSection = await _qnaApiClient.GetSectionBySectionNo(Id, sequenceNo, sectionId);
 
-            await _qnaApiClient.DeleteFile(applicationId, selectedSection.Id, pageId, questionId, filename);
+            await _qnaApiClient.DeleteFile(Id, selectedSection.Id, pageId, questionId, filename);
 
-            return RedirectToAction("Page", "RoatpApplication", new { applicationId = applicationId, sequenceId = sequenceNo, sectionId, pageId, redirectAction = __redirectAction });
+            return RedirectToAction("Page", "RoatpApplication", new { applicationId = Id, sequenceId = sequenceNo, sectionId, pageId, redirectAction = __redirectAction });
         }
     }
 }

@@ -31,7 +31,7 @@ namespace SFA.DAS.ApplyService.Web.Authorization
         {
             _logger.LogInformation("AccessApplicationRequirementHandler invoked");
 
-            var requestedApplicationId = _httpContextAccessor.HttpContext.Request.Query["ApplicationId"].ToString();
+            var requestedApplicationId = GetRequestedApplicationId();
             Apply application = null;
 
             if (Guid.TryParse(requestedApplicationId, out var applicationId))
@@ -78,6 +78,23 @@ namespace SFA.DAS.ApplyService.Web.Authorization
                     }
                 }
             }
+        }
+
+        private string GetRequestedApplicationId()
+        {
+            var result = _httpContextAccessor.HttpContext.Request.Query["ApplicationId"].ToString();
+
+            if(string.IsNullOrWhiteSpace(result))
+            {
+                var path = _httpContextAccessor.HttpContext.Request.Path.Value;
+
+                if (path.StartsWith("/Application/"))
+                {
+                    result = path.Split('/').Last();
+                }
+            }
+
+            return result;
         }
     }
 }
