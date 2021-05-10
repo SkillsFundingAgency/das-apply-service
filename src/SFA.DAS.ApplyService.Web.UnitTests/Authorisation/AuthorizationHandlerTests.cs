@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +17,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 namespace SFA.DAS.ApplyService.Web.UnitTests.Authorisation
 {
     [TestFixture]
-    public class AccessApplicationRequirementHandlerTests
+    public class AuthorizationHandlerTests
     {
         private AuthorizationHandler _handler;
 
@@ -43,6 +44,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Authorisation
 
             var queryCollection = new QueryCollection(new Dictionary<string, StringValues> {{ "ApplicationId", _applicationId.ToString()}});
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
+            _httpContextAccessor.Setup(x => x.HttpContext.Request.Method).Returns(() => HttpMethod.Get.Method);
             _httpContextAccessor.Setup(x => x.HttpContext.Request.Query).Returns(() => queryCollection);
 
             _handler = new AuthorizationHandler(_httpContextAccessor.Object,

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -82,7 +83,9 @@ namespace SFA.DAS.ApplyService.Web.Authorization
 
         private string GetRequestedApplicationId()
         {
-            var result = _httpContextAccessor.HttpContext.Request.Query["ApplicationId"].ToString();
+            var result = _httpContextAccessor.HttpContext.Request.Method == HttpMethod.Get.Method
+                ? _httpContextAccessor.HttpContext.Request.Query["ApplicationId"].ToString()
+                : _httpContextAccessor.HttpContext.Request.Form["ApplicationId"].ToString();
 
             if(string.IsNullOrWhiteSpace(result))
             {
