@@ -32,6 +32,9 @@
     var dobYearError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "DobYear") != null ? "govuk-input--error" : "";
     var showDobYearError = !String.IsNullOrEmpty(dobYearError);
 
+    var showDobError = showErrors && Model.ErrorMessages.Any(x => x.Field == "DobMonth" || x.Field == "DobYear");
+    var dobError = showDobError ? "govuk-input--error" : "";
+
 
     var emailError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "Email") != null ? "govuk-input--error" : "";
     var showEmailError = !String.IsNullOrEmpty(emailError);
@@ -185,13 +188,16 @@
         @if (showErrors)
         {
             <span class="govuk-error-message">
+                
                 @foreach (var dobMonthErrorMessage in errorMessages.Where(x => x.Field == "DobMonth"))
                 {
-                    @Html.Raw(dobMonthErrorMessage.ErrorMessage) <br />
+                    @Html.Raw(dobMonthErrorMessage.ErrorMessage)
+                    <br/>
                 }
                 @foreach (var dobYearErrorMessage in errorMessages.Where(x => x.Field == "DobYear"))
                 {
-                    @Html.Raw(dobYearErrorMessage.ErrorMessage) <br />
+                    @Html.Raw(dobYearErrorMessage.ErrorMessage)
+                    <br/>
                 }
             </span>
         }
@@ -200,7 +206,7 @@
                 <div class="govuk-form-group" sfa-validation-for="DobMonth">
                     <label class="govuk-label govuk-date-input__label" for="DobMonth">Month</label>
                     <input value="@Model.DobMonth"
-                           class="govuk-input govuk-date-input__input govuk-input--width-2 @dobMonthError"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2 @dobError"
                            id="DobMonth"
                            name="DobMonth"
                            type="number"
@@ -212,7 +218,7 @@
                 <div class="govuk-form-group" sfa-validation-for="DobYear">
                     <label class="govuk-label govuk-date-input__label" for="DobYear">Year</label>
                     <input value="@Model.DobYear"
-                           class="govuk-input govuk-date-input__input govuk-input--width-4 @dobYearError"
+                           class="govuk-input govuk-date-input__input govuk-input--width-4 @dobError"
                            id="DobYear"
                            name="DobYear"
                            type="number"
