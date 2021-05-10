@@ -6,25 +6,34 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
+using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Services.Files;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
     [TestFixture]
-    public class GatewayRegisterChecksControllerTests
+    public class RoatpGatewayControllerTests_ProviderRouteName
     {
         private readonly Guid _applicationId = Guid.NewGuid();
 
+        private Mock<ILogger<RoatpGatewayController>> _logger;
         private Mock<IMediator> _mediator;
-        private Mock<ILogger<GatewayRegisterChecksController>> _logger;
-        private GatewayRegisterChecksController _controller;
+        private Mock<IGatewayApiChecksService> _gatewayApiChecksService;
+        private Mock<IFileStorageService> _fileStorage;
+        private RoatpGatewayController _controller;
 
         [SetUp]
         public void Before_each_test()
         {
             _mediator = new Mock<IMediator>();
-            _logger = new Mock<ILogger<GatewayRegisterChecksController>>();
-            _controller = new GatewayRegisterChecksController(_mediator.Object, _logger.Object);
+            _logger = new Mock<ILogger<RoatpGatewayController>>();
+            _gatewayApiChecksService = new Mock<IGatewayApiChecksService>();
+            _gatewayApiChecksService.Setup(x => x.GetExternalApiCheckDetails(_applicationId)).ReturnsAsync(new ApplyGatewayDetails());
+            _fileStorage = new Mock<IFileStorageService>();
+            _controller = new RoatpGatewayController(_logger.Object, _mediator.Object, _gatewayApiChecksService.Object,
+                _fileStorage.Object);
         }
 
         [TestCase("Main")]

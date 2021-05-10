@@ -1,6 +1,4 @@
 ﻿using MediatR;
-using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Threading;
@@ -50,9 +48,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                         }
                     }
                     
-                    await _applyRepository.SubmitApplication(application.ApplicationId, application.ApplyData, request.FinancialData, submittingContact.Id);
-
-                    return true;
+                    return await _applyRepository.SubmitApplication(application.ApplicationId, application.ApplyData, request.FinancialData, submittingContact.Id);
                 }
             }
 

@@ -154,8 +154,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var gatewayReviewComment = "Some comment";
             var gatewayReviewExternalComment = "some external comment";
+            var subcontractingLimit = 100000;
 
-            var request = new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, _userId, _userName);
+            var request = new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, subcontractingLimit, _userId, _userName);
             await _controller.UpdateGatewayReviewStatusAndComment(request);
 
             _mediator.Verify(x => x.Send(request, It.IsAny<CancellationToken>()), Times.Once);

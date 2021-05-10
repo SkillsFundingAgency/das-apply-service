@@ -55,7 +55,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_MainEmployer));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_MainEmployer));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Main));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Employer)); 
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_MainEmployer));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting), Times.Never);
         }

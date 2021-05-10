@@ -66,7 +66,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
             _gatewayRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
 
             await _handler.Handle(new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus,
-                gatewayReviewComment, gatewayReviewExternalComment, _userId, _userName), CancellationToken.None);
+                gatewayReviewComment, gatewayReviewExternalComment, null, _userId, _userName), CancellationToken.None);
 
             _gatewayRepository.Verify(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName), Times.Once);
         }
@@ -80,7 +80,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
 
             _gatewayRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
 
-            var request = new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, _userId, _userName);
+            var request = new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, null, _userId, _userName);
 
             await _handler.Handle(request, CancellationToken.None);
 
@@ -96,7 +96,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
 
             _gatewayRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
 
-            var request = new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, _userId, _userName);
+            var request = new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, null, _userId, _userName);
 
             await _handler.Handle(request, CancellationToken.None);
 
@@ -118,7 +118,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
 
             _gatewayRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(_applicationId, It.IsAny<ApplyData>(), gatewayReviewStatus, _userId, _userName)).ReturnsAsync(true);
 
-            var request = new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, _userId, _userName);
+            var request = new UpdateGatewayReviewStatusAndCommentCommand(_applicationId, gatewayReviewStatus, gatewayReviewComment, gatewayReviewExternalComment, null, _userId, _userName);
 
             await _handler.Handle(request, CancellationToken.None);
 
