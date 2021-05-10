@@ -1407,6 +1407,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     result.Add(personData);
                 }
 
+                var partnerData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPartners);
+                if (partnerData != null && partnerData.DataRows != null && partnerData.DataRows.Count > 0)
+                {
+                    result.Add(partnerData);
+                }
+
                 var directorsData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
                 if (directorsData != null && directorsData.DataRows != null && directorsData.DataRows.Count > 0)
                 {
