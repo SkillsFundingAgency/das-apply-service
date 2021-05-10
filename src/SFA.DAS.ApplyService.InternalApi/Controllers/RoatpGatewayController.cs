@@ -200,5 +200,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             
             return Ok();
         }
+
+        [HttpGet("/Gateway/{applicationId}/ProviderRouteName")]
+        public async Task<string> GetProviderRouteName(Guid applicationId)
+        {
+            // NOTE: ProviderRouteName name isn't part of QnA. It's actually part of the Apply Details!
+            var application = await _mediator.Send(new GetApplicationRequest(applicationId));
+
+            var providerRouteName = application?.ApplyData?.ApplyDetails?.ProviderRouteName;
+
+            _logger.LogInformation($"Getting ProviderRouteName for application '{applicationId}' - ProviderRouteName '{providerRouteName}'");
+
+            return providerRouteName;
+        }
     }
 }

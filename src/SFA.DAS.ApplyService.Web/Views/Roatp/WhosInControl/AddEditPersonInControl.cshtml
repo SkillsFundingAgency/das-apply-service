@@ -10,6 +10,8 @@
     var dobYearError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "PersonInControlDobYear") != null ? "govuk-input--error" : "";
     var showDobYearError = !String.IsNullOrEmpty(dobYearError);
     var errorMessages = Model.ErrorMessages != null ? Model.ErrorMessages.DistinctBy(x => x.ErrorMessage) : null;
+    var showDobError = showErrors && Model.ErrorMessages.Any(x => x.Field == "PersonInControlDobMonth" || x.Field == "PersonInControlDobYear");
+    var dobError = showDobError ? "govuk-input--error" : "";
 }
 
 <div class="govuk-form-group @(showNameError ? "govuk-form-group--error" : "")" sfa-validation-for="PersonInControlName" sfa-validationerror-class="form-group-error">
@@ -53,7 +55,7 @@
                 <div class="govuk-form-group" sfa-validation-for="PersonInControlDobMonth">
                     <label class="govuk-label govuk-date-input__label" for="PersonInControlDobMonth">Month</label>
                     <input value="@Model.PersonInControlDobMonth"
-                           class="govuk-input govuk-date-input__input govuk-input--width-2 @dobMonthError"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2 @dobError"
                            id="PersonInControlDobMonth"
                            name="PersonInControlDobMonth"
                            type="number"
@@ -65,7 +67,7 @@
                 <div class="govuk-form-group" sfa-validation-for="PersonInControlDobYear">
                     <label class="govuk-label govuk-date-input__label" for="PersonInControlDobYear">Year</label>
                     <input value="@Model.PersonInControlDobYear"
-                           class="govuk-input govuk-date-input__input govuk-input--width-4 @dobYearError"
+                           class="govuk-input govuk-date-input__input govuk-input--width-4 @dobError"
                            id="PersonInControlDobYear"
                            name="PersonInControlDobYear"
                            type="number"

@@ -41,8 +41,7 @@
         public const string RoatpStatusDate = "PRE-93";
         public const string RoatpProviderRoute = "PRE-94";
         public const string LevyPayingEmployer = "PRE-95";
-        public const string ApplyProviderRoute = "YO-1";
-       
+        public const string ApplyProviderRoute = "YO-1";      
         public const string COAStage1Application = "COA-1";                  
     }
 
@@ -124,13 +123,11 @@
         public const int DeliveringApprenticeshipTraining = 7;
         public const int EvaluatingApprenticeshipTraining = 8;
         public const int Finish = 9;
-        public const int ConditionsOfAcceptance = 99;
     }
 
     public static class RoatpWorkflowSectionIds
     {
         public const int Preamble = 1;
-        public const int ConditionsOfAcceptance = 1;
 
         public static class YourOrganisation
         {
@@ -197,6 +194,7 @@
     {
         public const string Preamble = "1";
         public const string ProviderRoute = "2";
+        public const string ConditionsOfAcceptance = "3";
         public const string YourOrganisationIntroductionMain = "10";
         public const string YourOrganisationIntroductionEmployer = "11";
         public const string YourOrganisationIntroductionSupporting = "12";
@@ -204,7 +202,7 @@
         public const string YourOrganisationParentCompanyDetails = "21";
         public const string WebsiteManuallyEntered = "40";
         public const string YourOrganisationIcoNumber = "30";
-        public const string ConditionsOfAcceptance = "999999";
+        
 
         public static class WhosInControl
         {
@@ -311,7 +309,8 @@
             public const string ApprenticeshipStandards = "6230";
             public const string ApplicationFrameworks_MainEmployer = "6250";
             public const string ApplicationFrameworks_Supporting = "6260";
-            public const string OrganisationTransition_MainEmployer = "6252";
+            public const string OrganisationTransition_Main = "6252";
+            public const string OrganisationTransition_Employer = "6253";
             public const string OrganisationTransition_Supporting = "6262";
             public const string OnlyDeliveringApprenticeshipFrameworks_MainEmployer = "6254";
             public const string OnlyDeliveringApprenticeshipFrameworks_Supporting = "6264";
@@ -424,9 +423,10 @@
 
             CreateRoatpQuestionAnswers(applicationDetails, questions);
 
-            CreateApplyQuestionAnswers(applicationDetails, questions);
             CreateLevyEmployerQuestionAnswers(applicationDetails, questions);
 
+            CreateApplyQuestionAnswers(applicationDetails, questions);
+            
             return questions;
         }
         
@@ -465,8 +465,8 @@
                 QuestionId = RoatpPreambleQuestionIdConstants.COAStage1Application,
                 Value = "TRUE",
                 PageId = RoatpWorkflowPageIds.ConditionsOfAcceptance,
-                SequenceId = RoatpWorkflowSequenceIds.ConditionsOfAcceptance,
-                SectionId = RoatpWorkflowSectionIds.ConditionsOfAcceptance
+                SequenceId = RoatpWorkflowSequenceIds.Preamble,
+                SectionId = RoatpWorkflowSectionIds.Preamble
             });
         }
 

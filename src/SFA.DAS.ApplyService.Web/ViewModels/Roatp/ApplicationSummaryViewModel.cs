@@ -10,12 +10,10 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string OrganisationName { get; set; }
         public string TradingName { get; set; }
         public string ApplicationRouteId { get; set; }
-        public string EmailAddress { get; set; }
         public DateTime? SubmittedDate { get; set; }
         public string ExternalComments { get; set; }
-
-        public bool HideEmailAddress { get; set; }
-
+        public string EmailAddress { get; set; }
+        public string FinancialGrade { get; set; }
         public string ApplicationRouteShortText
         {
             get
