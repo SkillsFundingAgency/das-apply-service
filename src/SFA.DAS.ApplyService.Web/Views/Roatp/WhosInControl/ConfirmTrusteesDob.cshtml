@@ -18,7 +18,8 @@
                         <ul class="govuk-list govuk-error-summary__list">
                             @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
                             {
-                                <li><a href="#@(errorMessage.Field)" sfa-validation-for="@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                                var field = errorMessage.Field.Contains("_Year") ? errorMessage.Field.Replace("_Year", "_Month") : errorMessage.Field;
+                                <li><a href="#@field" sfa-validation-for="@field">@errorMessage.ErrorMessage</a></li>
                             }
                         </ul>
                     </div>
