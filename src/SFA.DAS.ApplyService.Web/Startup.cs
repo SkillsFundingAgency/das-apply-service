@@ -82,6 +82,10 @@ namespace SFA.DAS.ApplyService.Web
                     policy.Requirements.Add(new AccessApplicationRequirement());
                     policy.Requirements.Add(new ApplicationStatusRequirement(ApplicationStatus.InProgress, ApplicationStatus.New));
                 });
+                options.AddPolicy("AccessApplication", policy =>
+                {
+                    policy.Requirements.Add(new AccessApplicationRequirement());
+                });
             });
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });

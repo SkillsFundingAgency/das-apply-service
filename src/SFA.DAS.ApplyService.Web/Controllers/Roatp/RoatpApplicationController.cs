@@ -1245,6 +1245,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationSubmitted(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
@@ -1252,6 +1253,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationWithdrawn(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
@@ -1261,6 +1263,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationRemoved(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
@@ -1268,6 +1271,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationRejected(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
@@ -1276,6 +1280,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationApprovedAlreadyActive(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
@@ -1283,6 +1288,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationApproved(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
@@ -1290,6 +1296,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> FeedbackAdded(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
@@ -1297,6 +1304,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationUnsuccessful(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
