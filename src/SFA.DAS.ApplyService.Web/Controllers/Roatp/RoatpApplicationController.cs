@@ -520,6 +520,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [Route("change-ukprn")]
         [HttpGet]
+        [Authorize(Policy = "AccessInProgressApplication")]
         public IActionResult ChangeUkprn(Guid applicationId)
         {
             var model = new ChangeUkprnViewModel { ApplicationId = applicationId };
@@ -528,6 +529,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AccessInProgressApplication")]
         [Route("change-ukprn")]
         public IActionResult ChangeUkprn(ChangeUkprnViewModel model)
         {
@@ -546,6 +548,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [Route("change-ukprn/enter-new-ukprn")]
         [HttpGet]
+        [Authorize(Policy = "AccessInProgressApplication")]
         public async Task<IActionResult> EnterNewUkprn(Guid applicationId)
         {
             var applicationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
@@ -556,6 +559,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpPost]
         [Route("change-ukprn/enter-new-ukprn")]
+        [Authorize(Policy = "AccessInProgressApplication")]
         public async Task<IActionResult> EnterNewUkprn(EnterNewUkprnViewModel model)
         {
             if (!ModelState.IsValid)
