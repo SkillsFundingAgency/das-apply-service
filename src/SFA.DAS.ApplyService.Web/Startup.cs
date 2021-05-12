@@ -73,7 +73,7 @@ namespace SFA.DAS.ApplyService.Web
         
             ConfigureAuth(services);
 
-            services.AddSingleton<IAuthorizationHandler, AuthorizationHandler>();
+            services.AddTransient<IAuthorizationHandler, AuthorizationHandler>();
 
             services.AddAuthorization(options =>
             {
