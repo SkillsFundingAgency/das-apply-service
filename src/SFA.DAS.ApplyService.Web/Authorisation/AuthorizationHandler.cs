@@ -32,6 +32,12 @@ namespace SFA.DAS.ApplyService.Web.Authorization
         {
             _logger.LogInformation("AccessApplicationRequirementHandler invoked");
 
+            var pendingRequirements = context.PendingRequirements.ToList();
+            if (!pendingRequirements.Exists(x => x is AccessApplicationRequirement || x is ApplicationStatusRequirement))
+            {
+                return;
+            }
+
             var requestedApplicationId = GetRequestedApplicationId();
             Apply application = null;
 
@@ -46,7 +52,6 @@ namespace SFA.DAS.ApplyService.Web.Authorization
                 _logger.LogInformation("Unable to determine ApplicationId parameter");
             }
 
-            var pendingRequirements = context.PendingRequirements.ToList();
             foreach (var requirement in pendingRequirements)
             {
                 _logger.LogInformation($"Evaluating requirement: {requirement.GetType().Name}");
