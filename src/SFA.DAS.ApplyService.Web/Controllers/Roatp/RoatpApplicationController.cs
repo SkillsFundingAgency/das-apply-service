@@ -1120,6 +1120,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpGet]
         [Route("submit-application")]
+        [Authorize(Policy = "AccessInProgressApplication")]
         public async Task<IActionResult> SubmitApplication(Guid applicationId)
         {
             var model = new SubmitApplicationViewModel { ApplicationId = applicationId };
@@ -1132,6 +1133,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AccessInProgressApplication")]
         public async Task<IActionResult> ConfirmSubmitApplication(SubmitApplicationViewModel model)
         {
             var canUpdate = await CanUpdateApplication(model.ApplicationId);
