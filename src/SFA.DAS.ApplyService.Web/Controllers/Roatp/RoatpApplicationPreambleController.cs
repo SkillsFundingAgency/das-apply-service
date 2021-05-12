@@ -74,7 +74,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 var model = new SelectApplicationRouteViewModel
                 {
-                    ApplicationRoutes = await GetApplicationRoutesForOrganisation(),
+                    ApplicationRoutes = await GetApplicationRoutes(),
                     ErrorMessages = new List<ValidationErrorDetail>()
                 };
 
@@ -230,7 +230,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             if (!ModelState.IsValid)
             {
-                model.ApplicationRoutes = await GetApplicationRoutesForOrganisation();
+                model.ApplicationRoutes = await GetApplicationRoutes();
                 model.ErrorMessages = new List<ValidationErrorDetail>();
                 var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
                 foreach (var modelError in modelErrors)
@@ -367,7 +367,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var model = new SelectApplicationRouteViewModel();
 
-            var applicationRoutes = await GetApplicationRoutesForOrganisation();
+            var applicationRoutes = await GetApplicationRoutes();
 
             model.ApplicationRoutes = applicationRoutes;
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
@@ -385,7 +385,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             if (model.ApplicationRouteId == ApplicationRoute.EmployerProviderApplicationRoute)
             {
-                var applicationRoutes = await GetApplicationRoutesForOrganisation();
+                var applicationRoutes = await GetApplicationRoutes();
                 var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
                 applicationDetails.ApplicationRoute = applicationRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId);
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
@@ -576,7 +576,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             var model = new SelectApplicationRouteViewModel { ApplicationId = applicationId };
             PopulateGetHelpWithQuestion(model, "ApplicationRoute");
-            model.ApplicationRoutes = await GetApplicationRoutesForOrganisation(applicationId);
+            model.ApplicationRoutes = await GetApplicationRoutes();
             var applicationRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
             model.ApplicationRouteId = Convert.ToInt32(applicationRoute.Value);
 
@@ -731,46 +731,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return true;
         }
 
-        private async Task<List<ApplicationRoute>> GetApplicationRoutesForOrganisation()
+        private async Task<List<ApplicationRoute>> GetApplicationRoutes()
         {
-            return await GetApplicationRoutesForOrganisation(Guid.Empty);
-        }
+            return  (await _roatpApiClient.GetApplicationRoutes()).ToList();
 
-        private async Task<List<ApplicationRoute>> GetApplicationRoutesForOrganisation(Guid applicationId)
-        {
-            ApplicationRoute existingRoute = null;
-            var applicationRoutes = (await _roatpApiClient.GetApplicationRoutes()).ToList();
-
-            if (applicationId == Guid.Empty)
-            {
-                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-                if (applicationDetails?.RoatpRegisterStatus != null
-                && applicationDetails.RoatpRegisterStatus.UkprnOnRegister
-                && applicationDetails.RoatpRegisterStatus.StatusId != OrganisationStatus.Removed)
-                {
-                    existingRoute = applicationRoutes.FirstOrDefault(x => x.Id == applicationDetails.RoatpRegisterStatus.ProviderTypeId);
-                }
-            }
-            else
-            {
-                var ukprn = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UKPRN);
-                var roatpRegisterStatus = await _roatpApiClient.GetOrganisationRegisterStatus(Convert.ToInt32(ukprn.Value));
-
-                if (roatpRegisterStatus != null
-                    && roatpRegisterStatus.UkprnOnRegister
-                    && roatpRegisterStatus.StatusId != OrganisationStatus.Removed)
-                {
-                    existingRoute = applicationRoutes.FirstOrDefault(x => x.Id == roatpRegisterStatus.ProviderTypeId);
-                }
-            }
-
-            if (existingRoute != null)
-            {
-                applicationRoutes.Remove(existingRoute);
-            }
-
-            return applicationRoutes;
         }
     }
 }
