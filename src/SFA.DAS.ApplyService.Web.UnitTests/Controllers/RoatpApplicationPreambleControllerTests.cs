@@ -1599,7 +1599,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             model.ApplicationId.Should().Be(applicationId);
             model.ApplicationRouteId.Should().Be(applyApplicationRouteId);
-            model.ApplicationRoutes.Should().Contain(route => route.Id == existingProviderStatus.ProviderTypeId);
+            model.ApplicationRoutes.Count().Should().Be(3);
         }
 
         [Test]
