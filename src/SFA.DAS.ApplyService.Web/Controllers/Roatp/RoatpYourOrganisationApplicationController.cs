@@ -10,7 +10,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
-    [Authorize]
+    [Authorize(Policy = "AccessInProgressApplication")]
     public class RoatpYourOrganisationApplicationController : Controller
     {
         private readonly ILogger<RoatpYourOrganisationApplicationController> _logger;

@@ -531,6 +531,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
+        [Authorize(Policy = "AccessInProgressApplication")]
         public IActionResult ConfirmChangeRoute(Guid applicationId)
         {
             var model = new ConfirmChangeRouteViewModel { ApplicationId = applicationId };
@@ -539,6 +540,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
+        [Authorize(Policy = "AccessInProgressApplication")]
         public IActionResult SubmitConfirmChangeRoute(ConfirmChangeRouteViewModel model)
         {
             if (!ModelState.IsValid)
@@ -569,6 +571,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
+        [Authorize(Policy = "AccessInProgressApplication")]
         public async Task<IActionResult> ChangeApplicationProviderRoute(Guid applicationId)
         {
             var model = new SelectApplicationRouteViewModel { ApplicationId = applicationId };
@@ -581,6 +584,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
+        [Authorize(Policy = "AccessInProgressApplication")]
         public async Task<IActionResult> UpdateApplicationProviderRoute(SelectApplicationRouteViewModel model)
         {
             if (model.ApplicationRouteId == ApplicationRoute.EmployerProviderApplicationRoute && model.LevyPayingEmployer != "Y")
