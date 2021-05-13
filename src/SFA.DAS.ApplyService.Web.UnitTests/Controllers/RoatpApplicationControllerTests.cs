@@ -58,16 +58,20 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IRoatpOrganisationVerificationService> _roatpOrganisationVerificationService;
         private Mock<ITaskListOrchestrator> _taskListOrchestrator;
         private Mock<IUkrlpApiClient> _ukrlpApiClient;
-        private Mock<IApplicationApiClient> _applicationApiClient;
 
         [SetUp]
         public void Before_each_test()
         {
+            var signInId = Guid.NewGuid();
+            var givenNames = "Test";
+            var familyName = "User";
+
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
-                new Claim(ClaimTypes.Name, "example name"),
+                new Claim(ClaimTypes.Name, $"{givenNames} {familyName}"),
                 new Claim(ClaimTypes.NameIdentifier, "1"),
                 new Claim("Email", "test@test.com"),
+                new Claim("sub", signInId.ToString()),
                 new Claim("custom-claim", "example claim value"),
             }, "mock"));
 
@@ -109,12 +113,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 }
             };
 
+            _userService.Setup(x => x.GetSignInId()).ReturnsAsync(signInId);
             _userService.Setup(x => x.ValidateUser(It.IsAny<string>())).ReturnsAsync(true);
+
             var contact = new Contact
             {
                 Id = Guid.NewGuid(),
-                GivenNames = "Test",
-                FamilyName = "User"
+                SigninId = signInId,
+                GivenNames = givenNames,
+                FamilyName = familyName
             };
             _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(contact);
         }
