@@ -152,7 +152,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 case ApplicationStatus.Rejected:
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
                         return RedirectToAction("ApplicationUnsuccessful", new { applicationId });
-                    return RedirectToAction("ApplicationRejected", new { applicationId });
+                    return RedirectToAction("ApplicationRejected", "RoatpOverallOutcomes", new { applicationId });
                 case ApplicationStatus.FeedbackAdded:
                     return RedirectToAction("FeedbackAdded", new { applicationId });
                 case ApplicationStatus.Withdrawn:
@@ -1568,7 +1568,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 SubmittedDate = applicationData?.ApplicationSubmittedOn,
                 ExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
                 EmailAddress = User.GetEmail(),
-                FinancialGrade = application?.FinancialGrade?.SelectedGrade
+                FinancialReviewStatus = application?.FinancialReviewStatus,
+                FinancialGrade = application?.FinancialGrade?.SelectedGrade,
+                FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
+                GatewayReviewStatus = application?.GatewayReviewStatus,
+                ModerationStatus = application?.ModerationStatus
             };
             return model;
         }

@@ -1294,6 +1294,11 @@
     white-space: pre-line;
 }
 
+.das-multiline-text-bottom-margin {
+    white-space: pre-line;
+    margin-bottom: 50px;
+}
+
 .hint--no-color {
     font-family: GDS Transport, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -1304,3 +1309,15 @@
     display: block;
     margin-bottom: 15px;
 }
+
+.status--fail {
+    padding-left: 15px;
+    border-left: 5px solid #d4351c;
+    margin-bottom: 20px;
+}
+
+.status--pass {
+    padding-left: 15px;
+    border-left: 5px solid #00703c;
+    margin-bottom: 20px;
+} 

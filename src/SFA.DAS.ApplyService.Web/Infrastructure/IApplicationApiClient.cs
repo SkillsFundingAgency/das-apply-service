@@ -7,8 +7,10 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
@@ -55,5 +57,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus, string userId);
 
         Task<GetOversightReviewResponse> GetOversightReview(Guid applicationId);
+        Task<List<AssessorSequence>> GetClarificationSequences(Guid applicationId);
+
+        Task<List<ClarificationPageReviewOutcome>> GetAllClarificationPageReviewOutcomes(Guid applicationId, string userId);
+
+        Task<AssessorPage> GetAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId);
     }
 }
