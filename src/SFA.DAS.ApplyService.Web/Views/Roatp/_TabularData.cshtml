@@ -32,7 +32,7 @@
         <tr class="govuk-table__row">
             @foreach (var title in tableData.HeadingTitles)
             {
-                <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
+                <th class="govuk-table__header das-multiline-text" scope="col">@title</th>
             }
         </tr>
         </thead>
@@ -43,7 +43,7 @@
                 @for (var index = 0; index < dataRow.Columns.Count; index++)
                 {
                     var column = dataRow.Columns[index];
-                    if (index+1==monthField)
+                    if (index + 1 == monthField)
                     {
                         column = DateOfBirthFormatter.FormatMonth(column);
                     }
@@ -53,3 +53,4 @@
         }
         </tbody>
     </table>
+}

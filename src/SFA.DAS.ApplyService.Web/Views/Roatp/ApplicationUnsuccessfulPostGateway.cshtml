@@ -165,7 +165,7 @@ in sectionPage.PageOfAnswers
                                                             break;
                                                         default:
 
-                                                            <td class="govuk-table__cell das-multiline-text-bottom-margin">@Html.Raw(@answer.Value)</td>
+                                                            <td class="govuk-table__cell das-multiline-text-bottom-margin das-multiline-text-bottom-margin">@answer.Value</td>
 
                                                             break;
                                                     }
@@ -191,8 +191,8 @@ in sectionPage.PageOfAnswers
                                                         <ul class="govuk-list">
                                                             @foreach (var guidanceText in guidance.GuidanceInformation)
                                                             {
-                                                                <li>
-                                                                    @Html.Raw(guidanceText)
+                                                                <li class="das-multiline-text-bottom-margin">
+                                                                    @guidanceText
                                                                 </li>
                                                             }
                                                         </ul>
