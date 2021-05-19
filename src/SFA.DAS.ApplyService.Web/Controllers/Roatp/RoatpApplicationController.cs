@@ -136,39 +136,40 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             _logger.LogDebug("Applications controller action completed");
 
-            switch (applicationStatus)
-            {
-                case ApplicationStatus.New:
-                case ApplicationStatus.InProgress:
-                    return RedirectToAction("TaskList", new { applicationId });
-                case ApplicationStatus.Approved:
-                {
-                    var oversightReview = await _apiClient.GetOversightReview(applicationId);
-                    if (oversightReview?.Status== OversightReviewStatus.SuccessfulAlreadyActive)
-                        return RedirectToAction("ApplicationApprovedAlreadyActive", new { applicationId });
-
-                    return RedirectToAction("ApplicationApproved", new { applicationId });
-                    }
-                case ApplicationStatus.Rejected:
-                    if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
-                        return RedirectToAction("ApplicationUnsuccessful", new { applicationId });
-                    return RedirectToAction("ApplicationRejected", "RoatpOverallOutcomes", new { applicationId });
-                case ApplicationStatus.FeedbackAdded:
-                    return RedirectToAction("FeedbackAdded", new { applicationId });
-                case ApplicationStatus.Withdrawn:
-                    return RedirectToAction("ApplicationWithdrawn", new { applicationId });
-                case ApplicationStatus.Removed:
-                    return RedirectToAction("ApplicationRemoved", new { applicationId });
-                case ApplicationStatus.GatewayAssessed:
-                    if(application.GatewayReviewStatus == GatewayReviewStatus.Reject)
-                        return RedirectToAction("ApplicationRejected", new { applicationId });
-                    return RedirectToAction("ApplicationSubmitted", new { applicationId });
-                case ApplicationStatus.Submitted:
-                case ApplicationStatus.Resubmitted:
-                    return RedirectToAction("ApplicationSubmitted", new { applicationId });
-                default:
-                    return RedirectToAction("TaskList", new { applicationId });
-            }
+            return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcomes", new {applicationId, applicationStatus});
+            // switch (applicationStatus)
+            // {
+            //     case ApplicationStatus.New:
+            //     case ApplicationStatus.InProgress:
+            //         return RedirectToAction("TaskList", new { applicationId });
+            //     case ApplicationStatus.Approved:
+            //     {
+            //         var oversightReview = await _apiClient.GetOversightReview(applicationId);
+            //         if (oversightReview?.Status== OversightReviewStatus.SuccessfulAlreadyActive)
+            //             return RedirectToAction("ApplicationApprovedAlreadyActive", "RoatpOverallOutcomes", new { applicationId });
+            //
+            //         return RedirectToAction("ApplicationApproved", "RoatpOverallOutcomes", new { applicationId });
+            //         }
+            //     case ApplicationStatus.Rejected:
+            //         if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
+            //             return RedirectToAction("ApplicationUnsuccessful", new { applicationId });
+            //         return RedirectToAction("ApplicationRejected", "RoatpOverallOutcomes", new { applicationId });
+            //     case ApplicationStatus.FeedbackAdded:
+            //         return RedirectToAction("FeedbackAdded", "RoatpOverallOutcomes", new { applicationId });
+            //     case ApplicationStatus.Withdrawn:
+            //         return RedirectToAction("ApplicationWithdrawn", "RoatpOverallOutcomes", new { applicationId });
+            //     case ApplicationStatus.Removed:
+            //         return RedirectToAction("ApplicationRemoved", "RoatpOverallOutcomes", new { applicationId });
+            //     case ApplicationStatus.GatewayAssessed:
+            //         if(application.GatewayReviewStatus == GatewayReviewStatus.Reject)
+            //             return RedirectToAction("ApplicationRejectedRejected", "RoatpOverallOutcomes", new { applicationId });
+            //         return RedirectToAction("ApplicationSubmitted", "RoatpOverallOutcomes", new { applicationId });
+            //     case ApplicationStatus.Submitted:
+            //     case ApplicationStatus.Resubmitted:
+            //         return RedirectToAction("ApplicationSubmitted", "RoatpOverallOutcomes", new { applicationId });
+            //     default:
+            //         return RedirectToAction("TaskList", new { applicationId });
+            // }
         }
 
 
@@ -1238,7 +1239,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 };
 
                 await _submitApplicationEmailService.SendSubmitConfirmationEmail(applicationSubmitConfirmation);
-                return RedirectToAction("ApplicationSubmitted", new { model.ApplicationId });
+                return RedirectToAction("ApplicationSubmitted","RoatpOverallOutcomes", new { model.ApplicationId });
             }
             else
             {
@@ -1246,87 +1247,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationSubmitted(Guid applicationId)
-        {
-            var model = await BuildApplicationSummaryViewModel(applicationId);
-            return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
-        }
-
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationWithdrawn(Guid applicationId)
-        {
-            var model = await BuildApplicationSummaryViewModel(applicationId);
-
-            return View("~/Views/Roatp/ApplicationWithdrawn.cshtml", model);
-        }
-
-
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationRemoved(Guid applicationId)
-        {
-            var model = await BuildApplicationSummaryViewModel(applicationId);
-            return View("~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", model);
-        }
-
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationRejected(Guid applicationId)
-        {
-            var model = await BuildApplicationSummaryViewModel(applicationId);
-            return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
-        }
-
-
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationApprovedAlreadyActive(Guid applicationId)
-        {
-            var model = await BuildApplicationSummaryViewModel(applicationId);
-            return View("~/Views/Roatp/ApplicationApprovedAlreadyActive.cshtml", model);
-        }
-
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationApproved(Guid applicationId)
-        {
-            var model = await BuildApplicationSummaryViewModel(applicationId);
-            return View("~/Views/Roatp/ApplicationApproved.cshtml", model);
-        }
-
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> FeedbackAdded(Guid applicationId)
-        {
-            var model = await BuildApplicationSummaryViewModel(applicationId);
-            return View("~/Views/Roatp/FeedbackAdded.cshtml", model);
-        }
-
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationUnsuccessful(Guid applicationId)
-        {
-            var application = await _apiClient.GetApplication(applicationId);
-            var applicationData = application.ApplyData.ApplyDetails;
-
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationId = application.ApplicationId,
-                UKPRN = applicationData.UKPRN,
-                OrganisationName = applicationData.OrganisationName,
-                TradingName = applicationData.TradingName,
-                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
-                ApplicationReference = applicationData.ReferenceNumber,
-                EmailAddress = User.GetEmail(),
-                SubmittedDate = applicationData.ApplicationSubmittedOn,
-                ExternalComments = application.ApplyData.GatewayReviewDetails.ExternalComments
-            };
-
-            return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
-        }
 
         private async Task SavePreambleInformation(Guid applicationId, ApplicationDetails applicationDetails)
         {
@@ -1552,30 +1472,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }            
         }
 
-        private async Task<ApplicationSummaryViewModel> BuildApplicationSummaryViewModel(Guid applicationId)
-        {
-            var application = await _apiClient.GetApplication(applicationId);
-            var applicationData = application.ApplyData.ApplyDetails;
-
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationId = application.ApplicationId,
-                UKPRN = applicationData.UKPRN,
-                OrganisationName = applicationData.OrganisationName,
-                TradingName = applicationData.TradingName,
-                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
-                ApplicationReference = applicationData.ReferenceNumber,
-                SubmittedDate = applicationData?.ApplicationSubmittedOn,
-                ExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
-                EmailAddress = User.GetEmail(),
-                FinancialReviewStatus = application?.FinancialReviewStatus,
-                FinancialGrade = application?.FinancialGrade?.SelectedGrade,
-                FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
-                GatewayReviewStatus = application?.GatewayReviewStatus,
-                ModerationStatus = application?.ModerationStatus
-            };
-            return model;
-        }
 
         private static DateTime? AccountingReferenceDate(JObject applicationData)
         {
