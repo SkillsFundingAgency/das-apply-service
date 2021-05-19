@@ -314,7 +314,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
             if (!canUpdate)
             {
-                RedirectToAction("TaskList", "RoatpApplication", new {applicationId}, $"Sequence_{sequenceId}");
+                return RedirectToAction("TaskList", "RoatpApplication", new {applicationId}, $"Sequence_{sequenceId}");
             }
             
             var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
@@ -511,6 +511,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [Route("change-ukprn")]
         [HttpGet]
+        [Authorize(Policy = "AccessInProgressApplication")]
         public IActionResult ChangeUkprn(Guid applicationId)
         {
             var model = new ChangeUkprnViewModel { ApplicationId = applicationId };
@@ -519,6 +520,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AccessInProgressApplication")]
         [Route("change-ukprn")]
         public IActionResult ChangeUkprn(ChangeUkprnViewModel model)
         {
@@ -537,6 +539,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [Route("change-ukprn/enter-new-ukprn")]
         [HttpGet]
+        [Authorize(Policy = "AccessInProgressApplication")]
         public async Task<IActionResult> EnterNewUkprn(Guid applicationId)
         {
             var applicationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
@@ -547,6 +550,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpPost]
         [Route("change-ukprn/enter-new-ukprn")]
+        [Authorize(Policy = "AccessInProgressApplication")]
         public async Task<IActionResult> EnterNewUkprn(EnterNewUkprnViewModel model)
         {
             if (!ModelState.IsValid)
@@ -1107,6 +1111,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpGet]
         [Route("submit-application")]
+        [Authorize(Policy = "AccessInProgressApplication")]
         public async Task<IActionResult> SubmitApplication(Guid applicationId)
         {
             var model = new SubmitApplicationViewModel { ApplicationId = applicationId };
@@ -1119,6 +1124,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AccessInProgressApplication")]
         public async Task<IActionResult> ConfirmSubmitApplication(SubmitApplicationViewModel model)
         {
             var canUpdate = await CanUpdateApplication(model.ApplicationId);
@@ -1232,6 +1238,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationSubmitted(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
@@ -1239,6 +1246,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationWithdrawn(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
@@ -1248,6 +1256,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationRemoved(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
@@ -1255,6 +1264,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationRejected(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
@@ -1263,6 +1273,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationApprovedAlreadyActive(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
@@ -1270,6 +1281,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationApproved(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
@@ -1277,6 +1289,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> FeedbackAdded(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
@@ -1284,6 +1297,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationUnsuccessful(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);

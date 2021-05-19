@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -14,6 +15,7 @@ using SFA.DAS.ApplyService.Web.ViewModels.Roatp.ManagementHierarchy;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
+    [Authorize(Policy = "AccessInProgressApplication")]
     public class RoatpManagementHierarchyController  : RoatpApplyControllerBase
     {
         private readonly IQnaApiClient _qnaApiClient;

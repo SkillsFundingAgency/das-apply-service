@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Security.Claims;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
