@@ -17,8 +17,8 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Application.Services;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
-{    
-    [Authorize]
+{
+    [Authorize(Policy = "AccessInProgressApplication")]
     public class RoatpWhosInControlApplicationController : RoatpApplyControllerBase
     {
         private readonly IQnaApiClient _qnaApiClient;

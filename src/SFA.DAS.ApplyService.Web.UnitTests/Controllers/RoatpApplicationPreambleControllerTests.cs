@@ -1566,7 +1566,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
           }
 
         [Test]
-        public void Provider_changing_route_mid_application_currently_active_on_the_register_is_only_offered_other_provider_routes()
+        public void Provider_changing_route_mid_application_currently_active_on_the_register_is_offered_all_provider_routes()
         {
             var applicationId = Guid.NewGuid();
             var applyApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute;
@@ -1599,7 +1599,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             model.ApplicationId.Should().Be(applicationId);
             model.ApplicationRouteId.Should().Be(applyApplicationRouteId);
-            model.ApplicationRoutes.Should().NotContain(route => route.Id == existingProviderStatus.ProviderTypeId);
+            model.ApplicationRoutes.Count().Should().Be(3);
         }
 
         [Test]

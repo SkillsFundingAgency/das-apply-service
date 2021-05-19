@@ -8,7 +8,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
 
-    [Authorize]
+    [Authorize(Policy = "AccessInProgressApplication")]
     public class ApplicationController: Controller
     {
         private readonly IQnaApiClient _qnaApiClient;

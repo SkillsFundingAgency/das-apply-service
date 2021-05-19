@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Configuration
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
         AssessorServiceApiAuthentication AssessorServiceApiAuthentication { get; set; }
-        ProviderRegisterApiAuthentication ProviderRegisterApiAuthentication { get; set; }
+
         ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
 
         CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
