@@ -27,5 +27,19 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             return value;
         }
+
+        public static string GetGivenName(this ClaimsPrincipal principal)
+        {
+            string value = principal.FindFirstValue("given_name");
+
+            return value;
+        }
+
+        public static string GetFirstName(this ClaimsPrincipal principal)
+        {
+            string value = principal.FindFirstValue("family_name");
+
+            return value;
+        }
     }
 }

@@ -8,7 +8,6 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Start;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
@@ -42,7 +41,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<ILogger<RoatpApplicationController>> _logger;
         private Mock<IUsersApiClient> _usersApiClient;
         private Mock<ISessionService> _sessionService;
-        private Mock<IConfigurationService> _configService;
         private Mock<IUserService> _userService;
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IQuestionPropertyTokeniser> _questionPropertyTokeniser;
@@ -58,7 +56,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IRoatpOrganisationVerificationService> _roatpOrganisationVerificationService;
         private Mock<ITaskListOrchestrator> _taskListOrchestrator;
         private Mock<IUkrlpApiClient> _ukrlpApiClient;
-        private Mock<IApplicationApiClient> _applicationApiClient;
 
         [SetUp]
         public void Before_each_test()
@@ -75,7 +72,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _logger = new Mock<ILogger<RoatpApplicationController>>();
             _usersApiClient = new Mock<IUsersApiClient>();
             _sessionService = new Mock<ISessionService>();
-            _configService = new Mock<IConfigurationService>();
             _userService = new Mock<IUserService>();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _pagesWithSectionsFlowService = new Mock<IPagesWithSectionsFlowService>();
@@ -93,7 +89,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _taskListOrchestrator = new Mock<ITaskListOrchestrator>();
             _ukrlpApiClient = new Mock<IUkrlpApiClient>();
 
-            _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
+            _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object,
                                                          _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, 
                                                           _pagesWithSectionsFlowService.Object,
                                                          _questionPropertyTokeniser.Object, _pageOverrideConfiguration.Object,
@@ -109,7 +105,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 }
             };
 
-            _userService.Setup(x => x.ValidateUser(It.IsAny<string>())).ReturnsAsync(true);
             var contact = new Contact
             {
                 Id = Guid.NewGuid(),

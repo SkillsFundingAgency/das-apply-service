@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Start;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
@@ -39,7 +38,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IApplicationApiClient _apiClient;
         private readonly ILogger<RoatpApplicationController> _logger;
         private readonly IUsersApiClient _usersApiClient;
-        private readonly IConfigurationService _configService;
         private readonly IUserService _userService;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IQuestionPropertyTokeniser _questionPropertyTokeniser;
@@ -61,7 +59,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private const string InvalidCheckBoxListSelectionErrorMessage = "If your answer is 'none of the above', you must only select that option";
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
-            ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
+            ISessionService sessionService, IUserService userService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient,
             IPagesWithSectionsFlowService pagesWithSectionsFlowService,
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
@@ -75,7 +73,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _apiClient = apiClient;
             _logger = logger;
             _sessionService = sessionService;
-            _configService = configService;
             _userService = userService;
             _usersApiClient = usersApiClient;
             _qnaApiClient = qnaApiClient;
@@ -99,7 +96,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var user = User.Identity.Name;
 
-            if (!await _userService.ValidateUser(user))
+            if (string.IsNullOrWhiteSpace(user))
                 return RedirectToAction("PostSignIn", "Users");
 
             _logger.LogDebug($"Got LoggedInUser from Session: {user}");
