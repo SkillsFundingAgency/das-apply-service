@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             _assessorLookupService = assessorLookupService;
         }
 
-        public async Task AugmentModelWithModerationFailDetails(ApplicationSummaryWithModeratorDetails model,
+        public async Task AugmentModelWithModerationFailDetails(ApplicationSummaryWithModeratorDetailsViewModel model,
             string userId)
         {
             var sequences = await _apiClient.GetClarificationSequences(model.ApplicationId);
@@ -299,7 +299,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
     public interface IOverallOutcomeAugmentationService
     {
-         Task AugmentModelWithModerationFailDetails(ApplicationSummaryWithModeratorDetails model,
+         Task AugmentModelWithModerationFailDetails(ApplicationSummaryWithModeratorDetailsViewModel model,
             string userId);
     }
 }

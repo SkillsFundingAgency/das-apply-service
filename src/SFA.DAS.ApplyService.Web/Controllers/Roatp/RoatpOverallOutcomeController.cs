@@ -31,6 +31,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
 
         [HttpGet]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ProcessApplicationStatus(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
@@ -52,7 +53,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.Rejected: //this logic will need to change with the coming status update story
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
                         return RedirectToAction("ApplicationUnsuccessful", new {applicationId});
-                    return RedirectToAction("ApplicationCheckedAgainstModeration",  new {applicationId});
+                    return RedirectToAction("ApplicationUnsuccessful",  new {applicationId});
                 case ApplicationStatus.FeedbackAdded:
                     return RedirectToAction("FeedbackAdded", new {applicationId});
                 case ApplicationStatus.Withdrawn:
@@ -74,15 +75,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         [HttpGet]
         [Route("ApplicationStatus")]
-        public async Task<IActionResult> ApplicationCheckedAgainstModeration(Guid applicationId)
+        [Authorize(Policy = "AccessApplication")]
+        public async Task<IActionResult> ApplicationUnsuccessful(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
             var applicationData = application.ApplyData.ApplyDetails;
 
             var oversightReview = await _apiClient.GetOversightReview(applicationId);
-            // special page for pmo fail and/or moderation fail
+            
 
-            var applicationUnsuccessful = false;
+            // this will change based on coming stories and overturns etc
+            var applicationGatewayReviewStatusFail = (application.GatewayReviewStatus == GatewayReviewStatus.Fail);
+
+            if (applicationGatewayReviewStatusFail)
+            {
+                var unsuccessfulModel = await BuildApplicationSummaryViewModel(applicationId);
+                return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", unsuccessfulModel);
+            }
+
             var applicationUnsuccessfulModerationFail = false;
             if (application?.GatewayReviewStatus == GatewayAnswerStatus.Pass)
             {
@@ -91,89 +101,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     && oversightReview.ModerationApproved.HasValue
                     && oversightReview.ModerationApproved == true)
                 {
-                    applicationUnsuccessful = true;
                     applicationUnsuccessfulModerationFail = true;
                 }
-
-                if (application?.FinancialReviewStatus != null
-                    && application?.FinancialReviewStatus == FinancialReviewStatus.Fail)
-                    applicationUnsuccessful = true;
             }
 
-            if (applicationUnsuccessful)
-            {
-                var model = new ApplicationSummaryWithModeratorDetails
-                {
-                    ApplicationId = application.ApplicationId,
-                    UKPRN = applicationData.UKPRN,
-                    OrganisationName = applicationData.OrganisationName,
-                    TradingName = applicationData.TradingName,
-                    ApplicationRouteId = applicationData.ProviderRoute.ToString(),
-                    ApplicationReference = applicationData.ReferenceNumber,
-                    SubmittedDate = applicationData?.ApplicationSubmittedOn,
-                    ExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
-                    EmailAddress = User.GetEmail(),
-                    FinancialReviewStatus = application?.FinancialReviewStatus,
-                    FinancialGrade = application?.FinancialGrade?.SelectedGrade,
-                    FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
-                    GatewayReviewStatus = application?.GatewayReviewStatus,
-                    ModerationStatus = application?.ModerationStatus
-                };
-
-                if (applicationUnsuccessfulModerationFail)
-                {
-                    await _augmentationService.AugmentModelWithModerationFailDetails(model,
-                        User.GetUserId().ToString());
-                }
-                return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", model);
-            }
-
-            return RedirectToAction("ApplicationUnsuccessful", new { applicationId });
-        }
-
-        // private async Task AugmentModelWithModerationFailDetails(ApplicationSummaryWithModeratorDetails model, string userId)
-        // {
-        //     // add much more details to the model if moderation is a fail
-        //     // build the model
-        //
-        //     // A check clarifications for failed details
-        //     var sequences = await _apiClient.GetClarificationSequences(model.ApplicationId);
-        //
-        //     var passFailDetails = await _apiClient.GetAllClarificationPageReviewOutcomes(model.ApplicationId, userId);
-        //     var failedDetails = passFailDetails.Where(x => x.ModeratorReviewStatus == ModerationStatus.Fail).ToList();
-        //
-        //     // add the failed question pages to the sections under each sequence where fails have been found
-        //     if (failedDetails.Any())
-        //     {
-        //         AddPagesToSequencesFromFailedDetails(sequences, failedDetails);
-        //
-        //         var sequencesWithModerationFails = new List<AssessorSequence>();
-        //         BuildSequencesWithModerationFails(sequences, sequencesWithModerationFails);
-        //
-        //         var allSections = await _qnaApiClient.GetSections(model.ApplicationId);
-        //
-        //         RemoveInactiveOrEmptyPagesFromSequences(sequencesWithModerationFails, allSections);
-        //         AddPageTitlesToSequences(sequencesWithModerationFails);
-        //         AddAnswersToSequences(sequencesWithModerationFails, allSections);
-        //         AddQuestionsToSequences(sequencesWithModerationFails, allSections);
-        //         AddSequenceTitlesToSequences(sequencesWithModerationFails);
-        //
-        //         model.Sequences = sequencesWithModerationFails;
-        //         model.PagesWithGuidance =
-        //             GatherGuidancePagesForSequenceQuestions(sequencesWithModerationFails, allSections);
-        //     }
-        // }
-
-        
-        
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationUnsuccessful(Guid applicationId)
-        {
-            var application = await _apiClient.GetApplication(applicationId);
-            var applicationData = application.ApplyData.ApplyDetails;
-
-            var model = new ApplicationSummaryViewModel
+            var model = new ApplicationSummaryWithModeratorDetailsViewModel
             {
                 ApplicationId = application.ApplicationId,
                 UKPRN = applicationData.UKPRN,
@@ -181,12 +113,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 TradingName = applicationData.TradingName,
                 ApplicationRouteId = applicationData.ProviderRoute.ToString(),
                 ApplicationReference = applicationData.ReferenceNumber,
+                SubmittedDate = applicationData?.ApplicationSubmittedOn,
+                ExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
                 EmailAddress = User.GetEmail(),
-                SubmittedDate = applicationData.ApplicationSubmittedOn,
-                ExternalComments = application.ApplyData.GatewayReviewDetails.ExternalComments
+                FinancialReviewStatus = application?.FinancialReviewStatus,
+                FinancialGrade = application?.FinancialGrade?.SelectedGrade,
+                FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
+                GatewayReviewStatus = application?.GatewayReviewStatus,
+                ModerationStatus = application?.ModerationStatus
             };
 
-            return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
+            if (applicationUnsuccessfulModerationFail)
+            {
+                await _augmentationService.AugmentModelWithModerationFailDetails(model,
+                        User.GetUserId().ToString());
+            }
+
+            return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", model);
+ 
         }
 
         [HttpGet]
