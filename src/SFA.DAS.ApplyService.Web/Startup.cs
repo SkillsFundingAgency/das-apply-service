@@ -299,6 +299,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IRoatpOrganisationVerificationService, RoatpOrganisationVerificationService>();
             services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
             services.AddTransient<ITaskListOrchestrator, TaskListOrchestrator>();
+            services.AddTransient<IOverallOutcomeAugmentationService, OverallOutcomeAugmentationService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

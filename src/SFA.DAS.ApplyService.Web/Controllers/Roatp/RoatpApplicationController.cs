@@ -15,7 +15,6 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Session;
-using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Orchestrators;
@@ -26,11 +25,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     using Configuration;
     using Microsoft.Extensions.Options;
     using MoreLinq;
-    using SFA.DAS.ApplyService.EmailService.Interfaces;
-    using SFA.DAS.ApplyService.Web.Controllers.Roatp;
-    using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
-    using SFA.DAS.ApplyService.Web.Services;
-    using SFA.DAS.ApplyService.Web.Validators;
+    using EmailService.Interfaces;
+    using Roatp;
+    using Infrastructure.Validations;
+    using Services;
+    using Validators;
     using ViewModels.Roatp;
 
     [Authorize]
@@ -39,7 +38,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IApplicationApiClient _apiClient;
         private readonly ILogger<RoatpApplicationController> _logger;
         private readonly IUsersApiClient _usersApiClient;
-        private readonly IConfigurationService _configService;
         private readonly IUserService _userService;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IQuestionPropertyTokeniser _questionPropertyTokeniser;
@@ -61,7 +59,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private const string InvalidCheckBoxListSelectionErrorMessage = "If your answer is 'none of the above', you must only select that option";
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
-            ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
+            ISessionService sessionService, IUserService userService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient,
             IPagesWithSectionsFlowService pagesWithSectionsFlowService,
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
@@ -75,7 +73,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _apiClient = apiClient;
             _logger = logger;
             _sessionService = sessionService;
-            _configService = configService;
             _userService = userService;
             _usersApiClient = usersApiClient;
             _qnaApiClient = qnaApiClient;
@@ -136,7 +133,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             _logger.LogDebug("Applications controller action completed");
 
-            return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcomes", new {applicationId, applicationStatus});
+            return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new {applicationId, applicationStatus});
             // switch (applicationStatus)
             // {
             //     case ApplicationStatus.New:
@@ -146,27 +143,27 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             //     {
             //         var oversightReview = await _apiClient.GetOversightReview(applicationId);
             //         if (oversightReview?.Status== OversightReviewStatus.SuccessfulAlreadyActive)
-            //             return RedirectToAction("ApplicationApprovedAlreadyActive", "RoatpOverallOutcomes", new { applicationId });
+            //             return RedirectToAction("ApplicationApprovedAlreadyActive", "RoatpOverallOutcome", new { applicationId });
             //
-            //         return RedirectToAction("ApplicationApproved", "RoatpOverallOutcomes", new { applicationId });
+            //         return RedirectToAction("ApplicationApproved", "RoatpOverallOutcome", new { applicationId });
             //         }
             //     case ApplicationStatus.Rejected:
             //         if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
             //             return RedirectToAction("ApplicationUnsuccessful", new { applicationId });
-            //         return RedirectToAction("ApplicationRejected", "RoatpOverallOutcomes", new { applicationId });
+            //         return RedirectToAction("ApplicationCheckedAgainstModeration", "RoatpOverallOutcome", new { applicationId });
             //     case ApplicationStatus.FeedbackAdded:
-            //         return RedirectToAction("FeedbackAdded", "RoatpOverallOutcomes", new { applicationId });
+            //         return RedirectToAction("FeedbackAdded", "RoatpOverallOutcome", new { applicationId });
             //     case ApplicationStatus.Withdrawn:
-            //         return RedirectToAction("ApplicationWithdrawn", "RoatpOverallOutcomes", new { applicationId });
+            //         return RedirectToAction("ApplicationWithdrawn", "RoatpOverallOutcome", new { applicationId });
             //     case ApplicationStatus.Removed:
-            //         return RedirectToAction("ApplicationRemoved", "RoatpOverallOutcomes", new { applicationId });
+            //         return RedirectToAction("ApplicationRemoved", "RoatpOverallOutcome", new { applicationId });
             //     case ApplicationStatus.GatewayAssessed:
             //         if(application.GatewayReviewStatus == GatewayReviewStatus.Reject)
-            //             return RedirectToAction("ApplicationRejectedRejected", "RoatpOverallOutcomes", new { applicationId });
-            //         return RedirectToAction("ApplicationSubmitted", "RoatpOverallOutcomes", new { applicationId });
+            //             return RedirectToAction("ApplicationRejectedRejected", "RoatpOverallOutcome", new { applicationId });
+            //         return RedirectToAction("ApplicationSubmitted", "RoatpOverallOutcome", new { applicationId });
             //     case ApplicationStatus.Submitted:
             //     case ApplicationStatus.Resubmitted:
-            //         return RedirectToAction("ApplicationSubmitted", "RoatpOverallOutcomes", new { applicationId });
+            //         return RedirectToAction("ApplicationSubmitted", "RoatpOverallOutcome", new { applicationId });
             //     default:
             //         return RedirectToAction("TaskList", new { applicationId });
             // }
@@ -1013,89 +1010,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return answers;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Submit(Guid applicationId)
-        {
-            var canUpdate = await CanUpdateApplication(applicationId);
-            if (!canUpdate)
-            {
-                return RedirectToAction("TaskList", new { applicationId });
-            }
-
-            var activeSequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-            var errors = ValidateSubmit(activeSequence);
-            if (errors.Any())
-            {
-                var sequenceVm = new SequenceViewModel(activeSequence, applicationId, errors);
-
-                if (activeSequence.Status == ApplicationSequenceStatus.FeedbackAdded)
-                {
-                    return View("~/Views/Application/Feedback.cshtml", sequenceVm);
-                }
-                else
-                {
-                    return View("~/Views/Application/Sequence.cshtml", sequenceVm);
-                }
-            }
-
-            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
-
-            var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
-            {
-                ApplicationId = applicationId,
-                ProviderRoute = Convert.ToInt32(providerRoute.Value),
-                SubmittingContactId = User.GetUserId()
-            };
-
-            if (await _apiClient.SubmitApplication(submitApplicationRequest))
-            {
-                return RedirectToAction("Submitted", new { applicationId });
-            }
-            else
-            {
-                // unable to submit
-                return RedirectToAction("NotSubmitted", new { applicationId });
-            }
-        }
-
-        private List<ValidationErrorDetail> ValidateSubmit(ApplicationSequence sequence)
-        {
-            var validationErrors = new List<ValidationErrorDetail>();
-
-            if (sequence?.Sections is null)
-            {
-                var validationError = new ValidationErrorDetail(string.Empty, $"Cannot submit empty sequence");
-                validationErrors.Add(validationError);
-            }
-            else if (sequence.Sections.Where(sec => sec.PagesComplete != sec.PagesActive).Any())
-            {
-                foreach (var sectionQuestionsNotYetCompleted in sequence.Sections.Where(sec => sec.PagesComplete != sec.PagesActive))
-                {
-                    var validationError = new ValidationErrorDetail(sectionQuestionsNotYetCompleted.Id.ToString(), $"You need to complete the '{sectionQuestionsNotYetCompleted.LinkTitle}' section");
-                    validationErrors.Add(validationError);
-                }
-            }
-            else if (sequence.Sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)).Any())
-            {
-                foreach (var sectionFeedbackNotYetCompleted in sequence.Sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)))
-                {
-                    var validationError = new ValidationErrorDetail(sectionFeedbackNotYetCompleted.Id.ToString(), $"You need to complete the '{sectionFeedbackNotYetCompleted.LinkTitle}' section");
-                    validationErrors.Add(validationError);
-                }
-            }
-
-            return validationErrors;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, string redirectAction)
-        {
-            await _apiClient.DeleteAnswer(applicationId, sequenceId, sectionId, pageId, answerId, User.GetUserId());
-
-            return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId, redirectAction });
-        }
-
-
+        
         private async Task UpdateQuestionsWithinQnA(Guid applicationId, List<PreambleAnswer> questions)
         {
             if (questions != null)
@@ -1239,7 +1154,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 };
 
                 await _submitApplicationEmailService.SendSubmitConfirmationEmail(applicationSubmitConfirmation);
-                return RedirectToAction("ApplicationSubmitted","RoatpOverallOutcomes", new { model.ApplicationId });
+                return RedirectToAction("ApplicationSubmitted","RoatpOverallOutcome", new { model.ApplicationId });
             }
             else
             {

@@ -1,6 +1,5 @@
 ﻿@using SFA.DAS.ApplyService.Domain.Entities
 @using SFA.DAS.ApplyService.Application.Apply.Roatp
-@using Microsoft.EntityFrameworkCore.Metadata.Internal
 @model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryWithModeratorDetails
 
 @{
@@ -60,155 +59,160 @@
             <p class="govuk-body">
                 Your application was unsuccessful as the answer for the following questions are insufficient
             </p>
-
-            @foreach (var sequence in Model.Sequences)
+            @if (Model.Sequences != null)
             {
-                <h1 class="govuk-heading-l">@sequence.SequenceTitle</h1>
-                foreach (var seqSection in sequence.Sections)
+                @foreach (var sequence in Model.Sequences)
                 {
-
-                    var inSectors = sequence.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining
-                        && seqSection.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees;
-
-                    if (inSectors)
+                    <h1 class="govuk-heading-l">@sequence.SequenceTitle</h1>
+                    foreach (var seqSection in sequence.Sections)
                     {
-                        <h2 class="govuk-heading-m">Sectors</h2>
-                        <ul class="govuk-list govuk-list--bullet">
+
+                        var inSectors = sequence.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining
+                                        && seqSection.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees;
+
+                        if (inSectors)
+                        {
+                            <h2 class="govuk-heading-m">Sectors</h2>
+                            <ul class="govuk-list govuk-list--bullet">
+                                @foreach (var sectionPage in seqSection.Pages)
+                                {
+
+                                    <li> @sectionPage.Title - PENDING</li>
+
+                                }
+                            </ul>
+
+                        }
+                        else
+                        {
                             @foreach (var sectionPage in seqSection.Pages)
                             {
-
-                                <li> @sectionPage.Title  - PENDING</li>
-
-                            }
-                        </ul>
-
-                    }
-                    else
-                    {
-                        @foreach (var sectionPage in seqSection.Pages)
-                        {
-                            var isTabularData = false;
-                            @foreach (var dummy in from question in sectionPage.Questions
-                                                  from answers
-in sectionPage.PageOfAnswers
-                                                  from answer
-                     in answers.Answers.Where(x => x.QuestionId == question.QuestionId)
-                                                  where question.Input.Type == QuestionType.TabularData
-                                                  select question)
-                            {
-                                isTabularData = true;
-                            }
-
-
-                            if (isTabularData)
-                            {
-                                <h2 class="govuk-heading-m"> @sectionPage.Title</h2>
-
-                                @foreach (var question in sectionPage.Questions)
+                                var isTabularData = false;
+                                @foreach (var dummy in from question in sectionPage.Questions
+                                    from answers
+                                        in sectionPage.PageOfAnswers
+                                    from answer
+                                        in answers.Answers.Where(x => x.QuestionId == question.QuestionId)
+                                    where question.Input.Type == QuestionType.TabularData
+                                    select question)
                                 {
-                                    @foreach (var answers in sectionPage.PageOfAnswers)
+                                    isTabularData = true;
+                                }
+
+
+                                if (isTabularData)
+                                {
+                                    <h2 class="govuk-heading-m"> @sectionPage.Title</h2>
+
+                                    @foreach (var question in sectionPage.Questions)
                                     {
-                                        foreach (var answer in answers.Answers.Where(x => x.QuestionId == question.QuestionId))
+                                        @foreach (var answers in sectionPage.PageOfAnswers)
                                         {
-                                            <partial name="~/Views/Roatp/_TabularData.cshtml" for="@answer.Value" />
+                                            foreach (var answer in answers.Answers.Where(x => x.QuestionId == question.QuestionId))
+                                            {
+                                                <partial name="~/Views/Roatp/_TabularData.cshtml" for="@answer.Value"/>
+                                            }
+                                        }
+
+                                    }
+                                }
+                                else
+                                {
+                                    {
+                                        
+                                        
+                                    }
+                                    <h2 class="govuk-heading-m"> @sectionPage.Title</h2>
+                                    <table class="govuk-table govuk-!-margin-bottom-9">
+                                        <thead class="govuk-table__head">
+                                        <tr class="govuk-table__row">
+                                            <th class="govuk-table__header govuk-!-width-two-thirds" scope="col">Application question</th>
+                                            <th class="govuk-table__header das-no-wrap" scope="col">Answer</th>
+                                        </tr>
+                                        </thead>
+                                        @foreach (var question in sectionPage.Questions)
+                                        {
+                                            <tr class="govuk-table__row">
+                                                <th scope="row" class="govuk-table__header">@question.Label</th>
+
+
+
+                                                @foreach (var answers in sectionPage.PageOfAnswers)
+                                                {
+                                                    foreach (var answer in answers.Answers.Where(x => x.QuestionId == question.QuestionId))
+                                                    {
+
+
+                                                        @switch (question.Input.Type)
+                                                        {
+                                                            case QuestionType.FileUpload:
+                                                                <td class="govuk-table__cell">
+                                                                    <a class="govuk-link" asp-controller="RoatpOverallOutcome" asp-action="DownloadFile" asp-route-applicationId="@Model.ApplicationId" asp-route-sectionId="@sectionPage.SectionId" asp-route-pageId="@sectionPage.PageId" asp-route-questionId="@question.QuestionId" asp-route-filename="@answer.Value">@answer.Value</a>
+                                                                </td>
+                                                                break;
+                                                            case QuestionType.CheckboxList:
+                                                            case QuestionType.ComplexCheckboxList:
+                                                                <td class="govuk-table__cell">
+                                                                    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                                                                        @foreach (var selectedAnswer in answer.Value.Split(','))
+                                                                        {
+                                                                            <li>@selectedAnswer</li>
+                                                                        }
+                                                                    </ul>
+                                                                </td>
+                                                                break;
+                                                            case QuestionType.TabularData:
+                                                                <td class="govuk-table__cell das-multiline-text-bottom-margin">
+                                                                    <partial name="~/Views/Roatp/_TabularData.cshtml" for="@answer.Value"/>
+                                                                </td>
+                                                                break;
+                                                            default:
+
+                                                                <td class="govuk-table__cell das-multiline-text-bottom-margin das-multiline-text-bottom-margin">@answer.Value</td>
+
+                                                                break;
+                                                        }
+                                                    }
+                                                }
+                                            </tr>
+
+                                        }
+                                    </table>
+                                    @if (Model.PagesWithGuidance != null && Model.PagesWithGuidance.Any(x => x.PageId == sectionPage.PageId))
+                                    {
+                                        var guidance = Model.PagesWithGuidance.FirstOrDefault(x => x.PageId == sectionPage.PageId);
+                                        @if(guidance?.GuidanceInformation !=null && guidance.GuidanceInformation.Count>0)
+                                        {
+                                            <div class="govuk-grid-row">
+                                                <div class="govuk-grid-column-two-thirds">
+                                                    <details class="govuk-details govuk-!-margin-bottom-9">
+                                                        <summary class="govuk-details__summary">
+                                                            <span class="govuk-details__summary-text">
+                                                                View application guidance
+                                                            </span>
+                                                        </summary>
+                                                        <div class="govuk-details__text">
+                                                            <ul class="govuk-list">
+                                                                @foreach (var guidanceText in guidance.GuidanceInformation)
+                                                                {
+                                                                    <li>
+                                                                        @Html.Raw(guidanceText)
+                                                                    </li>
+                                                                }
+                                                            </ul>
+                                                        </div>
+                                                    </details>
+                                                </div>
+                                            </div>
                                         }
                                     }
 
                                 }
                             }
-                            else
-                            {
-
-                                <h2 class="govuk-heading-m"> @sectionPage.Title</h2>
-                                <table class="govuk-table govuk-!-margin-bottom-9">
-                                    <thead class="govuk-table__head">
-                                        <tr class="govuk-table__row">
-                                            <th class="govuk-table__header govuk-!-width-two-thirds" scope="col">Application question</th>
-                                            <th class="govuk-table__header das-no-wrap" scope="col">Answer</th>
-                                        </tr>
-                                    </thead>
-                                    @foreach (var question in sectionPage.Questions)
-                                    {
-                                        <tr class="govuk-table__row">
-                                            <th scope="row" class="govuk-table__header">@question.Label</th>
-
-
-
-                                            @foreach (var answers in sectionPage.PageOfAnswers)
-                                            {
-                                                foreach (var answer in answers.Answers.Where(x => x.QuestionId == question.QuestionId))
-                                                {
-
-
-                                                    @switch (question.Input.Type)
-                                                    {
-                                                        case QuestionType.FileUpload:
-                                                            <td class="govuk-table__cell">
-                                                                <a class="govuk-link" asp-controller="RoatpOveralloutcomes" asp-action="DownloadFile" asp-route-applicationId="@Model.ApplicationId" asp-route-sectionId="@sectionPage.SectionId" asp-route-pageId="@sectionPage.PageId" asp-route-questionId="@question.QuestionId" asp-route-filename="@answer.Value">@answer.Value</a>
-                                                            </td>
-                                                            break;
-                                                        case QuestionType.CheckboxList:
-                                                        case QuestionType.ComplexCheckboxList:
-                                                            <td class="govuk-table__cell">
-                                                                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
-                                                                    @foreach (var selectedAnswer in answer.Value.Split(','))
-                                                                    {
-                                                                        <li>@selectedAnswer</li>
-                                                                    }
-                                                                </ul>
-                                                            </td>
-                                                            break;
-                                                        case QuestionType.TabularData:
-                                                            <td class="govuk-table__cell das-multiline-text-bottom-margin">
-                                                                <partial name="~/Views/Roatp/_TabularData.cshtml" for="@answer.Value" />
-                                                            </td>
-                                                            break;
-                                                        default:
-
-                                                            <td class="govuk-table__cell das-multiline-text-bottom-margin das-multiline-text-bottom-margin">@answer.Value</td>
-
-                                                            break;
-                                                    }
-                                                }
-                                            }
-                                        </tr>
-
-                                    }
-                                </table>
-                                @if (Model.PagesWithGuidance != null && Model.PagesWithGuidance.Any(x => x.PageId == sectionPage.PageId))
-                                {
-                                    var guidance = Model.PagesWithGuidance.FirstOrDefault(x => x.PageId == sectionPage.PageId);
-                                    {
-                                        <div class="govuk-grid-row">
-                                            <div class="govuk-grid-column-two-thirds">
-                                                <details class="govuk-details govuk-!-margin-bottom-9">
-                                                    <summary class="govuk-details__summary">
-                                                        <span class="govuk-details__summary-text">
-                                                            View application guidance
-                                                        </span>
-                                                    </summary>
-                                                    <div class="govuk-details__text">
-                                                        <ul class="govuk-list">
-                                                            @foreach (var guidanceText in guidance.GuidanceInformation)
-                                                            {
-                                                                <li class="das-multiline-text-bottom-margin">
-                                                                    @guidanceText
-                                                                </li>
-                                                            }
-                                                        </ul>
-                                                    </div>
-                                                </details>
-                                            </div>
-                                        </div>
-                                    }
-                                }
-
-                            }
                         }
                     }
                 }
             }
-
 
             <h1 class="govuk-heading-m">How to make an appeal</h1>
             <p class="govuk-body">
