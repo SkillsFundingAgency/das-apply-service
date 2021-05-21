@@ -20,20 +20,18 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
         private readonly ILogger<RecordOversightOutcomeHandler> _logger;
         private readonly IAuditService _auditService;
         private readonly IApplicationUpdatedEmailService _applicationUpdatedEmailService;
-        //private readonly IUnitOfWork _unitOfWork;  // MFCMFC remove
 
         public RecordOversightOutcomeHandler(ILogger<RecordOversightOutcomeHandler> logger,
             IOversightReviewRepository oversightReviewRepository,
             IApplicationRepository applyRepository,
             IAuditService auditService,
-            IApplicationUpdatedEmailService applicationUpdatedEmailService) //, IUnitOfWork unitOfWork)
+            IApplicationUpdatedEmailService applicationUpdatedEmailService) 
         {
             _logger = logger;
             _oversightReviewRepository = oversightReviewRepository;
             _applyRepository = applyRepository;
             _auditService = auditService;
             _applicationUpdatedEmailService = applicationUpdatedEmailService;
-           // this._unitOfWork = unitOfWork;   //MFCMFC remove
         }
 
         public async Task<bool> Handle(RecordOversightOutcomeCommand request, CancellationToken cancellationToken)
@@ -50,7 +48,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             SaveChanges(oversightReview, application, isNew);
 
             _auditService.Save();
-            // await _unitOfWork.Commit();    //MFCMFC remove
 
             await _applicationUpdatedEmailService.SendEmail(request.ApplicationId);
 

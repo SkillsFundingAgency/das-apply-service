@@ -134,39 +134,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _logger.LogDebug("Applications controller action completed");
 
             return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new {applicationId, applicationStatus});
-            // switch (applicationStatus)
-            // {
-            //     case ApplicationStatus.New:
-            //     case ApplicationStatus.InProgress:
-            //         return RedirectToAction("TaskList", new { applicationId });
-            //     case ApplicationStatus.Approved:
-            //     {
-            //         var oversightReview = await _apiClient.GetOversightReview(applicationId);
-            //         if (oversightReview?.Status== OversightReviewStatus.SuccessfulAlreadyActive)
-            //             return RedirectToAction("ApplicationApprovedAlreadyActive", "RoatpOverallOutcome", new { applicationId });
-            //
-            //         return RedirectToAction("ApplicationApproved", "RoatpOverallOutcome", new { applicationId });
-            //         }
-            //     case ApplicationStatus.Rejected:
-            //         if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
-            //             return RedirectToAction("ApplicationUnsuccessful", new { applicationId });
-            //         return RedirectToAction("ApplicationCheckedAgainstModeration", "RoatpOverallOutcome", new { applicationId });
-            //     case ApplicationStatus.FeedbackAdded:
-            //         return RedirectToAction("FeedbackAdded", "RoatpOverallOutcome", new { applicationId });
-            //     case ApplicationStatus.Withdrawn:
-            //         return RedirectToAction("ApplicationWithdrawn", "RoatpOverallOutcome", new { applicationId });
-            //     case ApplicationStatus.Removed:
-            //         return RedirectToAction("ApplicationRemoved", "RoatpOverallOutcome", new { applicationId });
-            //     case ApplicationStatus.GatewayAssessed:
-            //         if(application.GatewayReviewStatus == GatewayReviewStatus.Reject)
-            //             return RedirectToAction("ApplicationRejectedRejected", "RoatpOverallOutcome", new { applicationId });
-            //         return RedirectToAction("ApplicationSubmitted", "RoatpOverallOutcome", new { applicationId });
-            //     case ApplicationStatus.Submitted:
-            //     case ApplicationStatus.Resubmitted:
-            //         return RedirectToAction("ApplicationSubmitted", "RoatpOverallOutcome", new { applicationId });
-            //     default:
-            //         return RedirectToAction("TaskList", new { applicationId });
-            // }
         }
 
 
