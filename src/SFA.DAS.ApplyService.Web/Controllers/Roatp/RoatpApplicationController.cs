@@ -38,7 +38,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IApplicationApiClient _apiClient;
         private readonly ILogger<RoatpApplicationController> _logger;
         private readonly IUsersApiClient _usersApiClient;
-        private readonly IUserService _userService;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IQuestionPropertyTokeniser _questionPropertyTokeniser;
         private readonly IPageNavigationTrackingService _pageNavigationTrackingService;
@@ -59,7 +58,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private const string InvalidCheckBoxListSelectionErrorMessage = "If your answer is 'none of the above', you must only select that option";
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
-            ISessionService sessionService, IUserService userService, IUsersApiClient usersApiClient,
+            ISessionService sessionService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient,
             IPagesWithSectionsFlowService pagesWithSectionsFlowService,
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
@@ -73,7 +72,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _apiClient = apiClient;
             _logger = logger;
             _sessionService = sessionService;
-            _userService = userService;
             _usersApiClient = usersApiClient;
             _qnaApiClient = qnaApiClient;
             _pagesWithSectionsFlowService = pagesWithSectionsFlowService;
@@ -94,14 +92,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Applications()
         {
-            var user = User.Identity.Name;
+            var username = User.Identity.Name;
 
-            if (string.IsNullOrWhiteSpace(user))
+            if (string.IsNullOrWhiteSpace(username))
                 return RedirectToAction("PostSignIn", "Users");
 
-            _logger.LogDebug($"Got LoggedInUser from Session: {user}");
+            _logger.LogDebug($"Got LoggedInUser from Session: {username}");
 
-            var signinId = await _userService.GetSignInId();
+            var signinId = User.GetSignInId();
             var applications = await GetInFlightApplicationsForSignInId(signinId);
 
             var application = new Apply();
@@ -206,11 +204,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ["ApplyProviderRoute"] = providerRoute.ToString()
             };
 
-            var user = await _usersApiClient.GetUserBySignInId(signinId.ToString());
+            var user = await _usersApiClient.GetUserBySignInId(signinId);
 
             var applicationType = ApplicationTypes.RegisterTrainingProviders;
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
-            _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{user.Id.ToString()}], applicationType: [{applicationType}], startApplicationJson: [{startApplicationJson}]");
+            _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{user.Id}], applicationType: [{applicationType}], startApplicationJson: [{startApplicationJson}]");
             var qnaResponse = await _qnaApiClient.StartApplication(user.Id.ToString(), applicationType, startApplicationJson);
             _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{qnaResponse?.ApplicationId}]");
 
@@ -606,7 +604,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             bool canUpdate = false;
 
-            var signInId = await _userService.GetSignInId();
+            var signInId = User.GetSignInId();
             var application = await _apiClient.GetApplicationByUserId(applicationId, signInId);
 
             var validApplicationStatuses = new string[] { ApplicationStatus.InProgress, ApplicationStatus.FeedbackAdded };

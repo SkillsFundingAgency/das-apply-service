@@ -21,11 +21,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return value;
         }
 
-        public static string GetSignInId(this ClaimsPrincipal principal)
+        public static Guid GetSignInId(this ClaimsPrincipal principal)
         {
             string value = principal.FindFirstValue("sub");
 
-            return value;
+            Guid.TryParse(value, out var signInId);
+
+            return signInId;
         }
 
         public static string GetGivenName(this ClaimsPrincipal principal)

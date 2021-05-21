@@ -15,9 +15,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     {
         Task<bool> InviteUser(CreateAccountViewModel vm);
 
-        Task<bool> CreateUserFromAsLogin(string signInId, string email, string givenName, string familyName);
+        Task<bool> CreateUserFromAsLogin(Guid signInId, string email, string givenName, string familyName);
 
-        Task<Contact> GetUserBySignInId(string signInId);
+        Task<Contact> GetUserBySignInId(Guid signInId);
 
         Task<bool> ApproveUser(Guid userId);
         Task Callback(SignInCallback callback);
@@ -36,7 +36,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return result == HttpStatusCode.OK;
         }
 
-        public async Task<bool> CreateUserFromAsLogin(string signInId, string email, string givenName, string familyName)
+        public async Task<bool> CreateUserFromAsLogin(Guid signInId, string email, string givenName, string familyName)
         {
             var contact = new NewContact { Email = email, GivenName = givenName, FamilyName = familyName };
 
@@ -44,7 +44,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return result == HttpStatusCode.OK;
         }
 
-        public async Task<Contact> GetUserBySignInId(string signInId)
+        public async Task<Contact> GetUserBySignInId(Guid signInId)
         {
             return await Get<Contact>($"/Account/{signInId}");
         }
