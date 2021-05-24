@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.WindowsAzure.Storage.Core;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
@@ -28,7 +28,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         private string _userId;
         private OverallOutcomeAugmentationService _service;
         private string _page121;
-        
+        private string _question121Id;
+        private string _page122BodyText;
+        private string _page121QuestionBodyText;
+        private string _page122;
+
         [SetUp]
         public void Before_each_test()
         {
@@ -38,6 +42,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _assessorLookupService = new Mock<IAssessorLookupService>();
             _userId = "test";
             _page121 = "page1.2.1";
+            _page122 = "page1.2.2";
+            _question121Id = "121Id";
+            _page121QuestionBodyText = "page 1 2 1 Question Body text used in guidance";
+            _page122BodyText = "page 1 2 2 Body text";
             var sequences = new List<AssessorSequence>();
 
             var clarificationOutcomes = new List<ClarificationPageReviewOutcome>();
@@ -73,13 +81,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var modelPreUpdate = GetCopyOfModel();
             var modelToBeUpdated = GetCopyOfModel();
 
-            var sequences = SetUpAsessorSequences("page title");
+            var sequences = SetUpAsessorSequences();
             _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
 
             var clarificationPages = SetUpClarificationOutcomes();
             _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationPages);
-            var sections = SetUpApplicationSections(pageActive, sequence2PagesActive);
+            var sections = SetUpApplicationSections(pageActive, sequence2PagesActive, "answer",null);
 
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
 
@@ -111,13 +119,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             _assessorLookupService.Setup(x => x.GetTitleForPage(_page121)).Returns(pageTitle);
 
-            var sequences = SetUpAsessorSequences(pageTitle);
+            var sequences = SetUpAsessorSequences();
             _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
 
             var clarificationPages = SetUpClarificationOutcomes();
             _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationPages);
-            var sections = SetUpApplicationSections(true, true);
+            var sections = SetUpApplicationSections(true, true, "answer",null);
 
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
 
@@ -131,8 +139,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         }
 
 
-        [TestCase("page title")]
-        [TestCase("page title 2")]
+        [TestCase("page title 3")]
+        [TestCase("page title 4")]
         public async Task page_titles_returned_against_sector_if_not_set_as_expected(string pageTitle)
         {
             var modelToBeUpdated = GetCopyOfModel();
@@ -140,13 +148,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _assessorLookupService.Setup(x => x.GetTitleForPage(_page121)).Returns(string.Empty);
             _assessorLookupService.Setup(x => x.GetSectorNameForPage(_page121)).Returns(pageTitle);
 
-            var sequences = SetUpAsessorSequences(pageTitle);
+            var sequences = SetUpAsessorSequences();
             _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
 
             var clarificationPages = SetUpClarificationOutcomes();
             _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationPages);
-            var sections = SetUpApplicationSections(true, true);
+            var sections = SetUpApplicationSections(true, true, "answer",null);
 
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
 
@@ -159,9 +167,111 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             pageTitle.Should().Be(page121Title);
         }
 
+        [TestCase("answer 1")]
+        [TestCase("answer 1b")]
+        [TestCase("answer 1c")]
+        public async Task page_answers_returned_as_expected(string answer)
+        {
+            var modelToBeUpdated = GetCopyOfModel();
 
 
-        private List<AssessorSequence> SetUpAsessorSequences(string pageTitle)
+            var sequences = SetUpAsessorSequences();
+            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+
+            var clarificationPages = SetUpClarificationOutcomes();
+            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
+                .ReturnsAsync(clarificationPages);
+            var sections = SetUpApplicationSections(true, true,answer,"question");
+
+            _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
+
+            await _service.AugmentModelWithModerationFailDetails(modelToBeUpdated, _userId);
+
+            var page121Answer = modelToBeUpdated.Sequences.First(x => x.SequenceNumber == 1).Sections
+                .FirstOrDefault(x => x.SectionNumber == 2).Pages.First(x => x.PageId == _page121).PageOfAnswers.FirstOrDefault().Answers.FirstOrDefault().Value;
+
+            answer.Should().Be(page121Answer);
+        }
+
+
+        [TestCase("question 1 text")]
+        [TestCase("answer 1b text")]
+        [TestCase("answer 1c text")]
+        public async Task page_questions_returned_as_expected(string questionText)
+        {
+            var modelToBeUpdated = GetCopyOfModel();
+
+
+            var sequences = SetUpAsessorSequences();
+            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+
+            var clarificationPages = SetUpClarificationOutcomes();
+            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
+                .ReturnsAsync(clarificationPages);
+            var sections = SetUpApplicationSections(true, true, "answer", questionText);
+
+            _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
+
+            await _service.AugmentModelWithModerationFailDetails(modelToBeUpdated, _userId);
+
+            var page121Question = modelToBeUpdated.Sequences.First(x => x.SequenceNumber == 1).Sections
+                .FirstOrDefault(x => x.SectionNumber == 2).Pages.First(x => x.PageId == _page121).Questions.FirstOrDefault(x=>x.QuestionId==_question121Id).Value;
+
+            questionText.Should().Be(page121Question);
+        }
+
+
+
+        [TestCase("sequence 1 title", "sequence 2 title")]
+        [TestCase("sequence 1 title alt", "sequence 2 title alt")]
+        public async Task sequence_title_returned_as_expected(string sequence1Title, string  sequence2Title)
+        {
+            var modelToBeUpdated = GetCopyOfModel();
+
+
+            var sequences = SetUpAsessorSequences();
+            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+
+            var clarificationPages = SetUpClarificationOutcomes();
+            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
+                .ReturnsAsync(clarificationPages);
+            var sections = SetUpApplicationSections(true, true, "answer", "question");
+
+            _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
+
+            var sequence1Number = 1;
+            var sequence2Number = 2;
+            _assessorLookupService.Setup(x=>x.GetTitleForSequence(sequence1Number)).Returns(sequence1Title);
+            _assessorLookupService.Setup(x => x.GetTitleForSequence(sequence2Number)).Returns(sequence2Title);
+            await _service.AugmentModelWithModerationFailDetails(modelToBeUpdated, _userId);
+
+            sequence1Title.Should().Be(modelToBeUpdated.Sequences.FirstOrDefault(x=>x.SequenceNumber==sequence1Number).SequenceTitle);
+            sequence2Title.Should().Be(modelToBeUpdated.Sequences.First(x=>x.SequenceNumber==sequence2Number).SequenceTitle);
+        }
+
+
+        [Test]
+        public async Task guidance_text_returned_as_expected()
+        {
+            var modelToBeUpdated = GetCopyOfModel();
+
+            var sequences = SetUpAsessorSequences();
+            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+
+            var clarificationPages = SetUpClarificationOutcomes();
+            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
+                .ReturnsAsync(clarificationPages);
+            var sections = SetUpApplicationSections(true, true, null, null);
+
+            _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
+
+            await _service.AugmentModelWithModerationFailDetails(modelToBeUpdated, _userId);
+
+            _page121QuestionBodyText.Should().Be(modelToBeUpdated.PagesWithGuidance.First(x=>x.PageId==_page121).GuidanceInformation.FirstOrDefault());
+            _page122BodyText.Should().Be(modelToBeUpdated.PagesWithGuidance.First(x => x.PageId == _page122).GuidanceInformation.FirstOrDefault());
+        }
+
+        private List<AssessorSequence> SetUpAsessorSequences()
     {
 
         var section2_3 = new AssessorSection
@@ -214,7 +324,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 },
                 new Page
                 {
-                    PageId = "Page1.2.2", DisplayType = SectionDisplayType.Questions, LinkTitle = "1.2 page 2",
+                    PageId = _page122, DisplayType = SectionDisplayType.Questions, LinkTitle = "1.2 page 2",
                     Active = true, Complete = true
                 },
                 new Page
@@ -269,7 +379,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             new ClarificationPageReviewOutcome
             {
                 ApplicationId = _applicationId,
-                PageId = "Page1.2.2",
+                PageId = _page122,
                 SequenceNumber = 1,
                 SectionNumber = 2,
                 ModeratorReviewStatus = ModerationStatus.Fail
@@ -318,10 +428,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
     return clarificationPages;
     }
 
-    private List<ApplicationSection> SetUpApplicationSections(bool pageActive, bool sequence2PagesActive)
+    private List<ApplicationSection> SetUpApplicationSections(bool pageActive, bool sequence2PagesActive, string answerToQuestion, string questionValue)
         {
-           
-
             var sections = new List<ApplicationSection>();
 
             var applicationSection1_2 = new ApplicationSection
@@ -333,13 +441,27 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 {
                     Pages = new List<Page>
                     {
-                        new Page {PageId = _page121, Active = true, Questions = new List<Question>()},
-                        new Page {PageId = "Page1.2.2", Active = true, Questions = new List<Question>()},
+                        new Page {PageId = _page121, Active = true, Questions = new List<Question>
+                            {
+                                new Question {QuestionId = _question121Id, Input = new Input{Type="Text"}, Value = questionValue, QuestionBodyText = _page121QuestionBodyText}
+                            },
+                            PageOfAnswers = new List<PageOfAnswers>
+                            {
+                                new PageOfAnswers
+                                {
+                                    Answers = new List<Answer>
+                                    {
+                                        new Answer {QuestionId = _question121Id, Value = answerToQuestion}
+                                    }
+                                }
+                            }
+                        },
+                        new Page {PageId = _page122, Active = true, Questions = new List<Question> {new Question{ Input = new Input {Type="Text"}}},BodyText = _page122BodyText},
                         new Page
                         {
                             PageId = "Page1.2.3", Active = pageActive, Questions = new List<Question>()
                         }
-                    }
+                    },
                 }
             };
             var applicationSection2_3 = new ApplicationSection
@@ -359,6 +481,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                     }
                 }
             };
+   
             var applicationSection2_4 = new ApplicationSection
             {
                 ApplicationId = _applicationId,

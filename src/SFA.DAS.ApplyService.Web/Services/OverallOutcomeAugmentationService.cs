@@ -43,14 +43,10 @@ namespace SFA.DAS.ApplyService.Web.Services
                 var allSections = await _qnaApiClient.GetSections(model.ApplicationId);
 
                 RemoveInactiveOrEmptyPagesSectionsSequencesFromSequences(sequencesWithModerationFails, allSections);
-
-                
                 AddPageTitlesToSequences(sequencesWithModerationFails);
-
-
-                //TESTING COMPLETE TO THIS POINT
                 AddAnswersToSequences(sequencesWithModerationFails, allSections);
                 AddQuestionsToSequences(sequencesWithModerationFails, allSections);
+                //TESTING COMPLETE TO THIS POINT
                 AddSequenceTitlesToSequences(sequencesWithModerationFails);
 
                 model.Sequences = sequencesWithModerationFails;
