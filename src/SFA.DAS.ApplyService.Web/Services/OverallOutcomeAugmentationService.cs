@@ -31,19 +31,24 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             var sequences = await _apiClient.GetClarificationSequences(model.ApplicationId);
             var passFailDetails = await _apiClient.GetAllClarificationPageReviewOutcomes(model.ApplicationId, userId);
-            var failedDetails = passFailDetails.Where(x => x.ModeratorReviewStatus == ModerationStatus.Fail).ToList();
+            var moderationFailedDetails = passFailDetails.Where(x => x.ModeratorReviewStatus == ModerationStatus.Fail).ToList();
 
-            if (failedDetails.Any())
+            if (moderationFailedDetails.Any())
             {
-                AddPagesToSequencesFromFailedDetails(sequences, failedDetails);
+                AddPagesToSequencesFromFailedDetails(sequences, moderationFailedDetails);
 
                 var sequencesWithModerationFails = new List<AssessorSequence>();
                 BuildSequencesWithModerationFails(sequences, sequencesWithModerationFails);
 
                 var allSections = await _qnaApiClient.GetSections(model.ApplicationId);
 
-                RemoveInactiveOrEmptyPagesFromSequences(sequencesWithModerationFails, allSections);
+                RemoveInactiveOrEmptyPagesSectionsSequencesFromSequences(sequencesWithModerationFails, allSections);
+
+                
                 AddPageTitlesToSequences(sequencesWithModerationFails);
+
+
+                //TESTING COMPLETE TO THIS POINT
                 AddAnswersToSequences(sequencesWithModerationFails, allSections);
                 AddQuestionsToSequences(sequencesWithModerationFails, allSections);
                 AddSequenceTitlesToSequences(sequencesWithModerationFails);
@@ -158,11 +163,14 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
         }
 
-        private static void RemoveInactiveOrEmptyPagesFromSequences(List<AssessorSequence> sequencesWithModerationFails,
+        private static void RemoveInactiveOrEmptyPagesSectionsSequencesFromSequences(List<AssessorSequence> sequencesWithModerationFails,
             IEnumerable<ApplicationSection> allSections)
         {
+            var sequencesToRemove = new List<AssessorSequence>();
+
             foreach (var sequence in sequencesWithModerationFails)
             {
+                var sectionsToRemove = new List<AssessorSection>();
                 foreach (var section in sequence.Sections)
                 {
                     var pagesToRemove = new List<Page>();
@@ -185,6 +193,30 @@ namespace SFA.DAS.ApplyService.Web.Services
                         foreach (var pageToRemove in pagesToRemove)
                             section.Pages.Remove(pageToRemove);
                     }
+
+                    if (section.Pages.Count==0)
+                        sectionsToRemove.Add(section);
+                }
+
+                if (sectionsToRemove.Any())
+                {
+                    foreach (var sectionToRemove in sectionsToRemove)
+                    {
+                        sequence.Sections.Remove(sectionToRemove);
+                    }
+                }
+
+                if (sequence.Sections.Count == 0)
+                {
+                    sequencesToRemove.Add(sequence);
+                }
+            }
+
+            if (sequencesToRemove.Any())
+            {
+                foreach (var sequence in sequencesToRemove)
+                {
+                    sequencesWithModerationFails.Remove(sequence);
                 }
             }
         }
@@ -213,22 +245,24 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
         }
 
-        private static void AddPagesToSequencesFromFailedDetails(List<AssessorSequence> sequences,
-            List<ClarificationPageReviewOutcome> failedDetails)
+        private static void AddPagesToSequencesFromFailedDetails(List<AssessorSequence> sequences, List<ClarificationPageReviewOutcome> failedDetails)
         {
             foreach (var sequence in sequences)
             {
                 foreach (var section in sequence.Sections)
                 {
-                    foreach (var question in failedDetails)
+                    foreach (var outcome in failedDetails)
                     {
-                        if (question.SequenceNumber == section.SequenceNumber &&
-                            question.SectionNumber == section.SectionNumber)
+                        if (outcome.SequenceNumber == section.SequenceNumber &&
+                            outcome.SectionNumber == section.SectionNumber)
                         {
-                            if (section.Pages == null)
+                            if (section.Pages==null)
                                 section.Pages = new List<Page>();
 
-                            section.Pages.Add(new Page {PageId = question.PageId});
+                            if (section.Pages.All(x => x.PageId == outcome.PageId))
+                            {
+                                section.Pages.Add(new Page {PageId = outcome.PageId, Active = true});
+                            }
                         }
                     }
                 }
@@ -238,8 +272,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         private string GetTitleForPage(Page page)
         {
-            var title = string.Empty;
-            title = _assessorLookupService.GetTitleForPage(page.PageId);
+            var title = _assessorLookupService.GetTitleForPage(page.PageId);
             if (string.IsNullOrEmpty(title))
             {
                 title = _assessorLookupService.GetSectorNameForPage(page.PageId);
