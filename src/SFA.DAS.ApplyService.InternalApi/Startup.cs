@@ -202,10 +202,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
         private void ConfigHttpClients(IServiceCollection services)
         {
-            var acceptHeaderName = "Accept";
-            var acceptHeaderValue = "application/json";
             var handlerLifeTime = TimeSpan.FromMinutes(5);
-
 
             services.AddHttpClient<ReferenceDataApiClient, ReferenceDataApiClient>(config =>
             {
