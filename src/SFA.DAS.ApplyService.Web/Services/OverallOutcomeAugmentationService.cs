@@ -88,10 +88,10 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
         }
 
-        private List<AssessorPage> GatherGuidancePagesForSequenceQuestions(
+        private List<PageWithGuidance> GatherGuidancePagesForSequenceQuestions(
             List<AssessorSequence> sequencesWithModerationFails, IEnumerable<ApplicationSection> allSections)
         {
-            var guidancePages = new List<AssessorPage>();
+            var guidancePages = new List<PageWithGuidance>();
             foreach (var sequence in sequencesWithModerationFails)
             {
                 foreach (var section in sequence.Sections)
@@ -106,7 +106,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
                         if (pageDetails != null && pageDetails.Active)
                         {
-                            var guidancePage = new AssessorPage
+                            var guidancePage = new PageWithGuidance
                             {
                                 PageId = page.PageId,
                                 GuidanceInformation = GetGuidanceInformation(pageDetails)
