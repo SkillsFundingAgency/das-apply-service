@@ -60,7 +60,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             foreach (var sequence in sequencesWithModerationFails)
             {
                 sequence.SequenceTitle =
-                    _assessorLookupService.GetTitleForSequence(sequence.SequenceNumber);
+                    _assessorLookupService.GetTitleForSequence(sequence.SequenceNumber)?.Replace("checks",string.Empty,StringComparison.InvariantCultureIgnoreCase).Trim();
             }
         }
 
