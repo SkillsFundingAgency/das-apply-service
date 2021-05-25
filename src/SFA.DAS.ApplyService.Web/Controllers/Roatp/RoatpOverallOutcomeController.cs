@@ -194,9 +194,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/ApplicationApprovedAlreadyActive.cshtml", model);
         }
 
-        public async Task<IActionResult> DownloadFile(Guid applicationId, Guid sectionId,
+        public async Task<IActionResult> DownloadFile(Guid applicationId, int sequenceNo, int sectionNo,
             string pageId, string questionId, string filename)
         {
+
+            var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNo, sectionNo);
+            var sectionId = section.Id;
             var response = await _qnaApiClient.DownloadFile(applicationId, sectionId, pageId, questionId,
                 filename);
 

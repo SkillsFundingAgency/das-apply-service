@@ -46,7 +46,6 @@ namespace SFA.DAS.ApplyService.Web.Services
                 AddPageTitlesToSequences(sequencesWithModerationFails);
                 AddAnswersToSequences(sequencesWithModerationFails, allSections);
                 AddQuestionsToSequences(sequencesWithModerationFails, allSections);
-                //TESTING COMPLETE TO THIS POINT
                 AddSequenceTitlesToSequences(sequencesWithModerationFails);
 
                 model.Sequences = sequencesWithModerationFails;
@@ -255,7 +254,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                             if (section.Pages==null)
                                 section.Pages = new List<Page>();
 
-                            if (section.Pages.All(x => x.PageId == outcome.PageId))
+                            if (section.Pages.All(x => x.PageId != outcome.PageId))
                             {
                                 section.Pages.Add(new Page {PageId = outcome.PageId, Active = true});
                             }

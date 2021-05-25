@@ -6,6 +6,8 @@
 @{
     var monthField = 0;
     var tableData = JsonConvert.DeserializeObject<TabularData>(Model);
+    var sectionTitle = ViewBag.SectionTitle;
+
     if (tableData?.HeadingTitles != null)
     {
         for (var i = 0; i < tableData.HeadingTitles.Count; i++)
@@ -21,36 +23,43 @@
 
 @if (tableData != null && tableData.HeadingTitles != null && tableData.DataRows != null)
 {
-    <table class="govuk-table">
-        @if (tableData.Caption != null)
+    <div class="question--status">
+        @if (!string.IsNullOrEmpty(sectionTitle))
         {
-            <caption class="govuk-table__caption">
-                @tableData.Caption
-            </caption>
+            <h2 class="govuk-heading-s"> @sectionTitle</h2>
         }
-        <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            @foreach (var title in tableData.HeadingTitles)
-            {
-                <th class="govuk-table__header das-multiline-text" scope="col">@title</th>
-            }
-        </tr>
-        </thead>
-        <tbody class="govuk-table_body">
+
         @foreach (var dataRow in tableData.DataRows)
         {
-            <tr class="govuk-table__row">
-                @for (var index = 0; index < dataRow.Columns.Count; index++)
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <table class="govuk-table govuk-!-margin-bottom-9">
+
+            @for (var index = 0; index < dataRow.Columns.Count; index++)
+            {
+                var heading = string.Empty;
+                if (tableData.HeadingTitles.Count >= index)
                 {
-                    var column = dataRow.Columns[index];
-                    if (index + 1 == monthField)
-                    {
-                        column = DateOfBirthFormatter.FormatMonth(column);
-                    }
-                    <td class="govuk-table__cell">@column</td>
+                    heading = tableData.HeadingTitles[index];
                 }
-            </tr>
+
+                var column = dataRow.Columns[index];
+                if (index + 1 == monthField)
+                {
+                    column = DateOfBirthFormatter.FormatMonth(column);
+                }
+               
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">@heading</th>
+                    <td class="govuk-table__cell">@column</td>
+                </tr>
+            }
+                </table>
+        
+            </div>
+        </div>
+
         }
-        </tbody>
-    </table>
+    </div>
+    
 }
