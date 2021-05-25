@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
     [TestFixture]
     public class OverallOutcomeAugmentationServiceTests
     {
-        private Mock<IApplicationApiClient> _apiClient;
+        private Mock<IOversightApiClient> _apiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IAssessorLookupService> _assessorLookupService;
         private Guid _applicationId;
@@ -38,7 +38,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         {
             _applicationId = Guid.NewGuid();
             _qnaApiClient = new Mock<IQnaApiClient>();
-            _apiClient = new Mock<IApplicationApiClient>();
+            _apiClient = new Mock<IOversightApiClient>();
             _assessorLookupService = new Mock<IAssessorLookupService>();
             _userId = "test";
             _page121 = "page1.2.1";

@@ -166,36 +166,5 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             return await Post<dynamic, bool>($"/Application/Status", new { applicationId, applicationStatus, userId });
         }
-
-        public async Task<GetOversightReviewResponse> GetOversightReview(Guid applicationId)
-        {
-            return await Get<GetOversightReviewResponse>($"/Oversight/{applicationId}/review");
-        }
-
-        public async Task<List<AssessorSequence>> GetClarificationSequences(Guid applicationId)
-        {
-            return await Get<List<AssessorSequence>>($"/Clarification/Applications/{applicationId}/Overview");
-        }
-
-        public async Task<List<ClarificationPageReviewOutcome>> GetAllClarificationPageReviewOutcomes(Guid applicationId, string userId)
-        {
-            return await Post<GetAllClarificationPageReviewOutcomesRequest, List<ClarificationPageReviewOutcome>>($"/Clarification/Applications/{applicationId}/GetAllPageReviewOutcomes", new GetAllClarificationPageReviewOutcomesRequest(applicationId, userId));
-        }
-
-        public async Task<AssessorPage> GetAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
-        {
-            AssessorPage assessorPage;
-
-            if (string.IsNullOrEmpty(pageId))
-            {
-                assessorPage = await Get<AssessorPage>($"/Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page");
-            }
-            else
-            {
-                assessorPage = await Get<AssessorPage>($"/Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}");
-            }
-
-            return assessorPage;
-        }
     }
 }

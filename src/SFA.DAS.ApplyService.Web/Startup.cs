@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -22,28 +18,23 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
-using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
-using SFA.DAS.ApplyService.Web;
 using SFA.DAS.ApplyService.Web.Authorization;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Infrastructure.Services;
 using SFA.DAS.ApplyService.Web.Orchestrators;
-using StructureMap;
 using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
 {
-    using Controllers;
-    using SFA.DAS.ApplyService.Application.Apply;
     using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.EmailService.Infrastructure;
     using SFA.DAS.ApplyService.EmailService.Interfaces;
     using SFA.DAS.ApplyService.Web.Configuration;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
-    using SFA.DAS.ApplyService.Web.Services;
+    using Services;
     using SFA.DAS.ApplyService.Web.Validators;
     using SFA.DAS.Http;
     using SFA.DAS.Http.TokenGenerators;
@@ -175,6 +166,13 @@ namespace SFA.DAS.ApplyService.Web
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IOversightApiClient, OversightApiClient>(config =>
+                {
+                    config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                    config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+                })
+                .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IQnaApiClient, QnaApiClient>(config =>
             {

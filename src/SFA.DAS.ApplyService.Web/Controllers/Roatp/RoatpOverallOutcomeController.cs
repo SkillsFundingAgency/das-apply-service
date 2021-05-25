@@ -15,18 +15,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     [Authorize]
     public class RoatpOverallOutcomeController : Controller
     {
-        private readonly IApplicationApiClient _apiClient;
+        private readonly IOversightApiClient _apiClient;
+        private readonly IApplicationApiClient _applicationApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IOverallOutcomeAugmentationService _augmentationService;
         private readonly ILogger<RoatpOverallOutcomeController> _logger;
 
-        public RoatpOverallOutcomeController(IApplicationApiClient apiClient, IQnaApiClient qnaApiClient,
-              IOverallOutcomeAugmentationService augmentationService, ILogger<RoatpOverallOutcomeController> logger)
+        public RoatpOverallOutcomeController(IOversightApiClient apiClient, IQnaApiClient qnaApiClient,
+              IOverallOutcomeAugmentationService augmentationService, IApplicationApiClient applicationApiClient, ILogger<RoatpOverallOutcomeController> logger)
         {
             _apiClient = apiClient;
             _qnaApiClient = qnaApiClient;
             _augmentationService = augmentationService;
             _logger = logger;
+            _applicationApiClient = applicationApiClient;
         }
 
 
@@ -34,7 +36,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ProcessApplicationStatus(Guid applicationId)
         {
-            var application = await _apiClient.GetApplication(applicationId);
+            var application = await _applicationApiClient.GetApplication(applicationId);
             var applicationStatus = application.ApplicationStatus;
 
             switch (applicationStatus)
@@ -78,7 +80,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationUnsuccessful(Guid applicationId)
         {
-            var application = await _apiClient.GetApplication(applicationId);
+            var application = await _applicationApiClient.GetApplication(applicationId);
             var applicationData = application.ApplyData.ApplyDetails;
 
             var oversightReview = await _apiClient.GetOversightReview(applicationId);
@@ -216,7 +218,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         private async Task<ApplicationSummaryViewModel> BuildApplicationSummaryViewModel(Guid applicationId)
         {
-            var application = await _apiClient.GetApplication(applicationId);
+            var application = await _applicationApiClient.GetApplication(applicationId);
             var applicationData = application.ApplyData.ApplyDetails;
 
             var model = new ApplicationSummaryViewModel
@@ -228,7 +230,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ApplicationRouteId = applicationData.ProviderRoute.ToString(),
                 ApplicationReference = applicationData.ReferenceNumber,
                 SubmittedDate = applicationData?.ApplicationSubmittedOn,
-                ExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
+                ExternalComments = application.ExternalComments ?? application.ApplyData.GatewayReviewDetails?.ExternalComments,
                 EmailAddress = User.GetEmail(),
                 FinancialReviewStatus = application?.FinancialReviewStatus,
                 FinancialGrade = application?.FinancialGrade?.SelectedGrade,

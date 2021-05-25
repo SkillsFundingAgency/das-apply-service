@@ -56,11 +56,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus, string userId);
 
-        Task<GetOversightReviewResponse> GetOversightReview(Guid applicationId);
-        Task<List<AssessorSequence>> GetClarificationSequences(Guid applicationId);
 
-        Task<List<ClarificationPageReviewOutcome>> GetAllClarificationPageReviewOutcomes(Guid applicationId, string userId);
-
-        Task<AssessorPage> GetAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId);
     }
 }

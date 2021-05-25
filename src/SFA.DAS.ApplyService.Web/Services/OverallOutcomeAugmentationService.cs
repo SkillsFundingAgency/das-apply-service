@@ -14,11 +14,11 @@ namespace SFA.DAS.ApplyService.Web.Services
 {
     public class OverallOutcomeAugmentationService : IOverallOutcomeAugmentationService
     {
-        private readonly IApplicationApiClient _apiClient;
+        private readonly IOversightApiClient _apiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IAssessorLookupService _assessorLookupService;
 
-        public OverallOutcomeAugmentationService(IApplicationApiClient apiClient, IQnaApiClient qnaApiClient,
+        public OverallOutcomeAugmentationService(IOversightApiClient apiClient, IQnaApiClient qnaApiClient,
             IAssessorLookupService assessorLookupService)
         {
             _apiClient = apiClient;
@@ -66,15 +66,11 @@ namespace SFA.DAS.ApplyService.Web.Services
         private void AddQuestionsToSequences(List<AssessorSequence> sequencesWithModerationFails,
             IEnumerable<ApplicationSection> allSections)
         {
-            foreach (var sequence in sequencesWithModerationFails)
+            foreach (var section in sequencesWithModerationFails.SelectMany(sequence => sequence.Sections))
             {
-                foreach (var section in sequence.Sections)
-                {
-                    foreach (var page in section.Pages)
+                var selectedSection = GetSectionForSequenceNumberSectionNumber(allSections, section.SequenceNumber, section.SectionNumber);
+                foreach (var page in section.Pages)
                     {
-                        var selectedSection = allSections.FirstOrDefault(x =>
-                            x.SequenceId == section.SequenceNumber && x.SectionId == section.SectionNumber);
-
                         var pageDetails =
                             selectedSection?.QnAData?.Pages?.SingleOrDefault(p => p.PageId == page.PageId);
 
@@ -83,7 +79,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                             page.Questions = GatherAndTypePageQuestions(pageDetails);
                         }
                     }
-                }
+                
             }
         }
 
@@ -91,30 +87,10 @@ namespace SFA.DAS.ApplyService.Web.Services
             List<AssessorSequence> sequencesWithModerationFails, IEnumerable<ApplicationSection> allSections)
         {
             var guidancePages = new List<PageWithGuidance>();
-            foreach (var sequence in sequencesWithModerationFails)
+            foreach (var section in sequencesWithModerationFails.SelectMany(sequence => sequence.Sections))
             {
-                foreach (var section in sequence.Sections)
-                {
-                    foreach (var page in section.Pages)
-                    {
-                        var selectedSection = allSections.FirstOrDefault(x =>
-                            x.SequenceId == section.SequenceNumber && x.SectionId == section.SectionNumber);
-
-                        var pageDetails =
-                            selectedSection?.QnAData?.Pages?.SingleOrDefault(p => p.PageId == page.PageId);
-
-                        if (pageDetails != null && pageDetails.Active)
-                        {
-                            var guidancePage = new PageWithGuidance
-                            {
-                                PageId = page.PageId,
-                                GuidanceInformation = GetGuidanceInformation(pageDetails)
-                            };
-
-                            guidancePages.Add(guidancePage);
-                        }
-                    }
-                }
+                guidancePages.AddRange(from page in section.Pages let selectedSection = GetSectionForSequenceNumberSectionNumber(allSections, section.SequenceNumber, section.SectionNumber) 
+                    let pageDetails = selectedSection?.QnAData?.Pages?.SingleOrDefault(p => p.PageId == page.PageId) where pageDetails != null && pageDetails.Active select new PageWithGuidance {PageId = page.PageId, GuidanceInformation = GetGuidanceInformation(pageDetails)});
             }
 
             return guidancePages;
@@ -123,39 +99,37 @@ namespace SFA.DAS.ApplyService.Web.Services
         private static void AddAnswersToSequences(List<AssessorSequence> sequencesWithModerationFails,
             IEnumerable<ApplicationSection> allSections)
         {
-            foreach (var sequence in sequencesWithModerationFails)
+            foreach (var section in sequencesWithModerationFails.SelectMany(sequence => sequence.Sections))
             {
-                foreach (var section in sequence.Sections)
+                var selectedSection = GetSectionForSequenceNumberSectionNumber(allSections, section.SequenceNumber, section.SectionNumber);
+                foreach (var page in section.Pages)
                 {
-                    foreach (var page in section.Pages)
+                    var pageDetails =
+                        selectedSection?.QnAData?.Pages?.SingleOrDefault(p => p.PageId == page.PageId);
+
+                    if (pageDetails != null && pageDetails.Active)
                     {
-                        var selectedSection = allSections.FirstOrDefault(x =>
-                            x.SequenceId == section.SequenceNumber && x.SectionId == section.SectionNumber);
-
-                        var pageDetails =
-                            selectedSection?.QnAData?.Pages?.SingleOrDefault(p => p.PageId == page.PageId);
-
-                        if (pageDetails != null && pageDetails.Active)
-                        {
-                            page.PageOfAnswers = pageDetails.PageOfAnswers;
-                        }
+                        page.PageOfAnswers = pageDetails.PageOfAnswers;
                     }
                 }
             }
         }
 
+        private static ApplicationSection GetSectionForSequenceNumberSectionNumber(IEnumerable<ApplicationSection> allSections, int sequenceNumber, int sectionNumber)
+        {
+            return allSections.FirstOrDefault(x => x.SequenceId == sequenceNumber && x.SectionId == sectionNumber);
+        }
+
         private void AddPageTitlesToSequences(List<AssessorSequence> sequencesWithModerationFails)
         {
-            foreach (var sequence in sequencesWithModerationFails)
+            foreach (var section in sequencesWithModerationFails.SelectMany(sequence => sequence.Sections))
             {
-                foreach (var section in sequence.Sections)
+            foreach (var page in section.Pages)
                 {
-                    foreach (var page in section.Pages)
-                    {
-                        page.Title = GetTitleForPage(page);
-                    }
+                    page.Title = GetTitleForPage(page);
                 }
             }
+            
         }
 
         private static void RemoveInactiveOrEmptyPagesSectionsSequencesFromSequences(List<AssessorSequence> sequencesWithModerationFails,
@@ -172,8 +146,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
                     foreach (var page in section.Pages)
                     {
-                        var selectedSection = allSections.FirstOrDefault(x =>
-                            x.SequenceId == section.SequenceNumber && x.SectionId == section.SectionNumber);
+                        var selectedSection =  GetSectionForSequenceNumberSectionNumber(allSections, section.SequenceNumber, section.SectionNumber);
 
                         var pageDetails =
                             selectedSection?.QnAData?.Pages?.SingleOrDefault(p => p.PageId == page.PageId);
@@ -223,19 +196,17 @@ namespace SFA.DAS.ApplyService.Web.Services
             {
                 foreach (var section in sequence.Sections)
                 {
-                    if (section.Pages != null)
-                    {
-                        if (sequencesWithModerationFails.All(x => x.SequenceNumber != sequence.SequenceNumber))
-                            sequencesWithModerationFails.Add(new AssessorSequence
-                            {
-                                SequenceNumber = sequence.SequenceNumber,
-                                SequenceTitle = sequence.SequenceTitle,
-                                Sections = new List<AssessorSection>()
-                            });
+                    if (section.Pages == null) continue;
+                    if (!sequencesWithModerationFails.Any(x => x.SequenceNumber == sequence.SequenceNumber))
+                        sequencesWithModerationFails.Add(new AssessorSequence
+                        {
+                            SequenceNumber = sequence.SequenceNumber,
+                            SequenceTitle = sequence.SequenceTitle,
+                            Sections = new List<AssessorSection>()
+                        });
 
-                        sequencesWithModerationFails.FirstOrDefault(x => x.SequenceNumber == section.SequenceNumber)
-                            ?.Sections.Add(section);
-                    }
+                    sequencesWithModerationFails.
+                        FirstOrDefault(x => x.SequenceNumber == section.SequenceNumber).Sections.Add(section);
                 }
             }
         }
@@ -281,16 +252,13 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             foreach (var q in pageDetails.Questions)
             {
-                if (string.Equals(q.Input.Type, QuestionType.CheckboxList,
-                    StringComparison.CurrentCultureIgnoreCase))
+                if (QuestionType.CheckboxList.Equals(q.Input.Type, StringComparison.CurrentCultureIgnoreCase))
                     q.Input.Type = QuestionType.CheckboxList;
 
-                if (string.Equals(q.Input.Type, QuestionType.ComplexCheckboxList,
-                    StringComparison.CurrentCultureIgnoreCase))
+                if (QuestionType.ComplexCheckboxList.Equals(q.Input.Type, StringComparison.CurrentCultureIgnoreCase))
                     q.Input.Type = QuestionType.ComplexCheckboxList;
 
-                if (string.Equals(q.Input.Type, QuestionType.Checkbox,
-                    StringComparison.CurrentCultureIgnoreCase))
+                if (QuestionType.Checkbox.Equals(q.Input.Type, StringComparison.CurrentCultureIgnoreCase))
                     q.Input.Type = QuestionType.Checkbox;
             }
 
@@ -323,11 +291,5 @@ namespace SFA.DAS.ApplyService.Web.Services
             return guidanceInformation;
         }
 
-    }
-
-    public interface IOverallOutcomeAugmentationService
-    {
-         Task AugmentModelWithModerationFailDetails(ApplicationSummaryWithModeratorDetailsViewModel model,
-            string userId);
     }
 }
