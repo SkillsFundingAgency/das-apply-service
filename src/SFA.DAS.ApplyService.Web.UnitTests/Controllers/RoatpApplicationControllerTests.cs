@@ -65,6 +65,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [SetUp]
         public void Before_each_test()
         {
+            var signInId = Guid.NewGuid();
+            var givenNames = "Test";
+            var familyName = "User";
+
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.Name, $"{USER_GIVEN_NAME} {USER_FAMILY_NAME}"),
