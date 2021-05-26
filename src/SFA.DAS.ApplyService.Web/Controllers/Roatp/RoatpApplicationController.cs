@@ -199,8 +199,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
 
-            _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{user.Id}], applicationType: [{applicationType}], startApplicationJson: [{startApplicationJson}]");
-            var qnaResponse = await _qnaApiClient.StartApplication(user.Id.ToString(), applicationType, startApplicationJson);
+            _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{user.Id}], startApplicationJson: [{startApplicationJson}]");
+            var qnaResponse = await _qnaApiClient.StartApplication(user.Id.ToString(), ApplicationTypes.RegisterTrainingProviders, startApplicationJson);
             _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{qnaResponse?.ApplicationId}]");
 
             var applicationId = Guid.Empty;
