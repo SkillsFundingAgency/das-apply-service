@@ -44,7 +44,6 @@ using IRoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.IRoatpAp
 using QnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.QnaTokenService;
 using RoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.RoatpApiClient;
 using SecurityHeadersExtensions = SFA.DAS.ApplyService.InternalApi.Infrastructure.SecurityHeadersExtensions;
-using ServiceCollectionExtensions = SFA.DAS.ApplyService.InternalApi.Infrastructure.ServiceCollectionExtensions;
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
@@ -203,43 +202,35 @@ namespace SFA.DAS.ApplyService.InternalApi
 
         private void ConfigHttpClients(IServiceCollection services)
         {
-            var acceptHeaderName = "Accept";
-            var acceptHeaderValue = "application/json";
             var handlerLifeTime = TimeSpan.FromMinutes(5);
-
 
             services.AddHttpClient<ReferenceDataApiClient, ReferenceDataApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.ReferenceDataApiAuthentication.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<CompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.CompaniesHouseApiAuthentication.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IInternalQnaApiClient, InternalQnaApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.QnaApiAuthentication.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IEmailTemplateClient, EmailTemplateClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.InternalApi.Uri);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
         }
