@@ -1259,7 +1259,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> ApplicationWithdrawn(Guid applicationId)
         {
             var model = await BuildApplicationSummaryViewModel(applicationId);
-
             return View("~/Views/Roatp/ApplicationWithdrawn.cshtml", model);
         }
 
@@ -1309,22 +1308,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ApplicationUnsuccessful(Guid applicationId)
         {
-            var application = await _apiClient.GetApplication(applicationId);
-            var applicationData = application.ApplyData.ApplyDetails;
-
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationId = application.ApplicationId,
-                UKPRN = applicationData.UKPRN,
-                OrganisationName = applicationData.OrganisationName,
-                TradingName = applicationData.TradingName,
-                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
-                ApplicationReference = applicationData.ReferenceNumber,
-                EmailAddress = User.GetEmail(),
-                SubmittedDate = applicationData.ApplicationSubmittedOn,
-                ExternalComments = application.ApplyData.GatewayReviewDetails.ExternalComments
-            };
-
+            var model = await BuildApplicationSummaryViewModel(applicationId);
             return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
         }
 
@@ -1565,10 +1549,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 TradingName = applicationData.TradingName,
                 ApplicationRouteId = applicationData.ProviderRoute.ToString(),
                 ApplicationReference = applicationData.ReferenceNumber,
-                SubmittedDate = applicationData?.ApplicationSubmittedOn,
-                ExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
+                SubmittedDate = applicationData.ApplicationSubmittedOn,
+                ExternalComments = application.ExternalComments ?? application.ApplyData.GatewayReviewDetails?.ExternalComments,
                 EmailAddress = User.GetEmail(),
-                FinancialGrade = application?.FinancialGrade?.SelectedGrade
+                FinancialGrade = application.FinancialGrade?.SelectedGrade
             };
             return model;
         }
