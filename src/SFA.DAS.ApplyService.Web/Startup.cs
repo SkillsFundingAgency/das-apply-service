@@ -246,7 +246,6 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddTransient<IDfeSignInService, DfeSignInService>();
             services.AddTransient<CreateAccountValidator, CreateAccountValidator>();
-            services.AddTransient<IUserService, UserService>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
             services.AddTransient<IResetRouteQuestionsService, ResetRouteQuestionsService>();

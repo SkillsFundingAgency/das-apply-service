@@ -8,7 +8,6 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Start;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
@@ -37,13 +36,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     [TestFixture]
     public class RoatpApplicationControllerTests
     {
+        private const string USER_GIVEN_NAME = "Test";
+        private const string USER_FAMILY_NAME = "User";
+        private const string USER_EMAIL_ADDRESS = "Test.User@test.com";
+        private readonly Guid USER_USERID = Guid.NewGuid();
+        private readonly Guid USER_SIGNINID = Guid.NewGuid();
+
         private RoatpApplicationController _controller;
         private Mock<IApplicationApiClient> _apiClient;
         private Mock<ILogger<RoatpApplicationController>> _logger;
         private Mock<IUsersApiClient> _usersApiClient;
         private Mock<ISessionService> _sessionService;
-        private Mock<IConfigurationService> _configService;
-        private Mock<IUserService> _userService;
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IQuestionPropertyTokeniser> _questionPropertyTokeniser;
         private Mock<IPageNavigationTrackingService> _pageNavigationTrackingService;
@@ -68,19 +71,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
-                new Claim(ClaimTypes.Name, $"{givenNames} {familyName}"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("Email", "test@test.com"),
-                new Claim("sub", signInId.ToString()),
-                new Claim("custom-claim", "example claim value"),
+                new Claim(ClaimTypes.Name, $"{USER_GIVEN_NAME} {USER_FAMILY_NAME}"),
+                new Claim("sub", USER_SIGNINID.ToString()),
+                new Claim("given_name", USER_GIVEN_NAME),
+                new Claim("family_name", USER_FAMILY_NAME),
+                new Claim("Email", USER_EMAIL_ADDRESS),
             }, "mock"));
 
             _apiClient = new Mock<IApplicationApiClient>();
             _logger = new Mock<ILogger<RoatpApplicationController>>();
             _usersApiClient = new Mock<IUsersApiClient>();
             _sessionService = new Mock<ISessionService>();
-            _configService = new Mock<IConfigurationService>();
-            _userService = new Mock<IUserService>();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _pagesWithSectionsFlowService = new Mock<IPagesWithSectionsFlowService>();
 
@@ -97,8 +98,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _taskListOrchestrator = new Mock<ITaskListOrchestrator>();
             _ukrlpApiClient = new Mock<IUkrlpApiClient>();
 
-            _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
-                                                         _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, 
+            _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object,
+                                                         _usersApiClient.Object, _qnaApiClient.Object, 
                                                           _pagesWithSectionsFlowService.Object,
                                                          _questionPropertyTokeniser.Object, _pageOverrideConfiguration.Object,
                                                          _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
@@ -113,17 +114,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 }
             };
 
-            _userService.Setup(x => x.GetSignInId()).ReturnsAsync(signInId);
-            _userService.Setup(x => x.ValidateUser(It.IsAny<string>())).ReturnsAsync(true);
-
             var contact = new Contact
             {
-                Id = Guid.NewGuid(),
-                SigninId = signInId,
-                GivenNames = givenNames,
-                FamilyName = familyName
+                Id = USER_USERID,
+                SigninId = USER_SIGNINID,
+                GivenNames = USER_GIVEN_NAME,
+                FamilyName = USER_FAMILY_NAME,
+                Email = USER_EMAIL_ADDRESS
             };
-            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(contact);
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(contact);
         }
 
         [Test]
@@ -946,19 +945,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         public async Task TaskList_shows_tasklist_view_for_application()
         {
             var applicationId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
 
-            _userService.Setup(x => x.GetSignInId()).ReturnsAsync(() => userId);
-
-            var inProgressApp = new Domain.Entities.Apply
+            var inProgressApp = new Apply
             {
                 ApplicationStatus = ApplicationStatus.InProgress,
                 ApplyData = new ApplyData()
             };
 
-            _apiClient.Setup(x => x.GetApplicationByUserId(applicationId, userId)).ReturnsAsync(() => inProgressApp);
+            _apiClient.Setup(x => x.GetApplicationByUserId(applicationId, USER_SIGNINID)).ReturnsAsync(() => inProgressApp);
 
-            _taskListOrchestrator.Setup(x => x.GetTaskListViewModel(applicationId, userId))
+            _taskListOrchestrator.Setup(x => x.GetTaskListViewModel(applicationId, USER_USERID))
                 .ReturnsAsync(() => new TaskListViewModel());
 
             var result = await _controller.TaskList(applicationId);

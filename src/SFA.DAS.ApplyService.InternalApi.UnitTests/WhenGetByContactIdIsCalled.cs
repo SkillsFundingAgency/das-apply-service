@@ -8,9 +8,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Users.GetContact;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
@@ -28,7 +26,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 
             });
 
-            var accountController = new AccountController(mediator.Object, new Mock<ILogger<AccountController>>().Object, new Mock<IContactRepository>().Object, new Mock<IConfigurationService>().Object);
+            var accountController = new AccountController(mediator.Object, new Mock<ILogger<AccountController>>().Object);
 
             var result = await accountController.GetByContactId(Guid.NewGuid());
 
