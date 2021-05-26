@@ -7,7 +7,7 @@ using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public interface IOversightApiClient
+    public interface IOutcomeApiClient
     {
         Task<List<ClarificationPageReviewOutcome>> GetAllClarificationPageReviewOutcomes(Guid applicationId, string userId);
 

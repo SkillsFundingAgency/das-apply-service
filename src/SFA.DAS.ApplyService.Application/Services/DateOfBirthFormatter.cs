@@ -33,32 +33,6 @@ namespace SFA.DAS.ApplyService.Application.Services
             return $"{ShortMonthNames[index]} {year}";
         }
 
-        public static string FormatMonth(string month)
-        {
-            if (String.IsNullOrWhiteSpace(month))
-            {
-                return string.Empty;
-            }
-
-            int monthValue = 0;
-            int.TryParse(month, out monthValue);
-
-            if (monthValue == 0)
-            {
-                return month;
-            }
-
-            var index = monthValue - 1;
-
-            if (index < 0 || index > 11)
-            {
-                return month;
-            }
-
-            return $"{ShortMonthNames[index]}";
-        }
-
-
         public static string GetMonthNumberFromShortDateOfBirth(string shortDob)
         {
             var endIndex = shortDob.IndexOf(" ");

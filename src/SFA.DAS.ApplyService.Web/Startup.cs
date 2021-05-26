@@ -167,7 +167,7 @@ namespace SFA.DAS.ApplyService.Web
             })
             .SetHandlerLifetime(handlerLifeTime);
 
-            services.AddHttpClient<IOversightApiClient, OversightApiClient>(config =>
+            services.AddHttpClient<IOutcomeApiClient, OutcomeApiClient>(config =>
                 {
                     config.BaseAddress = new Uri(_configService.InternalApi.Uri);
                     config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
@@ -297,7 +297,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IRoatpOrganisationVerificationService, RoatpOrganisationVerificationService>();
             services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
             services.AddTransient<ITaskListOrchestrator, TaskListOrchestrator>();
-            services.AddTransient<IOverallOutcomeAugmentationService, OverallOutcomeAugmentationService>();
+            services.AddTransient<IOverallOutcomeService, OverallOutcomeService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

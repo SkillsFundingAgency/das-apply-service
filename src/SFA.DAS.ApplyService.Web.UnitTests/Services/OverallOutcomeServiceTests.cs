@@ -18,15 +18,15 @@ using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 {
     [TestFixture]
-    public class OverallOutcomeAugmentationServiceTests
+    public class OverallOutcomeServiceTests
     {
-        private Mock<IOversightApiClient> _apiClient;
+        private Mock<IOutcomeApiClient> _apiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IAssessorLookupService> _assessorLookupService;
         private Guid _applicationId;
         private ApplicationSummaryWithModeratorDetailsViewModel _model;
         private string _userId;
-        private OverallOutcomeAugmentationService _service;
+        private OverallOutcomeService _service;
         private string _page121;
         private string _question121Id;
         private string _page122BodyText;
@@ -38,7 +38,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         {
             _applicationId = Guid.NewGuid();
             _qnaApiClient = new Mock<IQnaApiClient>();
-            _apiClient = new Mock<IOversightApiClient>();
+            _apiClient = new Mock<IOutcomeApiClient>();
             _assessorLookupService = new Mock<IAssessorLookupService>();
             _userId = "test";
             _page121 = "page1.2.1";
@@ -54,7 +54,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationOutcomes);
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
-            _service = new OverallOutcomeAugmentationService(_apiClient.Object, _qnaApiClient.Object,
+            _service = new OverallOutcomeService(_apiClient.Object, _qnaApiClient.Object,
                 _assessorLookupService.Object);
 
 
@@ -269,6 +269,70 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             _page121QuestionBodyText.Should().Be(modelToBeUpdated.PagesWithGuidance.First(x=>x.PageId==_page121).GuidanceInformation.FirstOrDefault());
             _page122BodyText.Should().Be(modelToBeUpdated.PagesWithGuidance.First(x => x.PageId == _page122).GuidanceInformation.FirstOrDefault());
+        }
+
+
+        [Test]
+        public async Task BuildApplilcationSummaryViewModel_builds_expected_viewModel()
+        {
+            var emailAddress = "test@test.com";
+            var ukprn = "12345678";
+            var organisationName = "org name 1";
+            var tradingName = "trading name";
+            var applicationRouteId = 1;
+            var applicationReference = "ABC";
+            var submittedDate = DateTime.Today.AddDays(-32);
+            var externalComments = "external comments";
+            var financialReviewStatus = Domain.Entities.FinancialReviewStatus.Fail;
+            var financialGrade = "pass";
+            var financialExternalComments = "financial external comments";
+            var gatewayReviewStatus = GatewayReviewStatus.Pass;
+            var moderationStatus = Domain.Apply.ModerationStatus.Fail;
+
+            var application = new Apply
+            {
+                ApplicationId = _applicationId, 
+                ExternalComments = externalComments,
+                FinancialReviewStatus = financialReviewStatus,
+                FinancialGrade = new FinancialReviewDetails {
+                    SelectedGrade = financialGrade,
+                    ExternalComments = financialExternalComments },
+                GatewayReviewStatus = gatewayReviewStatus,
+                ModerationStatus = moderationStatus,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails
+                    {
+                        UKPRN = ukprn,
+                        OrganisationName = organisationName,
+                        TradingName = tradingName,
+                        ProviderRoute = applicationRouteId,
+                        ReferenceNumber = applicationReference,
+                        ApplicationSubmittedOn = submittedDate
+                    }
+                }
+            };
+
+            var expectedModel = new ApplicationSummaryViewModel
+            {
+                ApplicationId = _applicationId, 
+                UKPRN = ukprn,
+                OrganisationName = organisationName,
+                EmailAddress = emailAddress,
+                TradingName = tradingName,
+                ApplicationRouteId = applicationRouteId.ToString(),
+                ApplicationReference = applicationReference,
+                SubmittedDate = submittedDate,
+                ExternalComments = externalComments,
+                FinancialReviewStatus = financialReviewStatus,
+                GatewayReviewStatus = gatewayReviewStatus,
+                ModerationStatus = moderationStatus,
+                FinancialGrade = financialGrade,
+                FinancialExternalComments = financialExternalComments
+            };
+
+            var returnedModel = _service.BuildApplicationSummaryViewModel(application, emailAddress);
+            expectedModel.Should().BeEquivalentTo(returnedModel);
         }
 
         private List<AssessorSequence> SetUpAsessorSequences()
@@ -505,13 +569,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             return sections;
         }
 
+    private ApplicationSummaryWithModeratorDetailsViewModel GetCopyOfModel()
+    {
+        var model = new ApplicationSummaryWithModeratorDetailsViewModel
+        { ApplicationId = _applicationId };
 
-        private ApplicationSummaryWithModeratorDetailsViewModel GetCopyOfModel()
-        {
-            var model = new ApplicationSummaryWithModeratorDetailsViewModel
-            { ApplicationId = _applicationId };
-
-            return model;
-        }
+        return model;
+    }
     }
 }

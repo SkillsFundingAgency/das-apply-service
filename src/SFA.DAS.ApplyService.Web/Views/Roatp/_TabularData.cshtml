@@ -1,6 +1,7 @@
 ﻿@using Newtonsoft.Json
 @using SFA.DAS.ApplyService.Application.Services
 @using SFA.DAS.ApplyService.Domain.Apply
+@using System.Globalization
 @model string
 
 @{
@@ -46,7 +47,7 @@
                 var column = dataRow.Columns[index];
                 if (index + 1 == monthField)
                 {
-                    column = DateOfBirthFormatter.FormatMonth(column);
+                    column = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(int.Parse(column));
                 }
                
                 <tr class="govuk-table__row">

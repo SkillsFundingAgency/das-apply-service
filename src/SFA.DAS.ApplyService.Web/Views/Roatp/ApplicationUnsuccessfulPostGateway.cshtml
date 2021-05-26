@@ -1,10 +1,19 @@
 ﻿@using SFA.DAS.ApplyService.Domain.Entities
 @using SFA.DAS.ApplyService.Application.Apply.Roatp
+@using SFA.DAS.ApplyService.Domain.Apply
 @model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryWithModeratorDetailsViewModel
 
 @{
     ViewBag.Title = "Application unsuccessful";
     Layout = "_Layout";
+
+
+    var passFailStatusCssClass = "status--pass";
+
+    @if (Model.FinancialReviewStatus == FinancialReviewStatus.Fail)
+    {
+        passFailStatusCssClass = "status--fail";
+    }
 }
 
 <partial name="~/Views/Roatp/ApplicationHeaderReadOnly.cshtml" />
@@ -35,17 +44,10 @@
             <h1 class="govuk-heading-l">Feedback on your financial health assessment</h1>
             <p class="govuk-body">
                 The outcome of your financial health assessment is:<br />
-                @if (Model.FinancialReviewStatus == FinancialReviewStatus.Fail)
-                {
-                    <span class="status--fail hint--no-color">@Model.FinancialGrade</span>
-                }
-                else
-                {
-                    <span class="status--pass hint--no-color">@Model.FinancialGrade</span>
-                }
+                <span class="@passFailStatusCssClass hint--no-color">@Model.FinancialGrade</span>
             </p>
 
-            @if (Model.FinancialGrade.ToLower() == "inadequate")
+            @if (Model.FinancialGrade == FinancialApplicationSelectedGrade.Inadequate)
             {
                 <h2 class="govuk-heading-m">Why your financial health assessment is inadequate</h2>
                 <p class="govuk-body das-multiline-text-bottom-margin">
@@ -121,10 +123,6 @@
                                 }
                                 else
                                 {
-                                    {
-
-
-                                    }
                                     <h2 class="govuk-heading-s"> @sectionPage.Title</h2>
 
                                     <span class="question--status">

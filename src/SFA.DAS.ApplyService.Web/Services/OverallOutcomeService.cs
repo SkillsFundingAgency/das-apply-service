@@ -12,13 +12,13 @@ using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Services
 {
-    public class OverallOutcomeAugmentationService : IOverallOutcomeAugmentationService
+    public class OverallOutcomeService : IOverallOutcomeService
     {
-        private readonly IOversightApiClient _apiClient;
+        private readonly IOutcomeApiClient _apiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IAssessorLookupService _assessorLookupService;
 
-        public OverallOutcomeAugmentationService(IOversightApiClient apiClient, IQnaApiClient qnaApiClient,
+        public OverallOutcomeService(IOutcomeApiClient apiClient, IQnaApiClient qnaApiClient,
             IAssessorLookupService assessorLookupService)
         {
             _apiClient = apiClient;
@@ -53,6 +53,77 @@ namespace SFA.DAS.ApplyService.Web.Services
                     GatherGuidancePagesForSequenceQuestions(sequencesWithModerationFails, allSections);
             }
         }
+
+        public ApplicationSummaryViewModel BuildApplicationSummaryViewModel(Apply application, string emailAddress)
+            {
+                var applicationData = application.ApplyData.ApplyDetails;
+
+                var model = new ApplicationSummaryViewModel
+                {
+                    ApplicationId = application.ApplicationId,
+                    UKPRN = applicationData.UKPRN,
+                    OrganisationName = applicationData.OrganisationName,
+                    TradingName = applicationData.TradingName,
+                    ApplicationRouteId = applicationData.ProviderRoute.ToString(),
+                    ApplicationReference = applicationData.ReferenceNumber,
+                    SubmittedDate = applicationData?.ApplicationSubmittedOn,
+                    ExternalComments = application.ExternalComments ?? application.ApplyData.GatewayReviewDetails?.ExternalComments,
+                    EmailAddress = emailAddress,
+                    FinancialReviewStatus = application?.FinancialReviewStatus,
+                    FinancialGrade = application?.FinancialGrade?.SelectedGrade,
+                    FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
+                    GatewayReviewStatus = application?.GatewayReviewStatus,
+                    ModerationStatus = application?.ModerationStatus
+                };
+                return model;
+            }
+
+        public async Task<ApplicationSummaryWithModeratorDetailsViewModel> ApplicationUnsuccessful(Apply application, string emailAddress)
+        {
+            var applicationData = application.ApplyData.ApplyDetails;
+
+            var oversightReview = await _apiClient.GetOversightReview(application.ApplicationId);
+
+            var applicationUnsuccessfulModerationFail = false;
+            if (application?.GatewayReviewStatus == GatewayAnswerStatus.Pass)
+            {
+                if (application?.ModerationStatus != null
+                    && application?.ModerationStatus == ModerationStatus.Fail
+                    && oversightReview.ModerationApproved.HasValue
+                    && oversightReview.ModerationApproved == true)
+                {
+                    applicationUnsuccessfulModerationFail = true;
+                }
+            }
+
+            var model = new ApplicationSummaryWithModeratorDetailsViewModel
+            {
+                ApplicationId = application.ApplicationId,
+                UKPRN = applicationData.UKPRN,
+                OrganisationName = applicationData.OrganisationName,
+                TradingName = applicationData.TradingName,
+                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
+                ApplicationReference = applicationData.ReferenceNumber,
+                SubmittedDate = applicationData?.ApplicationSubmittedOn,
+                ExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
+                EmailAddress = emailAddress,
+                FinancialReviewStatus = application?.FinancialReviewStatus,
+                FinancialGrade = application?.FinancialGrade?.SelectedGrade,
+                FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
+                GatewayReviewStatus = application?.GatewayReviewStatus,
+                ModerationStatus = application?.ModerationStatus
+            };
+
+            if (applicationUnsuccessfulModerationFail)
+            {
+                await AugmentModelWithModerationFailDetails(model,
+                   emailAddress);
+            }
+
+            return model;
+        }
+
+
 
         private void AddSequenceTitlesToSequences(List<AssessorSequence> sequencesWithModerationFails)
         {
@@ -206,7 +277,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                         });
 
                     sequencesWithModerationFails.
-                        FirstOrDefault(x => x.SequenceNumber == section.SequenceNumber).Sections.Add(section);
+                        FirstOrDefault(x => x.SequenceNumber == section.SequenceNumber)?.Sections.Add(section);
                 }
             }
         }

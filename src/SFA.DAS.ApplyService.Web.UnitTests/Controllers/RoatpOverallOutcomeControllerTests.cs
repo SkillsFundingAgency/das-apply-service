@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -18,22 +20,42 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     public class RoatpOverallOutcomeControllerTests
     {
         private RoatpOverallOutcomeController _controller;
-        private Mock<IOversightApiClient> _apiClient;
+        private Mock<IOutcomeApiClient> _apiClient;
         private Mock<IApplicationApiClient> _applicationApiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
-        private Mock<IOverallOutcomeAugmentationService> _augmentationService;
+        private Mock<IOverallOutcomeService> _outcomeService;
         private Mock<ILogger<RoatpOverallOutcomeController>> _logger;
 
         [SetUp]
         public void Before_each_test()
         {
-            _apiClient = new Mock<IOversightApiClient>();
+            _apiClient = new Mock<IOutcomeApiClient>();
             _logger = new Mock<ILogger<RoatpOverallOutcomeController>>();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
-            _augmentationService = new Mock<IOverallOutcomeAugmentationService>();
-            
-            _controller = new RoatpOverallOutcomeController(_apiClient.Object, _qnaApiClient.Object, _augmentationService.Object, _applicationApiClient.Object, _logger.Object);
+            _outcomeService = new Mock<IOverallOutcomeService>();
+
+            var signInId = Guid.NewGuid();
+            var givenNames = "Test";
+            var familyName = "User";
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.Name, $"{givenNames} {familyName}"),
+                new Claim(ClaimTypes.NameIdentifier, "1"),
+                new Claim("Email", "test@test.com"),
+                new Claim("sub", signInId.ToString()),
+                new Claim("custom-claim", "example claim value"),
+            }, "mock"));
+
+            _controller = new RoatpOverallOutcomeController(_apiClient.Object, _qnaApiClient.Object,
+                _outcomeService.Object, _applicationApiClient.Object, _logger.Object)
+            {
+                ControllerContext = new ControllerContext()
+                {
+                    HttpContext = new DefaultHttpContext() {User = user}
+                }
+            };
         }
 
 
@@ -49,12 +71,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
 
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationSubmitted.cshtml");
         }
 
-        
         [Test]
         public async Task Application_shows_active_with_success_page_if_application_approved_and_oversight_review_status_already_active()
         {
@@ -73,9 +94,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationApprovedAlreadyActive");
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationApprovedAlreadyActive.cshtml");
         }
         
         [Test]
@@ -92,10 +113,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
         
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
-        
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationApproved");
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationApproved.cshtml");
         }
         
         [Test]
@@ -129,9 +150,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationSubmitted.cshtml");
         }
         
         [Test]
@@ -147,9 +168,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationRejected");
+            var viewRe = result as ViewResult;
+            viewRe.Should().NotBeNull();
+            viewRe.ViewName.Should().Contain("ApplicationRejected.cshtml");
         }
         
         [Test]
@@ -164,9 +185,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("FeedbackAdded");
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("FeedbackAdded.cshtml");
         }
         
         [Test]
@@ -216,9 +237,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationUnsuccessful");
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationUnsuccessful.cshtml");
         }
         
         [Test]
@@ -233,9 +254,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationUnsuccessful");
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationUnsuccessfulPostGateway.cshtml");
         }
         
         [Test]
@@ -250,11 +271,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationWithdrawn");
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationWithdrawn.cshtml");
         }
-        
         
         [Test]
         public async Task Application_shows_removed_page_if_application_removed()
@@ -268,11 +288,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationRemoved");
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationWithdrawnESFA.cshtml");
         }
-        
         
         [Test]
         public async Task Application_shows_submitted_page_if_application_submitted()
@@ -286,9 +305,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationSubmitted.cshtml");
         }
         
         [Test]
@@ -303,9 +322,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationSubmitted.cshtml");
         }
     }
 }

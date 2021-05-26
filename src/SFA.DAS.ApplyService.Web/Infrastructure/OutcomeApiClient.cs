@@ -12,9 +12,9 @@ using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class OversightApiClient : ApiClientBase<OversightApiClient>, IOversightApiClient
+    public class OutcomeApiClient : ApiClientBase<OutcomeApiClient>, IOutcomeApiClient
     {
-        public OversightApiClient(HttpClient httpClient, ILogger<OversightApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
+        public OutcomeApiClient(HttpClient httpClient, ILogger<OutcomeApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
 
