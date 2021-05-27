@@ -29,38 +29,43 @@
         {
             <h2 class="govuk-heading-s"> @sectionTitle</h2>
         }
-
-        @foreach (var dataRow in tableData.DataRows)
-        {
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                <table class="govuk-table govuk-!-margin-bottom-9">
-
-            @for (var index = 0; index < dataRow.Columns.Count; index++)
-            {
-                var heading = string.Empty;
-                if (tableData.HeadingTitles.Count >= index)
-                {
-                    heading = tableData.HeadingTitles[index];
-                }
-
-                var column = dataRow.Columns[index];
-                if (index + 1 == monthField)
-                {
-                    column = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(int.Parse(column));
-                }
-               
-                <tr class="govuk-table__row">
-                    <th scope="row" class="govuk-table__header">@heading</th>
-                    <td class="govuk-table__cell">@column</td>
-                </tr>
-            }
-                </table>
         
-            </div>
-        </div>
+        <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <table class="govuk-table govuk-!-margin-bottom-2">
+                @for (var index = 0; index < tableData.DataRows.Count; index++)
+                {
+                    var dataRow = tableData.DataRows[index];
+                    /*@*/for (var i = 0; i < dataRow.Columns.Count; i++)
+                    {
+                        var heading = string.Empty;
+                        if (tableData.HeadingTitles.Count >= i)
+                        {
+                            heading = tableData.HeadingTitles[i];
+                        }
 
-        }
+                        var column = dataRow.Columns[i];
+                        if (i + 1 == monthField)
+                        {
+                            column = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(int.Parse(column));
+                        }
+
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">@heading</th>
+                            <td class="govuk-table__cell">@column</td>
+                        </tr>
+                    }
+                    @if (index+1 < tableData.DataRows.Count)
+                    {
+                        <tr>
+                            <td>&nbsp;</td>
+                        </tr>
+                    }
+                }
+            </table>
+        
+        </div>
+        </div>
     </div>
     
 }
