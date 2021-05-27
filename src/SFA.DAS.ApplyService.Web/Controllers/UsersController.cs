@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -98,21 +97,29 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public async Task<IActionResult> PostSignIn()
         {
-            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
-           
+            var signInId = User.GetSignInId();
+            var user = await _usersApiClient.GetUserBySignInId(signInId);
+
             if (user is null)
             {
-                return RedirectToAction("NotSetUp");
+                // User exists so we can create them an account automatically
+                if (await _usersApiClient.CreateUserFromAsLogin(signInId, User.GetEmail(), User.GetGivenName(), User.GetFirstName()))
+                {
+                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble"); 
+                }
+                else
+                {
+                    return RedirectToAction("NotSetUp");
+                }
             }
             else if (user.ApplyOrganisationId is null)
             {
                 return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
             }
-
-            var selectedApplicationType = ApplicationTypes.RegisterTrainingProviders;
-            
-            return RedirectToAction("Applications", "RoatpApplication", new { applicationType = selectedApplicationType });
-
+            else
+            {
+                return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
+            }
         }
 
         [HttpGet("/Users/SignedOut")]
