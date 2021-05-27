@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
 
         private string AssociatedPagesWithSectionStatus(Page page, QnAData selectedSectionQnAData, bool isFirstPage)
         {
-            if (isFirstPage && !page.Complete) return "";
+            
             if (page.Next.All(x => x.Action != NextAction.NextPage)) return TaskListSectionStatus.Completed;
 
             foreach (var nxt in page.Next.Where(x => x.Action == NextAction.NextPage))
@@ -37,7 +37,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
                 }
             }
 
-            return TaskListSectionStatus.Completed;
+            return String.Empty;
         }
     }
 }
