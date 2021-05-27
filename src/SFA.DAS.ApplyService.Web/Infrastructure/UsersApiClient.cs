@@ -15,13 +15,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     {
         Task<bool> InviteUser(CreateAccountViewModel vm);
 
-        Task<Contact> GetUserBySignInId(string signInId);
+        Task<bool> CreateUserFromAsLogin(Guid signInId, string email, string givenName, string familyName);
+
+        Task<Contact> GetUserBySignInId(Guid signInId);
 
         Task<bool> ApproveUser(Guid userId);
         Task Callback(SignInCallback callback);
-        Task AssociateOrganisationWithUser(Guid contactId, Guid organisationId);
-        Task MigrateUsers();
-        Task MigrateContactAndOrgs(MigrateContactOrganisation migrateContactOrganisation);
     }
 
     public class UsersApiClient : ApiClientBase<UsersApiClient>, IUsersApiClient
@@ -37,7 +36,15 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return result == HttpStatusCode.OK;
         }
 
-        public async Task<Contact> GetUserBySignInId(string signInId)
+        public async Task<bool> CreateUserFromAsLogin(Guid signInId, string email, string givenName, string familyName)
+        {
+            var contact = new NewContact { Email = email, GivenName = givenName, FamilyName = familyName };
+
+            var result = await Post($"/Account/{signInId}", contact);
+            return result == HttpStatusCode.OK;
+        }
+
+        public async Task<Contact> GetUserBySignInId(Guid signInId)
         {
             return await Get<Contact>($"/Account/{signInId}");
         }
@@ -51,25 +58,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task Callback(SignInCallback callback)
         {
             await Post($"/Account/Callback", callback);
-        }
-
-        public async Task MigrateUsers()
-        {
-            await Post("/Account/MigrateUsers", new { });
-        }
-
-        public async Task AssociateOrganisationWithUser(Guid contactId, Guid organisationId)
-        {
-            await Post($"/Account/UpdateContactWithOrgId", new UpdateContactOrgId
-            {
-                ContactId = contactId,
-                OrganisationId = organisationId
-            });
-        }
-
-        public async Task MigrateContactAndOrgs(MigrateContactOrganisation migrateContactOrganisation)
-        {
-            await Post("/Account/MigrateContactAndOrgs", migrateContactOrganisation);
         }
     }
 }

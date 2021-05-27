@@ -14,17 +14,14 @@ namespace SFA.DAS.ApplyService.Web.Authorization
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IApplicationApiClient _apiClient;
-        private readonly IUserService _userService;
         private readonly ILogger<AuthorizationHandler> _logger;
 
         public AuthorizationHandler(IHttpContextAccessor httpContextAccessor,
             IApplicationApiClient apiClient,
-            IUserService userService,
             ILogger<AuthorizationHandler> logger)
         {
             _httpContextAccessor = httpContextAccessor;
             _apiClient = apiClient;
-            _userService = userService;
             _logger = logger;
         }
 
@@ -44,7 +41,7 @@ namespace SFA.DAS.ApplyService.Web.Authorization
             if (Guid.TryParse(requestedApplicationId, out var applicationId))
             {
                 _logger.LogInformation($"Requested application {applicationId}");
-                var signInId = await _userService.GetSignInId();
+                var signInId = _httpContextAccessor.HttpContext.User.GetSignInId();
                 application = await _apiClient.GetApplicationByUserId(applicationId, signInId);
             }
             else

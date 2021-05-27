@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Domain.Entities;
 using Microsoft.Extensions.Logging;
@@ -15,76 +15,71 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
     [TestFixture]
     public class WhenHandlingCreateAccountRequest
     {
-        private Mock<IContactRepository> _userRepository;
+        private Mock<IContactRepository> _contactRepository;
         private CreateAccountHandler _handler;
         private Mock<IDfeSignInService> _dfeSignInService;
+
+        private const string EMAIL = "name@email.com";
+        private const string GIVEN_NAME = "James";
+        private const string FAMILY_NAME = "Jones";
+        private readonly Guid ContactId = Guid.NewGuid();
 
         [SetUp]
         public void Setup()
         {
-            _userRepository = new Mock<IContactRepository>();
+            _contactRepository = new Mock<IContactRepository>();
+            _contactRepository.Setup(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME)).ReturnsAsync(new Contact { Id = ContactId, GivenNames = GIVEN_NAME, FamilyName = FAMILY_NAME, Email = EMAIL });
+
             _dfeSignInService = new Mock<IDfeSignInService>();
-            
-            _handler = new CreateAccountHandler(_userRepository.Object, _dfeSignInService.Object, new Mock<ILogger<CreateAccountHandler>>().Object);
+            _dfeSignInService.Setup(dfe => dfe.InviteUser(EMAIL, GIVEN_NAME, FAMILY_NAME, ContactId)).ReturnsAsync(new InviteUserResponse { IsSuccess = true });
+
+            _handler = new CreateAccountHandler(_contactRepository.Object, _dfeSignInService.Object, new Mock<ILogger<CreateAccountHandler>>().Object);
         }
         
         [Test]
-        public void ThenANewUserIsCreated()
+        public async Task ThenANewUserIsCreated()
         {
-            _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
-            
-            _userRepository.Verify(r => r.CreateContact("name@email.com", "James", "Jones", "ASLogin"));
+            await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME), new CancellationToken());
+
+            _contactRepository.Verify(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME));
         }
 
         [Test]
-        public void ThenAnExistingUserIsNotCreated()
+        public async Task ThenANewUserIsInvitedToDfeSignin()
         {
-            _userRepository.Setup(r => r.GetContact("name@email.com")).ReturnsAsync(new Contact());
-            _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
-            
-            _userRepository.Verify(r => r.CreateContact("name@email.com", "James", "Jones", "ASLogin"), Times.Never);
+            await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME), new CancellationToken());
+
+            _dfeSignInService.Verify(dfe => dfe.InviteUser(EMAIL, GIVEN_NAME, FAMILY_NAME, ContactId));
         }
 
         [Test]
-        public void ThenANewUserIsInvitedToDfeSignin()
+        public async Task ThenAnExistingUserIsNotCreated()
         {
-            var newUserId = Guid.NewGuid();
+            _contactRepository.Setup(r => r.GetContactByEmail(EMAIL)).ReturnsAsync(new Contact { Id = ContactId, GivenNames = GIVEN_NAME, FamilyName = FAMILY_NAME, Email = EMAIL });
 
-            _userRepository.Setup(r => r.CreateContact("name@email.com", "James", "Jones", "ASLogin"))
-                .ReturnsAsync(new Contact() {Id = newUserId});
+            await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME), new CancellationToken());
             
-            _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
-
-            _dfeSignInService.Verify(s => s.InviteUser("name@email.com", "James", "Jones", newUserId));
+            _contactRepository.Verify(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME), Times.Never);
         }
 
         [Test]
-        public void And_AndErrorIsReturnedFromDfeService_ReturnFalse()
+        public async Task ThenAnExistingUserIsInvitedToDfeSignin()
         {
-            _dfeSignInService.Setup(dfe => dfe.InviteUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>()))
-                .ReturnsAsync(new InviteUserResponse() {IsSuccess = false});
-            
-            var newUserId = Guid.NewGuid();
+            _contactRepository.Setup(r => r.GetContactByEmail(EMAIL)).ReturnsAsync(new Contact { Id = ContactId, GivenNames = GIVEN_NAME, FamilyName = FAMILY_NAME, Email = EMAIL });
 
-            _userRepository.Setup(r => r.CreateContact("name@email.com", "James", "Jones", "ASLogin"))
-                .ReturnsAsync(new Contact() {Id = newUserId});
+            await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME), new CancellationToken());
+
+            _dfeSignInService.Verify(dfe => dfe.InviteUser(EMAIL, GIVEN_NAME, FAMILY_NAME, It.IsAny<Guid>()));
+        }
+
+        [Test]
+        public async Task And_AnyErrorReturnedFromDfeService_ReturnsFalse()
+        {
+            _dfeSignInService.Setup(dfe => dfe.InviteUser(EMAIL, GIVEN_NAME, FAMILY_NAME, ContactId)).ReturnsAsync(new InviteUserResponse { IsSuccess = false });
             
-            var result = _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken()).Result;
+            var result = await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME), new CancellationToken());
 
             result.Should().Be(false);
-        }
-
-        [Test]
-        public void ThenAnExistingUserIsInvitedToDfeSignin()
-        {
-            _userRepository.Setup(r => r.GetContact("name@email.com")).ReturnsAsync(new Contact{SigninId = Guid.NewGuid()});
-            
-            _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
-
-            _dfeSignInService.Verify(s => s.InviteUser("name@email.com", "James", "Jones", It.IsAny<Guid>()));
-        }
-
-
-        
+        }             
     }
 }
