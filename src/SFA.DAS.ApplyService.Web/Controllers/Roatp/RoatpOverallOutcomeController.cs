@@ -78,6 +78,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
         }
 
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> DownloadFile(Guid applicationId, int sequenceNo, int sectionNo,
             string pageId, string questionId, string filename)
         {
