@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             repository.Setup(x => x.Update(It.IsAny<Domain.Entities.Apply>()));
 
             var logger = new Mock<ILogger<RecordOversightOutcomeHandler>>();
-            var handler = new RecordOversightOutcomeHandler(logger.Object, oversightReviewRepository.Object, repository.Object, Mock.Of<IAuditService>(), Mock.Of<IApplicationUpdatedEmailService>());
+            var handler = new RecordOversightOutcomeHandler(logger.Object, oversightReviewRepository.Object, repository.Object, Mock.Of<IAuditService>(), Mock.Of<IApplicationUpdatedEmailService>(), Mock.Of<IUnitOfWork>());
 
             var result = await handler.Handle(command, new CancellationToken());
 
@@ -86,7 +86,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 { ApplicationId = command.ApplicationId, Status = ApplicationStatus.Submitted });
 
             var logger = new Mock<ILogger<RecordOversightOutcomeHandler>>();
-            var handler = new RecordOversightOutcomeHandler(logger.Object, oversightReviewRepository.Object, repository.Object, Mock.Of<IAuditService>(), Mock.Of<IApplicationUpdatedEmailService>());
+            var handler = new RecordOversightOutcomeHandler(logger.Object, oversightReviewRepository.Object, repository.Object, Mock.Of<IAuditService>(), Mock.Of<IApplicationUpdatedEmailService>(), Mock.Of<IUnitOfWork>());
 
             var result = await handler.Handle(command, new CancellationToken());
 
@@ -141,7 +141,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 { ApplicationId = command.ApplicationId, Status = ApplicationStatus.Submitted });
 
             var logger = new Mock<ILogger<RecordOversightOutcomeHandler>>();
-            var handler = new RecordOversightOutcomeHandler(logger.Object, oversightReviewRepository.Object, repository.Object, Mock.Of<IAuditService>(), Mock.Of<IApplicationUpdatedEmailService>());
+            var handler = new RecordOversightOutcomeHandler(logger.Object, oversightReviewRepository.Object, repository.Object, Mock.Of<IAuditService>(), Mock.Of<IApplicationUpdatedEmailService>(), Mock.Of<IUnitOfWork>());
 
             if (expectThrows)
             {
@@ -187,7 +187,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
 
             var applicationUpdatedEmailService = new Mock<IApplicationUpdatedEmailService>();
             var logger = new Mock<ILogger<RecordOversightOutcomeHandler>>();
-            var handler = new RecordOversightOutcomeHandler(logger.Object, oversightReviewRepository.Object, repository.Object, Mock.Of<IAuditService>(), applicationUpdatedEmailService.Object);
+            var handler = new RecordOversightOutcomeHandler(logger.Object, oversightReviewRepository.Object, repository.Object, Mock.Of<IAuditService>(), applicationUpdatedEmailService.Object, Mock.Of<IUnitOfWork>());
             await handler.Handle(command, new CancellationToken());
 
             applicationUpdatedEmailService.Verify(x => x.SendEmail(It.Is<Guid>(id => id == command.ApplicationId)), Times.Once);

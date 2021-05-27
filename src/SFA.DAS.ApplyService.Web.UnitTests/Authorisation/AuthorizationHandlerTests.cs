@@ -23,7 +23,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Authorisation
 
         private Mock<IHttpContextAccessor> _httpContextAccessor;
         private Mock<IApplicationApiClient> _applicationApiClient;
-        private Mock<IUserService> _userService;
 
         private Guid _applicationId;
         private Guid _userSignInId;
@@ -33,8 +32,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Authorisation
         public void Setup()
         {
             _userSignInId = Guid.NewGuid();
-            _userService = new Mock<IUserService>();
-            _userService.Setup(x => x.GetSignInId()).ReturnsAsync(_userSignInId);
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim("Email", "test@test.com"),
+                new Claim("sub", _userSignInId.ToString()),
+                new Claim("given_name", "Forename"),
+                new Claim("family_name", "Surname"),
+                new Claim("custom-claim", "example claim value"),
+            }, "mock"));
 
             _applicationId = Guid.NewGuid();
             _application = new Apply { ApplicationId = _applicationId };
@@ -46,10 +52,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Authorisation
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _httpContextAccessor.Setup(x => x.HttpContext.Request.Method).Returns(() => HttpMethod.Get.Method);
             _httpContextAccessor.Setup(x => x.HttpContext.Request.Query).Returns(() => queryCollection);
+            _httpContextAccessor.Setup(x => x.HttpContext.User).Returns(() => user);
 
             _handler = new AuthorizationHandler(_httpContextAccessor.Object,
                 _applicationApiClient.Object,
-                _userService.Object,
                 Mock.Of<ILogger<AuthorizationHandler>>());
         }
 
