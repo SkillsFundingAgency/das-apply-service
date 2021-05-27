@@ -21,15 +21,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     {
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly CreateAccountValidator _createAccountValidator;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IHttpContextAccessor contextAccessor, 
-                               CreateAccountValidator createAccountValidator)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService,
+            CreateAccountValidator createAccountValidator)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
-            _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
         }
         
@@ -65,13 +63,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public IActionResult SignOut()
         {
-            _contextAccessor.HttpContext.Session.Clear();
-            foreach (var cookie in _contextAccessor.HttpContext.Request.Cookies.Keys)
+            HttpContext.Session.Clear();
+            foreach (var cookie in HttpContext.Request.Cookies.Keys)
             {
-                _contextAccessor.HttpContext.Response.Cookies.Delete(cookie);
+                HttpContext.Response.Cookies.Delete(cookie);
             }
 
-            if (string.IsNullOrEmpty(_contextAccessor.HttpContext.User.FindFirstValue("display_name")))
+            if (string.IsNullOrEmpty(HttpContext.User.GetFirstName()))
             {
                 var authenticationProperties = new AuthenticationProperties
                 {
