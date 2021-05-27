@@ -98,7 +98,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _taskListOrchestrator = new Mock<ITaskListOrchestrator>();
             _ukrlpApiClient = new Mock<IUkrlpApiClient>();
 
-            _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, 
+            _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object,
                                                          _usersApiClient.Object, _qnaApiClient.Object, 
                                                           _pagesWithSectionsFlowService.Object,
                                                          _questionPropertyTokeniser.Object, _pageOverrideConfiguration.Object,

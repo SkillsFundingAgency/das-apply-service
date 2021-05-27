@@ -58,7 +58,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
         }
 
-
         [Test]
         public async Task Application_shows_confirmation_page_if_application_Gateway_Assessed()
         {
@@ -137,7 +136,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ControllerName.Should().Be("RoatpApplication");
         }
         
-        
         [Test]
         public async Task Application_shows_confirmation_page_if_application_resubmitted()
         {
@@ -197,8 +195,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 ApplicationStatus = ApplicationStatus.InProgress
             };
-        
-        
+            
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(inProgressApp);
         
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
@@ -262,7 +259,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public async Task Application_shows_withdrawn_page_if_application_withdrawn()
         {
-            var submittedApp = new Domain.Entities.Apply
+            var submittedApp = new Apply
             {
                 ApplicationStatus = ApplicationStatus.Withdrawn
             };
@@ -279,7 +276,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public async Task Application_shows_removed_page_if_application_removed()
         {
-            var submittedApp = new Domain.Entities.Apply
+            var submittedApp = new Apply
             {
                 ApplicationStatus = ApplicationStatus.Removed
             };
@@ -296,7 +293,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public async Task Application_shows_submitted_page_if_application_submitted()
         {
-            var submittedApp = new Domain.Entities.Apply
+            var submittedApp = new Apply
             {
                 ApplicationStatus = ApplicationStatus.Submitted
             };
@@ -313,7 +310,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public async Task Application_shows_submitted_page_if_application_resubmitted()
         {
-            var submittedApp = new Domain.Entities.Apply
+            var submittedApp = new Apply
             {
                 ApplicationStatus = ApplicationStatus.Resubmitted
             };

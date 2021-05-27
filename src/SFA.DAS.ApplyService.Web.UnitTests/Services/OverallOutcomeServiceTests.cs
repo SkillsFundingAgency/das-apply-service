@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.WindowsAzure.Storage.Core;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
@@ -24,7 +23,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IAssessorLookupService> _assessorLookupService;
         private Guid _applicationId;
-        private ApplicationSummaryWithModeratorDetailsViewModel _model;
         private string _userId;
         private OverallOutcomeService _service;
         private string _page121;
@@ -56,10 +54,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
             _service = new OverallOutcomeService(_apiClient.Object, _qnaApiClient.Object,
                 _assessorLookupService.Object);
-
-
         }
-
 
         [Test]
         public async Task no_failed_moderator_question_returns_model_unchanged()
@@ -110,7 +105,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             numberOfPages.Should().Be(countOfPages);
         }
 
-
         [TestCase("page title")]
         [TestCase("page title 2")]
         public async Task page_titles_set_up_as_expected(string pageTitle)
@@ -138,10 +132,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
            pageTitle.Should().Be(page121Title);
         }
 
-
         [TestCase("page title 3")]
         [TestCase("page title 4")]
-        public async Task page_titles_returned_against_sector_if_not_set_as_expected(string pageTitle)
+        public async Task page_titles_returned_against_sector_if_not_set_by_get_title_for_page_as_expected(string pageTitle)
         {
             var modelToBeUpdated = GetCopyOfModel();
 
@@ -160,7 +153,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             await _service.AugmentModelWithModerationFailDetails(modelToBeUpdated, _userId);
 
-
             var page121Title = modelToBeUpdated.Sequences.First(x => x.SequenceNumber == 1).Sections
                 .FirstOrDefault(x => x.SectionNumber == 2).Pages.First(x => x.PageId == _page121).Title;
 
@@ -173,7 +165,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         public async Task page_answers_returned_as_expected(string answer)
         {
             var modelToBeUpdated = GetCopyOfModel();
-
 
             var sequences = SetUpAsessorSequences();
             _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
@@ -192,7 +183,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             answer.Should().Be(page121Answer);
         }
-
 
         [TestCase("question 1 text")]
         [TestCase("answer 1b text")]
@@ -219,8 +209,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             questionText.Should().Be(page121Question);
         }
-
-
 
         [TestCase("sequence 1 title", "sequence 2 title")]
         [TestCase("sequence 1 title alt", "sequence 2 title alt")]
@@ -249,7 +237,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             sequence2Title.Should().Be(modelToBeUpdated.Sequences.First(x=>x.SequenceNumber==sequence2Number).SequenceTitle);
         }
 
-
         [Test]
         public async Task guidance_text_returned_as_expected()
         {
@@ -270,7 +257,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _page121QuestionBodyText.Should().Be(modelToBeUpdated.PagesWithGuidance.First(x=>x.PageId==_page121).GuidanceInformation.FirstOrDefault());
             _page122BodyText.Should().Be(modelToBeUpdated.PagesWithGuidance.First(x => x.PageId == _page122).GuidanceInformation.FirstOrDefault());
         }
-
 
         [Test]
         public async Task BuildApplilcationSummaryViewModel_builds_expected_viewModel()
@@ -333,11 +319,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             var returnedModel = _service.BuildApplicationSummaryViewModel(application, emailAddress);
             expectedModel.Should().BeEquivalentTo(returnedModel);
-        }
-
-        private List<AssessorSequence> SetUpAsessorSequences()
+        } 
+       private List<AssessorSequence> SetUpAsessorSequences()
     {
-
         var section2_3 = new AssessorSection
         {
             LinkTitle = "Section 2.3",
@@ -425,10 +409,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         };
 
         return sequences;
-
     }
 
-    private List<ClarificationPageReviewOutcome> SetUpClarificationOutcomes()
+       private List<ClarificationPageReviewOutcome> SetUpClarificationOutcomes()
     {
     var clarificationPages = new List<ClarificationPageReviewOutcome>
         {
@@ -492,7 +475,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
     return clarificationPages;
     }
 
-    private List<ApplicationSection> SetUpApplicationSections(bool pageActive, bool sequence2PagesActive, string answerToQuestion, string questionValue)
+       private List<ApplicationSection> SetUpApplicationSections(bool pageActive, bool sequence2PagesActive, string answerToQuestion, string questionValue)
         {
             var sections = new List<ApplicationSection>();
 
@@ -528,6 +511,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                     },
                 }
             };
+
             var applicationSection2_3 = new ApplicationSection
             {
                 ApplicationId = _applicationId,
@@ -545,7 +529,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                     }
                 }
             };
-   
+
             var applicationSection2_4 = new ApplicationSection
             {
                 ApplicationId = _applicationId,
@@ -569,7 +553,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             return sections;
         }
 
-    private ApplicationSummaryWithModeratorDetailsViewModel GetCopyOfModel()
+       private ApplicationSummaryWithModeratorDetailsViewModel GetCopyOfModel()
     {
         var model = new ApplicationSummaryWithModeratorDetailsViewModel
         { ApplicationId = _applicationId };

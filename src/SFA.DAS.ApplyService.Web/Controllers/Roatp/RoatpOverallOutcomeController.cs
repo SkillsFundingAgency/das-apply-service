@@ -29,8 +29,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _logger = logger;
             _applicationApiClient = applicationApiClient;
         }
-
-
+        
         [HttpGet]
         [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ProcessApplicationStatus(Guid applicationId)
