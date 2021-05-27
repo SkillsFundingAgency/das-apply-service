@@ -7,12 +7,6 @@
     ViewBag.Title = "Application unsuccessful";
     Layout = "_Layout";
 
-    var passFailStatusCssClass = "status--pass";
-
-    @if (Model.FinancialReviewStatus == FinancialReviewStatus.Fail)
-    {
-        passFailStatusCssClass = "status--fail";
-    }
 }
 
 <partial name="~/Views/Roatp/ApplicationHeaderReadOnly.cshtml" />
@@ -43,7 +37,7 @@
             <h1 class="govuk-heading-l">Feedback on your financial health assessment</h1>
             <p class="govuk-body">
                 The outcome of your financial health assessment is:<br />
-                <span class="@passFailStatusCssClass hint--no-color">@Model.FinancialGrade</span>
+                <span class="answer--status hint--no-color">@Model.FinancialGrade</span>
             </p>
 
             @if (Model.FinancialGrade == FinancialApplicationSelectedGrade.Inadequate)
@@ -167,7 +161,7 @@
                                             {
                                                 <div class="govuk-grid-row">
                                                     <div class="govuk-grid-column-two-thirds">
-                                                        <details class="govuk-details govuk-!-margin-bottom-9">
+                                                        <details class="govuk-details govuk-!-margin-bottom-1">
                                                             <summary class="govuk-details__summary">
                                                                 <span class="govuk-details__summary-text">
                                                                     View application guidance
