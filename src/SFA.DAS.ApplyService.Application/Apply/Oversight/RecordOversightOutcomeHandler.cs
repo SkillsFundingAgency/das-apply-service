@@ -119,6 +119,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 oversightReview.UserName = request.UserName;
             }
         }
+
         private void SaveChanges(OversightReview oversightReview, Domain.Entities.Apply application, bool isNew)
         {
             if (isNew)
@@ -127,14 +128,19 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             }
             else
             {
-                 _oversightReviewRepository.Update(oversightReview);
+                _oversightReviewRepository.Update(oversightReview);
             }
 
-            if (oversightReview.Status == OversightReviewStatus.InProgress) return;
-
-            application.ApplicationStatus = oversightReview.Status == OversightReviewStatus.Unsuccessful
-                ? ApplicationStatus.Rejected
-                : ApplicationStatus.Approved;
+            if (oversightReview.Status == OversightReviewStatus.InProgress)
+            {
+                application.ApplicationStatus = ApplicationStatus.InProgressOutcome;
+            }
+            else
+            {
+                application.ApplicationStatus = oversightReview.Status == OversightReviewStatus.Unsuccessful
+                    ? ApplicationStatus.Rejected
+                    : ApplicationStatus.Approved;
+            }
 
             _applyRepository.Update(application);
         }

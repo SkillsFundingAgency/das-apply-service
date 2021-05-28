@@ -176,6 +176,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Withdrawn = "Withdrawn";
         public const string Removed = "Removed";
 
+        public const string InProgressOutcome = "InProgessOutcome";
         // Below are other statuses mentioned in the most recent status documentation
         // Please check the flow in RoatpApplicationController, under the line ' switch (application.ApplicationStatus)' if you add new statuses
         // GWResubmitted
