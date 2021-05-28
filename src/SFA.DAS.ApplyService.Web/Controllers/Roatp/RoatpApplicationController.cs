@@ -424,6 +424,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             });
         }
 
+        [HttpGet]
+        public IActionResult SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId)
+        {
+            return !string.IsNullOrWhiteSpace(pageId)
+                ? RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId })
+                : RedirectToAction("Section", new { applicationId, sequenceId, sectionId });
+        }
+
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> SaveAnswers(PageViewModel vm, string formAction)
