@@ -213,7 +213,7 @@ namespace SFA.DAS.ApplyService.Data
                             applicationStatusRemoved = ApplicationStatus.Removed,
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
                             gatewayReviewStatusFailed = GatewayReviewStatus.Fail,
-                            gatewayReviewStatusRejected = GatewayReviewStatus.Reject
+                            gatewayReviewStatusRejected = GatewayReviewStatus.Rejected
                         })).ToList();
             }
         }

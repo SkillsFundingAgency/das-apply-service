@@ -152,7 +152,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 case ApplicationStatus.Removed:
                     return RedirectToAction("ApplicationRemoved", new { application.ApplicationId });
                 case ApplicationStatus.GatewayAssessed:
-                    if(application.GatewayReviewStatus == GatewayReviewStatus.Reject)
+                    if(application.GatewayReviewStatus == GatewayReviewStatus.Rejected)
                         return RedirectToAction("ApplicationRejected", new { application.ApplicationId });
                     return RedirectToAction("ApplicationSubmitted", new { application.ApplicationId });
                 case ApplicationStatus.Submitted:

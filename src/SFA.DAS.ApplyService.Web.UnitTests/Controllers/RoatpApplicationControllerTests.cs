@@ -452,7 +452,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var submittedApp = new Domain.Entities.Apply
             {
                 ApplicationStatus = ApplicationStatus.GatewayAssessed,
-                GatewayReviewStatus = GatewayReviewStatus.Reject
+                GatewayReviewStatus = GatewayReviewStatus.Rejected
             };
             var applications = new List<Domain.Entities.Apply>
             {

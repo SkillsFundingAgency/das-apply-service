@@ -78,3 +78,7 @@ BEGIN
 		   (10061524, N'2021-05-17 08:00:00', N'2021-06-30 23:59:59'),
 		   (10013516, N'2021-05-17 08:00:00', N'2021-06-30 23:59:59')
 END
+
+-- APR-2494 script to update GatewayReviewStatus Reject to Rejected
+-- Can be removed once APR-2494 deployed to prod
+  update apply set GatewayReviewStatus='Rejected' where GatewayReviewStatus='Reject'

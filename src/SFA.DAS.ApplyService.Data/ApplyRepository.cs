@@ -648,7 +648,7 @@ namespace SFA.DAS.ApplyService.Data
                 {
                     gatewayReviewStatusPass = GatewayReviewStatus.Pass,
                     gatewayReviewStatusFail = GatewayReviewStatus.Fail,
-                    GatewayReviewStatusReject = GatewayReviewStatus.Reject,
+                    GatewayReviewStatusReject = GatewayReviewStatus.Rejected,
                     assessorReviewStatusApproved = AssessorReviewStatus.Approved,
                     assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
                     financialReviewStatusApproved = FinancialReviewStatus.Pass,

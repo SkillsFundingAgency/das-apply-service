@@ -56,7 +56,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 
             var updatedSuccessfully = await _gatewayRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, request.GatewayReviewStatus, request.UserId, request.UserName);
 
-            if (updatedSuccessfully && request.GatewayReviewStatus == GatewayReviewStatus.Reject)
+            if (updatedSuccessfully && request.GatewayReviewStatus == GatewayReviewStatus.Rejected)
             {
                 var oversightReview = new OversightReview
                 {
