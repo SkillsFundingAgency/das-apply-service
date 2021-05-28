@@ -60,6 +60,8 @@
     <Folder Include="Tables\" />
     <Folder Include="StoredProcedures" />
     <Folder Include="Sequences" />
+    <Folder Include="AdhocScipts" />
+    <Folder Include="AdhocScipts\DataMart" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Contacts.sql" />
@@ -85,5 +87,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SFA.DAS.ApplyService.Database.publish.xml" />
+    <None Include="AdhocScipts\DataMart\LookupOversightReviewStatus.sql" />
   </ItemGroup>
 </Project>
