@@ -13,31 +13,37 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
     {
         public ApplicationSection ProcessPagesInSectionsForStatusText(ApplicationSection selectedSection)
         {
-            foreach (var page in selectedSection.QnAData.Pages.Where(x => x.DisplayType == SectionDisplayType.PagesWithSections))
+           
+            foreach (var page in selectedSection.QnAData.Pages.Where(x =>
+                x.DisplayType == SectionDisplayType.PagesWithSections))
             {
-                page.StatusText = AssociatedPagesWithSectionStatus(page, selectedSection.QnAData, true);
+                var pages = new List<Page>();
+                GatherListOfPages(page, selectedSection.QnAData, pages);
+
+                page.StatusText = pages.All(x => x.Complete) ? TaskListSectionStatus.Completed :
+                    pages.Any(x => x.Complete) ? TaskListSectionStatus.InProgress : string.Empty;
             }
 
             return selectedSection;
         }
 
-        private string AssociatedPagesWithSectionStatus(Page page, QnAData selectedSectionQnAData, bool isFirstPage)
+        private static void GatherListOfPages(Page page, QnAData selectedSectionQnAData, ICollection<Page> pages)
         {
-            
-            if (page.Next.All(x => x.Action != NextAction.NextPage)) return TaskListSectionStatus.Completed;
+            pages.Add(page);
+
+            if (page.Next.All(x => x.Action != NextAction.NextPage)) return;
 
             foreach (var nxt in page.Next.Where(x => x.Action == NextAction.NextPage))
             {
                 var pageId = nxt.ReturnId;
 
                 var pageNext = selectedSectionQnAData.Pages.FirstOrDefault(x => x.PageId == pageId && x.Active);
-                if (pageNext != null)
-                {
-                    return !pageNext.Complete ? TaskListSectionStatus.InProgress : AssociatedPagesWithSectionStatus(pageNext, selectedSectionQnAData, false);
-                }
-            }
 
-            return String.Empty;
+                if (pageNext == null)
+                    return;
+
+                GatherListOfPages(pageNext, selectedSectionQnAData, pages);
+            }
         }
     }
 }
