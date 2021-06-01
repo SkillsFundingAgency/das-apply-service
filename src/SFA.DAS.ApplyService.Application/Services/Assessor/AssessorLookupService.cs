@@ -1,4 +1,5 @@
-﻿using SFA.DAS.ApplyService.Application.Apply.Roatp;
+﻿using Newtonsoft.Json.Serialization;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Sectors;
 
 namespace SFA.DAS.ApplyService.Application.Services.Assessor
@@ -235,7 +236,8 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
                     return "Systems and processes to collect apprenticeship data";
                 case RoatpWorkflowPageIds.EvaluatingApprenticeshipTraining.IndividualisedLearnerRecordData:
                     return "Individualised Learner Record (ILR) data";
-
+                case RoatpWorkflowPageIds.EvaluatingApprenticeshipTraining.IndividualisedLearnerRecordDataPerson:
+                    return "Who is the individual accountable for submitting ILR data for your organisation?";
                 default:
                     return null;
             }

@@ -97,7 +97,5 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             return NotFound();
         }
-
     }
-
 }
