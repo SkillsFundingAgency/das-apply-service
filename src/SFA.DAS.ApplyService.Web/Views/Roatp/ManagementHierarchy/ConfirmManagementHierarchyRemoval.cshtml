@@ -12,9 +12,7 @@
     var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
 }
 
-<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
-
-@*<a class="govuk-back-link" asp-action="ConfirmManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId">Back</a>*@
+<partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
