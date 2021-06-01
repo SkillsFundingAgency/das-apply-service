@@ -382,7 +382,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var submittedApp = new Domain.Entities.Apply
             {
-                ApplicationStatus = ApplicationStatus.Approved
+                ApplicationStatus = ApplicationStatus.Approved  //MFCMFC
             };
             var applications = new List<Apply>
             {
@@ -401,7 +401,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationApprovedAlreadyActive");
+            redirectResult.ActionName.Should().Be("ApplicationApprovedAlreadyActive");  //MFCMFC
         }
 
         [Test]
@@ -409,7 +409,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var submittedApp = new Domain.Entities.Apply
             {
-                ApplicationStatus = ApplicationStatus.Approved
+                ApplicationStatus = ApplicationStatus.Approved   //MFCMFC
             };
             var applications = new List<Apply>
             {
@@ -422,7 +422,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationApproved");
+            redirectResult.ActionName.Should().Be("ApplicationApproved");  //MFCMFC
         }
 
         [Test]
@@ -473,7 +473,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var submittedApp = new Domain.Entities.Apply
             {
-                ApplicationStatus = ApplicationStatus.Rejected,
+                ApplicationStatus = ApplicationStatus.Rejected,    //MFCMFC
                 GatewayReviewStatus = GatewayReviewStatus.Fail
             };
             var applications = new List<Domain.Entities.Apply>

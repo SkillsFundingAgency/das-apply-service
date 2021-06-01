@@ -44,7 +44,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 ApplicationReferenceNumber = "APR000111",
                 ApplicationSubmittedDate = DateTime.Today.AddDays(-1),
                 OversightStatus = OversightReviewStatus.Successful,
-                ApplicationStatus = ApplicationStatus.Approved,
+                ApplicationStatus = ApplicationStatus.Approved,    //MFCMFC
                 ApplicationDeterminedDate = DateTime.Today
             };
 

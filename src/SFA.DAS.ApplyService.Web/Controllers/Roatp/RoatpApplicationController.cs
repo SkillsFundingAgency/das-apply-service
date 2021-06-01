@@ -133,7 +133,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 case ApplicationStatus.New:
                 case ApplicationStatus.InProgress:
                     return RedirectToAction("TaskList", new { application.ApplicationId });
-                case ApplicationStatus.Approved:
+                case ApplicationStatus.Approved:     //MFCMFC -- need to integrate with 2402
                 {
                     var oversightReview = await _apiClient.GetOversightReview(application.ApplicationId);
                     if (oversightReview?.Status== OversightReviewStatus.SuccessfulAlreadyActive)
@@ -141,7 +141,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                     return RedirectToAction("ApplicationApproved", new { application.ApplicationId });
                 }
-                case ApplicationStatus.Rejected:
+                case ApplicationStatus.Rejected:    //MFCMFC - need to integrate with 2402
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
                         return RedirectToAction("ApplicationUnsuccessful", new { application.ApplicationId });
                     return RedirectToAction("ApplicationRejected", new { application.ApplicationId });

@@ -138,8 +138,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             else
             {
                 application.ApplicationStatus = oversightReview.Status == OversightReviewStatus.Unsuccessful
-                    ? ApplicationStatus.Rejected
-                    : ApplicationStatus.Approved;
+                    ? ApplicationStatus.Rejected //MFCMFC
+                    : ApplicationStatus.Approved;  //MFCMFC
             }
 
             _applyRepository.Update(application);

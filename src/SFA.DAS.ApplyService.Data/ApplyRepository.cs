@@ -114,6 +114,7 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var application = await GetApplication(applicationId);
+                //MFCMFC
                 var invalidApplicationStatuses = new List<string> { ApplicationStatus.Approved, ApplicationStatus.Rejected, ApplicationStatus.Removed, ApplicationStatus.Withdrawn, ApplicationStatus.Cancelled };
 
                 // Application must exist and has not already been Approved, Rejected, Removed, Widthdrawn or Cancelled
@@ -130,8 +131,8 @@ namespace SFA.DAS.ApplyService.Data
                                                             new
                                                             {
                                                                 applicationId,
-                                                                applicationStatusApproved = ApplicationStatus.Approved,
-                                                                applicationStatusRejected = ApplicationStatus.Rejected,
+                                                                applicationStatusApproved = ApplicationStatus.Approved,   //MFCMFC
+                                                                applicationStatusRejected = ApplicationStatus.Rejected,   //MFCMFC
                                                                 applicationStatusRemoved = ApplicationStatus.Removed,
                                                                 applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                                                                 applicationStatusCancelled = ApplicationStatus.Cancelled
