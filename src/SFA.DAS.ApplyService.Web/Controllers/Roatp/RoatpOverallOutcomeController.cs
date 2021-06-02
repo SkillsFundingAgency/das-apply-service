@@ -29,14 +29,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _logger = logger;
             _applicationApiClient = applicationApiClient;
         }
-        
+
         [HttpGet]
         [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ProcessApplicationStatus(Guid applicationId)
         {
             var application = await _applicationApiClient.GetApplication(applicationId);
             var model = _overallOutcomeService.BuildApplicationSummaryViewModel(application, User.GetEmail());
- 
+
             switch (application.ApplicationStatus)
             {
                 case ApplicationStatus.New:
@@ -53,8 +53,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.Rejected: //this logic will need to change with the coming status update story
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
                         return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
-                    
-                    var unsuccessfulModel = await _overallOutcomeService.BuildApplicationSummaryViewModelWithModerationDetails(application, User.GetEmail());
+
+                    var unsuccessfulModel =
+                        await _overallOutcomeService.BuildApplicationSummaryViewModelWithModerationDetails(application,
+                            User.GetEmail());
                     return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", unsuccessfulModel);
 
                 case ApplicationStatus.FeedbackAdded:
@@ -73,26 +75,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 default:
                     return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
             }
-        }
-
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> DownloadFile(Guid applicationId, int sequenceNo, int sectionNo,
-            string pageId, string questionId, string filename)
-        {
-
-            var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNo, sectionNo);
-            var sectionId = section.Id;
-            var response = await _qnaApiClient.DownloadFile(applicationId, sectionId, pageId, questionId,
-                filename);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var fileStream = await response.Content.ReadAsStreamAsync();
-
-                return File(fileStream, response.Content.Headers.ContentType.MediaType, filename);
-            }
-
-            return NotFound();
         }
     }
 }

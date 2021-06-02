@@ -140,7 +140,11 @@
                                                             {
                                                                 case QuestionType.FileUpload:
                                                                     <p class="govuk-heading-s  govuk-!-margin-bottom-0"> @question.Label</p>
-                                                                    <div class="das-multiline-text-bottom-margin"><a class="govuk-link" asp-controller="RoatpOverallOutcome" asp-action="DownloadFile" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@sequence.SequenceNumber" asp-route-sectionNo="@seqSection.SectionNumber" asp-route-pageId="@sectionPage.PageId" asp-route-questionId="@question.QuestionId" asp-route-filename="@answer.Value">@answer.Value</a></div>
+                                                                    <div class="das-multiline-text-bottom-margin">
+                                                                        <a class="govuk-link" href="@Url.Action("Download", "Application", new { Id = Model.ApplicationId, sequenceNo = sequence.SequenceNumber, sectionId = seqSection.SectionNumber, pageId = sectionPage.PageId, questionId = answer.QuestionId, filename = answer.Value })">
+                                                                            @answer.Value
+                                                                        </a>
+                                                                    </div>
                                                                     break;
                                                                 case QuestionType.CheckboxList:
                                                                 case QuestionType.ComplexCheckboxList:
