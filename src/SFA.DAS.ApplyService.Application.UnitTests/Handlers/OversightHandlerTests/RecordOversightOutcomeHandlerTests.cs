@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
     public class RecordOversightOutcomeHandlerTests
     {
         [TestCase(OversightReviewStatus.Successful, ApplicationStatus.Successful)]  
-        [TestCase(OversightReviewStatus.Unsuccessful, ApplicationStatus.Rejected)]  //MFCMFC
+        [TestCase(OversightReviewStatus.Unsuccessful, ApplicationStatus.Unsuccessful)]  
         public async Task Record_oversight_outcome_updates_oversight_status_and_applies_correct_application_status(OversightReviewStatus oversightReviewStatus, string applicationStatus)
         {
             var command = new RecordOversightOutcomeCommand

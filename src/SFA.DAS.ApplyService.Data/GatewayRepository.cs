@@ -260,7 +260,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> EvaluateGateway(Guid applicationId, bool isGatewayApproved, string userId, string userName)
         {
-            var applicationStatus = isGatewayApproved ? ApplicationStatus.GatewayAssessed : ApplicationStatus.RejectedX;   //MFCMFC
+            var applicationStatus = isGatewayApproved ? ApplicationStatus.GatewayAssessed : ApplicationStatus.Rejected;   
             var gatewayReviewStatus = isGatewayApproved ? GatewayReviewStatus.Pass : GatewayReviewStatus.Fail;
 
             using (var connection = new SqlConnection(_config.SqlConnectionString))

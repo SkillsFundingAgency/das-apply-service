@@ -58,7 +58,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
             _oversightReviewRepository.Add(oversightReview);
 
-            application.ApplicationStatus = ApplicationStatus.RejectedX;  
+            application.ApplicationStatus = ApplicationStatus.Rejected;  
             _applyRepository.Update(application);
 
             _auditService.Save();

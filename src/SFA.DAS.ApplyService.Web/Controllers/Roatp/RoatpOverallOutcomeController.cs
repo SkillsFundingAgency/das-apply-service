@@ -69,8 +69,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Rejected)
                         return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
-                case ApplicationStatus.RejectedX:
-                    return View("~/Views/Roatp/ApplicationRejected.cshtml", model);   //MFCMFC should it be the same page for a gateway rejected compared to an oversight rejected?
+                case ApplicationStatus.Rejected:
+                    return View("~/Views/Roatp/ApplicationRejected.cshtml", model);   
                 case ApplicationStatus.Submitted:
                 case ApplicationStatus.Resubmitted:
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
