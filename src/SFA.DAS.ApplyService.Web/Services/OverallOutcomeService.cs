@@ -78,7 +78,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return model;
             }
 
-        public async Task<ApplicationSummaryWithModeratorDetailsViewModel> ApplicationUnsuccessful(Apply application, string emailAddress)
+        public async Task<ApplicationSummaryWithModeratorDetailsViewModel> BuildApplicationSummaryViewModelWithModerationDetails(Apply application, string emailAddress)
         {
             var applicationData = application.ApplyData.ApplyDetails;
 

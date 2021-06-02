@@ -16,16 +16,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IOutcomeApiClient _apiClient;
         private readonly IApplicationApiClient _applicationApiClient;
         private readonly IQnaApiClient _qnaApiClient;
-        private readonly IOverallOutcomeService _service;
+        private readonly IOverallOutcomeService _overallOutcomeService;
         private readonly ILogger<RoatpOverallOutcomeController> _logger;
 
         public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, IQnaApiClient qnaApiClient,
-            IOverallOutcomeService service, IApplicationApiClient applicationApiClient,
+            IOverallOutcomeService overallOutcomeService, IApplicationApiClient applicationApiClient,
             ILogger<RoatpOverallOutcomeController> logger)
         {
             _apiClient = apiClient;
             _qnaApiClient = qnaApiClient;
-            _service = service;
+            _overallOutcomeService = overallOutcomeService;
             _logger = logger;
             _applicationApiClient = applicationApiClient;
         }
@@ -35,10 +35,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> ProcessApplicationStatus(Guid applicationId)
         {
             var application = await _applicationApiClient.GetApplication(applicationId);
-            var model = _service.BuildApplicationSummaryViewModel(application, User.GetEmail());
-            var applicationStatus = application.ApplicationStatus;
-
-            switch (applicationStatus)
+            var model = _overallOutcomeService.BuildApplicationSummaryViewModel(application, User.GetEmail());
+ 
+            switch (application.ApplicationStatus)
             {
                 case ApplicationStatus.New:
                 case ApplicationStatus.InProgress:
@@ -53,11 +52,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
                 case ApplicationStatus.Rejected: //this logic will need to change with the coming status update story
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
-                    {
                         return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
-                    }
-
-                    var unsuccessfulModel = await _service.ApplicationUnsuccessful(application, User.GetEmail());
+                    
+                    var unsuccessfulModel = await _overallOutcomeService.BuildApplicationSummaryViewModelWithModerationDetails(application, User.GetEmail());
                     return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", unsuccessfulModel);
 
                 case ApplicationStatus.FeedbackAdded:

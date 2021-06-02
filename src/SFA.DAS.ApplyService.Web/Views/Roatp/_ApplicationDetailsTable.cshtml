@@ -1,47 +1,45 @@
 ﻿@using SFA.DAS.AdminService.Common.Extensions;
 @model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
 
-<table class="govuk-table">
-    <tbody class="govuk-table__body">
-        <tr class="govuk-table__row">
-            <th scope="row" class="govuk-table__header govuk-!-width-one-half">
-                        UKPRN
-            </th>
-            <td class="govuk-table__cell">
-                @Model.UKPRN
-            </td>
-    </tr>
-    <tr class="govuk-table__row">
-    <th scope="row" class="govuk-table__header">
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            UKPRN
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.UKPRN
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
             Legal name
-    </th>
-    <td class="govuk-table__cell">
+        </dt>
+        <dd class="govuk-summary-list__value">
             @Model.OrganisationName
-    </td>
-    </tr>
-    <tr class="govuk-table__row">
-    <th scope="row" class="govuk-table__header">
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
             Provider route
-    </th>
-    <td class="govuk-table__cell">
+        </dt>
+        <dd class="govuk-summary-list__value">
             @Model.ApplicationRouteShortText
-    </td>
-    </tr>
-    <tr class="govuk-table__row">
-    <th scope="row" class="govuk-table__header">
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
             Application reference
-    </th>
-    <td class="govuk-table__cell">
+        </dt>
+        <dd class="govuk-summary-list__value">
             @Model.ApplicationReference
-    </td>
-    </tr>
-    <tr class="govuk-table__row">
-    <th scope="row" class="govuk-table__header">
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
             Application submitted date
-    </th>
-    <td class="govuk-table__cell">
+        </dt>
+        <dd class="govuk-summary-list__value">
             @Model.SubmittedDate.ToSfaShortDateString()
-    </td>
-    </tr>
-    </tbody>
-</table>
+        </dd>
+    </div>
+</dl>
