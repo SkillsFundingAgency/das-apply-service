@@ -114,8 +114,8 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var application = await GetApplication(applicationId);
-                //MFCMFC
-                var invalidApplicationStatuses = new List<string> { ApplicationStatus.Approved, ApplicationStatus.Rejected, ApplicationStatus.Removed, ApplicationStatus.Withdrawn, ApplicationStatus.Cancelled };
+                //MFCMFC - will need to expand to include unsuccessful
+                var invalidApplicationStatuses = new List<string> { ApplicationStatus.Successful, ApplicationStatus.RejectedX, ApplicationStatus.Unsuccessful, ApplicationStatus.Removed, ApplicationStatus.Withdrawn, ApplicationStatus.Cancelled };
 
                 // Application must exist and has not already been Approved, Rejected, Removed, Widthdrawn or Cancelled
                 if (application != null && !invalidApplicationStatuses.Contains(application.ApplicationStatus))
@@ -127,12 +127,13 @@ namespace SFA.DAS.ApplyService.Data
 														INNER JOIN Contacts con ON a.OrganisationId = con.ApplyOrganisationID
                                                         WHERE a.OrganisationId = (SELECT OrganisationId FROM Apply WHERE ApplicationId = @applicationId)
 														AND a.CreatedBy <> (SELECT CreatedBy FROM Apply WHERE ApplicationId = @applicationId)
-                                                        AND a.ApplicationStatus NOT IN (@applicationStatusApproved, @applicationStatusRejected, @applicationStatusRemoved, @applicationStatusWithdrawn, @applicationStatusCancelled)",
+                                                        AND a.ApplicationStatus NOT IN (@applicationStatusSuccessful, @applicationStatusUnsuccessful, @applicationStatusRejected, @applicationStatusRemoved, @applicationStatusWithdrawn, @applicationStatusCancelled)",
                                                             new
                                                             {
                                                                 applicationId,
-                                                                applicationStatusApproved = ApplicationStatus.Approved,   //MFCMFC
-                                                                applicationStatusRejected = ApplicationStatus.Rejected,   //MFCMFC
+                                                                applicationStatusSuccessful = ApplicationStatus.Successful,   
+                                                                appicationStatusUnsuccessful = ApplicationStatus.Unsuccessful,
+                                                                applicationStatusRejected = ApplicationStatus.RejectedX,   
                                                                 applicationStatusRemoved = ApplicationStatus.Removed,
                                                                 applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                                                                 applicationStatusCancelled = ApplicationStatus.Cancelled

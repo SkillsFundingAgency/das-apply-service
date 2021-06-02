@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -19,30 +15,26 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
-using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
-using SFA.DAS.ApplyService.Web;
 using SFA.DAS.ApplyService.Web.Authorization;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Infrastructure.Services;
 using SFA.DAS.ApplyService.Web.Orchestrators;
-using StructureMap;
 using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
 {
-    using Controllers;
-    using SFA.DAS.ApplyService.Application.Apply;
     using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.EmailService.Infrastructure;
     using SFA.DAS.ApplyService.EmailService.Interfaces;
     using SFA.DAS.ApplyService.Web.Configuration;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
-    using SFA.DAS.ApplyService.Web.Services;
+    using Services;
     using SFA.DAS.ApplyService.Web.Validators;
     using SFA.DAS.Http;
     using SFA.DAS.Http.TokenGenerators;
@@ -172,6 +164,12 @@ namespace SFA.DAS.ApplyService.Web
             })
             .SetHandlerLifetime(handlerLifeTime);
 
+            services.AddHttpClient<IOutcomeApiClient, OutcomeApiClient>(config =>
+                {
+                    config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                })
+                .SetHandlerLifetime(handlerLifeTime);
+
             services.AddHttpClient<IQnaApiClient, QnaApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.QnaApiAuthentication.ApiBaseAddress);
@@ -255,6 +253,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();
             services.AddTransient<IAnswerFormService, AnswerFormService>();
             services.AddTransient<IEmailTokenService, EmailTokenService>();
+            services.AddTransient<IAssessorLookupService, AssessorLookupService>();
             services.AddTransient<IGetHelpWithQuestionEmailService, GetHelpWithQuestionEmailService>();
             services.AddTransient<INotificationsApi>(x => {
                 var apiConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
@@ -284,6 +283,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IRoatpOrganisationVerificationService, RoatpOrganisationVerificationService>();
             services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
             services.AddTransient<ITaskListOrchestrator, TaskListOrchestrator>();
+            services.AddTransient<IOverallOutcomeService, OverallOutcomeService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

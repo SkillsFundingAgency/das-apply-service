@@ -1,6 +1,6 @@
 ﻿using SFA.DAS.ApplyService.Domain.Sectors;
 
-namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
+namespace SFA.DAS.ApplyService.Application.Services.Assessor
 {
     public interface IAssessorLookupService
     {

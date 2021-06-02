@@ -19,8 +19,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
     [TestFixture]
     public class RecordOversightOutcomeHandlerTests
     {
-        [TestCase(OversightReviewStatus.Successful, ApplicationStatus.Approved)]   //MFCMFC
-        [TestCase(OversightReviewStatus.Unsuccessful, ApplicationStatus.Rejected)] 
+        [TestCase(OversightReviewStatus.Successful, ApplicationStatus.Successful)]  
+        [TestCase(OversightReviewStatus.Unsuccessful, ApplicationStatus.Rejected)]  //MFCMFC
         public async Task Record_oversight_outcome_updates_oversight_status_and_applies_correct_application_status(OversightReviewStatus oversightReviewStatus, string applicationStatus)
         {
             var command = new RecordOversightOutcomeCommand
