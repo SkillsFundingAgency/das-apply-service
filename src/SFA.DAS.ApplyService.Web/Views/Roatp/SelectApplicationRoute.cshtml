@@ -8,36 +8,18 @@
 
     var isError = showErrors ? "govuk-input--error" : "";
 
-    var backAction = "ConfirmOrganisation";
-    var backController = "RoatpApplicationPreamble";
-
     var submitAction = "ProcessRoute";
 
     if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
     {
         submitAction = "UpdateApplicationProviderRoute";
-        backController = "RoatpApplication";
-        backAction = "TaskList";
     }
-}
-@if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
-{
-    <partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
-}
-else
-{
-    <partial name="~/Views/Roatp/PreambleHeader.cshtml" />
 }
 
-@*
-<form asp-controller="@backController" asp-action="@backAction" method="get" name="backForm" novalidate>
-    @if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
-    {
-        <input type="hidden" asp-for="ApplicationId" />
-    }
-    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-</form>
-*@
+@if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 

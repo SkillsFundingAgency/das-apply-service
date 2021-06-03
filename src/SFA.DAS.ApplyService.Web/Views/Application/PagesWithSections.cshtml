@@ -10,9 +10,7 @@
     var pageId = pagesToCheck?.FirstOrDefault()?.PageId;
 }
 
-<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
-
-@*<a class="govuk-back-link" asp-action="Back" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId" asp-route-redirectAction="TaskList">Back</a>*@
+<partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
