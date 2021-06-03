@@ -58,7 +58,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
             _oversightReviewRepository.Add(oversightReview);
 
-            application.ApplicationStatus = ApplicationStatus.Rejected;  
+            application.ApplicationStatus =  application?.GatewayReviewStatus == GatewayReviewStatus.Rejected
+                ? ApplicationStatus.Rejected :
+                ApplicationStatus.Unsuccessful;
+
             _applyRepository.Update(application);
 
             _auditService.Save();

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
@@ -131,15 +132,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 _oversightReviewRepository.Update(oversightReview);
             }
 
-            if (oversightReview.Status == OversightReviewStatus.InProgress)
+            switch (oversightReview.Status)
             {
-                application.ApplicationStatus = ApplicationStatus.InProgressOutcome;
-            }
-            else
-            {
-                application.ApplicationStatus = oversightReview.Status == OversightReviewStatus.Unsuccessful
-                    ? ApplicationStatus.Unsuccessful 
-                    : ApplicationStatus.Successful;  
+                case OversightReviewStatus.InProgress:
+                    application.ApplicationStatus = ApplicationStatus.InProgressOutcome;
+                    break;
+                case OversightReviewStatus.Successful:
+                case OversightReviewStatus.SuccessfulAlreadyActive:
+                case OversightReviewStatus.SuccessfulFitnessForFunding:
+                    application.ApplicationStatus = ApplicationStatus.Successful;
+                    break;
+                case OversightReviewStatus.Unsuccessful:
+                    application.ApplicationStatus = application?.GatewayReviewStatus == GatewayReviewStatus.Rejected 
+                        ? ApplicationStatus.Rejected : 
+                        ApplicationStatus.Unsuccessful;
+                    break;
             }
 
             _applyRepository.Update(application);
