@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 })
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
-                    options.Cookie.Name = ".Assessors.Cookies";
+                    options.Cookie.Name = ".Apply.Cookies";
                     options.Cookie.HttpOnly = true;
 
                     if (!env.IsDevelopment())
@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 {
                     options.CorrelationCookie = new CookieBuilder()
                     {
-                        Name = ".Assessor.Correlation.", 
+                        Name = ".Apply.Correlation.", 
                         HttpOnly = true,
                         SameSite = SameSiteMode.None,
                         SecurePolicy = CookieSecurePolicy.SameAsRequest

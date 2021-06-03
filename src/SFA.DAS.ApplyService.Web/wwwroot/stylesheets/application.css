@@ -335,6 +335,7 @@
 @media (min-width: 28.125em) {
   .app-task-list__task-name {
     float: left;
+    width: 70%;
   }
 }
 
