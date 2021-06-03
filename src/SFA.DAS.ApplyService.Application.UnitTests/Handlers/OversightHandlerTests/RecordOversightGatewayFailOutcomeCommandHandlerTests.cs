@@ -123,7 +123,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             await _handler.Handle(request, new CancellationToken());
 
             _applyRepository.Verify(x => x.Update(It.Is<Domain.Entities.Apply>(apply =>
-                    apply.ApplicationId == _applicationId && apply.ApplicationStatus == ApplicationStatus.Rejected)),     //MFCMFC
+                    apply.ApplicationId == _applicationId && apply.ApplicationStatus == ApplicationStatus.Rejected)),    
                 Times.Once);
         }
     }

@@ -171,7 +171,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string GatewayAssessed = "GatewayAssessed";	
         public const string FeedbackAdded = "FeedbackAdded";	
         public const string Rejected = "Rejected";	
-        // public const string Approved = "Approved";	
+    
         public const string Cancelled = "Cancelled";
         public const string Withdrawn = "Withdrawn";
         public const string Removed = "Removed";
