@@ -18,7 +18,10 @@
 
 @if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
 {
-    <partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
+    @section Navigation
+    {
+        <partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
+    }
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">

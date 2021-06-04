@@ -5,7 +5,11 @@
     Layout = "_Layout";
 }
 
-<partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+}
+
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
     <div class="govuk-grid-row">
