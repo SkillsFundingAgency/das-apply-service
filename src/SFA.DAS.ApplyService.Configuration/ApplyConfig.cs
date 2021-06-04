@@ -2,7 +2,6 @@ namespace SFA.DAS.ApplyService.Configuration
 {
     public class ApplyConfig : IApplyConfig
     {
-        public ApiAuthentication ApiAuthentication { get; set; }
         public InternalApiConfig InternalApi { get; set; }
         public string SignInPage { get; set; }
         public string SessionRedisConnectionString { get; set; }
@@ -22,5 +21,7 @@ namespace SFA.DAS.ApplyService.Configuration
         public RoatpApiAuthentication RoatpApiAuthentication { get; set; }
 
         public QnaApiAuthentication QnaApiAuthentication { get; set; }
+
+        public AzureActiveDirectoryConfiguration AzureActiveDirectoryConfiguration { get; set; }
     }
 }
