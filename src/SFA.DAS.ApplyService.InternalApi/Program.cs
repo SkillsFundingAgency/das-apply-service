@@ -27,7 +27,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseApplicationInsights()
-                .UseUrls("https://localhost:6000", "http://localhost:5999")
                 .UseKestrel()
                 .UseNLog();
     }
