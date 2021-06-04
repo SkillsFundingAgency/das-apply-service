@@ -142,7 +142,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                     application.ApplicationStatus = ApplicationStatus.Successful;
                     break;
                 case OversightReviewStatus.Unsuccessful:
-                    application.ApplicationStatus = application?.GatewayReviewStatus == GatewayReviewStatus.Rejected 
+                    application.ApplicationStatus = application.GatewayReviewStatus == GatewayReviewStatus.Rejected 
                         ? ApplicationStatus.Rejected : 
                         ApplicationStatus.Unsuccessful;
                     break;
