@@ -6,7 +6,10 @@
     var question = Model.Questions?.FirstOrDefault(q => q.Type == QuestionType.FileUpload);
 }
 
-<partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">

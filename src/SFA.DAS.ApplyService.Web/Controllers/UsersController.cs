@@ -69,16 +69,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 HttpContext.Response.Cookies.Delete(cookie);
             }
 
-            if (string.IsNullOrEmpty(HttpContext.User.GetFirstName()))
+            if (!User.Identity.IsAuthenticated)
+            {
+                // If they are no longer authenticated then the cookie has expired. Don't try to signout.
+                return RedirectToAction("Index", "Home");
+            }
+            else
             {
                 var authenticationProperties = new AuthenticationProperties
                 {
                     RedirectUri = Url.Action("Index", "Home")
                 };
+
                 return SignOut(authenticationProperties, CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
             }
-
-            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult InviteSent()
