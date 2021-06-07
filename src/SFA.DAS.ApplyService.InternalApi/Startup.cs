@@ -93,7 +93,7 @@ namespace SFA.DAS.ApplyService.InternalApi
                 fv.RegisterValidatorsFromAssemblyContaining<GetStagedFilesQueryValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<Startup>();
             })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddOptions();
 
