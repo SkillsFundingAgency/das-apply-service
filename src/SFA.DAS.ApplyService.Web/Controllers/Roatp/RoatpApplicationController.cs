@@ -1199,7 +1199,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 };
 
                 await _submitApplicationEmailService.SendSubmitConfirmationEmail(applicationSubmitConfirmation);
-                return RedirectToAction("ApplicationSubmitted","RoatpOverallOutcome", new { model.ApplicationId });
+                return RedirectToAction("ProcessApplicationStatus","RoatpOverallOutcome", new { model.ApplicationId });
             }
             else
             {
