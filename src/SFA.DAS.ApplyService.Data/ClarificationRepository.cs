@@ -154,13 +154,14 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(
                     @"UPDATE [ModeratorPageReviewOutcome]
 			            SET [ClarificationFile] = NULL
+                            , [ClarificationStatus] = @inProgressStatus
                             , [ClarificationUpdatedAt] = GETUTCDATE()
 			            WHERE [ApplicationId] = @applicationId AND
 					          [SequenceNumber] = @sequenceNumber AND
 					          [SectionNumber] = @sectionNumber AND
 					          [PageId] = @pageId AND
                               [ClarificationFile] = @clarificationFile",
-                    new { applicationId, sequenceNumber, sectionNumber, pageId, clarificationFile });
+                    new { applicationId, sequenceNumber, sectionNumber, pageId, clarificationFile, inProgressStatus = ModerationStatus.InProgress });
             }
         }
     }
