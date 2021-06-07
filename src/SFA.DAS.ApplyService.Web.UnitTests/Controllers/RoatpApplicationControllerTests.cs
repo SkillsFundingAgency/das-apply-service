@@ -439,7 +439,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
+            redirectResult.ActionName.Should().Be("ProcessApplicationStatus");
 
             _submitApplicationEmailService.VerifyAll();
         }
