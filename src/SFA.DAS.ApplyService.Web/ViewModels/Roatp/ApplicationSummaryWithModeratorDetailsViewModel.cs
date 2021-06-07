@@ -8,5 +8,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     {
         public List<AssessorSequence> Sequences { get; set; }
         public List<PageWithGuidance> PagesWithGuidance { get; set; }
+
+        public bool ModerationPassOverturnedToFail { get; set; }
+        public string OversightExternalComments { get; set; }
     }
 }

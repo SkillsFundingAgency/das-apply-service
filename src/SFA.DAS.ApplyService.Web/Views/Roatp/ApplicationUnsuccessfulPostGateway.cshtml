@@ -58,13 +58,24 @@
         </div>
     </div>
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    
+
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-l">Feedback on your readiness and quality assessment</h2>
-            <p class="govuk-body">
-                Your application was unsuccessful as the answer to one or more of the questions was insufficient.
-            </p>
+            @if (Model.ModerationPassOverturnedToFail)
+            {
+                <p class="govuk-body das-preformatted-body">
+                    @Model.OversightExternalComments
+                </p>
+            }
+            else
+            {
+                <p class="govuk-body">
+                    Your application was unsuccessful as the answer to one or more of the questions was insufficient.
+                </p>
+            }
         </div>
     </div>
 
@@ -101,12 +112,12 @@
                             {
                                 var isTabularData = false;
                                 @foreach (var dummy in from question in sectionPage.Questions
-                                                      from answers
-                                                          in sectionPage.PageOfAnswers
-                                                      from answer
-                                                          in answers.Answers.Where(x => x.QuestionId == question.QuestionId)
-                                                      where question.Input.Type == QuestionType.TabularData
-                                                      select question)
+                                    from answers
+                                        in sectionPage.PageOfAnswers
+                                    from answer
+                                        in answers.Answers.Where(x => x.QuestionId == question.QuestionId)
+                                    where question.Input.Type == QuestionType.TabularData
+                                    select question)
                                 {
                                     isTabularData = true;
                                 }
@@ -119,11 +130,11 @@
                                     </h4>
 
                                     @foreach (var answer in from question in sectionPage.Questions
-                                                           from answers in sectionPage.PageOfAnswers
-                                                           from answer in answers.Answers.Where(x => x.QuestionId == question.QuestionId)
-                                                           select answer)
+                                        from answers in sectionPage.PageOfAnswers
+                                        from answer in answers.Answers.Where(x => x.QuestionId == question.QuestionId)
+                                        select answer)
                                     {
-                                        <partial name="~/Views/Roatp/_TabularData.cshtml" for="@answer.Value" />
+                                        <partial name="~/Views/Roatp/_TabularData.cshtml" for="@answer.Value"/>
                                     }
                                 }
                                 else
@@ -144,7 +155,7 @@
                                                         case QuestionType.FileUpload:
                                                             <p class="govuk-heading-s  govuk-!-margin-bottom-0"> @question.Label</p>
                                                             <div class="das-multiline-text-bottom-margin">
-                                                                <a class="govuk-link" href="@Url.Action("Download", "Application", new { Id = Model.ApplicationId, sequenceNo = sequence.SequenceNumber, sectionId = seqSection.SectionNumber, pageId = sectionPage.PageId, questionId = answer.QuestionId, filename = answer.Value })">
+                                                                <a class="govuk-link" href="@Url.Action("Download", "Application", new {Id = Model.ApplicationId, sequenceNo = sequence.SequenceNumber, sectionId = seqSection.SectionNumber, pageId = sectionPage.PageId, questionId = answer.QuestionId, filename = answer.Value})">
                                                                     @answer.Value
                                                                 </a>
                                                             </div>
@@ -161,7 +172,7 @@
                                                             break;
                                                         case QuestionType.TabularData:
                                                             <p class="govuk-heading-s"> @question.Label</p>
-                                                            <partial name="~/Views/Roatp/_TabularData.cshtml" for="@answer.Value" />
+                                                            <partial name="~/Views/Roatp/_TabularData.cshtml" for="@answer.Value"/>
                                                             break;
                                                         default:
                                                             <p class="govuk-heading-s"> @question.Label</p>
@@ -207,7 +218,9 @@
             </div>
         </div>
     }
-    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+
+<hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
