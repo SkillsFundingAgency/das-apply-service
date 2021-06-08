@@ -348,7 +348,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
           
             var result = await _service.BuildApplicationSummaryViewModelWithModerationDetails(submittedApp, _emailAddress);
 
-            result.ModerationPassOverturnedToFail = true;
+            result.ModerationPassOverturnedToFail.Should().Be(true);
             result.OversightExternalComments.Should().Be(oversightExternalComments);
             result.Sequences.Should().BeNullOrEmpty();
         }
