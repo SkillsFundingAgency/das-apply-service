@@ -36,6 +36,7 @@ using SecurityHeadersExtensions = SFA.DAS.ApplyService.InternalApi.Infrastructur
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
+    using Microsoft.AspNetCore.Mvc.Authorization;
     using SFA.DAS.ApplyService.Application.Behaviours;
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.EmailService;
@@ -87,8 +88,13 @@ namespace SFA.DAS.ApplyService.InternalApi
                 options.RequestCultureProviders.Clear();
             });
 
-            services.AddMvc()
-            .AddFluentValidation(fv =>
+            services.AddMvc(setup =>
+            {
+                if (!_hostingEnvironment.IsDevelopment())
+                {
+                    setup.Filters.Add(new AuthorizeFilter("Default"));
+                }
+            }).AddFluentValidation(fv =>
             {
                 fv.RegisterValidatorsFromAssemblyContaining<GetStagedFilesQueryValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<Startup>();

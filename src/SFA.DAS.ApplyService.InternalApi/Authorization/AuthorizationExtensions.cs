@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Authorization
                     else
                     {
                         policy.RequireAuthenticatedUser();
-                        policy.RequireRole("Default");
+                        policy.RequireRole("ApplyServiceInternalAPI");
                     }
                 });
 
