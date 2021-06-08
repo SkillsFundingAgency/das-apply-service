@@ -64,19 +64,19 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-l">Feedback on your readiness and quality assessment</h2>
+            <p class="govuk-body das-preformatted-body">
             @if (Model.ModerationPassOverturnedToFail)
-            {
-                <p class="govuk-body das-preformatted-body">
+                {
+
                     @Model.OversightExternalComments
-                </p>
             }
             else
             {
-                <p class="govuk-body">
-                    Your application was unsuccessful as the answer to one or more of the questions was insufficient.
-                </p>
+                @Html.Raw("Your application was unsuccessful as the answer to one or more of the questions was insufficient.")
             }
-        </div>
+            </p>
+            
+            </div>
     </div>
 
     @if (Model.Sequences != null)
