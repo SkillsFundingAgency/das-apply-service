@@ -113,14 +113,14 @@ namespace SFA.DAS.ApplyService.Web.Services
                 TradingName = applicationData.TradingName,
                 ApplicationRouteId = applicationData.ProviderRoute.ToString(),
                 ApplicationReference = applicationData.ReferenceNumber,
-                SubmittedDate = applicationData.ApplicationSubmittedOn,
-                ExternalComments = application.ApplyData?.GatewayReviewDetails?.ExternalComments,
+                SubmittedDate = applicationData?.ApplicationSubmittedOn,
+                ExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
                 EmailAddress = emailAddress,
-                FinancialReviewStatus = application.FinancialReviewStatus,
-                FinancialGrade = application.FinancialGrade?.SelectedGrade,
-                FinancialExternalComments = application.FinancialGrade?.ExternalComments,
-                GatewayReviewStatus = application.GatewayReviewStatus,
-                ModerationStatus = application.ModerationStatus,
+                FinancialReviewStatus = application?.FinancialReviewStatus,
+                FinancialGrade = application?.FinancialGrade?.SelectedGrade,
+                FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
+                GatewayReviewStatus = application?.GatewayReviewStatus,
+                ModerationStatus = application?.ModerationStatus,
                 ModerationPassOverturnedToFail = false
             };
 

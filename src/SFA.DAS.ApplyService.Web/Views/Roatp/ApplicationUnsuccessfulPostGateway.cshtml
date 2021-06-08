@@ -67,13 +67,12 @@
             <p class="govuk-body das-preformatted-body">
             @if (Model.ModerationPassOverturnedToFail)
                 {
-
                     @Model.OversightExternalComments
-            }
-            else
-            {
-                @Html.Raw("Your application was unsuccessful as the answer to one or more of the questions was insufficient.")
-            }
+                }
+                else
+                {
+                    @Html.Raw("Your application was unsuccessful as the answer to one or more of the questions was insufficient.")
+                }
             </p>
             
             </div>
