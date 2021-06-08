@@ -1,26 +1,16 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ExistingApplicationViewModel
 
 @{
-    var title = $"An application has been submitted for the UKPRN {Model.UKPRN}";
-    ViewBag.Title = title;
+    ViewBag.Title = $"An application has been submitted for the UKPRN {Model.UKPRN}";
     Layout = "_Layout";
 }
-
-<partial name="~/Views/Roatp/PreambleHeader.cshtml" />
-
-@*
-<form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm" novalidate>
-    <input type="hidden" asp-for="UKPRN" />
-    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-</form>
-*@
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <h1 class="govuk-heading-xl">@title</h1>
+            <h1 class="govuk-heading-xl">@ViewBag.Title</h1>
             <p class="govuk-body">
                 To check the progress of this application, <a asp-action="Index" asp-controller="Home">sign in</a> using the account details that were used to start the application.
             </p>

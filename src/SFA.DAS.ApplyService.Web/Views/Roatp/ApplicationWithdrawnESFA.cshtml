@@ -5,7 +5,10 @@
     Layout = "_Layout";
 }
 
-<partial name="~/Views/Roatp/ApplicationHeaderReadOnly.cshtml" />
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -48,7 +51,7 @@
             <p class="govuk-body">
                 You can contact the Manage apprenticeships service helpdesk on:
             </p>
-            <ul  class="govuk-list govuk-list--bullet">
+            <ul class="govuk-list govuk-list--bullet">
                 <li>08000 150 600</li>
                 <li><a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk" target="_blank">helpdesk@manage-apprenticeships.service.gov.uk</a></li>
             </ul>

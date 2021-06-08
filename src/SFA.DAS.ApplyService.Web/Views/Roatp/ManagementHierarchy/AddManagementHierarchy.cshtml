@@ -6,14 +6,10 @@
     Layout = "_Layout";
 }
 
-<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
-
-@*
-<form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm" novalidate>
-    <input type="hidden" asp-for="ApplicationId" />
-    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-</form>
-*@
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
