@@ -111,12 +111,12 @@
                             {
                                 var isTabularData = false;
                                 @foreach (var dummy in from question in sectionPage.Questions
-                                    from answers
-                                        in sectionPage.PageOfAnswers
-                                    from answer
-                                        in answers.Answers.Where(x => x.QuestionId == question.QuestionId)
-                                    where question.Input.Type == QuestionType.TabularData
-                                    select question)
+                                            from answers
+                                                in sectionPage.PageOfAnswers
+                                            from answer
+                                                in answers.Answers.Where(x => x.QuestionId == question.QuestionId)
+                                            where question.Input.Type == QuestionType.TabularData
+                                            select question)
                                 {
                                     isTabularData = true;
                                 }
@@ -129,9 +129,9 @@
                                     </h4>
 
                                     @foreach (var answer in from question in sectionPage.Questions
-                                        from answers in sectionPage.PageOfAnswers
-                                        from answer in answers.Answers.Where(x => x.QuestionId == question.QuestionId)
-                                        select answer)
+                                                from answers in sectionPage.PageOfAnswers
+                                                from answer in answers.Answers.Where(x => x.QuestionId == question.QuestionId)
+                                                select answer)
                                     {
                                         <partial name="~/Views/Roatp/_TabularData.cshtml" for="@answer.Value"/>
                                     }
