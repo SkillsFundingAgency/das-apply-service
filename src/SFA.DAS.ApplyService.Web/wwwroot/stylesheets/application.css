@@ -620,11 +620,6 @@
   }
 }
 
-/* .ui-autocomplete .ui-menu-item a:hover,
-.ui-autocomplete .ui-menu-item .ui-state-focus {
-    background: #dee0e2;
-} */
-
 .ui-menu .ui-menu-item .ui-state-hover,
 .ui-menu .ui-menu-item .ui-state-active {
   background: #dee0e2;
@@ -1290,18 +1285,28 @@
     color: #fff;
 }
 
-
 .das-multiline-text {
     white-space: pre-line;
 }
 
-.hint--no-color {
-    font-family: GDS Transport, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 1.25;
-    display: block;
-    margin-bottom: 15px;
+.das-multiline-text-bottom-margin {
+    white-space: pre-line;
+    margin-bottom: 20px;
+}
+
+.app-inset-text--question-answer {
+  border-left-width: 5px;
+  padding: 0 15px;
+  font-size: 16px;
+  margin-top: 15px;
+}
+
+.app-list--bordered {
+  border-top: 1px solid #b1b4b6;
+}
+
+.app-list--bordered > li {
+  border-bottom: 1px solid #b1b4b6;
+  padding: 7px 0;
+  margin: 0;
 }

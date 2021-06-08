@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Services;
+using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Domain.Sectors;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 

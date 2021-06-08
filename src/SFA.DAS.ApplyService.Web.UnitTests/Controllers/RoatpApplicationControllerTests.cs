@@ -250,188 +250,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _apiClient.VerifyAll();
         }
 
-        [Test]
-        public async Task Applications_shows_task_list_if_an_application_in_progress()
-        {
-            var inProgressApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.InProgress
-            };
-            var applications = new List<Domain.Entities.Apply>
-            {
-                inProgressApp
-            };
+        
 
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("TaskList");
-        }
-
-        [Test]
-        public async Task Applications_shows_confirmation_page_if_application_submitted()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.Submitted
-            };
-            var applications = new List<Domain.Entities.Apply>
-            {
-                submittedApp
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
-        }
-
-        [Test]
-        public async Task Applications_shows_confirmation_page_if_application_Gateway_Assessed()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.GatewayAssessed
-            };
-            var applications = new List<Domain.Entities.Apply>
-            {
-                submittedApp
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
-        }
-
-
-        [Test]
-        public async Task Applications_shows_confirmation_page_if_application_new()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.New
-            };
-            var applications = new List<Domain.Entities.Apply>
-            {
-                submittedApp
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("TaskList");
-        }
-
-        [Test]
-        public async Task Applications_shows_confirmation_page_if_application_resubmitted()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.Resubmitted
-            };
-            var applications = new List<Domain.Entities.Apply>
-            {
-                submittedApp
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
-        }
-
-        [Test]
-        public async Task Applications_shows_withdrawn_page_if_application_withdrawn()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.Withdrawn
-            };
-            var applications = new List<Domain.Entities.Apply>
-            {
-                submittedApp
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationWithdrawn");
-        }
-
-        [Test]
-        public async Task Applications_shows_active_with_success_page_if_application_approved_and_oversight_review_status_already_active()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.Approved
-            };
-            var applications = new List<Apply>
-            {
-                submittedApp
-            };
-
-            var oversightReview = new GetOversightReviewResponse
-            {
-                Status = OversightReviewStatus.SuccessfulAlreadyActive
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationApprovedAlreadyActive");
-        }
-
-        [Test]
-        public async Task Applications_shows_active_with_success_page_if_application_approved_and_oversight_review_status_not_set()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.Approved
-            };
-            var applications = new List<Apply>
-            {
-                submittedApp
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
        
-            var result = await _controller.Applications();
 
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationApproved");
-        }
 
         [Test]
-        public async Task Applications_shows_feedback_added_page_if_application_status_matches()
+        public async Task
+            Applications_shows_process_application_status_if_applications_called()
         {
-            var submittedApp = new Apply
-            {
-                ApplicationStatus = ApplicationStatus.FeedbackAdded
-            };
+            var submittedApp = new Domain.Entities.Apply();
             var applications = new List<Apply>
             {
                 submittedApp
@@ -443,52 +271,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("FeedbackAdded");
+            redirectResult.ActionName.Should().Be("ProcessApplicationStatus");
+            redirectResult.ControllerName.Should().Be("RoatpOverallOutcome");
         }
 
-        [Test]
-        public async Task Applications_shows_rejected_page_if_application_rejected()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.GatewayAssessed,
-                GatewayReviewStatus = GatewayReviewStatus.Reject
-            };
-            var applications = new List<Domain.Entities.Apply>
-            {
-                submittedApp
-            };
 
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationRejected");
-        }
-
-        [Test]
-        public async Task Applications_shows_unsuccessful_page_if_application_unsuccessful()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.Rejected,
-                GatewayReviewStatus = GatewayReviewStatus.Fail
-            };
-            var applications = new List<Domain.Entities.Apply>
-            {
-                submittedApp
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationUnsuccessful");
-        }
+       
 
         [Test]
         public async Task Applications_shows_enter_ukprn_page_if_application_cancelled()
@@ -651,7 +439,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
+            redirectResult.ActionName.Should().Be("ProcessApplicationStatus");
 
             _submitApplicationEmailService.VerifyAll();
         }
