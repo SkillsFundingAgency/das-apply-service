@@ -132,7 +132,7 @@ namespace SFA.DAS.ApplyService.Data
                                                             {
                                                                 applicationId,
                                                                 applicationStatusSuccessful = ApplicationStatus.Successful,   
-                                                                appicationStatusUnsuccessful = ApplicationStatus.Unsuccessful,
+                                                                applicationStatusUnsuccessful = ApplicationStatus.Unsuccessful,
                                                                 applicationStatusRejected = ApplicationStatus.Rejected,   
                                                                 applicationStatusRemoved = ApplicationStatus.Removed,
                                                                 applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
