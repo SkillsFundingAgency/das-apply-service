@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.EmailService.Infrastructure
             var configuration = _configurationService.GetConfig().GetAwaiter().GetResult();
 
             var azureServiceTokenProvider = new AzureServiceTokenProvider();
-            var generateTokenTask = azureServiceTokenProvider.GetAccessTokenAsync(configuration.QnaApiAuthentication.Identifier);
+            var generateTokenTask = azureServiceTokenProvider.GetAccessTokenAsync(configuration.InternalApi.Identifier);
 
             return generateTokenTask.GetAwaiter().GetResult();
         }
