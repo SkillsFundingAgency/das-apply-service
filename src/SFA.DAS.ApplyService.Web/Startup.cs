@@ -166,7 +166,7 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddHttpClient<IOutcomeApiClient, OutcomeApiClient>(config =>
                 {
-                    config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                    config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
                 })
                 .SetHandlerLifetime(handlerLifeTime);
 

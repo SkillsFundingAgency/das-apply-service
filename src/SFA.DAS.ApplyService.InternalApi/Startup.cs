@@ -38,6 +38,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 {
     using Microsoft.AspNetCore.Mvc.Authorization;
     using SFA.DAS.ApplyService.Application.Behaviours;
+    using SFA.DAS.ApplyService.Application.Services.Assessor;
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.EmailService.Infrastructure;
