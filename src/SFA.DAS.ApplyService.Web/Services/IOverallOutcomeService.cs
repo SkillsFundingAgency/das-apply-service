@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
@@ -13,5 +14,9 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         Task<ApplicationSummaryWithModeratorDetailsViewModel> BuildApplicationSummaryViewModelWithModerationDetails(Apply application,
             string emailAddress);
+
+
+        Task<OutcomeSectorDetailsViewModel> GetSectorDetailsViewModel(Guid applicationId, string pageId);
+
     }
 }

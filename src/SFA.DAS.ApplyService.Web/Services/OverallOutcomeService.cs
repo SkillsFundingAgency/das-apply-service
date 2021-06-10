@@ -123,6 +123,13 @@ namespace SFA.DAS.ApplyService.Web.Services
             return model;
         }
 
+        public async Task<OutcomeSectorDetailsViewModel> GetSectorDetailsViewModel(Guid applicationId, string pageId)
+        {
+            var model = new OutcomeSectorDetailsViewModel();
+            model.Heading = pageId;
+            model.Caption = applicationId.ToString();
+            return model;
+        }
 
 
         private void AddSequenceTitlesToSequences(List<AssessorSequence> sequencesWithModerationFails)
