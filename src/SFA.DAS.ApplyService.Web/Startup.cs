@@ -160,7 +160,7 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddHttpClient<IApplicationApiClient, ApplicationApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
@@ -178,49 +178,49 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddHttpClient<ICharityCommissionApiClient, CharityCommissionApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<ICompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IEmailTemplateClient, EmailTemplateClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IOrganisationApiClient, OrganisationApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IUkrlpApiClient, UkrlpApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IUsersApiClient, UsersApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IWhitelistedProvidersApiClient, WhitelistedProvidersApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
         }
