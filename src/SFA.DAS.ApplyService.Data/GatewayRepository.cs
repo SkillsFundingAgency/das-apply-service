@@ -310,6 +310,12 @@ namespace SFA.DAS.ApplyService.Data
                 applicationStatus = ApplicationStatus.Submitted;
             }
 
+            if (gatewayReviewStatus == GatewayReviewStatus.Rejected)
+            {
+                applicationStatus = ApplicationStatus.Rejected;
+            }
+
+
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var rowsAffected = await connection.ExecuteAsync(@"UPDATE [Apply]
