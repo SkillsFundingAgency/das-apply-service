@@ -1,21 +1,18 @@
-﻿
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Azure.Services.AppAuthentication;
 using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
-    public class QnaTokenService : InternalApi.Infrastructure.IQnaTokenService
+    public class QnaTokenService : IQnaTokenService
     {
-        private readonly IConfigurationService _configurationService;
         private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IApplyConfig _configuration;
+        private readonly IConfigurationService _configurationService;
 
         public QnaTokenService(IConfigurationService configurationService, IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
             _configurationService = configurationService;
-            _configuration = configurationService.GetConfig().Result;
         }
 
         public string GetToken()
@@ -23,17 +20,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             if (_hostingEnvironment.IsDevelopment())
                 return string.Empty;
 
-            var tenantId = _configuration.QnaApiAuthentication.TenantId;
-            var clientId = _configuration.QnaApiAuthentication.ClientId;
-            var appKey = _configuration.QnaApiAuthentication.ClientSecret;
-            var resourceId = _configuration.QnaApiAuthentication.ResourceId;
+            var configuration = _configurationService.GetConfig().GetAwaiter().GetResult();
 
-            var authority = $"https://login.microsoftonline.com/{tenantId}";
-            var clientCredential = new ClientCredential(clientId, appKey);
-            var context = new AuthenticationContext(authority, true);
-            var result = context.AcquireTokenAsync(resourceId, clientCredential).Result;
+            var azureServiceTokenProvider = new AzureServiceTokenProvider();
+            var generateTokenTask = azureServiceTokenProvider.GetAccessTokenAsync(configuration.QnaApiAuthentication.Identifier);
 
-            return result.AccessToken;
+            return generateTokenTask.GetAwaiter().GetResult();
         }
     }
 }

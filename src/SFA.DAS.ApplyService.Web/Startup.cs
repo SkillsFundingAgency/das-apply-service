@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -21,22 +17,17 @@ using Microsoft.IdentityModel.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
-using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
-using SFA.DAS.ApplyService.Web;
 using SFA.DAS.ApplyService.Web.Authorization;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Infrastructure.Services;
 using SFA.DAS.ApplyService.Web.Orchestrators;
-using StructureMap;
 using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
 {
-    using Controllers;
-    using SFA.DAS.ApplyService.Application.Apply;
     using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.EmailService.Infrastructure;
     using SFA.DAS.ApplyService.EmailService.Interfaces;
@@ -170,7 +161,7 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddHttpClient<IApplicationApiClient, ApplicationApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
@@ -184,56 +175,56 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddHttpClient<ICharityCommissionApiClient, CharityCommissionApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<ICompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IEmailTemplateClient, EmailTemplateClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IOrganisationApiClient, OrganisationApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IUkrlpApiClient, UkrlpApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IUsersApiClient, UsersApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IWhitelistedProvidersApiClient, WhitelistedProvidersApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
