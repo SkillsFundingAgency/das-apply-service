@@ -6,11 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.Application.Apply.Gateway.Applications;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions;
-using SFA.DAS.ApplyService.Application.Apply.GetApplications;
-using SFA.DAS.ApplyService.Domain.Roatp;
-using SFA.DAS.ApplyService.Configuration;
-using SFA.DAS.ApplyService.EmailService.Interfaces;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.InternalApi.Types.Requests;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers

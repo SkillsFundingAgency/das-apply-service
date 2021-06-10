@@ -48,14 +48,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetOversightsCompletedRequest());
         }
 
-
         [HttpGet]
         [Route("Oversights/Download")]
         public async Task<ActionResult<List<ApplicationOversightDownloadDetails>>> OversightDownload(DateTime dateFrom, DateTime dateTo)
         {
             return await _mediator.Send(new GetOversightDownloadRequest{ DateFrom = dateFrom, DateTo = dateTo });
         }
-
 
         [HttpPost]
         [Route("Oversight/Outcome")]

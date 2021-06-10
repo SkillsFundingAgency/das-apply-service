@@ -249,12 +249,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _qnaApiClient.VerifyAll();
             _apiClient.VerifyAll();
         }
-
-        
-
-       
-
-
+ 
         [Test]
         public async Task
             Applications_shows_process_application_status_if_applications_called()
@@ -270,13 +265,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = await _controller.Applications();
 
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
             redirectResult.ActionName.Should().Be("ProcessApplicationStatus");
             redirectResult.ControllerName.Should().Be("RoatpOverallOutcome");
         }
-
-
-       
 
         [Test]
         public async Task Applications_shows_enter_ukprn_page_if_application_cancelled()
@@ -536,7 +527,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     )));
         }
 
-
         [Test]
         public async Task Confirm_submit_application_submit_application_request_includes_null_financial_data_if_financial_page_is_not_active()
         {
@@ -638,7 +628,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     )));
         }
 
-
         [Test]
         public async Task Confirm_submit_application_submit_application_request_includes_organisation_type()
         {
@@ -728,7 +717,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 x.SubmitApplication(It.Is<SubmitApplicationRequest>(r => r.OrganisationType == "test")));
         }
 
-
         [Test]
         public async Task TaskList_shows_tasklist_view_for_application()
         {
@@ -750,7 +738,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             Assert.IsInstanceOf<ViewResult>(result);
             var viewResult = (ViewResult) result;
             Assert.AreEqual("~/Views/Roatp/TaskList.cshtml", viewResult.ViewName);
-
         }
     }
 }

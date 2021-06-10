@@ -213,7 +213,7 @@ namespace SFA.DAS.ApplyService.Data
                             applicationStatusRemoved = ApplicationStatus.Removed,
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
                             gatewayReviewStatusFailed = GatewayReviewStatus.Fail,
-                            gatewayReviewStatusRejected = GatewayReviewStatus.Reject
+                            gatewayReviewStatusRejected = GatewayReviewStatus.Rejected
                         })).ToList();
             }
         }
@@ -260,7 +260,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> EvaluateGateway(Guid applicationId, bool isGatewayApproved, string userId, string userName)
         {
-            var applicationStatus = isGatewayApproved ? ApplicationStatus.GatewayAssessed : ApplicationStatus.Rejected;
+            var applicationStatus = isGatewayApproved ? ApplicationStatus.GatewayAssessed : ApplicationStatus.Rejected;   
             var gatewayReviewStatus = isGatewayApproved ? GatewayReviewStatus.Pass : GatewayReviewStatus.Fail;
 
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -309,6 +309,12 @@ namespace SFA.DAS.ApplyService.Data
             {
                 applicationStatus = ApplicationStatus.Submitted;
             }
+
+            if (gatewayReviewStatus == GatewayReviewStatus.Rejected)
+            {
+                applicationStatus = ApplicationStatus.Rejected;
+            }
+
 
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {

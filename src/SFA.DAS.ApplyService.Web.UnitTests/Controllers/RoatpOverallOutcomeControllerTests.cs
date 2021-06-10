@@ -80,7 +80,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var submittedApp = new Apply
             {
-                ApplicationStatus = ApplicationStatus.Approved
+                ApplicationStatus = ApplicationStatus.Successful
             };
         
             var oversightReview = new GetOversightReviewResponse
@@ -103,7 +103,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var submittedApp = new Apply
             {
-                ApplicationStatus = ApplicationStatus.Approved
+                ApplicationStatus = ApplicationStatus.Successful
             };
         
             var oversightReview = new GetOversightReviewResponse();
@@ -159,7 +159,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var submittedApp = new Apply
             {
                 ApplicationStatus = ApplicationStatus.GatewayAssessed,
-                GatewayReviewStatus = GatewayReviewStatus.Reject
+                GatewayReviewStatus = GatewayReviewStatus.Rejected
             };
         
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
@@ -226,7 +226,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var submittedApp = new Apply
             {
-                ApplicationStatus = ApplicationStatus.Rejected,
+                ApplicationStatus = ApplicationStatus.Unsuccessful,
                 GatewayReviewStatus = GatewayReviewStatus.Fail
             };
         
@@ -244,7 +244,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var submittedApp = new Apply
             {
-                ApplicationStatus = ApplicationStatus.Rejected
+                ApplicationStatus = ApplicationStatus.Unsuccessful
             };
         
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);

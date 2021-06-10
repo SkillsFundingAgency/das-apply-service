@@ -78,11 +78,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Authorisation
 
         [TestCase(ApplicationStatus.InProgress, ApplicationStatus.New, false)]
         [TestCase(ApplicationStatus.InProgress, ApplicationStatus.Withdrawn, false)]
-        [TestCase(ApplicationStatus.InProgress, ApplicationStatus.Rejected, false)]
+        [TestCase(ApplicationStatus.InProgress, ApplicationStatus.Rejected, false)]  
         [TestCase(ApplicationStatus.New, ApplicationStatus.New, true)]
         [TestCase(ApplicationStatus.InProgress, ApplicationStatus.InProgress, true)]
         [TestCase(ApplicationStatus.Withdrawn, ApplicationStatus.Withdrawn, true)]
-        [TestCase(ApplicationStatus.Rejected, ApplicationStatus.Rejected, true)]
+        [TestCase(ApplicationStatus.Rejected, ApplicationStatus.Rejected, true)]  
+        [TestCase(ApplicationStatus.InProgressOutcome, ApplicationStatus.New, false)]
         public async Task ApplicationStatusRequirement_Succeeds_If_Application_Is_In_A_Valid_State(string applicationStatus, string requiredStatus, bool expectSucceeds)
         {
             _application.ApplicationStatus = applicationStatus;

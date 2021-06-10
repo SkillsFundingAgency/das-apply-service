@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.New:
                 case ApplicationStatus.InProgress:
                     return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
-                case ApplicationStatus.Approved:
+                case ApplicationStatus.Successful:
                 {
                     var oversightReview = await _apiClient.GetOversightReview(applicationId);
                     if (oversightReview?.Status == OversightReviewStatus.SuccessfulAlreadyActive)
@@ -50,7 +50,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                     return View("~/Views/Roatp/ApplicationApproved.cshtml", model);
                 }
-                case ApplicationStatus.Rejected: //this logic will need to change with the coming status update story
+                case ApplicationStatus.Unsuccessful: 
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
                         return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
 
@@ -66,9 +66,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.Removed:
                     return View("~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", model);
                 case ApplicationStatus.GatewayAssessed:
-                    if (application.GatewayReviewStatus == GatewayReviewStatus.Reject)
+                    if (application.GatewayReviewStatus == GatewayReviewStatus.Rejected)
                         return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
+                case ApplicationStatus.Rejected:
+                    return View("~/Views/Roatp/ApplicationRejected.cshtml", model);   
                 case ApplicationStatus.Submitted:
                 case ApplicationStatus.Resubmitted:
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);

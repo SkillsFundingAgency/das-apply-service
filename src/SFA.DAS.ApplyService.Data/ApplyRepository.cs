@@ -114,7 +114,8 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var application = await GetApplication(applicationId);
-                var invalidApplicationStatuses = new List<string> { ApplicationStatus.Approved, ApplicationStatus.Rejected, ApplicationStatus.Removed, ApplicationStatus.Withdrawn, ApplicationStatus.Cancelled };
+
+                var invalidApplicationStatuses = new List<string> { ApplicationStatus.Successful, ApplicationStatus.Rejected, ApplicationStatus.Unsuccessful, ApplicationStatus.Removed, ApplicationStatus.Withdrawn, ApplicationStatus.Cancelled };
 
                 // Application must exist and has not already been Approved, Rejected, Removed, Widthdrawn or Cancelled
                 if (application != null && !invalidApplicationStatuses.Contains(application.ApplicationStatus))
@@ -126,12 +127,13 @@ namespace SFA.DAS.ApplyService.Data
 														INNER JOIN Contacts con ON a.OrganisationId = con.ApplyOrganisationID
                                                         WHERE a.OrganisationId = (SELECT OrganisationId FROM Apply WHERE ApplicationId = @applicationId)
 														AND a.CreatedBy <> (SELECT CreatedBy FROM Apply WHERE ApplicationId = @applicationId)
-                                                        AND a.ApplicationStatus NOT IN (@applicationStatusApproved, @applicationStatusRejected, @applicationStatusRemoved, @applicationStatusWithdrawn, @applicationStatusCancelled)",
+                                                        AND a.ApplicationStatus NOT IN (@applicationStatusSuccessful, @applicationStatusUnsuccessful, @applicationStatusRejected, @applicationStatusRemoved, @applicationStatusWithdrawn, @applicationStatusCancelled)",
                                                             new
                                                             {
                                                                 applicationId,
-                                                                applicationStatusApproved = ApplicationStatus.Approved,
-                                                                applicationStatusRejected = ApplicationStatus.Rejected,
+                                                                applicationStatusSuccessful = ApplicationStatus.Successful,   
+                                                                applicationStatusUnsuccessful = ApplicationStatus.Unsuccessful,
+                                                                applicationStatusRejected = ApplicationStatus.Rejected,   
                                                                 applicationStatusRemoved = ApplicationStatus.Removed,
                                                                 applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                                                                 applicationStatusCancelled = ApplicationStatus.Cancelled
@@ -648,7 +650,7 @@ namespace SFA.DAS.ApplyService.Data
                 {
                     gatewayReviewStatusPass = GatewayReviewStatus.Pass,
                     gatewayReviewStatusFail = GatewayReviewStatus.Fail,
-                    GatewayReviewStatusReject = GatewayReviewStatus.Reject,
+                    GatewayReviewStatusReject = GatewayReviewStatus.Rejected,
                     assessorReviewStatusApproved = AssessorReviewStatus.Approved,
                     assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
                     financialReviewStatusApproved = FinancialReviewStatus.Pass,
