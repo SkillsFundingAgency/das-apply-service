@@ -125,9 +125,12 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public async Task<OutcomeSectorDetailsViewModel> GetSectorDetailsViewModel(Guid applicationId, string pageId)
         {
-            var model = new OutcomeSectorDetailsViewModel();
-            model.Heading = pageId;
-            model.Caption = applicationId.ToString();
+            var sectorDetails = await _apiClient.GetClarificationSectorDetails(applicationId, pageId);
+            var model = new OutcomeSectorDetailsViewModel
+            {
+                ApplicationId = applicationId, 
+                SectorDetails = sectorDetails
+            };
             return model;
         }
 
