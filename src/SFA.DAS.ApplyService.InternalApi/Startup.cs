@@ -1,32 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Net.Http;
 using System.Reflection;
-using System.Threading.Tasks;
-using Azure.Storage.Blobs;
-using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
-using SFA.DAS.ApplyService.Application.Email;
-using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Services;
-using SFA.DAS.ApplyService.Application.Services.Assessor;
-using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
@@ -48,11 +36,15 @@ using SecurityHeadersExtensions = SFA.DAS.ApplyService.InternalApi.Infrastructur
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
+    using Microsoft.AspNetCore.Mvc.Authorization;
     using SFA.DAS.ApplyService.Application.Behaviours;
+    using SFA.DAS.ApplyService.Application.Services.Assessor;
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.EmailService.Infrastructure;
     using SFA.DAS.ApplyService.EmailService.Interfaces;
+    using SFA.DAS.ApplyService.InternalApi.Authentication;
+    using SFA.DAS.ApplyService.InternalApi.Authorization;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Services;
     using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
@@ -65,55 +57,25 @@ namespace SFA.DAS.ApplyService.InternalApi
 
     public class Startup
     {
-        private readonly IHostingEnvironment _env;
+        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IConfiguration _configuration;
         private const string _serviceName = "SFA.DAS.ApplyService";
         private const string _version = "1.0";
 
         private readonly IApplyConfig _applyConfig;
 
-        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
-            _env = env;
+            _hostingEnvironment = hostingEnvironment;
             _configuration = configuration;
 
-            _applyConfig = new ConfigurationService(_env, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], _version, _serviceName).GetConfig().GetAwaiter().GetResult();
+            _applyConfig = new ConfigurationService(_hostingEnvironment, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], _version, _serviceName).GetConfig().GetAwaiter().GetResult();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(o =>
-                {
-                    o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(o =>
-                {
-                    o.Authority = $"https://login.microsoftonline.com/{_applyConfig.ApiAuthentication.TenantId}";
-                    o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                    {
-                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
-                        ValidAudiences = new List<string>
-                        {
-                            _applyConfig.ApiAuthentication.Audience,
-                            _applyConfig.ApiAuthentication.ClientId
-                        }
-                    };
-                    o.Events = new JwtBearerEvents()
-                    {
-                        OnMessageReceived = c =>
-                        {
-                            return Task.CompletedTask;
-                        },
-                        OnTokenValidated = c =>
-                        {
-                            return Task.CompletedTask;
-                        },
-                        OnAuthenticationFailed = c =>
-                        {
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
+            services.AddApiAuthorization(_hostingEnvironment);
+            services.AddApiAuthentication(_applyConfig);
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
@@ -127,14 +89,13 @@ namespace SFA.DAS.ApplyService.InternalApi
                 options.RequestCultureProviders.Clear();
             });
 
-            services.AddMvc(opt =>
+            services.AddMvc(setup =>
             {
-                if (_env.IsDevelopment())
+                if (!_hostingEnvironment.IsDevelopment())
                 {
-                    opt.Filters.Add(new AllowAnonymousFilter());
+                    setup.Filters.Add(new AuthorizeFilter("Default"));
                 }
-            })
-            .AddFluentValidation(fv =>
+            }).AddFluentValidation(fv =>
             {
                 fv.RegisterValidatorsFromAssemblyContaining<GetStagedFilesQueryValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<Startup>();
@@ -155,7 +116,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             {
                 c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.ApplyService.InternalApi", Version = "v1" });
                 c.CustomSchemaIds(x => x.FullName); // Fixes issue when the same type name appears twice
-                if (_env.IsDevelopment())
+                if (_hostingEnvironment.IsDevelopment())
                 {
                     var basePath = AppContext.BaseDirectory;
                     var xmlPath = Path.Combine(basePath, "SFA.DAS.ApplyService.InternalApi.xml");
@@ -231,7 +192,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddHttpClient<IEmailTemplateClient, EmailTemplateClient>(config =>
             {
-                config.BaseAddress = new Uri(_applyConfig.InternalApi.Uri);
+                config.BaseAddress = new Uri(_applyConfig.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
         }
