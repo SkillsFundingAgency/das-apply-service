@@ -89,7 +89,6 @@
                                     @foreach (var sectionPage in seqSection.Pages)
                                     {
                                     <li>
-                                        @* <a href="#" class="govuk-link">@sectionPage.Title</a> *@
                                         <a class="govuk-link" asp-action="GetSectorDetails" asp-controller="RoatpOverallOutcome" asp-route-applicationId="@Model.ApplicationId" asp-route-pageId="@sectionPage.PageId">@sectionPage.Title</a>
                                     </li>
 

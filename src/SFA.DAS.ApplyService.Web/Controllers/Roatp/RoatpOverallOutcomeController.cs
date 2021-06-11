@@ -3,13 +3,10 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
-using NLog.Common;
-using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
-using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -18,16 +15,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     {
         private readonly IOutcomeApiClient _apiClient;
         private readonly IApplicationApiClient _applicationApiClient;
-        private readonly IQnaApiClient _qnaApiClient;
         private readonly IOverallOutcomeService _overallOutcomeService;
         private readonly ILogger<RoatpOverallOutcomeController> _logger;
 
-        public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, IQnaApiClient qnaApiClient,
+        public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, 
             IOverallOutcomeService overallOutcomeService, IApplicationApiClient applicationApiClient,
             ILogger<RoatpOverallOutcomeController> logger)
         {
             _apiClient = apiClient;
-            _qnaApiClient = qnaApiClient;
             _overallOutcomeService = overallOutcomeService;
             _logger = logger;
             _applicationApiClient = applicationApiClient;
@@ -35,15 +30,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
 
 
-        [HttpGet] 
-        // [Authorize(Policy = "AccessApplication")]
+        [HttpGet]
         [Route("application/{applicationId}/sector/{pageId}")]
         public async Task<IActionResult> GetSectorDetails(Guid applicationId, string pageId)
         {
-            //var model = new OutcomeSectorDetailsViewModel();
-
             var model = await _overallOutcomeService.GetSectorDetailsViewModel(applicationId, pageId);
-
             return View("~/Views/Roatp/ApplicationUnsuccessfulSectorAnswers.cshtml", model);
         }
 
