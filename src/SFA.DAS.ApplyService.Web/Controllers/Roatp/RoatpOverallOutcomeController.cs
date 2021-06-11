@@ -15,16 +15,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     {
         private readonly IOutcomeApiClient _apiClient;
         private readonly IApplicationApiClient _applicationApiClient;
-        private readonly IQnaApiClient _qnaApiClient;
         private readonly IOverallOutcomeService _overallOutcomeService;
         private readonly ILogger<RoatpOverallOutcomeController> _logger;
 
-        public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, IQnaApiClient qnaApiClient,
+        public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, 
             IOverallOutcomeService overallOutcomeService, IApplicationApiClient applicationApiClient,
             ILogger<RoatpOverallOutcomeController> logger)
         {
             _apiClient = apiClient;
-            _qnaApiClient = qnaApiClient;
             _overallOutcomeService = overallOutcomeService;
             _logger = logger;
             _applicationApiClient = applicationApiClient;
@@ -64,7 +62,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.Withdrawn:
                     return View("~/Views/Roatp/ApplicationWithdrawn.cshtml", model);
                 case ApplicationStatus.Removed:
-                    return View("~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", model);
+                    var oversightStatus = await _overallOutcomeService.GetOversightReviewStatus(applicationId);
+                    return View(oversightStatus!=OversightReviewStatus.Removed ?
+                        "~/Views/Roatp/ApplicationSubmitted.cshtml" : 
+                        "~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", 
+                        model);
+
+
                 case ApplicationStatus.GatewayAssessed:
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Rejected)
                         return View("~/Views/Roatp/ApplicationRejected.cshtml", model);

@@ -7,6 +7,7 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
+using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
@@ -18,6 +19,7 @@ namespace SFA.DAS.ApplyService.Web.Services
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IAssessorLookupService _assessorLookupService;
 
+
         public OverallOutcomeService(IOutcomeApiClient apiClient, IQnaApiClient qnaApiClient,
             IAssessorLookupService assessorLookupService)
         {
@@ -26,6 +28,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             _assessorLookupService = assessorLookupService;
         }
 
+        
         public async Task AugmentModelWithModerationFailDetails(ApplicationSummaryWithModeratorDetailsViewModel model,
             string userId)
         {
@@ -123,7 +126,11 @@ namespace SFA.DAS.ApplyService.Web.Services
             return model;
         }
 
-
+        public async Task<OversightReviewStatus?> GetOversightReviewStatus(Guid applicationId)
+        {
+            var response = await _apiClient.GetOversightReview(applicationId);
+            return response?.Status;
+        }
 
         private void AddSequenceTitlesToSequences(List<AssessorSequence> sequencesWithModerationFails)
         {
@@ -362,5 +369,6 @@ namespace SFA.DAS.ApplyService.Web.Services
             return guidanceInformation;
         }
 
+        
     }
 }

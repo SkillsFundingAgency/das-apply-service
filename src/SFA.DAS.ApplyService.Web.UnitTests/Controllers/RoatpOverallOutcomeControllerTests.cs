@@ -31,7 +31,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             _apiClient = new Mock<IOutcomeApiClient>();
             _logger = new Mock<ILogger<RoatpOverallOutcomeController>>();
-            _qnaApiClient = new Mock<IQnaApiClient>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
             _outcomeService = new Mock<IOverallOutcomeService>();
 
@@ -48,7 +47,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 new Claim("custom-claim", "example claim value"),
             }, "mock"));
 
-            _controller = new RoatpOverallOutcomeController(_apiClient.Object, _qnaApiClient.Object,
+            _controller = new RoatpOverallOutcomeController(_apiClient.Object,
                 _outcomeService.Object, _applicationApiClient.Object, _logger.Object)
             {
                 ControllerContext = new ControllerContext()
@@ -274,7 +273,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
         
         [Test]
-        public async Task Application_shows_removed_page_if_application_removed()
+        public async Task Application_shows_removed_page_if_application_removed_and_oversight_status_is_removed()
         {
             var submittedApp = new Apply
             {
@@ -282,14 +281,40 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
         
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
-        
+            _outcomeService.Setup(x => x.GetOversightReviewStatus(It.IsAny<Guid>()))
+                .ReturnsAsync(OversightReviewStatus.Removed);
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationWithdrawnESFA.cshtml");
         }
-        
+
+        [TestCase(OversightReviewStatus.Unsuccessful)]
+        [TestCase(OversightReviewStatus.Successful)]
+        [TestCase(OversightReviewStatus.Rejected)]
+        [TestCase(OversightReviewStatus.SuccessfulFitnessForFunding)]
+        [TestCase(OversightReviewStatus.None)]
+        [TestCase(OversightReviewStatus.InProgress)]
+        [TestCase(OversightReviewStatus.SuccessfulAlreadyActive)]
+        [TestCase(OversightReviewStatus.Withdrawn)]
+        public async Task Application_shows_removed_page_if_application_removed_and_oversight_status_is_not_removed(OversightReviewStatus status)
+        {
+            var submittedApp = new Apply
+            {
+                ApplicationStatus = ApplicationStatus.Removed
+            };
+
+            _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
+            _outcomeService.Setup(x => x.GetOversightReviewStatus(It.IsAny<Guid>()))
+                .ReturnsAsync(status);
+            var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationSubmitted.cshtml");
+        }
+
         [Test]
         public async Task Application_shows_submitted_page_if_application_submitted()
         {
