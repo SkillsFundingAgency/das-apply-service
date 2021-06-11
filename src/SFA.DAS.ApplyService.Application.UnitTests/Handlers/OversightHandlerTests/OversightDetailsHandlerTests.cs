@@ -2,11 +2,7 @@
 using System.Threading;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightDetails;
-using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Domain.QueryResults;
@@ -44,7 +40,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 ApplicationReferenceNumber = "APR000111",
                 ApplicationSubmittedDate = DateTime.Today.AddDays(-1),
                 OversightStatus = OversightReviewStatus.Successful,
-                ApplicationStatus = ApplicationStatus.Approved,
+                ApplicationStatus = ApplicationStatus.Successful,    
                 ApplicationDeterminedDate = DateTime.Today
             };
 

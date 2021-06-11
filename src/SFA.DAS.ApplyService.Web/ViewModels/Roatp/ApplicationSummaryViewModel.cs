@@ -14,6 +14,10 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string ExternalComments { get; set; }
         public string EmailAddress { get; set; }
         public string FinancialGrade { get; set; }
+        public string FinancialReviewStatus { get; set; }
+        public string FinancialExternalComments { get; set; }
+        public string GatewayReviewStatus { get; set; }
+        public string ModerationStatus { get; set; }
         public string ApplicationRouteShortText
         {
             get

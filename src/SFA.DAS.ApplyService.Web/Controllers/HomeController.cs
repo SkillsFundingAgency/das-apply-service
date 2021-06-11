@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
@@ -40,37 +42,28 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View();
         }
 
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
-        }
-
-        public IActionResult AccessDenied()
-        {
-            return View();
-        }
-
         public IActionResult SessionTimeout()
         {
             return View();
         }
 
-        [Route("{controller}/404")]
-        public IActionResult PageNotFound()
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [Route("/home/error/{statusCode}")]
+        public IActionResult Error(int? statusCode = null)
         {
-            return View();
-        }
-
-        [Route("{controller}/500")]
-        public IActionResult ServiceError()
-        {
-            return View();
-        }
-
-        [Route("{controller}/503")]
-        public IActionResult ServiceUnavailable()
-        {
-            return View();
+            switch (statusCode)
+            {
+                case (int)HttpStatusCode.NotFound:
+                    return View("PageNotFound");
+                case (int)HttpStatusCode.Unauthorized:
+                    return View("AccessDenied");
+                case (int)HttpStatusCode.ServiceUnavailable:
+                    return View("ServiceUnavailable");
+                case (int)HttpStatusCode.InternalServerError:
+                    return View("ServiceError");
+                default:
+                    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
         }
     }
 }

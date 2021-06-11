@@ -74,7 +74,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
         [Test]
         public async Task UpdateGatewayReviewStatusAndComment_when_rejected_creates_oversight_review()
         {
-            var gatewayReviewStatus = GatewayReviewStatus.Reject;
+            var gatewayReviewStatus = GatewayReviewStatus.Rejected;
             var gatewayReviewComment = "Some comment";
             var gatewayReviewExternalComment = "Some external comment";
 
@@ -90,7 +90,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
         [Test]
         public async Task Handler_sends_email_when_application_rejected()
         {
-            var gatewayReviewStatus = GatewayReviewStatus.Reject;
+            var gatewayReviewStatus = GatewayReviewStatus.Rejected;
             var gatewayReviewComment = "Some comment";
             var gatewayReviewExternalComment = "Some external comment";
 

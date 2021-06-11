@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
         {
             var newGatewayStatuses = new List<string> { GatewayReviewStatus.New };
             var inProgressGatewayStatuses = new List<string> { GatewayReviewStatus.InProgress, GatewayReviewStatus.ClarificationSent };
-            var closedGatewayStatuses = new List<string> { GatewayReviewStatus.Fail, GatewayReviewStatus.Pass, GatewayReviewStatus.Reject };
+            var closedGatewayStatuses = new List<string> { GatewayReviewStatus.Fail, GatewayReviewStatus.Pass, GatewayReviewStatus.Rejected };
 
             var counts = (await _repository.GetGatewayApplicationStatusCounts()).ToList();
 

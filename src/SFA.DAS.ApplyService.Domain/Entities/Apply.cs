@@ -171,11 +171,15 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string GatewayAssessed = "GatewayAssessed";	
         public const string FeedbackAdded = "FeedbackAdded";	
         public const string Rejected = "Rejected";	
-        public const string Approved = "Approved";	
+    
         public const string Cancelled = "Cancelled";
         public const string Withdrawn = "Withdrawn";
         public const string Removed = "Removed";
 
+        public const string InProgressOutcome = "InProgessOutcome";
+
+        public const string Successful = "Successful";
+        public const string Unsuccessful = "Unsuccessful";
         // Below are other statuses mentioned in the most recent status documentation
         // Please check the flow in RoatpApplicationController, under the line ' switch (application.ApplicationStatus)' if you add new statuses
         // GWResubmitted
@@ -205,7 +209,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Resubmitted = "Re-submitted"; // TECH DEBT: Correct to "Resubmitted"
         public const string Fail = "Fail";
         public const string Pass = "Pass";
-        public const string Reject = "Reject";
+        public const string Rejected = "Rejected";
     }
 
     public static class AssessorReviewStatus

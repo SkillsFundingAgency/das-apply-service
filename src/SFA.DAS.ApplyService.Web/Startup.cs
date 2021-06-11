@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -33,7 +34,7 @@ namespace SFA.DAS.ApplyService.Web
     using SFA.DAS.ApplyService.EmailService.Interfaces;
     using SFA.DAS.ApplyService.Web.Configuration;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
-    using SFA.DAS.ApplyService.Web.Services;
+    using Services;
     using SFA.DAS.ApplyService.Web.Validators;
     using SFA.DAS.Http;
     using SFA.DAS.Http.TokenGenerators;
@@ -155,77 +156,71 @@ namespace SFA.DAS.ApplyService.Web
 
         private void ConfigHttpClients(IServiceCollection services)
         {
-            var acceptHeaderName = "Accept";
-            var acceptHeaderValue = "application/json";
             var handlerLifeTime = TimeSpan.FromMinutes(5);
 
             services.AddHttpClient<IApplicationApiClient, ApplicationApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IOutcomeApiClient, OutcomeApiClient>(config =>
+                {
+                    config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
+                })
+                .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IQnaApiClient, QnaApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.QnaApiAuthentication.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<ICharityCommissionApiClient, CharityCommissionApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<ICompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IEmailTemplateClient, EmailTemplateClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IOrganisationApiClient, OrganisationApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IUkrlpApiClient, UkrlpApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IUsersApiClient, UsersApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IWhitelistedProvidersApiClient, WhitelistedProvidersApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
         }
@@ -249,7 +244,6 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddTransient<IDfeSignInService, DfeSignInService>();
             services.AddTransient<CreateAccountValidator, CreateAccountValidator>();
-            services.AddTransient<IUserService, UserService>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
             services.AddTransient<IResetRouteQuestionsService, ResetRouteQuestionsService>();
@@ -259,6 +253,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();
             services.AddTransient<IAnswerFormService, AnswerFormService>();
             services.AddTransient<IEmailTokenService, EmailTokenService>();
+            services.AddTransient<IAssessorLookupService, AssessorLookupService>();
             services.AddTransient<IGetHelpWithQuestionEmailService, GetHelpWithQuestionEmailService>();
             services.AddTransient<INotificationsApi>(x => {
                 var apiConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
@@ -288,6 +283,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IRoatpOrganisationVerificationService, RoatpOrganisationVerificationService>();
             services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
             services.AddTransient<ITaskListOrchestrator, TaskListOrchestrator>();
+            services.AddTransient<IOverallOutcomeService, OverallOutcomeService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)
@@ -317,7 +313,7 @@ namespace SFA.DAS.ApplyService.Web
             app.UseSession();
             app.UseAuthentication();
             app.UseRequestLocalization();
-            app.UseStatusCodePagesWithReExecute("/Home/{0}");
+            app.UseStatusCodePagesWithReExecute("/Home/error/{0}");
             app.UseSecurityHeaders();
             app.UseHealthChecks("/health");
             app.UseMvc(routes =>

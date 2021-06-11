@@ -48,13 +48,13 @@ namespace SFA.DAS.ApplyService.Data.Queries
                           and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
 						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
-                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject)
+                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusRejected)
                             OR apply.ApplicationStatus = @applicationStatusRemoved)
                             order by CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
                 {
                     gatewayReviewStatusPass = GatewayReviewStatus.Pass,
                     gatewayReviewStatusFail = GatewayReviewStatus.Fail,
-                    GatewayReviewStatusReject = GatewayReviewStatus.Reject,
+                    GatewayReviewStatusRejected = GatewayReviewStatus.Rejected,
                     assessorReviewStatusApproved = AssessorReviewStatus.Approved,
                     assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
                     financialReviewStatusApproved = FinancialReviewStatus.Pass,

@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 })
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
-                    options.Cookie.Name = ".Assessors.Cookies";
+                    options.Cookie.Name = ".Apply.Cookies";
                     options.Cookie.HttpOnly = true;
 
                     if (!env.IsDevelopment())
@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 {
                     options.CorrelationCookie = new CookieBuilder()
                     {
-                        Name = ".Assessor.Correlation.", 
+                        Name = ".Apply.Correlation.", 
                         HttpOnly = true,
                         SameSite = SameSiteMode.None,
                         SecurePolicy = CookieSecurePolicy.SameAsRequest
@@ -83,8 +83,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
                         OnTokenValidated = async context =>
                         {
-                            var client = context.HttpContext.RequestServices.GetRequiredService<IUsersApiClient>();
-                            var signInId = context.Principal.FindFirst("sub").Value;
+                            Guid.TryParse(context.Principal.FindFirstValue("sub"), out var signInId);
+
+                            var client = context.HttpContext.RequestServices.GetRequiredService<IUsersApiClient>();       
                             var user = await client.GetUserBySignInId(signInId);
                             if (user != null)
                             {
@@ -104,8 +105,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
                                 var identity = new ClaimsIdentity(new List<Claim>(){new Claim("UserId", user.Id.ToString())});                      
                                 context.Principal.AddIdentity(identity);   
-                            }
-                            
+                            }   
                         },
                         
                         // Sometimes the auth flow fails. The most commonly observed causes for this are

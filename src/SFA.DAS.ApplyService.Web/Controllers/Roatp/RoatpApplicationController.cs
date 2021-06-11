@@ -10,12 +10,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Start;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Session;
-using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Orchestrators;
@@ -26,11 +24,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     using Configuration;
     using Microsoft.Extensions.Options;
     using MoreLinq;
-    using SFA.DAS.ApplyService.EmailService.Interfaces;
-    using SFA.DAS.ApplyService.Web.Controllers.Roatp;
-    using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
-    using SFA.DAS.ApplyService.Web.Services;
-    using SFA.DAS.ApplyService.Web.Validators;
+    using EmailService.Interfaces;
+    using Roatp;
+    using Infrastructure.Validations;
+    using Services;
+    using Validators;
     using ViewModels.Roatp;
 
     [Authorize]
@@ -39,8 +37,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IApplicationApiClient _apiClient;
         private readonly ILogger<RoatpApplicationController> _logger;
         private readonly IUsersApiClient _usersApiClient;
-        private readonly IConfigurationService _configService;
-        private readonly IUserService _userService;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IQuestionPropertyTokeniser _questionPropertyTokeniser;
         private readonly IPageNavigationTrackingService _pageNavigationTrackingService;
@@ -61,7 +57,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private const string InvalidCheckBoxListSelectionErrorMessage = "If your answer is 'none of the above', you must only select that option";
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
-            ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
+            ISessionService sessionService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient,
             IPagesWithSectionsFlowService pagesWithSectionsFlowService,
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
@@ -75,8 +71,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _apiClient = apiClient;
             _logger = logger;
             _sessionService = sessionService;
-            _configService = configService;
-            _userService = userService;
             _usersApiClient = usersApiClient;
             _qnaApiClient = qnaApiClient;
             _pagesWithSectionsFlowService = pagesWithSectionsFlowService;
@@ -97,19 +91,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Applications()
         {
-            var user = User.Identity.Name;
+            var username = User.Identity.Name;
 
-            if (!await _userService.ValidateUser(user))
+            if (string.IsNullOrWhiteSpace(username))
                 return RedirectToAction("PostSignIn", "Users");
 
-            _logger.LogDebug($"Got LoggedInUser from Session: {user}");
+            _logger.LogDebug($"Got LoggedInUser from Session: {username}");
 
-            var signinId = await _userService.GetSignInId();
+            var signinId = User.GetSignInId();
             var applications = await GetInFlightApplicationsForSignInId(signinId);
 
-            var application = new Apply();
-            Guid applicationId;
-            string applicationStatus;
+            Apply application;
 
             if (applications.Count > 1)
             {
@@ -118,57 +110,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
             if (applications.Count == 1)
             {
-                application = applications.Single();
-                applicationId = application.ApplicationId;
-                applicationStatus = application.ApplicationStatus;
-                
+                _logger.LogDebug($"Application found for userId: {signinId}");
+                application = applications[0];                
             }
             else
             {
-                applicationId = await StartApplication(signinId);
-                applicationStatus = ApplicationStatus.InProgress;
+                _logger.LogDebug($"No applications found for userId: {signinId}");
 
-                if (applicationId == Guid.Empty)
+                application = await StartApplication(signinId);
+
+                if (application.ApplicationId == Guid.Empty)
                 {
                     return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
-                }
+                }       
             }
             
             _logger.LogDebug("Applications controller action completed");
 
-            switch (applicationStatus)
-            {
-                case ApplicationStatus.New:
-                case ApplicationStatus.InProgress:
-                    return RedirectToAction("TaskList", new { applicationId });
-                case ApplicationStatus.Approved:
-                {
-                    var oversightReview = await _apiClient.GetOversightReview(applicationId);
-                    if (oversightReview?.Status== OversightReviewStatus.SuccessfulAlreadyActive)
-                        return RedirectToAction("ApplicationApprovedAlreadyActive", new { applicationId });
-
-                    return RedirectToAction("ApplicationApproved", new { applicationId });
-                    }
-                case ApplicationStatus.Rejected:
-                    if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
-                        return RedirectToAction("ApplicationUnsuccessful", new { applicationId });
-                    return RedirectToAction("ApplicationRejected", new { applicationId });
-                case ApplicationStatus.FeedbackAdded:
-                    return RedirectToAction("FeedbackAdded", new { applicationId });
-                case ApplicationStatus.Withdrawn:
-                    return RedirectToAction("ApplicationWithdrawn", new { applicationId });
-                case ApplicationStatus.Removed:
-                    return RedirectToAction("ApplicationRemoved", new { applicationId });
-                case ApplicationStatus.GatewayAssessed:
-                    if(application.GatewayReviewStatus == GatewayReviewStatus.Reject)
-                        return RedirectToAction("ApplicationRejected", new { applicationId });
-                    return RedirectToAction("ApplicationSubmitted", new { applicationId });
-                case ApplicationStatus.Submitted:
-                case ApplicationStatus.Resubmitted:
-                    return RedirectToAction("ApplicationSubmitted", new { applicationId });
-                default:
-                    return RedirectToAction("TaskList", new { applicationId });
-            }
+            return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new {application.ApplicationId, application.ApplicationStatus});
         }
 
 
@@ -181,24 +140,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return applications.Where(app => !statusFilter.Contains(app.ApplicationStatus)).OrderByDescending(app => app.CreatedAt).ToList();
         }
 
-        private async Task<Guid> StartApplication(Guid signinId)
+        private async Task<Apply> StartApplication(Guid signinId)
         {
             _logger.LogDebug("StartApplication method invoked");
-
-            var applications = await GetInFlightApplicationsForSignInId(signinId);
-
-            if (applications.Any())
-            {
-                _logger.LogError($"Multiple in flight applications found for userId: {signinId}");
-                return applications.First().ApplicationId;
-            }
-
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-            if (applicationDetails is null)
+
+            if (applicationDetails is null || signinId == Guid.Empty)
             {
-                return Guid.Empty;
+                _logger.LogDebug("Nothing found in session. Exiting StartApplication");
+                return new Apply { ApplicationId = Guid.Empty };
             }
 
+            _logger.LogDebug($"Found applications details in user session. Attempting to create application.");
             _logger.LogDebug($"Application Details:: Ukprn: [{applicationDetails?.UKPRN}], ProviderName: [{applicationDetails?.UkrlpLookupDetails?.ProviderName}], RouteId: [{applicationDetails?.ApplicationRoute?.Id}]");
             var providerRoute = applicationDetails.ApplicationRoute.Id;
 
@@ -209,13 +162,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ["ApplyProviderRoute"] = providerRoute.ToString()
             };
 
-            var user = await _usersApiClient.GetUserBySignInId(signinId.ToString());
+            var user = await _usersApiClient.GetUserBySignInId(signinId);
 
-            var applicationType = ApplicationTypes.RegisterTrainingProviders;
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
-            _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{user.Id.ToString()}], applicationType: [{applicationType}], startApplicationJson: [{startApplicationJson}]");
-            var qnaResponse = await _qnaApiClient.StartApplication(user.Id.ToString(), applicationType, startApplicationJson);
+
+            _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{user.Id}], startApplicationJson: [{startApplicationJson}]");
+            var qnaResponse = await _qnaApiClient.StartApplication(user.Id.ToString(), ApplicationTypes.RegisterTrainingProviders, startApplicationJson);
             _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{qnaResponse?.ApplicationId}]");
+
+            var applicationId = Guid.Empty;
 
             if (qnaResponse != null)
             {
@@ -229,13 +184,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, applicationDetails.RoatpRegisterStatus.ProviderTypeId, allQnaSequences, allQnaSections);
 
-                var applicationId = await _apiClient.StartApplication(startApplicationRequest);
+                applicationId = await _apiClient.StartApplication(startApplicationRequest);
                 _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{applicationId}]");
 
                 if (applicationId != Guid.Empty)
                 {
-                   await SavePreambleInformation(applicationId, applicationDetails);
-                   _logger.LogDebug("Preamble information saved");
+                    await SavePreambleInformation(applicationId, applicationDetails);
+                    _logger.LogDebug("Preamble information saved");
 
                     if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
                     {
@@ -249,13 +204,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         _logger.LogDebug("Save Charity Commission information saved");
                     }
                 }
-                
-                _logger.LogDebug("StartApplication method completed");
 
-                return applicationId;
+                _logger.LogDebug("StartApplication method completed");
             }
 
-            return Guid.Empty;
+            return new Apply { ApplicationId = applicationId, ApplicationStatus = ApplicationStatus.InProgress };
         }
 
         private string GetRouteName(int? routeId)
@@ -438,6 +391,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             });
         }
 
+        [HttpGet]
+        public IActionResult SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId)
+        {
+            return !string.IsNullOrWhiteSpace(pageId)
+                ? RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId })
+                : RedirectToAction("Section", new { applicationId, sequenceId, sectionId });
+        }
+
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> SaveAnswers(PageViewModel vm, string formAction)
@@ -609,7 +570,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             bool canUpdate = false;
 
-            var signInId = await _userService.GetSignInId();
+            var signInId = User.GetSignInId();
             var application = await _apiClient.GetApplicationByUserId(applicationId, signInId);
 
             var validApplicationStatuses = new string[] { ApplicationStatus.InProgress, ApplicationStatus.FeedbackAdded };
@@ -1012,6 +973,44 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return answers;
         }
 
+        
+        private async Task UpdateQuestionsWithinQnA(Guid applicationId, List<PreambleAnswer> questions)
+        {
+            if (questions != null)
+            {
+                // Many answers for a particular page could have been added, so we need to group them up
+                var pageAnswersDictionary = questions.GroupBy(q => q.PageId).ToDictionary(g => g.Key, g => g.ToList());
+
+                // Now we can process each page
+                foreach (var entry in pageAnswersDictionary)
+                {
+                    var answers = entry.Value; // Note: All answers have been grouped up
+
+                    // Make sure we have answers within the page to update
+                    if (answers != null && answers.Any())
+                    {
+                        var pageId = answers[0].PageId;
+
+                        await _qnaApiClient.UpdatePageAnswers(applicationId, answers[0].SequenceId, answers[0].SectionId, pageId, answers.ToList<Answer>());
+                    }
+                }
+            }
+        }
+
+        [HttpGet]
+        [Route("submit-application")]
+        [Authorize(Policy = "AccessInProgressApplication")]
+        public async Task<IActionResult> SubmitApplication(Guid applicationId)
+        {
+            var model = new SubmitApplicationViewModel { ApplicationId = applicationId };
+
+            var organisationName = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName);
+            model.OrganisationName = organisationName.Value;
+            model.EmailAddress = User.GetEmail();
+
+            return View("~/Views/Roatp/SubmitApplication.cshtml", model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Submit(Guid applicationId)
         {
@@ -1092,44 +1091,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             await _apiClient.DeleteAnswer(applicationId, sequenceId, sectionId, pageId, answerId, User.GetUserId());
 
             return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId, redirectAction });
-        }
-
-
-        private async Task UpdateQuestionsWithinQnA(Guid applicationId, List<PreambleAnswer> questions)
-        {
-            if (questions != null)
-            {
-                // Many answers for a particular page could have been added, so we need to group them up
-                var pageAnswersDictionary = questions.GroupBy(q => q.PageId).ToDictionary(g => g.Key, g => g.ToList());
-
-                // Now we can process each page
-                foreach (var entry in pageAnswersDictionary)
-                {
-                    var answers = entry.Value; // Note: All answers have been grouped up
-
-                    // Make sure we have answers within the page to update
-                    if (answers != null && answers.Any())
-                    {
-                        var pageId = answers[0].PageId;
-
-                        await _qnaApiClient.UpdatePageAnswers(applicationId, answers[0].SequenceId, answers[0].SectionId, pageId, answers.ToList<Answer>());
-                    }
-                }
-            }
-        }
-
-        [HttpGet]
-        [Route("submit-application")]
-        [Authorize(Policy = "AccessInProgressApplication")]
-        public async Task<IActionResult> SubmitApplication(Guid applicationId)
-        {
-            var model = new SubmitApplicationViewModel { ApplicationId = applicationId };
-
-            var organisationName = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName);
-            model.OrganisationName = organisationName.Value;
-            model.EmailAddress = User.GetEmail();
-
-            return View("~/Views/Roatp/SubmitApplication.cshtml", model);
         }
 
         [HttpPost]
@@ -1238,7 +1199,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 };
 
                 await _submitApplicationEmailService.SendSubmitConfirmationEmail(applicationSubmitConfirmation);
-                return RedirectToAction("ApplicationSubmitted", new { model.ApplicationId });
+                return RedirectToAction("ProcessApplicationStatus","RoatpOverallOutcome", new { model.ApplicationId });
             }
             else
             {
@@ -1246,87 +1207,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationSubmitted(Guid applicationId)
-        {
-            var model = await BuildApplicationSummaryViewModel(applicationId);
-            return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
-        }
 
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationWithdrawn(Guid applicationId)
-        {
-            var model = await BuildApplicationSummaryViewModel(applicationId);
-
-            return View("~/Views/Roatp/ApplicationWithdrawn.cshtml", model);
-        }
-
-
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationRemoved(Guid applicationId)
-        {
-            var model = await BuildApplicationSummaryViewModel(applicationId);
-            return View("~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", model);
-        }
-
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationRejected(Guid applicationId)
-        {
-            var model = await BuildApplicationSummaryViewModel(applicationId);
-            return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
-        }
-
-
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationApprovedAlreadyActive(Guid applicationId)
-        {
-            var model = await BuildApplicationSummaryViewModel(applicationId);
-            return View("~/Views/Roatp/ApplicationApprovedAlreadyActive.cshtml", model);
-        }
-
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationApproved(Guid applicationId)
-        {
-            var model = await BuildApplicationSummaryViewModel(applicationId);
-            return View("~/Views/Roatp/ApplicationApproved.cshtml", model);
-        }
-
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> FeedbackAdded(Guid applicationId)
-        {
-            var model = await BuildApplicationSummaryViewModel(applicationId);
-            return View("~/Views/Roatp/FeedbackAdded.cshtml", model);
-        }
-
-        [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
-        public async Task<IActionResult> ApplicationUnsuccessful(Guid applicationId)
-        {
-            var application = await _apiClient.GetApplication(applicationId);
-            var applicationData = application.ApplyData.ApplyDetails;
-
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationId = application.ApplicationId,
-                UKPRN = applicationData.UKPRN,
-                OrganisationName = applicationData.OrganisationName,
-                TradingName = applicationData.TradingName,
-                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
-                ApplicationReference = applicationData.ReferenceNumber,
-                EmailAddress = User.GetEmail(),
-                SubmittedDate = applicationData.ApplicationSubmittedOn,
-                ExternalComments = application.ApplyData.GatewayReviewDetails.ExternalComments
-            };
-
-            return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
-        }
 
         private async Task SavePreambleInformation(Guid applicationId, ApplicationDetails applicationDetails)
         {
@@ -1552,26 +1433,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }            
         }
 
-        private async Task<ApplicationSummaryViewModel> BuildApplicationSummaryViewModel(Guid applicationId)
-        {
-            var application = await _apiClient.GetApplication(applicationId);
-            var applicationData = application.ApplyData.ApplyDetails;
-
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationId = application.ApplicationId,
-                UKPRN = applicationData.UKPRN,
-                OrganisationName = applicationData.OrganisationName,
-                TradingName = applicationData.TradingName,
-                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
-                ApplicationReference = applicationData.ReferenceNumber,
-                SubmittedDate = applicationData?.ApplicationSubmittedOn,
-                ExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
-                EmailAddress = User.GetEmail(),
-                FinancialGrade = application?.FinancialGrade?.SelectedGrade
-            };
-            return model;
-        }
 
         private static DateTime? AccountingReferenceDate(JObject applicationData)
         {

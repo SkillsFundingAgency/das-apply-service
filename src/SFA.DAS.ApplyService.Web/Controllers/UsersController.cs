@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -22,15 +21,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     {
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly CreateAccountValidator _createAccountValidator;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IHttpContextAccessor contextAccessor, 
-                               CreateAccountValidator createAccountValidator)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService,
+            CreateAccountValidator createAccountValidator)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
-            _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
         }
         
@@ -66,22 +63,26 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public IActionResult SignOut()
         {
-            _contextAccessor.HttpContext.Session.Clear();
-            foreach (var cookie in _contextAccessor.HttpContext.Request.Cookies.Keys)
+            HttpContext.Session.Clear();
+            foreach (var cookie in HttpContext.Request.Cookies.Keys)
             {
-                _contextAccessor.HttpContext.Response.Cookies.Delete(cookie);
+                HttpContext.Response.Cookies.Delete(cookie);
             }
 
-            if (string.IsNullOrEmpty(_contextAccessor.HttpContext.User.FindFirstValue("display_name")))
+            if (!User.Identity.IsAuthenticated)
+            {
+                // If they are no longer authenticated then the cookie has expired. Don't try to signout.
+                return RedirectToAction("Index", "Home");
+            }
+            else
             {
                 var authenticationProperties = new AuthenticationProperties
                 {
                     RedirectUri = Url.Action("Index", "Home")
                 };
+
                 return SignOut(authenticationProperties, CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
             }
-
-            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult InviteSent()
@@ -98,21 +99,29 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public async Task<IActionResult> PostSignIn()
         {
-            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
-           
+            var signInId = User.GetSignInId();
+            var user = await _usersApiClient.GetUserBySignInId(signInId);
+
             if (user is null)
             {
-                return RedirectToAction("NotSetUp");
+                // User exists so we can create them an account automatically
+                if (await _usersApiClient.CreateUserFromAsLogin(signInId, User.GetEmail(), User.GetGivenName(), User.GetFirstName()))
+                {
+                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble"); 
+                }
+                else
+                {
+                    return RedirectToAction("NotSetUp");
+                }
             }
             else if (user.ApplyOrganisationId is null)
             {
                 return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
             }
-
-            var selectedApplicationType = ApplicationTypes.RegisterTrainingProviders;
-            
-            return RedirectToAction("Applications", "RoatpApplication", new { applicationType = selectedApplicationType });
-
+            else
+            {
+                return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
+            }
         }
 
         [HttpGet("/Users/SignedOut")]

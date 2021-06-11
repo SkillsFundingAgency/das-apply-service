@@ -1,7 +1,9 @@
 ﻿CREATE TABLE [dbo].[SubmittedApplicationAnswers]
 (
 	[Id] INT NOT NULL IDENTITY(1,1), 
-    [ApplicationId] UNIQUEIDENTIFIER NOT NULL,  
+    [ApplicationId] UNIQUEIDENTIFIER NOT NULL,
+    [SequenceNumber] INT NOT NULL,
+    [SectionNumber] INT NOT NULL,
     [PageId] NVARCHAR(25) NOT NULL,
 	[QuestionId] NVARCHAR(25) NOT NULL,
 	[QuestionType] NVARCHAR(25) NOT NULL,

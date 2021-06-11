@@ -7,14 +7,6 @@
     bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 }
 
-<partial name="~/Views/Roatp/PreambleHeader.cshtml" />
-
-@*
-<form asp-controller="RoatpApplicationPreamble" asp-action="ConditionsOfAcceptance" method="get" name="backForm" novalidate>
-    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-</form>
-*@
-
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
     <div class="govuk-grid-row">
@@ -69,8 +61,8 @@
                         </span>
                     </summary>
                     <div class="govuk-details__text" id="details-content-ukprn" aria-hidden="true">
-                        <p>To get a UKPRN, you’ll need to <a href="https://www.ukrlp.co.uk/" target="_blank" class="govuk-link">register with the UKRLP (opens in a new window or tab)</a>.</p>
-                        <p>After you’ve registered and received a UKPRN, sign back in to continue with this application.</p>
+                        <p>To get a UKPRN, you'll need to <a href="https://www.ukrlp.co.uk/" target="_blank" class="govuk-link">register with the UKRLP (opens in a new window or tab)</a>.</p>
+                        <p>After you've registered and received a UKPRN, sign back in to continue with this application.</p>
                     </div>
                 </details>
                 <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">

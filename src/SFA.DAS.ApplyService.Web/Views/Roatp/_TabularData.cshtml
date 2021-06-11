@@ -1,0 +1,72 @@
+﻿@using Newtonsoft.Json
+@using SFA.DAS.ApplyService.Application.Services
+@using SFA.DAS.ApplyService.Domain.Apply
+@using System.Globalization
+@model string
+
+@{
+    var monthField = 0;
+    var tableData = JsonConvert.DeserializeObject<TabularData>(Model);
+
+    if (tableData?.HeadingTitles != null)
+    {
+        for (var i = 0; i < tableData.HeadingTitles.Count; i++)
+        {
+            if (tableData.HeadingTitles[i].ToLower() == "month")
+            {
+                monthField = i + 1;
+                break;
+            }
+        }
+    }
+}
+
+@if (tableData != null && tableData.HeadingTitles != null && tableData.DataRows != null)
+{
+    <div class="govuk-inset-text app-inset-text--question-answer">
+        <table class="govuk-table govuk-!-font-size-16">
+            <tbody class="govuk-table__body">
+            @for (var index = 0; index < tableData.DataRows.Count; index++)
+            {
+                var dataRow = tableData.DataRows[index];
+
+                for (var i = 0; i < dataRow.Columns.Count; i++)
+                {
+                    var heading = string.Empty;
+                    if (tableData.HeadingTitles.Count >= i)
+                    {
+                        heading = tableData.HeadingTitles[i];
+                    }
+
+                    var column = dataRow.Columns[i];
+                    if (i + 1 == monthField)
+                    {
+                        column = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(int.Parse(column));
+                    }
+
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header govuk-!-width-one-third">@heading</th>
+                        <td class="govuk-table__cell">
+                            @if (heading.Equals("email",StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                <a href="mailto:@column" target="_blank">@column</a>
+                            }
+                            else
+                            {
+                                @column
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (index + 1 < tableData.DataRows.Count)
+                {
+                    <tr>
+                        <td>&nbsp;</td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+
+    </div>
+}
