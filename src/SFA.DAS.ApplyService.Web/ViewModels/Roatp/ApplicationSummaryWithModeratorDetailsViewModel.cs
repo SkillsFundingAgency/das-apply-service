@@ -10,6 +10,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public List<PageWithGuidance> PagesWithGuidance { get; set; }
 
         public bool ModerationPassOverturnedToFail { get; set; }
+        public bool ModerationPassAndApproved { get; set; }
         public string OversightExternalComments { get; set; }
     }
 }

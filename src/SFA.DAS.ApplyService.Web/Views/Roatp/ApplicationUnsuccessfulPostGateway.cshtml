@@ -1,6 +1,7 @@
 ﻿@using SFA.DAS.ApplyService.Domain.Entities
 @using SFA.DAS.ApplyService.Application.Apply.Roatp
 @using SFA.DAS.ApplyService.Domain.Apply
+@using NPOI.SS.Formula.Functions
 @model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryWithModeratorDetailsViewModel
 
 @{
@@ -58,12 +59,15 @@
         </div>
     </div>
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    
+@if (!Model.ModerationPassAndApproved)
+{
 
-<div class="govuk-grid-row">
+    <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-l">Feedback on your readiness and quality assessment</h2>
             <p class="govuk-body das-preformatted-body">
-            @if (Model.ModerationPassOverturnedToFail)
+                @if (Model.ModerationPassOverturnedToFail)
                 {
                     @Model.OversightExternalComments
                 }
@@ -72,8 +76,8 @@
                     @Html.Raw("Your application was unsuccessful as the answer to one or more of the questions was insufficient.")
                 }
             </p>
-            
-            </div>
+
+        </div>
     </div>
 
     @if (Model.Sequences != null)
@@ -109,12 +113,12 @@
                             {
                                 var isTabularData = false;
                                 @foreach (var dummy in from question in sectionPage.Questions
-                                                from answers
-                                                    in sectionPage.PageOfAnswers
-                                                from answer
-                                                    in answers.Answers.Where(x => x.QuestionId == question.QuestionId)
-                                                where question.Input.Type == QuestionType.TabularData
-                                                select question)
+                                    from answers
+                                        in sectionPage.PageOfAnswers
+                                    from answer
+                                        in answers.Answers.Where(x => x.QuestionId == question.QuestionId)
+                                    where question.Input.Type == QuestionType.TabularData
+                                    select question)
                                 {
                                     isTabularData = true;
                                 }
@@ -127,9 +131,9 @@
                                     </h4>
 
                                     @foreach (var answer in from question in sectionPage.Questions
-                                                    from answers in sectionPage.PageOfAnswers
-                                                    from answer in answers.Answers.Where(x => x.QuestionId == question.QuestionId)
-                                                    select answer)
+                                        from answers in sectionPage.PageOfAnswers
+                                        from answer in answers.Answers.Where(x => x.QuestionId == question.QuestionId)
+                                        select answer)
                                     {
                                         <partial name="~/Views/Roatp/_TabularData.cshtml" for="@answer.Value"/>
                                     }
@@ -217,7 +221,7 @@
     }
 
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-
+}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-l">How to make an appeal</h2>

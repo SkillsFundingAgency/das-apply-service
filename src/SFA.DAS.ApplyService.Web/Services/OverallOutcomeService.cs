@@ -86,6 +86,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             var applicationUnsuccessfulModerationFail = false;
             var applicationUnsuccessfulModerationPassOverturned = false;
+            var applicationUnsuccessfulModerationPassAndApproved = false;
             if (application?.GatewayReviewStatus == GatewayAnswerStatus.Pass)
             {
                 if (application?.ModerationStatus != null
@@ -96,12 +97,18 @@ namespace SFA.DAS.ApplyService.Web.Services
                     applicationUnsuccessfulModerationFail = true;
                 }
 
-                if (application?.ModerationStatus != null 
-                    && application.ModerationStatus==ModerationStatus.Pass
-                    && oversightReview.ModerationApproved.HasValue
-                    && oversightReview.ModerationApproved == false)
+                if (application?.ModerationStatus != null
+                    && application.ModerationStatus == ModerationStatus.Pass)
                 {
-                    applicationUnsuccessfulModerationPassOverturned = true;
+                    if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == false)
+                    {
+                        applicationUnsuccessfulModerationPassOverturned = true;
+                    }
+
+                    if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == true)
+                    {
+                        applicationUnsuccessfulModerationPassAndApproved = true;
+                    }
                 }
             }
 
@@ -121,7 +128,8 @@ namespace SFA.DAS.ApplyService.Web.Services
                 FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
                 GatewayReviewStatus = application?.GatewayReviewStatus,
                 ModerationStatus = application?.ModerationStatus,
-                ModerationPassOverturnedToFail = false
+                ModerationPassOverturnedToFail = false,
+                ModerationPassAndApproved = applicationUnsuccessfulModerationPassAndApproved
             };
 
             if (applicationUnsuccessfulModerationPassOverturned)
