@@ -8,5 +8,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     {
         public List<AssessorSequence> Sequences { get; set; }
         public List<PageWithGuidance> PagesWithGuidance { get; set; }
+        public List<ClarificationPage> PagesWithClarifications { get; set; }
     }
 }
