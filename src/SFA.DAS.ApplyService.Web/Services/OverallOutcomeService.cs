@@ -19,7 +19,6 @@ namespace SFA.DAS.ApplyService.Web.Services
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IAssessorLookupService _assessorLookupService;
 
-
         public OverallOutcomeService(IOutcomeApiClient apiClient, IQnaApiClient qnaApiClient,
             IAssessorLookupService assessorLookupService)
         {
@@ -28,7 +27,6 @@ namespace SFA.DAS.ApplyService.Web.Services
             _assessorLookupService = assessorLookupService;
         }
 
-        
         public async Task AugmentModelWithModerationFailDetails(ApplicationSummaryWithModeratorDetailsViewModel model,
             string userId)
         {
@@ -362,7 +360,5 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             return guidanceInformation;
         }
-
-        
     }
 }
