@@ -13,6 +13,5 @@ namespace SFA.DAS.ApplyService.Web.Services
         ApplicationSummaryViewModel BuildApplicationSummaryViewModel(Apply application, string emailAddress);
         Task<ApplicationSummaryWithModeratorDetailsViewModel> BuildApplicationSummaryViewModelWithModerationDetails(Apply application,
             string emailAddress);
-        Task<OversightReviewStatus?> GetOversightReviewStatus(Guid applicationId);
     }
 }

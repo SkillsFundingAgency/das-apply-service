@@ -279,10 +279,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 ApplicationStatus = ApplicationStatus.Removed
             };
-        
+
+            var oversightReview = new GetOversightReviewResponse {Status = OversightReviewStatus.Removed};
+
+            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
-            _outcomeService.Setup(x => x.GetOversightReviewStatus(It.IsAny<Guid>()))
-                .ReturnsAsync(OversightReviewStatus.Removed);
+
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
             var viewResult = result as ViewResult;
@@ -305,9 +307,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationStatus = ApplicationStatus.Removed
             };
 
+            var oversightReview = new GetOversightReviewResponse { Status = status };
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
-            _outcomeService.Setup(x => x.GetOversightReviewStatus(It.IsAny<Guid>()))
-                .ReturnsAsync(status);
+            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
 
             var viewResult = result as ViewResult;

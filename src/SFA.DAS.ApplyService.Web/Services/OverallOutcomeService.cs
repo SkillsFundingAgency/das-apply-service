@@ -126,12 +126,6 @@ namespace SFA.DAS.ApplyService.Web.Services
             return model;
         }
 
-        public async Task<OversightReviewStatus?> GetOversightReviewStatus(Guid applicationId)
-        {
-            var response = await _apiClient.GetOversightReview(applicationId);
-            return response?.Status;
-        }
-
         private void AddSequenceTitlesToSequences(List<AssessorSequence> sequencesWithModerationFails)
         {
             foreach (var sequence in sequencesWithModerationFails)
