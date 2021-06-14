@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
@@ -63,12 +64,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return View("~/Views/Roatp/ApplicationWithdrawn.cshtml", model);
                 case ApplicationStatus.Removed:
                     var oversightStatus = await _overallOutcomeService.GetOversightReviewStatus(applicationId);
-                    return View(oversightStatus!=OversightReviewStatus.Removed ?
-                        "~/Views/Roatp/ApplicationSubmitted.cshtml" : 
-                        "~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", 
-                        model);
-
-
+                    if (oversightStatus == OversightReviewStatus.Removed)
+                        return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
+                    return View("~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", model);
                 case ApplicationStatus.GatewayAssessed:
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Rejected)
                         return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
