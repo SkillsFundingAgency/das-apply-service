@@ -87,5 +87,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
             }
         }
+
+        [HttpGet("ClarificationDownload/{applicationId}/Sequence/{sequenceNumber}/Section/{sectionNumber}/Page/{pageId}/Download/{fileName}")]
+        public async Task<IActionResult> DownloadClarificationFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string fileName)
+        {
+            var response = await _apiClient.DownloadClarificationfile(applicationId, sequenceNumber, sectionNumber, pageId, fileName);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var fileStream = await response.Content.ReadAsStreamAsync();
+
+                return File(fileStream, response.Content.Headers.ContentType.MediaType, fileName);
+            }
+
+            return NotFound();
+        }
     }
 }
