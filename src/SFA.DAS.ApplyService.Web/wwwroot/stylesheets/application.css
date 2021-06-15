@@ -1310,3 +1310,8 @@
   padding: 7px 0;
   margin: 0;
 }
+
+
+.das-preformatted-body {
+    white-space: pre-wrap;
+}
