@@ -93,14 +93,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             var response = await _apiClient.DownloadClarificationfile(applicationId, sequenceNumber, sectionNumber, pageId, fileName);
 
-            if (response.IsSuccessStatusCode)
-            {
-                var fileStream = await response.Content.ReadAsStreamAsync();
-
-                return File(fileStream, response.Content.Headers.ContentType.MediaType, fileName);
-            }
-
-            return NotFound();
+            if (!response.IsSuccessStatusCode) return NotFound();
+            var fileStream = await response.Content.ReadAsStreamAsync();
+            return File(fileStream, response.Content.Headers.ContentType.MediaType, fileName);
         }
     }
 }

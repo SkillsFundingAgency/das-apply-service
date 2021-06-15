@@ -19,7 +19,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<GetOversightReviewResponse> GetOversightReview(Guid applicationId);
         Task<List<AssessorSequence>> GetClarificationSequences(Guid applicationId);
         Task<SectorDetails> GetClarificationSectorDetails(Guid applicationId, string pageId);
-
         Task<HttpResponseMessage> DownloadClarificationfile(Guid applicationId, int sequenceNumber, int sectionNumber,
             string pageId, string filename);
     }

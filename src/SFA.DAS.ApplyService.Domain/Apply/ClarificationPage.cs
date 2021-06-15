@@ -7,6 +7,5 @@
         public string PageId { get; set; }
         public string ClarificationFile { get; set; }
         public string ClarificationResponse { get; set; }
-
     }
 }

@@ -30,6 +30,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         private string _page122BodyText;
         private string _page121QuestionBodyText;
         private string _page122;
+        private string _clarificationResponse;
+        private string _clarificationFile;
 
         [SetUp]
         public void Before_each_test()
@@ -44,6 +46,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _question121Id = "121Id";
             _page121QuestionBodyText = "page 1 2 1 Question Body text used in guidance";
             _page122BodyText = "page 1 2 2 Body text";
+            _clarificationResponse = "clarification response";
+            _clarificationFile = "test.pdf";
+
             var sequences = new List<AssessorSequence>();
 
             var clarificationOutcomes = new List<ClarificationPageReviewOutcome>();
@@ -258,6 +263,35 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _page122BodyText.Should().Be(modelToBeUpdated.PagesWithGuidance.First(x => x.PageId == _page122).GuidanceInformation.FirstOrDefault());
         }
 
+
+        [Test]
+        public async Task clarification_text_returned_as_expected()
+        {
+            var modelToBeUpdated = GetCopyOfModel();
+
+            var sequences = SetUpAsessorSequences();
+            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+
+            var clarificationPages = SetUpClarificationOutcomes();
+            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
+                .ReturnsAsync(clarificationPages);
+            var sections = SetUpApplicationSections(true, true, null, null);
+
+            _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
+
+            await _service.AugmentModelWithModerationFailDetails(modelToBeUpdated, _userId);
+
+            modelToBeUpdated.PagesWithClarifications.Count.Should().Be(2);
+            modelToBeUpdated.PagesWithClarifications.First(x => x.PageId == _page121).ClarificationResponse.Should()
+                .Be(_clarificationResponse);
+            modelToBeUpdated.PagesWithClarifications.First(x => x.PageId == _page121).ClarificationFile.Should()
+                .Be(null);
+            modelToBeUpdated.PagesWithClarifications.First(x => x.PageId == _page122).ClarificationFile.Should()
+                .Be(_clarificationFile);
+            modelToBeUpdated.PagesWithClarifications.First(x => x.PageId == _page122).ClarificationResponse.Should()
+                .Be(null);
+        }
+
         [Test]
         public async Task BuildApplilcationSummaryViewModel_builds_expected_viewModel()
         {
@@ -421,7 +455,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 PageId = _page121,
                 SequenceNumber = 1,
                 SectionNumber = 2,
-                ModeratorReviewStatus = ModerationStatus.Fail
+                ModeratorReviewStatus = ModerationStatus.Fail,
+                Status = ModerationStatus.Fail, // should be a clarification
+                ClarificationResponse = _clarificationResponse
             },
             new ClarificationPageReviewOutcome
             {
@@ -429,7 +465,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 PageId = _page122,
                 SequenceNumber = 1,
                 SectionNumber = 2,
-                ModeratorReviewStatus = ModerationStatus.Fail
+                ModeratorReviewStatus = ModerationStatus.Fail,
+                Status = ModerationStatus.Fail,
+                ClarificationFile = _clarificationFile
             },
             new ClarificationPageReviewOutcome
             {
@@ -470,6 +508,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 SequenceNumber = 2,
                 SectionNumber = 4,
                 ModeratorReviewStatus = ModerationStatus.Fail
+            },
+            new ClarificationPageReviewOutcome
+            {
+                ApplicationId = _applicationId,
+                PageId = "Page2.4.3",
+                SequenceNumber = 2,
+                SectionNumber = 4,
+                ModeratorReviewStatus = ModerationStatus.Fail,
+                Status=ModerationStatus.Pass // it has passed from clarification, so should not show up
             }
         };
     return clarificationPages;

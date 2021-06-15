@@ -81,7 +81,7 @@
                         var inSectors = sequence.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining
                                         && seqSection.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees;
 
-                        if (Model.IsClarificationsPresent)
+                        if (Model.PagesWithClarifications != null && Model.PagesWithClarifications.Count > 0)
                         {
                             @if (inSectors)
                             {
@@ -127,7 +127,6 @@
                                                 <a class="govuk-link" href="@Url.Action("DownloadClarificationFile", "RoatpOverallOutcome", new {applicationId = Model.ApplicationId, sequenceNumber = sequence.SequenceNumber, sectionNumber = seqSection.SectionNumber, pageId = clarification.PageId, filename = clarification.ClarificationFile})">
                                                     @clarification.ClarificationFile
                                                 </a>
-
                                             }
 
                                             @if (Model.PagesWithGuidance != null && Model.PagesWithGuidance.Any(x => x.PageId == sectionPage.PageId))
@@ -152,7 +151,6 @@
                                                             </ul>
                                                         </div>
                                                     </details>
-
                                                 }
                                             }
                                         </div>
@@ -191,7 +189,6 @@
                                     {
                                         isTabularData = true;
                                     }
-
 
                                     if (isTabularData)
                                     {
@@ -275,7 +272,6 @@
                                                             </ul>
                                                         </div>
                                                     </details>
-
                                                 }
                                             }
                                         </div>

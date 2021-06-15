@@ -32,8 +32,8 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             var sequences = await _apiClient.GetClarificationSequences(model.ApplicationId);
             var passFailDetails = await _apiClient.GetAllClarificationPageReviewOutcomes(model.ApplicationId, userId);
-
-            var moderationFailedDetails = passFailDetails.Where(x => x.Status == ModerationStatus.Fail || (x.Status==null && x.ModeratorReviewStatus==ModerationStatus.Fail)).ToList();
+            var moderationFailedDetails = passFailDetails.Where(x => x.Status == ModerationStatus.Fail 
+                                                                     || (x.Status==null && x.ModeratorReviewStatus==ModerationStatus.Fail)).ToList();
 
             if (moderationFailedDetails.Any())
             {
