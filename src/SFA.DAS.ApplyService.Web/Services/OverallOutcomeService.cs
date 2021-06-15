@@ -37,8 +37,6 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             if (moderationFailedDetails.Any())
             {
-              
-
                 AddPagesToSequencesFromFailedDetails(sequences, moderationFailedDetails);
 
                 var sequencesWithModerationFails = new List<AssessorSequence>();
