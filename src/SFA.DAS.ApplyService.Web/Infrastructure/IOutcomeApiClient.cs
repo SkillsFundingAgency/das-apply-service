@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -15,7 +16,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<GetOversightReviewResponse> GetOversightReview(Guid applicationId);
         Task<List<AssessorSequence>> GetClarificationSequences(Guid applicationId);
-
+        Task<SectorDetails> GetClarificationSectorDetails(Guid applicationId, string pageId);
     }
 
 }
