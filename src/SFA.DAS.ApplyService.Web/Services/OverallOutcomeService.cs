@@ -85,6 +85,8 @@ namespace SFA.DAS.ApplyService.Web.Services
             var oversightReview = await _apiClient.GetOversightReview(application.ApplicationId);
 
             var applicationUnsuccessfulModerationFail = false;
+            var applicationUnsuccessfulModerationPassOverturned = false;
+            var applicationUnsuccessfulModerationPassAndApproved = false;
             if (application?.GatewayReviewStatus == GatewayAnswerStatus.Pass)
             {
                 if (application?.ModerationStatus != null
@@ -93,6 +95,20 @@ namespace SFA.DAS.ApplyService.Web.Services
                     && oversightReview.ModerationApproved == true)
                 {
                     applicationUnsuccessfulModerationFail = true;
+                }
+
+                if (application?.ModerationStatus != null
+                    && application.ModerationStatus == ModerationStatus.Pass)
+                {
+                    if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == false)
+                    {
+                        applicationUnsuccessfulModerationPassOverturned = true;
+                    }
+
+                    if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == true)
+                    {
+                        applicationUnsuccessfulModerationPassAndApproved = true;
+                    }
                 }
             }
 
@@ -111,9 +127,16 @@ namespace SFA.DAS.ApplyService.Web.Services
                 FinancialGrade = application?.FinancialGrade?.SelectedGrade,
                 FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
                 GatewayReviewStatus = application?.GatewayReviewStatus,
-                ModerationStatus = application?.ModerationStatus
+                ModerationStatus = application?.ModerationStatus,
+                ModerationPassOverturnedToFail = false,
+                ModerationPassAndApproved = applicationUnsuccessfulModerationPassAndApproved
             };
 
+            if (applicationUnsuccessfulModerationPassOverturned)
+            {
+                model.ModerationPassOverturnedToFail = true;
+                model.OversightExternalComments = oversightReview.ExternalComments;
+            }
             if (applicationUnsuccessfulModerationFail)
             {
                 await AugmentModelWithModerationFailDetails(model,

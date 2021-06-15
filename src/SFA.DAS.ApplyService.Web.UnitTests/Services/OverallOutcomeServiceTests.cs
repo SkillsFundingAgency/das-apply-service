@@ -10,6 +10,7 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
@@ -30,10 +31,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         private string _page122BodyText;
         private string _page121QuestionBodyText;
         private string _page122;
+        private string _emailAddress;
 
         [SetUp]
         public void Before_each_test()
         {
+            _emailAddress = "test@test.com";
             _applicationId = Guid.NewGuid();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _apiClient = new Mock<IOutcomeApiClient>();
@@ -319,8 +322,38 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             var returnedModel = _service.BuildApplicationSummaryViewModel(application, emailAddress);
             expectedModel.Should().BeEquivalentTo(returnedModel);
-        } 
-       private List<AssessorSequence> SetUpAsessorSequences()
+        }
+
+        [Test]
+        public async Task moderator_pass_with_failed_moderator_questions_returns_model_with_no_sequences_and_external_comments ()
+        {
+            var submittedApp = new Apply
+            {
+                ApplicationStatus = ApplicationStatus.Unsuccessful,
+                ApplicationId = _applicationId,
+                GatewayReviewStatus = GatewayReviewStatus.Pass,
+                ModerationStatus = ModerationStatus.Pass,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails
+                    {
+                        UKPRN = "11112222"
+                    }
+                }
+            };
+
+            var oversightExternalComments = "oversight external comments";
+
+            _apiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(new GetOversightReviewResponse {ModerationApproved = false, ExternalComments = oversightExternalComments});
+          
+            var result = await _service.BuildApplicationSummaryViewModelWithModerationDetails(submittedApp, _emailAddress);
+
+            result.ModerationPassOverturnedToFail.Should().Be(true);
+            result.OversightExternalComments.Should().Be(oversightExternalComments);
+            result.Sequences.Should().BeNullOrEmpty();
+        }
+
+        private List<AssessorSequence> SetUpAsessorSequences()
     {
         var section2_3 = new AssessorSection
         {
