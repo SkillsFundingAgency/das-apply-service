@@ -18,6 +18,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string FinancialExternalComments { get; set; }
         public string GatewayReviewStatus { get; set; }
         public string ModerationStatus { get; set; }
+        public string OversightInProgressExternalComments { get; set; }
         public string ApplicationRouteShortText
         {
             get

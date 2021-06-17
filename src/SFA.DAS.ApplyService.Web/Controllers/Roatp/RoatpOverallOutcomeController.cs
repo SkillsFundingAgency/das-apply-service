@@ -79,6 +79,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.Resubmitted:
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
                 case ApplicationStatus.InProgressOutcome:
+                    var oversightReviewDetails = await _apiClient.GetOversightReview(applicationId);
+                    model.OversightInProgressExternalComments = oversightReviewDetails?.InProgressExternalComments;
                     return View("~/Views/Roatp/ApplicationInProgress.cshtml", model);
                 default:
                     return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
