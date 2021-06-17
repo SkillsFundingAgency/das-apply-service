@@ -13,6 +13,7 @@ using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Controllers.Roatp;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -22,7 +23,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private RoatpOverallOutcomeController _controller;
         private Mock<IOutcomeApiClient> _apiClient;
         private Mock<IApplicationApiClient> _applicationApiClient;
-        private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IOverallOutcomeService> _outcomeService;
         private Mock<ILogger<RoatpOverallOutcomeController>> _logger;
 
@@ -349,6 +349,29 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationSubmitted.cshtml");
+        }
+
+
+        [Test]
+        public async Task Application_sectors_show_sector_details()
+        {
+            var applicationId = Guid.NewGuid();
+            const string pageId = "pageId";
+            const string sectorName = "name of sector";
+
+            var viewModel = new OutcomeSectorDetailsViewModel
+            {
+                ApplicationId = applicationId,
+                SectorDetails = new SectorDetails {SectorName = sectorName}
+            };
+
+            _outcomeService.Setup(x => x.GetSectorDetailsViewModel(applicationId, pageId)).ReturnsAsync(viewModel);
+            var result = await _controller.GetSectorDetails(applicationId, pageId);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.Model.Should().Be(viewModel);
+            viewResult.ViewName.Should().Contain("ApplicationUnsuccessfulSectorAnswers.cshtml");
         }
     }
 }

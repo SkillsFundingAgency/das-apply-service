@@ -9,6 +9,7 @@ using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -28,6 +29,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<List<AssessorSequence>> GetClarificationSequences(Guid applicationId)
         {
             return await Get<List<AssessorSequence>>($"/Clarification/Applications/{applicationId}/Overview");
+        }
+
+        public async Task<SectorDetails> GetClarificationSectorDetails(Guid applicationId, string pageId)
+        {
+            return await Get<SectorDetails>($"/Clarification/Applications/{applicationId}/SectorDetails/{pageId}");
         }
 
         public async Task<List<ClarificationPageReviewOutcome>> GetAllClarificationPageReviewOutcomes(Guid applicationId, string userId)

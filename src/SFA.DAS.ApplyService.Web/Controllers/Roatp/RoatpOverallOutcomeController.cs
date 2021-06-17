@@ -29,6 +29,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _applicationApiClient = applicationApiClient;
         }
 
+
+
+        [HttpGet]
+        [Route("application/{applicationId}/sector/{pageId}")]
+        public async Task<IActionResult> GetSectorDetails(Guid applicationId, string pageId)
+        {
+            var model = await _overallOutcomeService.GetSectorDetailsViewModel(applicationId, pageId);
+            return View("~/Views/Roatp/ApplicationUnsuccessfulSectorAnswers.cshtml", model);
+        }
+
         [HttpGet]
         [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ProcessApplicationStatus(Guid applicationId)
@@ -75,6 +85,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return View("~/Views/Roatp/ApplicationRejected.cshtml", model);   
                 case ApplicationStatus.Submitted:
                 case ApplicationStatus.Resubmitted:
+                case ApplicationStatus.InProgressOutcome:
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
                 default:
                     return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
