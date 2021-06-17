@@ -174,8 +174,6 @@ namespace SFA.DAS.ApplyService.Web.Services
             };
             return model;
         }
-
-
         private void AddSequenceTitlesToSequences(List<AssessorSequence> sequencesWithModerationFails)
         {
             foreach (var sequence in sequencesWithModerationFails)
@@ -412,6 +410,5 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             return guidanceInformation;
         }
-
     }
 }
