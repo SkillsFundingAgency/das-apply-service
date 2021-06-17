@@ -146,8 +146,16 @@ namespace SFA.DAS.ApplyService.Web.Services
             return model;
         }
 
-
-
+        public async Task<OutcomeSectorDetailsViewModel> GetSectorDetailsViewModel(Guid applicationId, string pageId)
+        {
+            var sectorDetails = await _apiClient.GetClarificationSectorDetails(applicationId, pageId);
+            var model = new OutcomeSectorDetailsViewModel
+            {
+                ApplicationId = applicationId, 
+                SectorDetails = sectorDetails
+            };
+            return model;
+        }
         private void AddSequenceTitlesToSequences(List<AssessorSequence> sequencesWithModerationFails)
         {
             foreach (var sequence in sequencesWithModerationFails)
@@ -384,6 +392,5 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             return guidanceInformation;
         }
-
     }
 }

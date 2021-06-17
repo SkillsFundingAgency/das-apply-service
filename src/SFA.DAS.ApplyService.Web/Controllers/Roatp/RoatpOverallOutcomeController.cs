@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
@@ -15,19 +16,27 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     {
         private readonly IOutcomeApiClient _apiClient;
         private readonly IApplicationApiClient _applicationApiClient;
-        private readonly IQnaApiClient _qnaApiClient;
         private readonly IOverallOutcomeService _overallOutcomeService;
         private readonly ILogger<RoatpOverallOutcomeController> _logger;
 
-        public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, IQnaApiClient qnaApiClient,
+        public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, 
             IOverallOutcomeService overallOutcomeService, IApplicationApiClient applicationApiClient,
             ILogger<RoatpOverallOutcomeController> logger)
         {
             _apiClient = apiClient;
-            _qnaApiClient = qnaApiClient;
             _overallOutcomeService = overallOutcomeService;
             _logger = logger;
             _applicationApiClient = applicationApiClient;
+        }
+
+
+
+        [HttpGet]
+        [Route("application/{applicationId}/sector/{pageId}")]
+        public async Task<IActionResult> GetSectorDetails(Guid applicationId, string pageId)
+        {
+            var model = await _overallOutcomeService.GetSectorDetailsViewModel(applicationId, pageId);
+            return View("~/Views/Roatp/ApplicationUnsuccessfulSectorAnswers.cshtml", model);
         }
 
         [HttpGet]
@@ -68,7 +77,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.Withdrawn:
                     return View("~/Views/Roatp/ApplicationWithdrawn.cshtml", model);
                 case ApplicationStatus.Removed:
-                    return View("~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", model);
+                    var oversightReviewDetails = await _apiClient.GetOversightReview(applicationId);
+                    if (oversightReviewDetails?.Status == OversightReviewStatus.Removed)
+                        return View("~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", model);
+                    return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
                 case ApplicationStatus.GatewayAssessed:
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Rejected)
                         return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
@@ -77,6 +89,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return View("~/Views/Roatp/ApplicationRejected.cshtml", model);   
                 case ApplicationStatus.Submitted:
                 case ApplicationStatus.Resubmitted:
+                case ApplicationStatus.InProgressOutcome:
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
                 case ApplicationStatus.InProgressOutcome:
                     var oversightReviewDetails = await _apiClient.GetOversightReview(applicationId);
