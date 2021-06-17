@@ -1,0 +1,147 @@
+﻿
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.OutcomeSectorDetailsViewModel;
+@{
+    var sectorDetails = Model.SectorDetails;
+}
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+}
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-l">Delivering apprenticeship training</h2>
+            <p class="govuk-heading-s">Sectors and employee experience</p>
+            <div class="govuk-inset-text app-inset-text--question-answer">
+                <p class="govuk-heading-s">Delivering training in the '@sectorDetails?.SectorName' sector</p>
+                <table class="govuk-table govuk-!-margin-bottom-9">
+                    <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">What standards do you intend to offer within the '@sectorDetails?.SectorName' sector?</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.WhatStandardsOffered))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">How many starts does your organisation forecast in the '@sectorDetails?.SectorName' sector in the first 12 months of joining the RoATP?</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.HowManyStarts))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">How many employees will deliver training in the '@sectorDetails?.SectorName' sector?</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.HowManyEmployees))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">First name</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.FirstName))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Last name</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.LastName))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Job role</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.JobRole))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Time in role</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.TimeInRole))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Is this person part of any other organisations?</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.IsPartOfAnyOtherOrganisations))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Enter the names of all these organisations</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.OtherOrganisations))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Date of birth</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.DateOfBirth))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Email</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.Email))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Contact number</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.ContactNumber))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">What's their experience of delivering training in this sector?</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.ExperienceOfDelivering))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Where did they gain this experience?</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.WhereDidTheyGainThisExperience))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Do they have any qualifications relating to this sector?</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.DoTheyHaveQualifications))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Tell us what qualifications they have</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.WhatQualificationsDoTheyHave))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Are they approved by awarding bodies to deliver training?</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.ApprovedByAwardingBodies))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Names of awarding bodies</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.NamesOfAwardingBodies))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Do they have sector or trade body memberships?</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.DoTheyHaveTradeBodyMemberships))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">Names of sector or trade bodies</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.NamesOfTradeBodyMemberships))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">What type of apprenticeship training have they delivered?</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.WhatTypeOfTrainingDelivered))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">How have they delivered training to apprentices?</td>
+                        <td class="govuk-table__cell">
+                            @if (sectorDetails?.HowIsTrainingDelivered == null)
+                            {
+                                <text>Not applicable</text>
+                            }
+                            else
+                            {
+                                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                                    @foreach (var item in sectorDetails?.HowIsTrainingDelivered)
+                                    {
+                                        <li>@item</li>
+                                    }
+                                </ul>
+                            }
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">What's their experience of delivering training to apprentices?</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.ExperienceOfDeliveringTraining))</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__cell">What's the typical duration of training they have delivered to apprentices?</td>
+                        <td class="govuk-table__cell">@(DecorateWithNotApplicable(sectorDetails?.TypicalDurationOfTraining))</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    <a class="govuk-button" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">
+        Back to application outcome
+        </a>
+</main>
+@functions {
+    private string DecorateWithNotApplicable(string detail)
+    {
+        return string.IsNullOrEmpty(detail) ? "Not applicable" : detail;
+    }
+}
