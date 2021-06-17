@@ -1285,6 +1285,12 @@
     color: #fff;
 }
 
+
+.app-panel--inprogress {
+    background: #005ea5;
+    color: #fff;
+}
+
 .das-multiline-text {
     white-space: pre-line;
 }

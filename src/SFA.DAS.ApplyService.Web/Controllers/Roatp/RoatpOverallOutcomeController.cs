@@ -78,6 +78,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.Submitted:
                 case ApplicationStatus.Resubmitted:
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
+                case ApplicationStatus.InProgressOutcome:
+                    return View("~/Views/Roatp/ApplicationInProgress.cshtml", model);
                 default:
                     return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
             }
