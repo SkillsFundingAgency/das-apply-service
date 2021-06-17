@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
@@ -15,16 +16,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     {
         private readonly IOutcomeApiClient _apiClient;
         private readonly IApplicationApiClient _applicationApiClient;
-        private readonly IQnaApiClient _qnaApiClient;
         private readonly IOverallOutcomeService _overallOutcomeService;
         private readonly ILogger<RoatpOverallOutcomeController> _logger;
 
-        public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, IQnaApiClient qnaApiClient,
+        public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, 
             IOverallOutcomeService overallOutcomeService, IApplicationApiClient applicationApiClient,
             ILogger<RoatpOverallOutcomeController> logger)
         {
             _apiClient = apiClient;
-            _qnaApiClient = qnaApiClient;
             _overallOutcomeService = overallOutcomeService;
             _logger = logger;
             _applicationApiClient = applicationApiClient;
@@ -68,7 +67,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.Withdrawn:
                     return View("~/Views/Roatp/ApplicationWithdrawn.cshtml", model);
                 case ApplicationStatus.Removed:
-                    return View("~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", model);
+                    var oversightReviewDetails = await _apiClient.GetOversightReview(applicationId);
+                    if (oversightReviewDetails?.Status == OversightReviewStatus.Removed)
+                        return View("~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", model);
+                    return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
                 case ApplicationStatus.GatewayAssessed:
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Rejected)
                         return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
