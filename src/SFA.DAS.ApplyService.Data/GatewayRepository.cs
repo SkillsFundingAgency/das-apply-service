@@ -459,18 +459,14 @@ namespace SFA.DAS.ApplyService.Data
 
         private string GetSortColumnForInProgress(string requestedColumn)
         {
-            if (requestedColumn == null) requestedColumn = string.Empty;
-
-            return requestedColumn.Equals("LastCheckedBy", StringComparison.InvariantCultureIgnoreCase)
+            return "LastCheckedBy".Equals(requestedColumn, StringComparison.InvariantCultureIgnoreCase)
                 ? "apply.GatewayUserName"
                 : "CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE)";
         }
 
         private string GetSortColumnForOutcome(string requestedColumn)
         {
-            if (requestedColumn == null) requestedColumn = string.Empty;
-
-            return requestedColumn.Equals("OutcomeMadeBy", StringComparison.InvariantCultureIgnoreCase)
+            return "OutcomeMadeBy".Equals(requestedColumn, StringComparison.InvariantCultureIgnoreCase)
                 ? @"CASE 
                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
                 WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
