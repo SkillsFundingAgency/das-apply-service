@@ -91,7 +91,8 @@ namespace SFA.DAS.ApplyService.Web.Services
                     FinancialGrade = application?.FinancialGrade?.SelectedGrade,
                     FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
                     GatewayReviewStatus = application?.GatewayReviewStatus,
-                    ModerationStatus = application?.ModerationStatus
+                    ModerationStatus = application?.ModerationStatus,
+                    SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit
                 };
                 return model;
             }

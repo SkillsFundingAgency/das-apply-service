@@ -19,6 +19,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string GatewayReviewStatus { get; set; }
         public string ModerationStatus { get; set; }
         public string OversightInProgressExternalComments { get; set; }
+
+        public int? SubcontractingLimit { get; set; }
+
+        public string SubcontractingLimitFormatted => !string.IsNullOrEmpty(SubcontractingLimit?.ToString()) ?SubcontractingLimit?.ToString("N0") : null;
+
         public string ApplicationRouteShortText
         {
             get
