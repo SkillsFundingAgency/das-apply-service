@@ -107,7 +107,7 @@ INSERT INTO LookupPageTitles ([SequenceNumber],[SectionNumber],[PageId],[Title])
 (3, 2, '3110', 'Checks on your organisation'),
 (3, 2, '3120', 'Checks on your organisation'),
 (3, 2, '3130', 'Checks on your organisation'),
-(3, 2, '3135', 'Has your organisation been removed from the Register of Training Organisations (RoTO) in the last 3 years? '),
+(3, 2, '3135', 'Checks on your organisation'),
 (3, 2, '3140', 'Checks on your organisation'),
 (3, 2, '3150', 'Checks on your organisation'),
 (3, 2, '3160', 'Checks on your organisation'),
