@@ -105,13 +105,15 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<RoatpGatewaySummaryItem>> GetNewGatewayApplications()
+            public async Task<List<RoatpGatewaySummaryItem>> GetNewGatewayApplications(string sortOrder)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                var orderByClause = $"{GetSortColumnForNew()} { GetOrderByDirection(sortOrder)}";
+
                 return (await connection
                     .QueryAsync<RoatpGatewaySummaryItem>(
-                        @"SELECT 
+                        $@"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
@@ -127,22 +129,24 @@ namespace SFA.DAS.ApplyService.Data
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
 	                        AND apply.GatewayReviewStatus = @gatewayReviewStatusNew
-                          ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC",
+                          ORDER BY {orderByClause}",
                         new
                         {
                             applicationStatusSubmitted = ApplicationStatus.Submitted,
-                            gatewayReviewStatusNew = GatewayReviewStatus.New
+                            gatewayReviewStatusNew = GatewayReviewStatus.New,
                         })).ToList();
             }
         }
 
-        public async Task<List<RoatpGatewaySummaryItem>> GetInProgressGatewayApplications()
+        public async Task<List<RoatpGatewaySummaryItem>> GetInProgressGatewayApplications(string sortColumn, string sortOrder)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                var orderByClause = $"{GetSortColumnForInProgress(sortColumn)} { GetOrderByDirection(sortOrder)}";
+
                 return (await connection
                     .QueryAsync<RoatpGatewaySummaryItem>(
-                        @"SELECT 
+                        $@"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
@@ -160,7 +164,7 @@ namespace SFA.DAS.ApplyService.Data
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
 	                        AND apply.GatewayReviewStatus in (@gatewayReviewStatusInProgress, @gatewayReviewStatusClarificationSent)
-                          ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC",
+                          ORDER BY {orderByClause}, org.Name ASC",
                         new
                         {
                             applicationStatusSubmitted = ApplicationStatus.Submitted,
@@ -170,13 +174,15 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<RoatpGatewaySummaryItem>> GetClosedGatewayApplications()
+        public async Task<List<RoatpGatewaySummaryItem>> GetClosedGatewayApplications(string sortColumn, string sortOrder)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                var orderByClause = $"{GetSortColumnForOutcome(sortColumn)} { GetOrderByDirection(sortOrder)}";
+
                 return (await connection
                     .QueryAsync<RoatpGatewaySummaryItem>(
-                        @"SELECT 
+                        $@"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
@@ -206,7 +212,7 @@ namespace SFA.DAS.ApplyService.Data
                                     apply.ApplicationStatus in (@applicationStatusWithdrawn, @applicationStatusRemoved)
                                     OR apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusFailed, @gatewayReviewStatusRejected)
                                 )
-                          ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC",
+                          ORDER BY {orderByClause}, org.Name ASC",
                         new
                         {
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
@@ -439,6 +445,38 @@ namespace SFA.DAS.ApplyService.Data
 
                 return rowsAffected > 0;
             }
+        }
+
+        private string GetOrderByDirection(string sortOrder)
+        {
+            return "ascending".Equals(sortOrder, StringComparison.InvariantCultureIgnoreCase) ? "ASC" : "DESC";
+        }
+
+        private string GetSortColumnForNew()
+        {
+            return "CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE)";
+        }
+
+        private string GetSortColumnForInProgress(string requestedColumn)
+        {
+            if (requestedColumn == null) requestedColumn = string.Empty;
+
+            return requestedColumn.Equals("LastCheckedBy", StringComparison.InvariantCultureIgnoreCase)
+                ? "apply.GatewayUserName"
+                : "CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE)";
+        }
+
+        private string GetSortColumnForOutcome(string requestedColumn)
+        {
+            if (requestedColumn == null) requestedColumn = string.Empty;
+
+            return requestedColumn.Equals("OutcomeMadeBy", StringComparison.InvariantCultureIgnoreCase)
+                ? @"CASE 
+                WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
+                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
+                ELSE apply.GatewayUserName
+                END"
+                : "CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE)";
         }
     }
 }
