@@ -1,4 +1,8 @@
 ﻿using System;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -8,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Controllers.Roatp;
@@ -395,6 +400,36 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             viewResult.Model.Should().Be(viewModel);
             viewResult.ViewName.Should().Contain("ApplicationUnsuccessfulSectorAnswers.cshtml");
+        }
+
+        [Test]
+        public async Task DownloadClarificationFile_when_file_exists_downloads_the_requested_file()
+        {
+            var filename = "test.pdf";
+            var contentType = "application/pdf";
+            var applicationId = Guid.NewGuid();
+            var sequenceNumber = 1;
+            var sectionNumber = 2;
+            var pageId = "pageId";
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StreamContent(new MemoryStream())
+                { Headers = { ContentLength = 0, ContentType = new MediaTypeHeaderValue(contentType) } };
+
+            _apiClient.Setup(x => x.DownloadClarificationfile(applicationId, sequenceNumber, sectionNumber, pageId, filename)).ReturnsAsync(response);
+            var result = await _controller.DownloadClarificationFile(applicationId, sequenceNumber, sectionNumber, pageId, filename) as FileStreamResult;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(filename, result.FileDownloadName);
+            Assert.AreEqual(contentType, result.ContentType);
+        }
+
+        [Test]
+        public async Task DownloadClarificationFile_when_file_does_not_exists_then_gives_NotFound_result()
+        {
+            var filename = "test.pdf";
+            var response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            _apiClient.Setup(x => x.DownloadClarificationfile(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), filename)).ReturnsAsync(response);
+            var result = await _controller.DownloadClarificationFile(Guid.NewGuid(), 1, 2, "_pageId", filename) as NotFoundResult;
+            Assert.IsNotNull(result);
         }
     }
 }

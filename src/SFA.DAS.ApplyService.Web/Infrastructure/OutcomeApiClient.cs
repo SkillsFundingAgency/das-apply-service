@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -34,6 +35,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<SectorDetails> GetClarificationSectorDetails(Guid applicationId, string pageId)
         {
             return await Get<SectorDetails>($"/Clarification/Applications/{applicationId}/SectorDetails/{pageId}");
+        }
+
+        public async  Task<HttpResponseMessage> DownloadClarificationfile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId,
+            string filename)
+        {
+            return await GetResponse($"/Clarification/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/Download/{filename}");
         }
 
         public async Task<List<ClarificationPageReviewOutcome>> GetAllClarificationPageReviewOutcomes(Guid applicationId, string userId)
