@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public int? SubcontractingLimit { get; set; }
 
-        public string SubcontractingLimitFormatted => !string.IsNullOrEmpty(SubcontractingLimit?.ToString()) ?SubcontractingLimit?.ToString("N0") : null;
+        public string SubcontractingLimitFormatted => SubcontractingLimit?.ToString("N0");
 
         public string ApplicationRouteShortText
         {
