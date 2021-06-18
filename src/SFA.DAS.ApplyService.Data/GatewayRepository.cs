@@ -129,7 +129,7 @@ namespace SFA.DAS.ApplyService.Data
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
 	                        AND apply.GatewayReviewStatus = @gatewayReviewStatusNew
-                          ORDER BY {orderByClause}",
+                          ORDER BY {orderByClause}, org.Name ASC",
                         new
                         {
                             applicationStatusSubmitted = ApplicationStatus.Submitted,
