@@ -88,5 +88,9 @@
   <ItemGroup>
     <None Include="SFA.DAS.ApplyService.Database.publish.xml" />
     <None Include="AdhocScipts\DataMart\LookupOversightReviewStatus.sql" />
+    <None Include="AdhocScipts\DataMart\LookupSequenceTitles.sql" />
+    <None Include="AdhocScipts\DataMart\LookupSectionTitles.sql" />
+    <None Include="AdhocScipts\DataMart\LookupPageTitles.sql" />
+    <None Include="AdhocScipts\DataMart\LookupQuestionTitles.sql" />
   </ItemGroup>
 </Project>
