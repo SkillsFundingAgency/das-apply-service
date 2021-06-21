@@ -137,3 +137,18 @@ END
 -- APR-2494 script to update GatewayReviewStatus Reject to Rejected
 -- Can be removed once APR-2494 deployed to prod
   update apply set GatewayReviewStatus='Rejected' where GatewayReviewStatus='Reject'
+
+
+  -- APR-2565 script to add ukprn to whitelist
+  -- can be removed once deployed to prod
+  IF NOT EXISTS (SELECT * FROM [WhitelistedProviders] WHERE [UKPRN] = 10046346)
+BEGIN
+INSERT INTO [WhitelistedProviders]
+           ([UKPRN]
+           ,[StartDateTime]
+           ,[EndDateTime])
+     VALUES
+           (10046346
+           ,'2021-07-01 00:00:00.000'
+           ,'2021-07-31 23:59:59.000')
+END
