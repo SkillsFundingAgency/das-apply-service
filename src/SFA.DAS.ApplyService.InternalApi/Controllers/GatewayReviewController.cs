@@ -7,6 +7,7 @@ using SFA.DAS.ApplyService.Application.Apply.Gateway.Applications;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions;
 using SFA.DAS.ApplyService.InternalApi.Types.Requests;
+using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -28,23 +29,23 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("GatewayReview/NewApplications")]
-        public async Task<ActionResult> NewApplications()
+        public async Task<ActionResult> NewApplications(string sortOrder)
         {
-            var applications = await _mediator.Send(new NewGatewayApplicationsRequest());
+            var applications = await _mediator.Send(new NewGatewayApplicationsRequest {SortOrder = sortOrder});
             return Ok(applications);
         }
 
         [HttpGet("GatewayReview/InProgressApplications")]
-        public async Task<ActionResult> InProgressApplications()
+        public async Task<ActionResult> InProgressApplications(string sortColumn, string sortOrder)
         {
-            var applications = await _mediator.Send(new InProgressGatewayApplicationsRequest());
+            var applications = await _mediator.Send(new InProgressGatewayApplicationsRequest { SortColumn = sortColumn, SortOrder = sortOrder });
             return Ok(applications);
         }
 
         [HttpGet("GatewayReview/ClosedApplications")]
-        public async Task<ActionResult> ClosedApplications()
+        public async Task<ActionResult> ClosedApplications(string sortColumn, string sortOrder)
         {
-            var applications = await _mediator.Send(new ClosedGatewayApplicationsRequest());
+            var applications = await _mediator.Send(new ClosedGatewayApplicationsRequest { SortColumn = sortColumn, SortOrder = sortOrder });
             return Ok(applications);
         }
 

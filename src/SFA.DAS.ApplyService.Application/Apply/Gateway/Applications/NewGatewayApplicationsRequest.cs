@@ -6,5 +6,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
 {
     public class NewGatewayApplicationsRequest : IRequest<List<RoatpGatewaySummaryItem>>
     {
+        public string SortOrder { get; set; }
     }
 }
