@@ -101,7 +101,30 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationApprovedAlreadyActive.cshtml");
         }
-        
+
+        [Test]
+        public async Task Application_shows_active_with_success_fintess_for_funging_page_if_application_approved_and_oversight_review_status_already_active()
+        {
+            var submittedApp = new Apply
+            {
+                ApplicationStatus = ApplicationStatus.Successful
+            };
+
+            var oversightReview = new GetOversightReviewResponse
+            {
+                Status = OversightReviewStatus.SuccessfulFitnessForFunding
+            };
+
+            _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
+            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
+
+            var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationApprovedFitnessForFunding.cshtml");
+        }
+
         [Test]
         public async Task Application_shows_active_with_success_page_if_application_approved_and_oversight_review_status_unset()
         {
