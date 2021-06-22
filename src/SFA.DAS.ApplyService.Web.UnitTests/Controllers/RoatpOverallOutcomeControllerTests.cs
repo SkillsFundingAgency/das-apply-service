@@ -80,6 +80,38 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+        public async Task Application_shows_confirmation_page_if_application_in_outcome_progress()
+        {
+            var submittedApp = new Apply
+            {
+                ApplicationStatus = ApplicationStatus.InProgressOutcome
+            };
+
+            var externalComments = "external comments";
+
+            var oversightReview = new GetOversightReviewResponse
+            {
+                InProgressExternalComments = externalComments
+            };
+
+            var model = new ApplicationSummaryViewModel();
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+
+            _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
+            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
+
+
+            var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationInProgress.cshtml");
+            var modelReturned = viewResult.Model as ApplicationSummaryViewModel;
+            modelReturned.OversightInProgressExternalComments.Should().Be(externalComments);
+        }
+
+        [Test]
         public async Task Application_shows_active_with_success_page_if_application_approved_and_oversight_review_status_already_active()
         {
             var submittedApp = new Apply
