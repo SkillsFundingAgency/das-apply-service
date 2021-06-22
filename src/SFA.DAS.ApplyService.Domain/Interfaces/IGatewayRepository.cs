@@ -12,9 +12,9 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         Task<bool> WithdrawApplication(Guid applicationId, string comments, string userId, string userName);
         Task<bool> RemoveApplication(Guid applicationId, string comments, string externalComments, string userId, string userName);
 
-        Task<List<RoatpGatewaySummaryItem>> GetNewGatewayApplications();
-        Task<List<RoatpGatewaySummaryItem>> GetInProgressGatewayApplications();
-        Task<List<RoatpGatewaySummaryItem>> GetClosedGatewayApplications();
+        Task<List<RoatpGatewaySummaryItem>> GetNewGatewayApplications(string sortOrder);
+        Task<List<RoatpGatewaySummaryItem>> GetInProgressGatewayApplications(string sortColumn, string sortOrder);
+        Task<List<RoatpGatewaySummaryItem>> GetClosedGatewayApplications(string sortColumn, string sortOrder);
         Task<IEnumerable<GatewayApplicationStatusCount>> GetGatewayApplicationStatusCounts();
 
         Task<bool> StartGatewayReview(Guid applicationId, string userId, string userName);

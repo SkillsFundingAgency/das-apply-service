@@ -1,4 +1,8 @@
 ﻿using System;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -8,11 +12,13 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Controllers.Roatp;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -22,7 +28,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private RoatpOverallOutcomeController _controller;
         private Mock<IOutcomeApiClient> _apiClient;
         private Mock<IApplicationApiClient> _applicationApiClient;
-        private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IOverallOutcomeService> _outcomeService;
         private Mock<ILogger<RoatpOverallOutcomeController>> _logger;
 
@@ -75,6 +80,38 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+        public async Task Application_shows_confirmation_page_if_application_in_outcome_progress()
+        {
+            var submittedApp = new Apply
+            {
+                ApplicationStatus = ApplicationStatus.InProgressOutcome
+            };
+
+            var externalComments = "external comments";
+
+            var oversightReview = new GetOversightReviewResponse
+            {
+                InProgressExternalComments = externalComments
+            };
+
+            var model = new ApplicationSummaryViewModel();
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+
+            _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
+            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
+
+
+            var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationInProgress.cshtml");
+            var modelReturned = viewResult.Model as ApplicationSummaryViewModel;
+            modelReturned.OversightInProgressExternalComments.Should().Be(externalComments);
+        }
+
+        [Test]
         public async Task Application_shows_active_with_success_page_if_application_approved_and_oversight_review_status_already_active()
         {
             var submittedApp = new Apply
@@ -96,7 +133,30 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationApprovedAlreadyActive.cshtml");
         }
-        
+
+        [Test]
+        public async Task Application_shows_active_with_success_fintess_for_funging_page_if_application_approved_and_oversight_review_status_already_active()
+        {
+            var submittedApp = new Apply
+            {
+                ApplicationStatus = ApplicationStatus.Successful
+            };
+
+            var oversightReview = new GetOversightReviewResponse
+            {
+                Status = OversightReviewStatus.SuccessfulFitnessForFunding
+            };
+
+            _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
+            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
+
+            var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationApprovedFitnessForFunding.cshtml");
+        }
+
         [Test]
         public async Task Application_shows_active_with_success_page_if_application_approved_and_oversight_review_status_unset()
         {
@@ -349,6 +409,59 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationSubmitted.cshtml");
+        }
+
+
+        [Test]
+        public async Task Application_sectors_show_sector_details()
+        {
+            var applicationId = Guid.NewGuid();
+            const string pageId = "pageId";
+            const string sectorName = "name of sector";
+
+            var viewModel = new OutcomeSectorDetailsViewModel
+            {
+                ApplicationId = applicationId,
+                SectorDetails = new SectorDetails {SectorName = sectorName}
+            };
+
+            _outcomeService.Setup(x => x.GetSectorDetailsViewModel(applicationId, pageId)).ReturnsAsync(viewModel);
+            var result = await _controller.GetSectorDetails(applicationId, pageId);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.Model.Should().Be(viewModel);
+            viewResult.ViewName.Should().Contain("ApplicationUnsuccessfulSectorAnswers.cshtml");
+        }
+
+        [Test]
+        public async Task DownloadClarificationFile_when_file_exists_downloads_the_requested_file()
+        {
+            var filename = "test.pdf";
+            var contentType = "application/pdf";
+            var applicationId = Guid.NewGuid();
+            var sequenceNumber = 1;
+            var sectionNumber = 2;
+            var pageId = "pageId";
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StreamContent(new MemoryStream())
+                { Headers = { ContentLength = 0, ContentType = new MediaTypeHeaderValue(contentType) } };
+
+            _apiClient.Setup(x => x.DownloadClarificationfile(applicationId, sequenceNumber, sectionNumber, pageId, filename)).ReturnsAsync(response);
+            var result = await _controller.DownloadClarificationFile(applicationId, sequenceNumber, sectionNumber, pageId, filename) as FileStreamResult;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(filename, result.FileDownloadName);
+            Assert.AreEqual(contentType, result.ContentType);
+        }
+
+        [Test]
+        public async Task DownloadClarificationFile_when_file_does_not_exists_then_gives_NotFound_result()
+        {
+            var filename = "test.pdf";
+            var response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            _apiClient.Setup(x => x.DownloadClarificationfile(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), filename)).ReturnsAsync(response);
+            var result = await _controller.DownloadClarificationFile(Guid.NewGuid(), 1, 2, "_pageId", filename) as NotFoundResult;
+            Assert.IsNotNull(result);
         }
     }
 }

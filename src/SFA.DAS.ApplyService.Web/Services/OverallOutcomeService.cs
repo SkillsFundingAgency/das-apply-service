@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
@@ -31,7 +32,8 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             var sequences = await _apiClient.GetClarificationSequences(model.ApplicationId);
             var passFailDetails = await _apiClient.GetAllClarificationPageReviewOutcomes(model.ApplicationId, userId);
-            var moderationFailedDetails = passFailDetails.Where(x => x.ModeratorReviewStatus == ModerationStatus.Fail).ToList();
+            var moderationFailedDetails = passFailDetails.Where(x => x.Status == ModerationStatus.Fail 
+                                                                     || (x.Status==null && x.ModeratorReviewStatus==ModerationStatus.Fail)).ToList();
 
             if (moderationFailedDetails.Any())
             {
@@ -47,11 +49,27 @@ namespace SFA.DAS.ApplyService.Web.Services
                 AddAnswersToSequences(sequencesWithModerationFails, allSections);
                 AddQuestionsToSequences(sequencesWithModerationFails, allSections);
                 AddSequenceTitlesToSequences(sequencesWithModerationFails);
-
                 model.Sequences = sequencesWithModerationFails;
                 model.PagesWithGuidance =
                     GatherGuidancePagesForSequenceQuestions(sequencesWithModerationFails, allSections);
+                model.PagesWithClarifications = GatherClarificationPages(moderationFailedDetails);
             }
+        }
+
+        private static List<ClarificationPage> GatherClarificationPages(List<ClarificationPageReviewOutcome> moderationFailedDetails)
+        {
+            if (moderationFailedDetails == null) return new List<ClarificationPage>();
+
+            return moderationFailedDetails.Where(x => x.Status != null)
+                .Select(page => new ClarificationPage
+                {
+                    SequenceNumber = page.SequenceNumber,
+                    SectionNumber = page.SectionNumber,
+                    PageId = page.PageId,
+                    ClarificationResponse = page.ClarificationResponse,
+                    ClarificationFile = page.ClarificationFile
+                })
+                .ToList();
         }
 
         public ApplicationSummaryViewModel BuildApplicationSummaryViewModel(Apply application, string emailAddress)
@@ -146,6 +164,16 @@ namespace SFA.DAS.ApplyService.Web.Services
             return model;
         }
 
+        public async Task<OutcomeSectorDetailsViewModel> GetSectorDetailsViewModel(Guid applicationId, string pageId)
+        {
+            var sectorDetails = await _apiClient.GetClarificationSectorDetails(applicationId, pageId);
+            var model = new OutcomeSectorDetailsViewModel
+            {
+                ApplicationId = applicationId, 
+                SectorDetails = sectorDetails
+            };
+            return model;
+        }
         private void AddSequenceTitlesToSequences(List<AssessorSequence> sequencesWithModerationFails)
         {
             foreach (var sequence in sequencesWithModerationFails)

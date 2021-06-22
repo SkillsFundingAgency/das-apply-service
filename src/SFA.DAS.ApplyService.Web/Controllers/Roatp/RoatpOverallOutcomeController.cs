@@ -29,6 +29,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _applicationApiClient = applicationApiClient;
         }
 
+
+
+        [HttpGet]
+        [Route("application/{applicationId}/sector/{pageId}")]
+        public async Task<IActionResult> GetSectorDetails(Guid applicationId, string pageId)
+        {
+            var model = await _overallOutcomeService.GetSectorDetailsViewModel(applicationId, pageId);
+            return View("~/Views/Roatp/ApplicationUnsuccessfulSectorAnswers.cshtml", model);
+        }
+
         [HttpGet]
         [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ProcessApplicationStatus(Guid applicationId)
@@ -42,13 +52,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.InProgress:
                     return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
                 case ApplicationStatus.Successful:
-                {
                     var oversightReview = await _apiClient.GetOversightReview(applicationId);
-                    if (oversightReview?.Status == OversightReviewStatus.SuccessfulAlreadyActive)
-                        return View("~/Views/Roatp/ApplicationApprovedAlreadyActive.cshtml", model);
+                    switch (oversightReview?.Status)
+                    {
+                        case OversightReviewStatus.SuccessfulAlreadyActive:
+                            return View("~/Views/Roatp/ApplicationApprovedAlreadyActive.cshtml", model);
+                        case OversightReviewStatus.SuccessfulFitnessForFunding:
+                            return View("~/Views/Roatp/ApplicationApprovedFitnessForFunding.cshtml", model);
+                        default:
+                            return View("~/Views/Roatp/ApplicationApproved.cshtml", model);
+                    }
 
-                    return View("~/Views/Roatp/ApplicationApproved.cshtml", model);
-                }
                 case ApplicationStatus.Unsuccessful: 
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
                         return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
@@ -76,9 +90,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.Submitted:
                 case ApplicationStatus.Resubmitted:
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
+                case ApplicationStatus.InProgressOutcome:
+                    var oversightReviewNotes = await _apiClient.GetOversightReview(applicationId);
+                    model.OversightInProgressExternalComments = oversightReviewNotes?.InProgressExternalComments;
+                    return View("~/Views/Roatp/ApplicationInProgress.cshtml", model);
                 default:
                     return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
             }
+        }
+
+        [HttpGet("ClarificationDownload/{applicationId}/Sequence/{sequenceNumber}/Section/{sectionNumber}/Page/{pageId}/Download/{fileName}")]
+        public async Task<IActionResult> DownloadClarificationFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string fileName)
+        {
+            var response = await _apiClient.DownloadClarificationfile(applicationId, sequenceNumber, sectionNumber, pageId, fileName);
+
+            if (!response.IsSuccessStatusCode) return NotFound();
+            var fileStream = await response.Content.ReadAsStreamAsync();
+            return File(fileStream, response.Content.Headers.ContentType.MediaType, fileName);
         }
     }
 }
