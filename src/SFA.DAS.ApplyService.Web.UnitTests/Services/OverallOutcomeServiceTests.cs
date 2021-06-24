@@ -346,7 +346,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 ApplicationRouteId = applicationRouteId.ToString(),
                 ApplicationReference = applicationReference,
                 SubmittedDate = submittedDate,
-                ExternalComments = externalComments,
+                GatewayExternalComments = externalComments,
                 FinancialReviewStatus = financialReviewStatus,
                 GatewayReviewStatus = gatewayReviewStatus,
                 ModerationStatus = moderationStatus,
@@ -380,7 +380,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             _apiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(new GetOversightReviewResponse {ModerationApproved = false, ExternalComments = oversightExternalComments});
           
-            var result = await _service.BuildApplicationSummaryViewModelWithModerationDetails(submittedApp, _emailAddress);
+            var result = await _service.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(submittedApp, _emailAddress);
 
             result.ModerationPassOverturnedToFail.Should().Be(true);
             result.OversightExternalComments.Should().Be(oversightExternalComments);

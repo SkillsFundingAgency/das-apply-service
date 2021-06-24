@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NPOI.SS.Formula.Functions;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -85,7 +86,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                     ApplicationRouteId = applicationData.ProviderRoute.ToString(),
                     ApplicationReference = applicationData.ReferenceNumber,
                     SubmittedDate = applicationData?.ApplicationSubmittedOn,
-                    ExternalComments = application.ExternalComments ?? application.ApplyData.GatewayReviewDetails?.ExternalComments,
+                    GatewayExternalComments = application.ExternalComments ?? application.ApplyData.GatewayReviewDetails?.ExternalComments,
                     EmailAddress = emailAddress,
                     FinancialReviewStatus = application?.FinancialReviewStatus,
                     FinancialGrade = application?.FinancialGrade?.SelectedGrade,
@@ -97,7 +98,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return model;
             }
 
-        public async Task<ApplicationSummaryWithModeratorDetailsViewModel> BuildApplicationSummaryViewModelWithModerationDetails(Apply application, string emailAddress)
+        public async Task<ApplicationSummaryWithModeratorDetailsViewModel> BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(Apply application, string emailAddress)
         {
             var applicationData = application.ApplyData.ApplyDetails;
 
@@ -105,7 +106,9 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             var applicationUnsuccessfulModerationFail = false;
             var applicationUnsuccessfulModerationPassOverturned = false;
-            var applicationUnsuccessfulModerationPassAndApproved = false;
+            var moderationPassedAndApproved = false;
+            var gatewayPassOverturnedtoFail = false;
+            var moderationFailedAndOverturned = false;
             if (application?.GatewayReviewStatus == GatewayAnswerStatus.Pass)
             {
                 if (application?.ModerationStatus != null
@@ -126,9 +129,21 @@ namespace SFA.DAS.ApplyService.Web.Services
 
                     if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == true)
                     {
-                        applicationUnsuccessfulModerationPassAndApproved = true;
+                        moderationPassedAndApproved = true;
                     }
                 }
+
+                if (application?.ModerationStatus != null
+                    && application.ModerationStatus == ModerationStatus.Fail)
+                {
+                    if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == false)
+                    { 
+                        moderationFailedAndOverturned = true;
+                    }
+                }
+
+                if (oversightReview?.GatewayApproved == false)
+                    gatewayPassOverturnedtoFail = true;
             }
 
             var model = new ApplicationSummaryWithModeratorDetailsViewModel
@@ -140,7 +155,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 ApplicationRouteId = applicationData.ProviderRoute.ToString(),
                 ApplicationReference = applicationData.ReferenceNumber,
                 SubmittedDate = applicationData?.ApplicationSubmittedOn,
-                ExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
+                GatewayExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
                 EmailAddress = emailAddress,
                 FinancialReviewStatus = application?.FinancialReviewStatus,
                 FinancialGrade = application?.FinancialGrade?.SelectedGrade,
@@ -148,7 +163,10 @@ namespace SFA.DAS.ApplyService.Web.Services
                 GatewayReviewStatus = application?.GatewayReviewStatus,
                 ModerationStatus = application?.ModerationStatus,
                 ModerationPassOverturnedToFail = false,
-                ModerationPassAndApproved = applicationUnsuccessfulModerationPassAndApproved
+                ModerationPassedAndApproved = moderationPassedAndApproved,
+                ModerationFailedAndOverturned = moderationFailedAndOverturned,
+                GatewayPassOverturnedToFail = gatewayPassOverturnedtoFail,
+                OversightExternalComments = oversightReview?.ExternalComments
             };
 
             if (applicationUnsuccessfulModerationPassOverturned)

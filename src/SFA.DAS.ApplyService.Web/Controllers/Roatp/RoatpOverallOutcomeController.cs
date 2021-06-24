@@ -74,7 +74,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
 
                     var unsuccessfulModel =
-                        await _overallOutcomeService.BuildApplicationSummaryViewModelWithModerationDetails(application,
+                        await _overallOutcomeService.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(application,
                             User.GetEmail());
                     return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", unsuccessfulModel);
 
