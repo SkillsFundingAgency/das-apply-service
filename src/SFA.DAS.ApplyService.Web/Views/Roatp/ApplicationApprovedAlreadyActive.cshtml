@@ -24,25 +24,11 @@
             <partial name="~/Views/Roatp/_ApplicationDetailsTable.cshtml" model="@Model" />
 
             <p class="govuk-body">
-                Your organisation has successfully passed the reapplication to be on the register for apprenticeship training providers (RoATP).
+                Your application to join the RoATP has been successful.
             </p>
 
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <h2 class="govuk-heading-l">Feedback on your financial health assessment</h2>
-                    <p class="govuk-body">The outcome of your financial health assessment is: </p>
-                    <div class="govuk-inset-text app-inset-text--question-answer">
-                        <p class="govuk-heading-s">@Model.FinancialGrade</p>
-                        @if (Model.FinancialGrade == FinancialApplicationSelectedGrade.Inadequate)
-                        {
-                        <h2 class="govuk-heading-m">Why your financial health assessment is inadequate</h2>
-                            <p class="govuk-body das-multiline-text">
-                            @Model.FinancialExternalComments
-                        </p>
-                        }
-                    </div>
-                </div>
-            </div>
+            <partial name="~/Views/Roatp/_FinancialHealthFeedback.cshtml" model="@Model" />
+
             <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
             <h2 class="govuk-heading-m">What happens next</h2>
             <p class="govuk-body">
@@ -65,8 +51,8 @@
                 A <a href="https://www.gov.uk/government/publications/provider-guide-to-delivering-high-quality-apprenticeships" target="_blank">new guide for training providers</a> is available online. It gives step-by-step advice on how to deliver high quality apprenticeships and is an essential read for all providers.
             </p>
             <p class="govuk-body">
-            As well as setting out the minimum requirements for newer providers, the guide supports experienced providers by highlighting good practice and continuous improvement. It also links to detailed guidance on specific topics such as off the job training and end point assessment. 
-                </p>
+                As well as setting out the minimum requirements for newer providers, the guide supports experienced providers by highlighting good practice and continuous improvement. It also links to detailed guidance on specific topics such as off the job training and end point assessment.
+            </p>
 
             <h2 class="govuk-heading-m">What you agreed to</h2>
             <p class="govuk-body">
