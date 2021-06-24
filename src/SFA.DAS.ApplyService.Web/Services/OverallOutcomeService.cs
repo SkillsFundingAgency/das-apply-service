@@ -111,12 +111,17 @@ namespace SFA.DAS.ApplyService.Web.Services
             var moderationFailedAndOverturned = false;
             if (application?.GatewayReviewStatus == GatewayAnswerStatus.Pass)
             {
-                if (application?.ModerationStatus != null
-                    && application?.ModerationStatus == ModerationStatus.Fail
-                    && oversightReview.ModerationApproved.HasValue
-                    && oversightReview.ModerationApproved == true)
+                if (application?.ModerationStatus != null && application?.ModerationStatus == ModerationStatus.Fail)
                 {
-                    applicationUnsuccessfulModerationFail = true;
+                    if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == true)
+                    {
+                        applicationUnsuccessfulModerationFail = true;
+                    }
+
+                    if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == false)
+                    {
+                        moderationFailedAndOverturned = true;
+                    }
                 }
 
                 if (application?.ModerationStatus != null
@@ -130,15 +135,6 @@ namespace SFA.DAS.ApplyService.Web.Services
                     if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == true)
                     {
                         moderationPassedAndApproved = true;
-                    }
-                }
-
-                if (application?.ModerationStatus != null
-                    && application.ModerationStatus == ModerationStatus.Fail)
-                {
-                    if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == false)
-                    { 
-                        moderationFailedAndOverturned = true;
                     }
                 }
 
@@ -174,6 +170,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 model.ModerationPassOverturnedToFail = true;
                 model.OversightExternalComments = oversightReview.ExternalComments;
             }
+
             if (applicationUnsuccessfulModerationFail)
             {
                 await AugmentModelWithModerationFailDetails(model,
