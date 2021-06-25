@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             var sequences = await _apiClient.GetClarificationSequences(model.ApplicationId);
             var passFailDetails = await _apiClient.GetAllClarificationPageReviewOutcomes(model.ApplicationId, userId);
-            var moderationFailedDetails = passFailDetails.Where(x => x.Status == ModerationStatus.Fail 
+            var moderationFailedDetails = passFailDetails?.Where(x => x.Status == ModerationStatus.Fail 
                                                                      || (x.Status==null && x.ModeratorReviewStatus==ModerationStatus.Fail)).ToList();
 
             if (moderationFailedDetails.Any())
@@ -104,10 +104,10 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             var oversightReview = await _apiClient.GetOversightReview(application.ApplicationId);
 
-            var applicationUnsuccessfulModerationFail = false;
-            var applicationUnsuccessfulModerationPassOverturned = false;
+            var moderationFailedAndApproved = false;
+            var moderationPassOverturnedToFail = false;
             var moderationPassedAndApproved = false;
-            var gatewayPassOverturnedtoFail = false;
+            var gatewayPassOverturnedToFail = false;
             var moderationFailedAndOverturned = false;
             if (application?.GatewayReviewStatus == GatewayAnswerStatus.Pass)
             {
@@ -115,7 +115,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 {
                     if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == true)
                     {
-                        applicationUnsuccessfulModerationFail = true;
+                        moderationFailedAndApproved = true;
                     }
 
                     if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == false)
@@ -129,7 +129,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 {
                     if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == false)
                     {
-                        applicationUnsuccessfulModerationPassOverturned = true;
+                        moderationPassOverturnedToFail = true;
                     }
 
                     if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == true)
@@ -139,7 +139,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 }
 
                 if (oversightReview?.GatewayApproved == false)
-                    gatewayPassOverturnedtoFail = true;
+                    gatewayPassOverturnedToFail = true;
             }
 
             var model = new ApplicationSummaryWithModeratorDetailsViewModel
@@ -158,20 +158,15 @@ namespace SFA.DAS.ApplyService.Web.Services
                 FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
                 GatewayReviewStatus = application?.GatewayReviewStatus,
                 ModerationStatus = application?.ModerationStatus,
-                ModerationPassOverturnedToFail = false,
-                ModerationPassedAndApproved = moderationPassedAndApproved,
-                ModerationFailedAndOverturned = moderationFailedAndOverturned,
-                GatewayPassOverturnedToFail = gatewayPassOverturnedtoFail,
+                ModerationPassOverturnedToFail = moderationPassOverturnedToFail,
+                ModerationPassApproved = moderationPassedAndApproved,
+                ModerationFailOverturnedToPass = moderationFailedAndOverturned,
+                ModerationFailApproved = moderationFailedAndApproved,
+                GatewayPassOverturnedToFail = gatewayPassOverturnedToFail,
                 OversightExternalComments = oversightReview?.ExternalComments
             };
 
-            if (applicationUnsuccessfulModerationPassOverturned)
-            {
-                model.ModerationPassOverturnedToFail = true;
-                model.OversightExternalComments = oversightReview.ExternalComments;
-            }
-
-            if (applicationUnsuccessfulModerationFail)
+            if (moderationFailedAndApproved)
             {
                 await AugmentModelWithModerationFailDetails(model,
                    emailAddress);

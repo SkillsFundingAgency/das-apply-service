@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using Polly.Caching;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
@@ -296,7 +297,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         }
 
         [Test]
-        public async Task BuildApplilcationSummaryViewModel_builds_expected_viewModel()
+        public async Task BuildApplicationSummaryViewModel_builds_expected_viewModel()
         {
             var emailAddress = "test@test.com";
             var ukprn = "12345678";
@@ -387,8 +388,102 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             result.Sequences.Should().BeNullOrEmpty();
         }
 
+        [TestCase(GatewayReviewStatus.Pass, true, false)] 
+        [TestCase(GatewayReviewStatus.Pass, false, true)]
+        [TestCase(GatewayReviewStatus.Fail, true, false)]
+        [TestCase(GatewayReviewStatus.Fail, false, false)]
+        public async Task application_unsuccessful_gateway_settings_work_as_expected(string gatewayReviewStatus,bool gatewayApproved, bool gatewayPassOverturnedToFail) //, string moderationStatus, bool moderationApproved, bool applicationUnsuccessfulModerationFail, bool moderationFailedAndOverturned)
+        {
+            var moderationStatus = ModerationStatus.Pass;
+
+            var gatewayExternalComments = "gatewayExternalComments";
+
+            var moderationApproved = true;
+
+            var submittedApp = new Apply
+            {
+                ApplicationStatus = ApplicationStatus.Unsuccessful,
+                ApplicationId = _applicationId,
+                GatewayReviewStatus = gatewayReviewStatus,
+                ModerationStatus = moderationStatus,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails
+                    {
+                        UKPRN = "11112222"
+                    },
+                    GatewayReviewDetails = new ApplyGatewayDetails
+                    {
+                        ExternalComments = gatewayExternalComments
+                    }
+                }
+            };
+
+            var oversightExternalComments = "oversight external comments";
+
+            _apiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(new GetOversightReviewResponse { GatewayApproved = gatewayApproved, ModerationApproved = moderationApproved, ExternalComments = oversightExternalComments });
+
+            var result = await _service.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(submittedApp, _emailAddress);
+
+            result.GatewayPassOverturnedToFail.Should().Be(gatewayPassOverturnedToFail);
+            result.GatewayExternalComments.Should().Be(gatewayExternalComments);
+
+        }
+
+        [TestCase(ModerationStatus.Pass, false, true, false, false, false,false)]
+        [TestCase(ModerationStatus.Pass, true, false, true, false,false,false)]
+        [TestCase(ModerationStatus.Fail, false, false, false, true, false,false)]
+        [TestCase(ModerationStatus.Fail, true, false, false, false, true,true)]
+        public async Task application_unsuccessful_moderation_settings_work_as_expected(string moderationStatus, bool moderationApproved, bool moderationPassOverturnedToFail, bool moderationPassApproved, bool moderationFailAndOverturned, bool moderationFailApproved, bool sequencesInjected)
+        {
+            var gatewayReviewStatus = GatewayAnswerStatus.Pass;
+
+            var submittedApp = new Apply
+            {
+                ApplicationStatus = ApplicationStatus.Unsuccessful,
+                ApplicationId = _applicationId,
+                GatewayReviewStatus = gatewayReviewStatus,
+                ModerationStatus = moderationStatus,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails
+                    {
+                        UKPRN = "11112222"
+                    }
+                }
+            };
+
+            const string oversightExternalComments = "oversight external comments";
+
+            _apiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(new GetOversightReviewResponse { GatewayApproved = true, ModerationApproved = moderationApproved, ExternalComments = oversightExternalComments });
+
+            var sequences = SetUpAsessorSequences();
+            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+
+            var clarificationPages = SetUpClarificationOutcomes();
+            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(It.IsAny<Guid>(), It.IsAny<string>()))
+                .ReturnsAsync(clarificationPages);
+            var sections = SetUpApplicationSections(true, false, "answer", null);
+
+            _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
+
+            var result = await _service.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(submittedApp, _emailAddress);
+
+            result.ModerationStatus.Should().Be(moderationStatus);
+            result.ModerationPassApproved.Should().Be(moderationPassApproved);
+            result.ModerationFailApproved.Should().Be(moderationFailApproved);
+            result.ModerationFailOverturnedToPass.Should().Be(moderationFailAndOverturned);
+            result.ModerationPassOverturnedToFail.Should().Be(moderationPassOverturnedToFail);
+            result.OversightExternalComments.Should().Be(oversightExternalComments);
+            if (sequencesInjected)
+                result.Sequences.Any().Should().Be(true);
+            else
+                result.Sequences.Should().BeNullOrEmpty();
+        }
+
+        
         private List<AssessorSequence> SetUpAsessorSequences()
-    {
+        {
         var section2_3 = new AssessorSection
         {
             LinkTitle = "Section 2.3",
