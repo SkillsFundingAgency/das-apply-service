@@ -75,7 +75,7 @@
     }
 
 
-@if (!Model.ModerationPassApproved && !Model.ModerationFailOverturnedToPass)
+@if (Model.ModerationPassOverturnedToFail || Model.ModerationFailApproved)
 {
 
     <div class="govuk-grid-row">
