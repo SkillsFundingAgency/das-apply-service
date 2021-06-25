@@ -27,24 +27,29 @@
                 Your application to join the RoATP has been successful.
             </p>
 
-            <partial name="~/Views/Roatp/_FinancialHealthFeedback.cshtml" model="@Model" />
-
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h2 class="govuk-heading-l">Feedback on your financial health assessment</h2>
+                    <p class="govuk-body">The outcome of your financial health assessment is: </p>
+                    <div class="govuk-inset-text app-inset-text--question-answer">
+                        <p class="govuk-heading-s">@Model.FinancialGrade</p>
+                        @if (Model.FinancialGrade == FinancialApplicationSelectedGrade.Inadequate)
+                        {
+                            <h2 class="govuk-heading-m">Why your financial health assessment is inadequate</h2>
+                            <p class="govuk-body das-multiline-text">
+                                @Model.FinancialExternalComments
+                            </p>
+                        }
+                    </div>
+                </div>
+            </div>
             <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
             <h2 class="govuk-heading-m">What happens next</h2>
             <p class="govuk-body">
-                Your organisation will remain on the register.
-            </p>
-
-            <p class="govuk-body">
-                If your organisation has any post-application (on-boarding) tasks to complete,
-                you'll receive an email within 5 working days from the 'Delivery Support team - Market Entry and Operation', explaining how to do this.
-
+                Your organisation will be published on the register and can deliver training up to a maximum value of £@Model.SubcontractingLimitFormatted per year.
             </p>
             <p class="govuk-body">
-                If you fail to complete any required post-application tasks within 6 weeks of being contacted, your application may be deemed expired and no longer valid.  If this happens, your organisation will not be added to the Register.
-            </p>
-            <p class="govuk-body">
-                <a href="https://www.gov.uk/guidance/apprenticeship-funding-rules" target="_blank">Review the latest apprenticeship funding rules</a>
+                <a href="https://www.gov.uk/guidance/apprenticeship-funding-rules" target="_blank">Review the latest apprenticeship funding rules</a>.
             </p>
 
             <p class="govuk-body">
