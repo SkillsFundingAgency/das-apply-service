@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NPOI.SS.Formula.Functions;
-using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
@@ -111,7 +109,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             var moderationFailedAndOverturned = false;
             if (application?.GatewayReviewStatus == GatewayAnswerStatus.Pass)
             {
-                if (application?.ModerationStatus != null && application?.ModerationStatus == ModerationStatus.Fail)
+                if (application?.ModerationStatus == ModerationStatus.Fail)
                 {
                     if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == true)
                     {
@@ -124,8 +122,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                     }
                 }
 
-                if (application?.ModerationStatus != null
-                    && application.ModerationStatus == ModerationStatus.Pass)
+                if (application.ModerationStatus == ModerationStatus.Pass)
                 {
                     if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == false)
                     {
