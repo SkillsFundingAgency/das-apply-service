@@ -111,27 +111,31 @@ namespace SFA.DAS.ApplyService.Web.Services
             {
                 if (application?.ModerationStatus == ModerationStatus.Fail)
                 {
-                    if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == true)
+                    if (oversightReview.ModerationApproved.HasValue)
                     {
-                        moderationFailedAndApproved = true;
-                    }
-
-                    if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == false)
-                    {
-                        moderationFailedAndOverturned = true;
+                        if (oversightReview.ModerationApproved == false)
+                        {
+                            moderationFailedAndOverturned = true;
+                        }
+                        else
+                        {
+                            moderationFailedAndApproved = true;
+                        }
                     }
                 }
-
-                if (application.ModerationStatus == ModerationStatus.Pass)
+                else if (application.ModerationStatus == ModerationStatus.Pass)
                 {
-                    if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == false)
+                    if (oversightReview.ModerationApproved.HasValue)
                     {
-                        moderationPassOverturnedToFail = true;
-                    }
 
-                    if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == true)
-                    {
-                        moderationPassedAndApproved = true;
+                        if (oversightReview.ModerationApproved == false)
+                        {
+                            moderationPassOverturnedToFail = true;
+                        }
+                        else
+                        {
+                            moderationPassedAndApproved = true;
+                        }
                     }
                 }
 
