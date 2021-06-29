@@ -6,11 +6,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
     public class NewAssessorApplicationsRequest : IRequest<List<AssessorApplicationSummary>>
     {
-        public NewAssessorApplicationsRequest(string userId)
+        public NewAssessorApplicationsRequest(string userId, string sortOrder)
         {
             UserId = userId;
+            SortOrder = sortOrder;
         }
 
         public string UserId { get; }
+        public string SortOrder { get; }
     }
 }
