@@ -83,10 +83,12 @@ namespace SFA.DAS.ApplyService.Data
             _config = configurationService.GetConfig().GetAwaiter().GetResult();
         }
 
-        public async Task<List<AssessorApplicationSummary>> GetNewAssessorApplications(string userId)
+        public async Task<List<AssessorApplicationSummary>> GetNewAssessorApplications(string userId, string sortOrder, string sortColumn)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
+
                 return (await connection
                     .QueryAsync<AssessorApplicationSummary>(
                         $@"SELECT 
@@ -94,7 +96,7 @@ namespace SFA.DAS.ApplyService.Data
 	                       FROM Apply apply
 	                       INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                       WHERE {NewApplicationsWhereClause}
-                           ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC",
+                           ORDER BY {orderByClause}, org.Name ASC",
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
@@ -646,6 +648,18 @@ namespace SFA.DAS.ApplyService.Data
                 }
                 connection.Close();
             }
+        }
+
+        private static string GetSortColumnForNew(string requestedColumn)
+        {
+            return requestedColumn=="SubmittedDate" 
+                ? " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) " 
+                : " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
+        }
+
+        private static string GetOrderByDirection(string sortOrder)
+        {
+            return "ascending".Equals(sortOrder, StringComparison.InvariantCultureIgnoreCase) ? "ASC" : "DESC";
         }
     }
 }

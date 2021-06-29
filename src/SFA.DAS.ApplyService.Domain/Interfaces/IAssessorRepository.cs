@@ -7,7 +7,7 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
 {
     public interface IAssessorRepository
     {
-        Task<List<AssessorApplicationSummary>> GetNewAssessorApplications(string userId);
+        Task<List<AssessorApplicationSummary>> GetNewAssessorApplications(string userId, string sortOrder, string sortColumn);
         Task<int> GetNewAssessorApplicationsCount(string userId);
         Task<List<AssessorApplicationSummary>> GetInProgressAssessorApplications(string userId);
         Task<int> GetInProgressAssessorApplicationsCount(string userId);
