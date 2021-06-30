@@ -93,7 +93,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             var expectedResult = new List<AssessorApplicationSummary>();
             _mediator.Setup(x => x.Send(It.Is<InProgressAssessorApplicationsRequest>(y => y.UserId == _userId), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
-            var actualResult = await _controller.InProgressApplications(_userId);
+            var actualResult = await _controller.InProgressApplications(_userId,null,null);
 
             _mediator.Verify(x => x.Send(It.Is<InProgressAssessorApplicationsRequest>(y => y.UserId == _userId), It.IsAny<CancellationToken>()), Times.Once);
             Assert.AreSame(expectedResult, actualResult);
