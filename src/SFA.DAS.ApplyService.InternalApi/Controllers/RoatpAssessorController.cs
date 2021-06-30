@@ -60,9 +60,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("Assessor/Applications/{userId}/InProgress")]
-        public async Task<List<AssessorApplicationSummary>> InProgressApplications(string userId)
+        public async Task<List<AssessorApplicationSummary>> InProgressApplications(string userId, string sortOrder, string sortColumn)
         {
-            var applications = await _mediator.Send(new InProgressAssessorApplicationsRequest(userId));
+            var applications = await _mediator.Send(new InProgressAssessorApplicationsRequest(userId, sortOrder, sortColumn));
 
             return applications;
         }

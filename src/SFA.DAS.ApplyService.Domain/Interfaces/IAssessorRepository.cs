@@ -9,7 +9,7 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
     {
         Task<List<AssessorApplicationSummary>> GetNewAssessorApplications(string userId, string sortOrder, string sortColumn);
         Task<int> GetNewAssessorApplicationsCount(string userId);
-        Task<List<AssessorApplicationSummary>> GetInProgressAssessorApplications(string userId);
+        Task<List<AssessorApplicationSummary>> GetInProgressAssessorApplications(string userId, string sortOrder, string sortColumn);
         Task<int> GetInProgressAssessorApplicationsCount(string userId);
         Task<List<ModerationApplicationSummary>> GetApplicationsInModeration();
         Task<int> GetApplicationsInModerationCount();

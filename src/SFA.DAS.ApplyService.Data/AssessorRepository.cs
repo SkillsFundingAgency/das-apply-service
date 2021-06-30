@@ -192,10 +192,12 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<AssessorApplicationSummary>> GetInProgressAssessorApplications(string userId)
+        public async Task<List<AssessorApplicationSummary>> GetInProgressAssessorApplications(string userId, string sortOrder, string sortColumn)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                var orderByClause = $"{GetSortColumnForNew(sortColumn)} {GetOrderByDirection(sortOrder)}";
+
                 return (await connection
                     .QueryAsync<AssessorApplicationSummary>(
                         $@"SELECT 
@@ -203,7 +205,7 @@ namespace SFA.DAS.ApplyService.Data
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                        WHERE {InProgressApplicationsWhereClause}
-                            ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC",
+                            ORDER BY {orderByClause}, org.Name ASC",
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
@@ -659,7 +661,7 @@ namespace SFA.DAS.ApplyService.Data
 
         private static string GetOrderByDirection(string sortOrder)
         {
-            return "ascending".Equals(sortOrder, StringComparison.InvariantCultureIgnoreCase) ? "ASC" : "DESC";
+            return "ascending".Equals(sortOrder, StringComparison.InvariantCultureIgnoreCase) ? " ASC " : " DESC ";
         }
     }
 }
