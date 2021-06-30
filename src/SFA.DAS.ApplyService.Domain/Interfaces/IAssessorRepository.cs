@@ -11,11 +11,11 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         Task<int> GetNewAssessorApplicationsCount(string userId);
         Task<List<AssessorApplicationSummary>> GetInProgressAssessorApplications(string userId, string sortOrder, string sortColumn);
         Task<int> GetInProgressAssessorApplicationsCount(string userId);
-        Task<List<ModerationApplicationSummary>> GetApplicationsInModeration();
+        Task<List<ModerationApplicationSummary>> GetApplicationsInModeration(string sortOrder, string sortColumn);
         Task<int> GetApplicationsInModerationCount();
-        Task<List<ClarificationApplicationSummary>> GetApplicationsInClarification();
+        Task<List<ClarificationApplicationSummary>> GetApplicationsInClarification(string sortOrder, string sortColumn);
         Task<int> GetApplicationsInClarificationCount();
-        Task<List<ClosedApplicationSummary>> GetClosedApplications();
+        Task<List<ClosedApplicationSummary>> GetClosedApplications(string sortOrder, string sortColumn);
         Task<int> GetClosedApplicationsCount();
         Task AssignAssessor1(Guid applicationId, string userId, string userName);
         Task AssignAssessor2(Guid applicationId, string userId, string userName);
