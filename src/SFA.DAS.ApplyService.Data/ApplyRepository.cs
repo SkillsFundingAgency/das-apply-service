@@ -377,9 +377,10 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
                 return (await connection
                     .QueryAsync<RoatpFinancialSummaryItem>(
-                        @"SELECT 
+                        $@"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
@@ -413,7 +414,7 @@ namespace SFA.DAS.ApplyService.Data
                           AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
                           AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
                           AND apply.FinancialReviewStatus IN (@financialStatusClarificationSent)
-                        ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  org.Name ASC",
+                       ORDER BY {orderByClause}, org.Name ASC",
                         new
                         {
                             financialHealthSequence = 2,
@@ -428,9 +429,10 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
                 return (await connection
                    .QueryAsync<RoatpFinancialSummaryItem>(
-                       @"SELECT 
+                       $@"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
@@ -476,7 +478,7 @@ namespace SFA.DAS.ApplyService.Data
                                apply.ApplicationStatus IN (@applicationStatusWithdrawn, @applicationStatusRemoved)
                                OR apply.FinancialReviewStatus IN (@financialStatusApproved, @financialStatusDeclined, @financialStatusExempt)
                               )
-                        ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  org.Name ASC",
+                        ORDER BY {orderByClause}, org.Name ASC",
                        new
                        {
                            financialHealthSequence = 2,
@@ -747,16 +749,20 @@ namespace SFA.DAS.ApplyService.Data
             {
                 case "SubmittedDate":
                     return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
-                // case "ModeratorName":
-                //     return " JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') ";
-                // case "OutcomeMadeBy":
-                //     var orderDetails = $@" CASE
-                //         WHEN apply.ApplicationStatus = '{ApplicationStatus.Withdrawn}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
-                //         WHEN apply.ApplicationStatus = '{ApplicationStatus.Removed}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-                //         ELSE JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName')
-                //     END ";
-                //
-                //     return orderDetails;
+                case "OutcomeMadeBy":
+                    return " JSON_VALUE(apply.FinancialGrade, '$.ClarificationRequestedBy') ";
+                case "OutcomeMadeByClosed":
+                    return  $@" CASE 
+                                WHEN apply.ApplicationStatus = '{ApplicationStatus.Withdrawn}'THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
+                                WHEN apply.ApplicationStatus = '{ApplicationStatus.Removed}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
+                                ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedBy')
+                            END ";
+                case "OutcomeMadeDate":
+                    return $@" CASE 
+                                WHEN apply.ApplicationStatus = '{ApplicationStatus.Withdrawn}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
+                                WHEN apply.ApplicationStatus = '{ApplicationStatus.Removed}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
+                                ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime')
+                            END";
                 default:
                     return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
             }
