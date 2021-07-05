@@ -18,6 +18,7 @@ namespace SFA.DAS.ApplyService.Data
     {
         private readonly IApplyConfig _config;
         private readonly ILogger<AssessorRepository> _logger;
+        private const string ModeratorNameField = "ModeratorName";
 
         private const string ApplicationSummaryFields = @"ApplicationId,
                             org.Name AS OrganisationName,
@@ -241,6 +242,11 @@ namespace SFA.DAS.ApplyService.Data
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
+                if (sortColumn == ModeratorNameField)
+                {
+                    orderByClause = $"{GetSortColumnForModeratorName(sortColumn, sortOrder)}";
+
+                }
                 return (await connection
                     .QueryAsync<ModerationApplicationSummary>(
                         $@"SELECT 
@@ -664,7 +670,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 case "SubmittedDate":
                     return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
-                case "ModeratorName":
+                case ModeratorNameField:
                     return " JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') ";
                 case "OutcomeMadeBy":
                     var orderDetails = $@" CASE
@@ -683,5 +689,17 @@ namespace SFA.DAS.ApplyService.Data
         {
             return "ascending".Equals(sortOrder, StringComparison.InvariantCultureIgnoreCase) ? " ASC " : " DESC ";
         }
+
+        private static string GetSortColumnForModeratorName(string sortColumn, string sortOrder)
+        {
+            var sorting =  sortOrder.ToLower() == "ascending" ? " ASC " : " DESC ";
+
+            return sortColumn== ModeratorNameField
+                ? $@" CASE WHEN NULLIF(JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName'),'') IS NULL THEN 1 ELSE 0 END,
+                            JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') {sorting}" 
+                : "";
+        }
+
+
     }
 }
