@@ -244,7 +244,7 @@ namespace SFA.DAS.ApplyService.Data
 
                 if (sortColumn == ModeratorNameField)
                 {
-                    orderByClause = $"{GetSortColumnForModeratorName(sortColumn, sortOrder)}";
+                    orderByClause = $"{GetSortColumnAndOrderForModeratorName(sortColumn, sortOrder)}";
 
                 }
                 return (await connection
@@ -690,7 +690,7 @@ namespace SFA.DAS.ApplyService.Data
             return "ascending".Equals(sortOrder, StringComparison.InvariantCultureIgnoreCase) ? " ASC " : " DESC ";
         }
 
-        private static string GetSortColumnForModeratorName(string sortColumn, string sortOrder)
+        private static string GetSortColumnAndOrderForModeratorName(string sortColumn, string sortOrder)
         {
             var sorting =  sortOrder.ToLower() == "ascending" ? " ASC " : " DESC ";
 
