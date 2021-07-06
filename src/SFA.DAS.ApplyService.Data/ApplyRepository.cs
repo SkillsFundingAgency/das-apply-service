@@ -247,7 +247,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
+                var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirectionFinancial(sortOrder)}";
 
                 return (await connection
                     .QueryAsync<RoatpFinancialSummaryItem>(
@@ -377,7 +377,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
+                var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirectionFinancial(sortOrder)}";
                 return (await connection
                     .QueryAsync<RoatpFinancialSummaryItem>(
                         $@"SELECT 
@@ -429,7 +429,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
+                var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirectionFinancial(sortOrder)}";
                 return (await connection
                    .QueryAsync<RoatpFinancialSummaryItem>(
                        $@"SELECT 
@@ -768,9 +768,9 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        private static string GetOrderByDirection(string sortOrder)
+        private static string GetOrderByDirectionFinancial(string sortOrder)
         {
-            return "ascending".Equals(sortOrder, StringComparison.InvariantCultureIgnoreCase) ? " ASC " : " DESC ";
+            return "descending".Equals(sortOrder, StringComparison.InvariantCultureIgnoreCase) ? " DESC " : " ASC ";
         }
     }
 }
