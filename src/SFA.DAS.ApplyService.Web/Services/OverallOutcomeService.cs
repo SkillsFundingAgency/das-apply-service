@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
@@ -32,7 +31,7 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             var sequences = await _apiClient.GetClarificationSequences(model.ApplicationId);
             var passFailDetails = await _apiClient.GetAllClarificationPageReviewOutcomes(model.ApplicationId, userId);
-            var moderationFailedDetails = passFailDetails.Where(x => x.Status == ModerationStatus.Fail 
+            var moderationFailedDetails = passFailDetails?.Where(x => x.Status == ModerationStatus.Fail 
                                                                      || (x.Status==null && x.ModeratorReviewStatus==ModerationStatus.Fail)).ToList();
 
             if (moderationFailedDetails.Any())
@@ -85,7 +84,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                     ApplicationRouteId = applicationData.ProviderRoute.ToString(),
                     ApplicationReference = applicationData.ReferenceNumber,
                     SubmittedDate = applicationData?.ApplicationSubmittedOn,
-                    ExternalComments = application.ExternalComments ?? application.ApplyData.GatewayReviewDetails?.ExternalComments,
+                    GatewayExternalComments = application.ExternalComments ?? application.ApplyData.GatewayReviewDetails?.ExternalComments,
                     EmailAddress = emailAddress,
                     FinancialReviewStatus = application?.FinancialReviewStatus,
                     FinancialGrade = application?.FinancialGrade?.SelectedGrade,
@@ -97,38 +96,51 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return model;
             }
 
-        public async Task<ApplicationSummaryWithModeratorDetailsViewModel> BuildApplicationSummaryViewModelWithModerationDetails(Apply application, string emailAddress)
+        public async Task<ApplicationSummaryWithModeratorDetailsViewModel> BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(Apply application, string emailAddress)
         {
             var applicationData = application.ApplyData.ApplyDetails;
 
             var oversightReview = await _apiClient.GetOversightReview(application.ApplicationId);
 
-            var applicationUnsuccessfulModerationFail = false;
-            var applicationUnsuccessfulModerationPassOverturned = false;
-            var applicationUnsuccessfulModerationPassAndApproved = false;
+            var moderationFailedAndApproved = false;
+            var moderationPassOverturnedToFail = false;
+            var moderationPassedAndApproved = false;
+            var gatewayPassOverturnedToFail = false;
+            var moderationFailedAndOverturned = false;
             if (application?.GatewayReviewStatus == GatewayAnswerStatus.Pass)
             {
-                if (application?.ModerationStatus != null
-                    && application?.ModerationStatus == ModerationStatus.Fail
-                    && oversightReview.ModerationApproved.HasValue
-                    && oversightReview.ModerationApproved == true)
+                if (application?.ModerationStatus == ModerationStatus.Fail)
                 {
-                    applicationUnsuccessfulModerationFail = true;
-                }
-
-                if (application?.ModerationStatus != null
-                    && application.ModerationStatus == ModerationStatus.Pass)
-                {
-                    if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == false)
+                    if (oversightReview.ModerationApproved.HasValue)
                     {
-                        applicationUnsuccessfulModerationPassOverturned = true;
-                    }
-
-                    if (oversightReview.ModerationApproved.HasValue && oversightReview.ModerationApproved == true)
-                    {
-                        applicationUnsuccessfulModerationPassAndApproved = true;
+                        if (oversightReview.ModerationApproved == false)
+                        {
+                            moderationFailedAndOverturned = true;
+                        }
+                        else
+                        {
+                            moderationFailedAndApproved = true;
+                        }
                     }
                 }
+                else if (application.ModerationStatus == ModerationStatus.Pass)
+                {
+                    if (oversightReview.ModerationApproved.HasValue)
+                    {
+
+                        if (oversightReview.ModerationApproved == false)
+                        {
+                            moderationPassOverturnedToFail = true;
+                        }
+                        else
+                        {
+                            moderationPassedAndApproved = true;
+                        }
+                    }
+                }
+
+                if (oversightReview?.GatewayApproved == false)
+                    gatewayPassOverturnedToFail = true;
             }
 
             var model = new ApplicationSummaryWithModeratorDetailsViewModel
@@ -140,23 +152,22 @@ namespace SFA.DAS.ApplyService.Web.Services
                 ApplicationRouteId = applicationData.ProviderRoute.ToString(),
                 ApplicationReference = applicationData.ReferenceNumber,
                 SubmittedDate = applicationData?.ApplicationSubmittedOn,
-                ExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
+                GatewayExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
                 EmailAddress = emailAddress,
                 FinancialReviewStatus = application?.FinancialReviewStatus,
                 FinancialGrade = application?.FinancialGrade?.SelectedGrade,
                 FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
                 GatewayReviewStatus = application?.GatewayReviewStatus,
                 ModerationStatus = application?.ModerationStatus,
-                ModerationPassOverturnedToFail = false,
-                ModerationPassAndApproved = applicationUnsuccessfulModerationPassAndApproved
+                ModerationPassOverturnedToFail = moderationPassOverturnedToFail,
+                ModerationPassApproved = moderationPassedAndApproved,
+                ModerationFailOverturnedToPass = moderationFailedAndOverturned,
+                ModerationFailApproved = moderationFailedAndApproved,
+                GatewayPassOverturnedToFail = gatewayPassOverturnedToFail,
+                OversightExternalComments = oversightReview?.ExternalComments
             };
 
-            if (applicationUnsuccessfulModerationPassOverturned)
-            {
-                model.ModerationPassOverturnedToFail = true;
-                model.OversightExternalComments = oversightReview.ExternalComments;
-            }
-            if (applicationUnsuccessfulModerationFail)
+            if (moderationFailedAndApproved)
             {
                 await AugmentModelWithModerationFailDetails(model,
                    emailAddress);

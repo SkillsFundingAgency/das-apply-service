@@ -11,7 +11,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public List<ClarificationPage> PagesWithClarifications { get; set; }
 
         public bool ModerationPassOverturnedToFail { get; set; }
-        public bool ModerationPassAndApproved { get; set; }
+        public bool ModerationPassApproved { get; set; }
+        public bool ModerationFailOverturnedToPass { get; set; }
+        public bool ModerationFailApproved { get; set; }
         public string OversightExternalComments { get; set; }
+
+        public bool GatewayPassOverturnedToFail { get; set; }
     }
 }
