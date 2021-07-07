@@ -427,6 +427,9 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications(string sortOrder, string sortColumn)
         {
+            if (sortColumn == null)
+                sortColumn = "OutcomeMadeDate";
+
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirectionFinancial(sortOrder)}";
@@ -770,7 +773,7 @@ namespace SFA.DAS.ApplyService.Data
 
         private static string GetOrderByDirectionFinancial(string sortOrder)
         {
-            return "descending".Equals(sortOrder, StringComparison.InvariantCultureIgnoreCase) ? " DESC " : " ASC ";
+            return "ascending".Equals(sortOrder, StringComparison.InvariantCultureIgnoreCase) ? " ASC " : " DESC ";
         }
     }
 }
