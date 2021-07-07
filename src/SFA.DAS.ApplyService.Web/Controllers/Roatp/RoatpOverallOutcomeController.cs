@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
@@ -18,7 +18,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IApplicationApiClient _applicationApiClient;
         private readonly IOverallOutcomeService _overallOutcomeService;
         private readonly ILogger<RoatpOverallOutcomeController> _logger;
-
+        private const string SupportingRouteId = "3";
         public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, 
             IOverallOutcomeService overallOutcomeService, IApplicationApiClient applicationApiClient,
             ILogger<RoatpOverallOutcomeController> logger)
@@ -52,6 +52,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.InProgress:
                     return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
                 case ApplicationStatus.Successful:
+               
+                    if (model.ApplicationRouteId==SupportingRouteId)
+                    {
+                        return View("~/Views/Roatp/ApplicationApprovedSupporting.cshtml", model);
+                    }
+
                     var oversightReview = await _apiClient.GetOversightReview(applicationId);
                     switch (oversightReview?.Status)
                     {
@@ -68,7 +74,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
 
                     var unsuccessfulModel =
-                        await _overallOutcomeService.BuildApplicationSummaryViewModelWithModerationDetails(application,
+                        await _overallOutcomeService.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(application,
                             User.GetEmail());
                     return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", unsuccessfulModel);
 

@@ -123,7 +123,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 Status = OversightReviewStatus.SuccessfulAlreadyActive
             };
-        
+
+
+            var model = new ApplicationSummaryViewModel();
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
             _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
         
@@ -134,8 +137,46 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.ViewName.Should().Contain("ApplicationApprovedAlreadyActive.cshtml");
         }
 
+
+
+        [TestCase(100000,"100,000")]
+        [TestCase(500000, "500,000")]
+        public async Task Application_shows_supporting_success_page_with_formatted_amount_if_application_approved_and_route_is_supporting(int subcontractorLimit, string subcontractLimitFormatted)
+        {
+            var supportingRouteId = 3;
+            var submittedApp = new Apply
+            {
+                ApplicationStatus = ApplicationStatus.Successful,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails
+                    {
+                        ProviderRoute = supportingRouteId
+                    }
+                }
+            };
+
+            var model = new ApplicationSummaryViewModel
+            {
+                SubcontractingLimit = subcontractorLimit,
+                ApplicationRouteId = supportingRouteId.ToString()
+            };
+
+            _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+
+            var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationApprovedSupporting.cshtml");
+            var modelReturned = viewResult.Model as ApplicationSummaryViewModel;
+            modelReturned.SubcontractingLimit.Should().Be(subcontractorLimit);
+            modelReturned.SubcontractingLimitFormatted.Should().Be(subcontractLimitFormatted);
+        }
+
         [Test]
-        public async Task Application_shows_active_with_success_fintess_for_funging_page_if_application_approved_and_oversight_review_status_already_active()
+        public async Task Application_shows_active_with_success_fitness_for_funding_page_if_application_approved_and_oversight_review_status_already_active()
         {
             var submittedApp = new Apply
             {
@@ -146,6 +187,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 Status = OversightReviewStatus.SuccessfulFitnessForFunding
             };
+
+            var model = new ApplicationSummaryViewModel();
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
 
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
             _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
@@ -166,7 +210,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
         
             var oversightReview = new GetOversightReviewResponse();
-        
+
+            var model = new ApplicationSummaryViewModel();
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
             _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
         
