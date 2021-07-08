@@ -49,6 +49,7 @@ namespace SFA.DAS.ApplyService.InternalApi
     using SFA.DAS.ApplyService.InternalApi.Services;
     using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
     using SFA.DAS.ApplyService.InternalApi.Services.Files;
+    using SFA.DAS.ApplyService.InternalApi.StartupExtensions;
     using SFA.DAS.Http;
     using SFA.DAS.Http.TokenGenerators;
     using SFA.DAS.Notifications.Api.Client;
@@ -110,7 +111,8 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddDistributedMemoryCache();
 
-            services.AddHealthChecks();
+            services.AddCache(_applyConfig, _hostingEnvironment);
+            services.AddDataProtection(_applyConfig, _hostingEnvironment);
 
             services.AddSwaggerGen(c =>
             {
