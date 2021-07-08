@@ -109,10 +109,10 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.Configure<List<CriminalComplianceGatewayConfig>>(_configuration.GetSection("CriminalComplianceGatewayConfig"));
             services.Configure<List<CriminalComplianceGatewayOverrideConfig>>(_configuration.GetSection("SoleTraderCriminalComplianceGatewayOverrides"));
 
-            services.AddDistributedMemoryCache();
-
             services.AddCache(_applyConfig, _hostingEnvironment);
             services.AddDataProtection(_applyConfig, _hostingEnvironment);
+
+            services.AddHealthChecks();
 
             services.AddSwaggerGen(c =>
             {
