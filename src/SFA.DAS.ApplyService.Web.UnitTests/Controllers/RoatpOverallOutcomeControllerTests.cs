@@ -177,7 +177,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
         [TestCase(100000, "100,000")]
         [TestCase(500000, "500,000")]
-        public async Task Application_shows_supporting_success_page_with_formatted_amount_if_application_approved_and_successful_fintess_for_funding_and_route_is_supporting(int subcontractorLimit, string subcontractLimitFormatted)
+        public async Task Application_shows_supporting_success_page_with_formatted_amount_if_application_approved_and_successful_fitness_for_funding_and_route_is_supporting(int subcontractorLimit, string subcontractLimitFormatted)
         {
             var supportingRouteId = 3;
             var submittedApp = new Apply
@@ -211,6 +211,47 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationApprovedSupportingFitnessForFunding.cshtml");
+            var modelReturned = viewResult.Model as ApplicationSummaryViewModel;
+            modelReturned.SubcontractingLimit.Should().Be(subcontractorLimit);
+            modelReturned.SubcontractingLimitFormatted.Should().Be(subcontractLimitFormatted);
+        }
+
+        [TestCase(100000, "100,000")]
+        [TestCase(500000, "500,000")]
+        public async Task Application_shows_supporting_success_page_with_formatted_amount_if_application_approved_and_successful_already_active_and_route_is_supporting(int subcontractorLimit, string subcontractLimitFormatted)
+        {
+            var supportingRouteId = 3;
+            var submittedApp = new Apply
+            {
+                ApplicationStatus = ApplicationStatus.Successful,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails
+                    {
+                        ProviderRoute = supportingRouteId
+                    }
+                }
+            };
+
+            var model = new ApplicationSummaryViewModel
+            {
+                SubcontractingLimit = subcontractorLimit,
+                ApplicationRouteId = supportingRouteId.ToString()
+            };
+
+            _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+            var oversightReview = new GetOversightReviewResponse
+            {
+                Status = OversightReviewStatus.SuccessfulAlreadyActive
+            };
+            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
+
+            var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationApprovedSupportingAlreadyActive.cshtml");
             var modelReturned = viewResult.Model as ApplicationSummaryViewModel;
             modelReturned.SubcontractingLimit.Should().Be(subcontractorLimit);
             modelReturned.SubcontractingLimitFormatted.Should().Be(subcontractLimitFormatted);
