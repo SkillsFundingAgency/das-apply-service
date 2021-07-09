@@ -61,6 +61,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                             case OversightReviewStatus.SuccessfulFitnessForFunding:
                                 return View("~/Views/Roatp/ApplicationApprovedSupportingFitnessForFunding.cshtml",
                                     model);
+                            case OversightReviewStatus.SuccessfulAlreadyActive:
+                                return View("~/Views/Roatp/ApplicationApprovedSupportingAlreadyActive.cshtml",
+                                    model);
                             default:
                                 return View("~/Views/Roatp/ApplicationApprovedSupporting.cshtml", model);
                         }
