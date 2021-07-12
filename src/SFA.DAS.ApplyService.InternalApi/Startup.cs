@@ -49,6 +49,7 @@ namespace SFA.DAS.ApplyService.InternalApi
     using SFA.DAS.ApplyService.InternalApi.Services;
     using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
     using SFA.DAS.ApplyService.InternalApi.Services.Files;
+    using SFA.DAS.ApplyService.InternalApi.StartupExtensions;
     using SFA.DAS.Http;
     using SFA.DAS.Http.TokenGenerators;
     using SFA.DAS.Notifications.Api.Client;
@@ -108,7 +109,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.Configure<List<CriminalComplianceGatewayConfig>>(_configuration.GetSection("CriminalComplianceGatewayConfig"));
             services.Configure<List<CriminalComplianceGatewayOverrideConfig>>(_configuration.GetSection("SoleTraderCriminalComplianceGatewayOverrides"));
 
-            services.AddDistributedMemoryCache();
+            services.AddCache(_applyConfig, _hostingEnvironment);
+            services.AddDataProtection(_applyConfig, _hostingEnvironment);
 
             services.AddHealthChecks();
 
