@@ -5,6 +5,8 @@ namespace SFA.DAS.ApplyService.Configuration
         public InternalApiConfig InternalApi { get; set; }
         public string SignInPage { get; set; }
         public string SessionRedisConnectionString { get; set; }
+        public string SessionCachingDatabase { get; set; }
+        public string DataProtectionKeysDatabase { get; set; }
         public DfeSignInConfig DfeSignIn { get; set; }
         public string SqlConnectionString { get; set; }
 
