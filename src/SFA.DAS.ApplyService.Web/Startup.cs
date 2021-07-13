@@ -39,6 +39,7 @@ namespace SFA.DAS.ApplyService.Web
     using SFA.DAS.Http;
     using SFA.DAS.Http.TokenGenerators;
     using SFA.DAS.Notifications.Api.Client;
+    using SFA.DAS.ApplyService.Web.StartupExtensions;
 
     public class Startup
     {
@@ -104,36 +105,8 @@ namespace SFA.DAS.ApplyService.Web
             services.Configure<List<CustomValidationConfiguration>>(_configuration.GetSection("CustomValidations"));
             services.Configure<List<NotRequiredOverrideConfiguration>>(_configuration.GetSection("NotRequiredOverrides"));
 
-            if (_env.IsDevelopment())
-            {
-                services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
-                    .SetApplicationName("Apply");
-
-                services.AddDistributedMemoryCache();
-            }
-            else
-            {
-                try
-                {
-                    var redis = ConnectionMultiplexer.Connect(
-                        $"{_configService.SessionRedisConnectionString},DefaultDatabase=1");
-
-                    services.AddDataProtection()
-                        .PersistKeysToStackExchangeRedis(redis, "Apply-DataProtectionKeys")
-                        .SetApplicationName("Apply");
-                    services.AddDistributedRedisCache(options =>
-                    {
-                        options.Configuration = $"{_configService.SessionRedisConnectionString},DefaultDatabase=0";
-                    });
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e,
-                        $"Error setting redis for session.  Conn: {_configService.SessionRedisConnectionString}");
-                    throw;
-                }
-            }
+            services.AddCache(_configService, _env);
+            services.AddDataProtection(_configService, _env);
 
             services.AddSession(opt =>
             {
