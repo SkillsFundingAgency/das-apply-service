@@ -2,8 +2,6 @@
 @using SFA.DAS.ApplyService.Domain.Entities
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + (@Model.Title ?? "Page not active");
-
-    var hasSectionTitle = !string.IsNullOrEmpty(Model.SectionTitle);
 }
 
 @section Navigation
@@ -22,7 +20,7 @@
             }
             else
             {
-                @if (!ViewData.ModelState.IsValid)
+                if (!ViewData.ModelState.IsValid)
                 {
 
                     <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
@@ -42,24 +40,18 @@
                     </div>
                 }
 
-                @if (Model.Questions.Count() != 1)
+                if (Model.Questions.Count() != 1)
                 {
-                    var hasModelTitle = !string.IsNullOrEmpty(Model.Title);
-                    var hasBodyText = !string.IsNullOrEmpty(Model.BodyText);
+                    var hasSectionTitle = !string.IsNullOrWhiteSpace(Model.SectionTitle);
+                    var hasModelTitle = !string.IsNullOrWhiteSpace(Model.Title);
+                    var hasBodyText = !string.IsNullOrWhiteSpace(Model.BodyText);
 
                     if (hasSectionTitle)
                     {
                         <span class="govuk-caption-xl">@Model.SectionTitle</span>
                     }
 
-                    if ((hasModelTitle || hasBodyText) && !string.IsNullOrEmpty(Model.PageContext))
-                    {
-                        <span class="govuk-caption-xl">
-                            @Html.Raw(Model.PageContext)
-                        </span>
-                    }
-
-                    @if (Model.DisplayType == PageDisplayType.PagesWithSections || Model.DisplayType == PageDisplayType.OtherPagesInPagesWithSections)
+                    if (Model.DisplayType == PageDisplayType.PagesWithSections || Model.DisplayType == PageDisplayType.OtherPagesInPagesWithSections)
                     {
                         <h1 class="govuk-heading-xl">
                             @Html.Raw(Model.BodyText)
@@ -74,14 +66,14 @@
                             </h1>
                         }
 
-                        @if (hasBodyText)
+                        if (hasBodyText)
                         {
                             @Html.Raw(Model.BodyText)
                         }
                     }
                 }
 
-                @if (Model.HasFeedback)
+                if (Model.HasFeedback)
                 {
                     <div class="govuk-inset-text">
                         <h2 class="govuk-heading-l">Feedback</h2>
@@ -111,17 +103,10 @@
                                 || QuestionType.ComplexCheckboxList.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase))
                             {
                                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                                    @if (Model.PageContext != null)
-                                    {
-                                        <span class="govuk-caption-xl">
-                                            @Html.Raw(Model.PageContext)
-                                        </span>
-                                    }
-                                    @if (hasSectionTitle)
+                                    @if (!string.IsNullOrWhiteSpace(Model.SectionTitle))
                                     {
                                         <span class="govuk-caption-xl">@Model.SectionTitle</span>
                                     }
-
 
                                     @if (Model.DisplayType == PageDisplayType.PagesWithSections || Model.DisplayType == PageDisplayType.OtherPagesInPagesWithSections)
                                     {
@@ -138,14 +123,14 @@
                                     }
                                 </legend>
 
-                                if (!string.IsNullOrWhiteSpace(@Model.BodyText) && Model.DisplayType != PageDisplayType.PagesWithSections
+                                if (!string.IsNullOrWhiteSpace(Model.BodyText) && Model.DisplayType != PageDisplayType.PagesWithSections
                                     && Model.DisplayType != PageDisplayType.OtherPagesInPagesWithSections)
                                 {
                                     @Html.Raw(Model.BodyText)
                                 }
                                 else
                                 {
-                                    @if (Model.DisplayType == PageDisplayType.PagesWithSections || Model.DisplayType == PageDisplayType.OtherPagesInPagesWithSections)
+                                    if (Model.DisplayType == PageDisplayType.PagesWithSections || Model.DisplayType == PageDisplayType.OtherPagesInPagesWithSections)
                                     {
                                         <label class="govuk-label">
                                             @Html.Raw(question.Label)
@@ -155,21 +140,14 @@
                             }
                             else
                             {
-                                if (!string.IsNullOrWhiteSpace(@Model.BodyText))
+                                if (!string.IsNullOrWhiteSpace(Model.BodyText))
                                 {
                                     <div>
                                         @Html.Raw(Model.BodyText)
                                     </div>
                                 }
 
-                                @if (Model.PageContext != null)
-                                {
-                                    <span class="govuk-caption-xl">
-                                        @Html.Raw(Model.PageContext)
-                                    </span>
-                                }
-
-                                @if (hasSectionTitle)
+                                if (!string.IsNullOrWhiteSpace(Model.SectionTitle))
                                 {
                                     <span class="govuk-caption-xl">@Model.SectionTitle</span>
                                 }
@@ -181,12 +159,12 @@
                                 </h2>
                             }
 
-                            @if (question.QuestionBodyText != null)
+                            @if (!string.IsNullOrWhiteSpace(question.QuestionBodyText))
                             {
                                 @Html.Raw(question.QuestionBodyText)
                             }
 
-                            @if (question.Hint != null)
+                            @if (!string.IsNullOrWhiteSpace(question.Hint))
                             {
                                 <span class="govuk-hint">
                                     @Html.Raw(question.Hint)
@@ -197,10 +175,6 @@
                               && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
                             {
                                 question.ErrorMessages = Model.ErrorMessages;
-                            }
-
-                            @{
-                                var questionType = question.Type.Replace("DataFed_", "");
                             }
 
                             <partial name="@($"~/Views/QuestionPartials/_{question.Type}.cshtml")" for="@question" />
@@ -228,12 +202,12 @@
                             </label>
                         }
 
-                        @if (question.QuestionBodyText != null)
+                        @if (!string.IsNullOrWhiteSpace(question.QuestionBodyText))
                         {
                             @Html.Raw(question.QuestionBodyText)
                         }
 
-                        @if (question.Hint != "")
+                        @if (!string.IsNullOrWhiteSpace(question.Hint))
                         {
                             <span class="govuk-hint">
                                 @Html.Raw(question.Hint)
@@ -261,7 +235,7 @@
                 }
             }
 
-            @if (Model.InfoText != null)
+            @if (!string.IsNullOrWhiteSpace(Model.InfoText))
             {
                 @Html.Raw(Model.InfoText)
             }
@@ -279,15 +253,15 @@
             @foreach (var linksConfiguration in Model.LinksConfiguration)
             {
                 var pageId = Model.PageId;
-                @foreach (var link in linksConfiguration.Links)
+                foreach (var link in linksConfiguration.Links)
                 {
 
-                    if (!string.IsNullOrEmpty(link.LinkPageId))
+                    if (!string.IsNullOrWhiteSpace(link.LinkPageId))
                     {
                         pageId = link.LinkPageId;
                     }
 
-                    if (!String.IsNullOrWhiteSpace(link.CssClasses))
+                    if (!string.IsNullOrWhiteSpace(link.CssClasses))
                     {
                         if (link.Action == "TaskList")
                         {

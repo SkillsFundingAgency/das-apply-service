@@ -41,12 +41,12 @@
                     </div>
                 }
 
-                if (!string.IsNullOrEmpty(Model.SectionTitle))
+                if (!string.IsNullOrWhiteSpace(Model.SectionTitle))
                 {
                     <span class="govuk-caption-xl">@Model.SectionTitle</span>
                 }
 
-                if (!string.IsNullOrEmpty(Model.Title))
+                if (!string.IsNullOrWhiteSpace(Model.Title))
                 {
                     <h1 class="govuk-heading-xl">
                         @Html.Raw(Model.Title)
@@ -64,12 +64,12 @@
                     <fieldset class="govuk-fieldset">
                         @if (question != null)
                         {
-                            @if (!string.IsNullOrEmpty(question.QuestionBodyText))
+                            @if (!string.IsNullOrWhiteSpace(question.QuestionBodyText))
                             {
                                 @Html.Raw(question.QuestionBodyText)
                             }
 
-                            @if (!string.IsNullOrEmpty(question.Hint))
+                            @if (!string.IsNullOrWhiteSpace(question.Hint))
                             {
                                 <span class="govuk-hint">
                                     @Html.Raw(question.Hint)
@@ -81,7 +81,7 @@
                     </fieldset>
                 </div>
 
-                @if (!string.IsNullOrEmpty(Model.InfoText))
+                @if (!string.IsNullOrWhiteSpace(Model.InfoText))
                 {
                     @Html.Raw(Model.InfoText)
                 }
@@ -101,7 +101,7 @@
                     var pageId = Model.PageId;
                     @foreach (var link in linksConfiguration.Links)
                     {
-                        if (!string.IsNullOrEmpty(link.LinkPageId))
+                        if (!string.IsNullOrWhiteSpace(link.LinkPageId))
                         {
                             pageId = link.LinkPageId;
                         }
