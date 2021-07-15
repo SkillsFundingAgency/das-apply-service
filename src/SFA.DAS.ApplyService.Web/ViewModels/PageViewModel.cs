@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
 
         public PageViewModel() { }
 
-        public PageViewModel(Guid applicationId, int sequenceId, int sectionId, string pageId, Page page, string pageContext, 
+        public PageViewModel(Guid applicationId, int sequenceId, int sectionId, string pageId, Page page, 
                              string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages, 
                              List<QnaPageOverrideConfiguration> pageOverrideConfiguration, List<QnaLinksConfiguration> linksConfiguration,
                              string sectionTitle, List<TabularData> peopleInControlDetails)
@@ -29,7 +29,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
             SequenceId = sequenceId;
             SectionId = sectionId;
             PageId = pageId;
-            PageContext = pageContext;
             RedirectAction = redirectAction;
             ReturnUrl = returnUrl;
             ErrorMessages = errorMessages;
@@ -52,7 +51,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         public string LinkTitle { get; set; }
 
         public string PageId { get; set; }
-        public string PageContext { get; set; }
+
         public string Title { get; set; }
 
         public string DisplayType { get; set; }
