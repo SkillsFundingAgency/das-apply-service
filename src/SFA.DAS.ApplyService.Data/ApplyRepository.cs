@@ -434,7 +434,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var orderByClause = $"{GetSortColumnForNew(sortColumn ?? "OutcomeMadeDate")} { GetOrderByDirectionFinancial(sortOrder)}";
+                var orderByClause = $"{GetSortColumnForNew(sortColumn ?? "SubmittedDate")} { GetOrderByDirectionFinancial(sortOrder)}";
 
                 return (await connection
                    .QueryAsync<RoatpFinancialSummaryItem>(
