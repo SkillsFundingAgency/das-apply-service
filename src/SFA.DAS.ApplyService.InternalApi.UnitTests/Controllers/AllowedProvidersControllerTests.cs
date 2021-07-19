@@ -92,5 +92,26 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             _mediator.Verify(x => x.Send(It.Is<AddAllowedProviderRequest>(y => y.Ukprn == entry.Ukprn && y.StartDateTime == entry.StartDateTime && y.EndDateTime == entry.EndDateTime), It.IsAny<CancellationToken>()), Times.Once);
             Assert.AreEqual(expectedResult, actualResult);
         }
+
+        [Test]
+        public async Task GetAllowedProviderDetails_returns_expected_result()
+        {
+            const int ukprn = 12345678;
+
+            var expectedResult = new AllowedProvider
+            {
+                Ukprn = ukprn,
+                StartDateTime = DateTime.MinValue,
+                EndDateTime = DateTime.MaxValue,
+                AddedDateTime = DateTime.Today
+            };
+
+            _mediator.Setup(x => x.Send(It.Is<GetAllowedProviderDetailsRequest>(r => r.Ukprn == ukprn), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
+
+            var actualResult = await _controller.GetAllowedProviderDetails(expectedResult.Ukprn);
+
+            _mediator.Verify(x => x.Send(It.Is<GetAllowedProviderDetailsRequest>(y => y.Ukprn == ukprn), It.IsAny<CancellationToken>()), Times.Once);
+            Assert.AreSame(expectedResult, actualResult);
+        }
     }
 }

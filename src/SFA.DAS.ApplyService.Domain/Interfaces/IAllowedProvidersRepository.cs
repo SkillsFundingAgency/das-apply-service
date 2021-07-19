@@ -12,5 +12,7 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         Task<List<AllowedProvider>> GetAllowedProvidersList(string sortColumn, string sortOrder);
 
         Task<bool> AddToAllowedProvidersList(int ukprn, DateTime startDateTime, DateTime endDateTime);
+
+        Task<AllowedProvider> GetAllowedProviderDetails(int ukprn);
     }
 }

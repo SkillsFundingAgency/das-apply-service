@@ -35,5 +35,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new AddAllowedProviderRequest(entry.Ukprn, entry.StartDateTime, entry.EndDateTime));
         }
+
+        [HttpGet("/AllowedProviders/{ukprn}")]
+        public async Task<AllowedProvider> GetAllowedProviderDetails(int ukprn)
+        {
+            return await _mediator.Send(new GetAllowedProviderDetailsRequest(ukprn));
+        }
     }
 }

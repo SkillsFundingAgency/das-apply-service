@@ -49,6 +49,16 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<AllowedProvider> GetAllowedProviderDetails(int ukprn)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return await connection.QuerySingleAsync<AllowedProvider>($@"SELECT * FROM AllowedProviders
+                                                                             WHERE UKPRN = @ukprn",
+                                                                  new { ukprn });
+            }
+        }
+
         public async Task<bool> AddToAllowedProvidersList(int ukprn, DateTime startDateTime, DateTime endDateTime)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
