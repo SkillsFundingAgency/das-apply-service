@@ -31,7 +31,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("/AllowedProviders")]
-        public async Task<bool> AddAllowedProvider(AllowedProvider entry)
+        public async Task<bool> AddAllowedProvider([FromBody] AllowedProvider entry)
         {
             return await _mediator.Send(new AddAllowedProviderRequest(entry.Ukprn, entry.StartDateTime, entry.EndDateTime));
         }
