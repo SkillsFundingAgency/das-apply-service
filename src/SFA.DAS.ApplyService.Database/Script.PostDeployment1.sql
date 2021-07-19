@@ -11,6 +11,7 @@ Post-Deployment Script Template
 */
 
 BEGIN
+	DROP TABLE IF EXISTS dbo.WhitelistedProviders;
 	DELETE FROM AllowedProviders;
 
 -- APR-2424 Allowed Providers May Refresh
