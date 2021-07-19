@@ -7,6 +7,6 @@ namespace SFA.DAS.ApplyService.Domain.Apply.AllowedProviders
         public int Ukprn { get; set; }
         public DateTime StartDateTime { get; set; }
         public DateTime EndDateTime { get; set; }
-        public DateTime AddedDateTime { get; set; }
+        public DateTime? AddedDateTime { get; set; }
     }
 }
