@@ -53,7 +53,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return await connection.QuerySingleAsync<AllowedProvider>($@"SELECT * FROM AllowedProviders
+                return await connection.QuerySingleOrDefaultAsync<AllowedProvider>($@"SELECT * FROM AllowedProviders
                                                                              WHERE UKPRN = @ukprn",
                                                                   new { ukprn });
             }
