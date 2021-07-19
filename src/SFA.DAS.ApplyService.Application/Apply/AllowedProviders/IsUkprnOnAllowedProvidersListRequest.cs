@@ -4,7 +4,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.AllowedProviders
 {
     public class IsUkprnOnAllowedProvidersListRequest : IRequest<bool>
     {
-        public int UKPRN { get; set; }
+        public int UKPRN { get; }
 
         public IsUkprnOnAllowedProvidersListRequest(int ukprn)
         {
