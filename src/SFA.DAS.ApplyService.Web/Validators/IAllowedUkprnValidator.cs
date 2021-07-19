@@ -2,8 +2,8 @@
 
 namespace SFA.DAS.ApplyService.Web.Validators
 {
-    public interface IUkprnWhitelistValidator
+    public interface IAllowedUkprnValidator
     {
-        Task<bool> IsWhitelistedUkprn(int ukprn);
+        Task<bool> IsUkprnOnAllowedList(int ukprn);
     }
 }

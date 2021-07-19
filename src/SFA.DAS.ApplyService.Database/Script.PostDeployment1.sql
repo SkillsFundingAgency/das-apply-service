@@ -11,10 +11,10 @@ Post-Deployment Script Template
 */
 
 BEGIN
-	DELETE FROM WhitelistedProviders;
+	DELETE FROM AllowedProviders;
 
--- APR-2424 Whitelisted Providers May Refresh
-	INSERT INTO WhitelistedProviders ([UKPRN], [StartDateTime], [EndDateTime]) 
+-- APR-2424 Allowed Providers May Refresh
+	INSERT INTO AllowedProviders ([UKPRN], [StartDateTime], [EndDateTime]) 
 	VALUES (10002085, N'2021-05-17 08:00:00', N'2021-06-30 23:59:59'),
 		   (10007165, N'2021-05-17 08:00:00', N'2021-06-30 23:59:59'),
 		   (10007177, N'2021-05-17 08:00:00', N'2021-06-30 23:59:59'),
@@ -49,7 +49,7 @@ BEGIN
 		   (10061524, N'2021-05-17 08:00:00', N'2021-06-30 23:59:59'),
 		   (10013516, N'2021-05-17 08:00:00', N'2021-06-30 23:59:59'),
 
--- APR-2530 Whitelisted Providers July Refresh (UTC times used)
+-- APR-2530 Allowed Providers July Refresh (UTC times used)
 		   (10034146, N'2021-07-01 08:00:00', N'2021-07-31 22:59:59'),
 		   (10037203, N'2021-07-01 08:00:00', N'2021-07-31 22:59:59'),
 		   (10039772, N'2021-07-01 08:00:00', N'2021-07-31 22:59:59'),
@@ -102,7 +102,7 @@ BEGIN
 		   (10048569, N'2021-07-01 08:00:00', N'2021-07-31 22:59:59'),
 		   (10055542, N'2021-07-01 08:00:00', N'2021-07-31 22:59:59'),
 
--- APR-2558 Whitelisted Providers August Refresh (UTC times used)
+-- APR-2558 Allowed Providers August Refresh (UTC times used)
 		   (10044008, N'2021-07-31 23:00:00', N'2021-08-31 22:59:59'),
 		   (10084912, N'2021-07-31 23:00:00', N'2021-08-31 22:59:59'),
 		   (10003526, N'2021-07-31 23:00:00', N'2021-08-31 22:59:59'),

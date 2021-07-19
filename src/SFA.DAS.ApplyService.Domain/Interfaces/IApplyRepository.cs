@@ -45,8 +45,6 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
 
         Task<bool> ChangeProviderRoute(Guid applicationId, int providerRoute, string providerRouteName);
 
-        Task<bool> IsUkprnWhitelisted(int ukprn);
-
         Task UpdateApplicationStatus(Guid applicationId, string status, string userId);
 
         Task<Contact> GetContactForApplication(Guid applicationId);

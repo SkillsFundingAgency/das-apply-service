@@ -38,7 +38,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IUsersApiClient _usersApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
         private readonly IQnaApiClient _qnaApiClient;
-        private readonly IUkprnWhitelistValidator _ukprnWhitelistValidator;
+        private readonly IAllowedUkprnValidator _ukprnWhitelistValidator;
         private readonly IResetRouteQuestionsService _resetRouteQuestionsService;
 
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient,
@@ -49,7 +49,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                                                   IUsersApiClient usersApiClient,
                                                   IApplicationApiClient applicationApiClient,
                                                   IQnaApiClient qnaApiClient,
-                                                  IUkprnWhitelistValidator ukprnWhitelistValidator, 
+                                                  IAllowedUkprnValidator ukprnWhitelistValidator, 
                                                   IResetRouteQuestionsService resetRouteQuestionsService)
             : base(sessionService)
         {
@@ -163,7 +163,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 {
                     validationMessage = UkprnValidationMessages.InvalidUkprn;
                 }
-                else if (!await _ukprnWhitelistValidator.IsWhitelistedUkprn(ukprn))
+                else if (!await _ukprnWhitelistValidator.IsUkprnOnAllowedList(ukprn))
                 {
                     validationMessage = UkprnValidationMessages.NotWhitelistedUkprn;
                 }
