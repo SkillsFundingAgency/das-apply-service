@@ -49,7 +49,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         }
 
         [Test]
-        public async Task GetAllowedProviderList_returns_expected_result()
+        public async Task GetAllowedProvidersList_returns_expected_result()
         {
             const string sortColumn = null;
             const string sortOrder = null;
@@ -67,7 +67,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 
             _mediator.Setup(x => x.Send(It.Is<GetAllowedProvidersListRequest>(r => r.SortColumn == sortColumn && r.SortOrder == sortOrder), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
-            var actualResult = await _controller.GetAllowedProviderList(sortColumn, sortOrder);
+            var actualResult = await _controller.GetAllowedProvidersList(sortColumn, sortOrder);
 
             _mediator.Verify(x => x.Send(It.Is<GetAllowedProvidersListRequest>(y => y.SortColumn == sortColumn && y.SortOrder == sortOrder), It.IsAny<CancellationToken>()), Times.Once);
             Assert.AreSame(expectedResult, actualResult);

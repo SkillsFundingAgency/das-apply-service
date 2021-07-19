@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("/AllowedProviders")]
-        public async Task<List<AllowedProvider>> GetAllowedProviderList(string sortColumn, string sortOrder)
+        public async Task<List<AllowedProvider>> GetAllowedProvidersList(string sortColumn, string sortOrder)
         {
             return await _mediator.Send(new GetAllowedProvidersListRequest(sortColumn, sortOrder));
         }
