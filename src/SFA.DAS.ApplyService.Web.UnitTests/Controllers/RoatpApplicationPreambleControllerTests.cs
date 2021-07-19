@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IUsersApiClient> _usersApiClient;
         private Mock<IApplicationApiClient> _applicationApiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
-        private Mock<IAllowedUkprnValidator> _ukprnWhitelistValidator;
+        private Mock<IAllowedUkprnValidator> _allowedUkprnValidator;
         private Mock<IResetRouteQuestionsService> _resetRoutQuestionsService;
         private RoatpApplicationPreambleController _controller;
 
@@ -70,7 +70,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _usersApiClient = new Mock<IUsersApiClient>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
             _qnaApiClient = new Mock<IQnaApiClient>();
-            _ukprnWhitelistValidator = new Mock<IAllowedUkprnValidator>();
+            _allowedUkprnValidator = new Mock<IAllowedUkprnValidator>();
             _resetRoutQuestionsService = new Mock<IResetRouteQuestionsService>();
 
             _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
@@ -81,7 +81,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 _usersApiClient.Object,
                 _applicationApiClient.Object,
                 _qnaApiClient.Object,
-                _ukprnWhitelistValidator.Object, _resetRoutQuestionsService.Object);
+                _allowedUkprnValidator.Object, _resetRoutQuestionsService.Object);
 
             _activeCompany = new CompaniesHouseSummary
             {
@@ -276,7 +276,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase("1234567A")]
         public void Validation_error_is_triggered_if_UKPRN_not_in_correct_format(string ukprn)
         {
-            _ukprnWhitelistValidator.Setup(x => x.IsUkprnOnAllowedList(It.IsAny<int>())).ReturnsAsync(true);
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(It.IsAny<int>())).ReturnsAsync(true);
 
             var model = new SearchByUkprnViewModel
             {
@@ -308,7 +308,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
-            _ukprnWhitelistValidator.Setup(x => x.IsUkprnOnAllowedList(ukprn)).ReturnsAsync(isUkprnWhitelisted);        
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(ukprn)).ReturnsAsync(isUkprnWhitelisted);        
 
             var model = new SearchByUkprnViewModel
             {
@@ -347,7 +347,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
-            _ukprnWhitelistValidator.Setup(x => x.IsUkprnOnAllowedList(10001000)).ReturnsAsync(true);
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(10001000)).ReturnsAsync(true);
 
             var model = new SearchByUkprnViewModel
             {
@@ -365,7 +365,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void UKPRN_is_found_on_UKRLP()
         {
-            _ukprnWhitelistValidator.Setup(x => x.IsUkprnOnAllowedList(10001000)).ReturnsAsync(true);
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(10001000)).ReturnsAsync(true);
 
             var matchingResult = new UkrlpLookupResults
             {

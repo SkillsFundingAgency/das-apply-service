@@ -18,10 +18,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("/AllowedProviders/ukprn/{ukprn}")]
-        public async Task<bool> IsUkprnOnAllowedProviderList(int ukprn)
+        [HttpGet("/AllowedProviders/{ukprn}/can-start-application")]
+        public async Task<bool> CanUkprnStartApplication(int ukprn)
         {
-            return await _mediator.Send(new IsUkprnOnAllowedProvidersListRequest(ukprn));
+            return await _mediator.Send(new CanUkprnStartApplicationRequest(ukprn));
         }
 
         [HttpGet("/AllowedProviders")]

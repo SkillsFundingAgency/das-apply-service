@@ -12,9 +12,9 @@ namespace SFA.DAS.ApplyService.Web.Validators
             _allowedProvidersApiClient = allowedProvidersApiClient;
         }
 
-        public async Task<bool> IsUkprnOnAllowedList(int ukprn)
+        public async Task<bool> CanUkprnStartApplication(int ukprn)
         {
-            return await _allowedProvidersApiClient.IsUkprnOnAllowedList(ukprn);
+            return await _allowedProvidersApiClient.CanUkprnStartApplication(ukprn);
         }
     }
 }

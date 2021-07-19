@@ -13,9 +13,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 
-        public async Task<bool> IsUkprnOnAllowedList(int ukprn)
+        public async Task<bool> CanUkprnStartApplication(int ukprn)
         {
-            return await Get<bool>($"/AllowedProviders/ukprn/{ukprn}");
+            return await Get<bool>($"/AllowedProviders/{ukprn}/can-start-application");
         }
     }
 }

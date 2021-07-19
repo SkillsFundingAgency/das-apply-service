@@ -11,16 +11,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
     public class EnterNewUkprnViewModelValidatorTests
     {
         private EnterNewUkprnViewModelValidator _validator;
-        private Mock<IAllowedUkprnValidator> _ukrpnWhitelistValidator;
+        private Mock<IAllowedUkprnValidator> _allowedUkprnValidator;
 
         [SetUp]
         public void Arrange()
         {
-            _ukrpnWhitelistValidator = new Mock<IAllowedUkprnValidator>();
-            _ukrpnWhitelistValidator.Setup(x => x.IsUkprnOnAllowedList(It.Is<int>(l => l == 10037482)))
+            _allowedUkprnValidator = new Mock<IAllowedUkprnValidator>();
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(It.Is<int>(l => l == 10037482)))
                 .ReturnsAsync(true);
 
-            _validator = new EnterNewUkprnViewModelValidator(_ukrpnWhitelistValidator.Object);
+            _validator = new EnterNewUkprnViewModelValidator(_allowedUkprnValidator.Object);
         }
 
         [Test]

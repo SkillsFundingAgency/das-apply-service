@@ -4,6 +4,6 @@ namespace SFA.DAS.ApplyService.Web.Validators
 {
     public interface IAllowedUkprnValidator
     {
-        Task<bool> IsUkprnOnAllowedList(int ukprn);
+        Task<bool> CanUkprnStartApplication(int ukprn);
     }
 }

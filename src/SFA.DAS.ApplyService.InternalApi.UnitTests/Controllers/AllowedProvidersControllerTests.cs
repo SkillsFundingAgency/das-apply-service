@@ -35,16 +35,16 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         }
 
         [Test]
-        public async Task IsUkprnOnAllowedProviderList_returns_expected_result()
+        public async Task CanUkprnStartApplication_returns_expected_result()
         {
             const int ukprn = 12345678;
             var expectedResult = true;
 
-            _mediator.Setup(x => x.Send(It.Is<IsUkprnOnAllowedProvidersListRequest>(r => r.UKPRN == ukprn), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
+            _mediator.Setup(x => x.Send(It.Is<CanUkprnStartApplicationRequest>(r => r.UKPRN == ukprn), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
-            var actualResult = await _controller.IsUkprnOnAllowedProviderList(ukprn);
+            var actualResult = await _controller.CanUkprnStartApplication(ukprn);
 
-            _mediator.Verify(x => x.Send(It.Is<IsUkprnOnAllowedProvidersListRequest>(y => y.UKPRN == ukprn), It.IsAny<CancellationToken>()), Times.Once);
+            _mediator.Verify(x => x.Send(It.Is<CanUkprnStartApplicationRequest>(y => y.UKPRN == ukprn), It.IsAny<CancellationToken>()), Times.Once);
             Assert.AreEqual(expectedResult, actualResult);
         }
 

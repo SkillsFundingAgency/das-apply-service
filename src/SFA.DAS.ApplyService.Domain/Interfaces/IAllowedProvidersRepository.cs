@@ -7,7 +7,7 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
 {
     public interface IAllowedProvidersRepository
     {
-        Task<bool> IsUkprnOnAllowedProvidersList(int ukprn);
+        Task<bool> CanUkprnStartApplication(int ukprn);
 
         Task<List<AllowedProvider>> GetAllowedProvidersList(string sortColumn, string sortOrder);
 

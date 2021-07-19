@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Data
             _config = configurationService.GetConfig().Result;
         }
 
-        public async Task<bool> IsUkprnOnAllowedProvidersList(int ukprn)
+        public async Task<bool> CanUkprnStartApplication(int ukprn)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
