@@ -310,8 +310,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
 
-            string pageContext = string.Empty;
-
             if (!ModelState.IsValid)
             {
                 // when the model state has errors the page will be displayed with the values which failed validation
@@ -329,7 +327,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     })).DistinctBy(f => f.Field).ToList()
                     : null;
 
-                viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
+                viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, redirectAction,
                     returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks, sectionTitle, peopleInControlDetails);
             }
             else
@@ -344,7 +342,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 page = await GetDataFedOptions(applicationId, page);
                 var peopleInControlDetails = await GetPeopleInControlDetails(applicationId, sequenceId, sectionId);
 
-                viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
+                viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, redirectAction,
                     returnUrl, null, _pageOverrideConfiguration, _qnaLinks, sectionTitle, peopleInControlDetails);
 
             }
@@ -439,7 +437,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 var peopleInControlDetails = await GetPeopleInControlDetails(applicationId, sequenceId, sectionId);
 
-                var viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, pageInvalid, string.Empty, redirectAction,
+                var viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, pageInvalid, redirectAction,
                     returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks, selectedSection.Title, peopleInControlDetails);
 
                 viewModel = await TokeniseViewModelProperties(viewModel);
