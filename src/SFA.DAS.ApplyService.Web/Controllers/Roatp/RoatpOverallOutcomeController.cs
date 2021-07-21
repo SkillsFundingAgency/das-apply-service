@@ -52,13 +52,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.InProgress:
                     return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
                 case ApplicationStatus.Successful:
-               
-                    if (model.ApplicationRouteId==SupportingRouteId)
-                    {
-                        return View("~/Views/Roatp/ApplicationApprovedSupporting.cshtml", model);
-                    }
 
                     var oversightReview = await _apiClient.GetOversightReview(applicationId);
+                    if (model.ApplicationRouteId == SupportingRouteId)
+                    {
+                        switch (oversightReview?.Status)
+                        {
+                            case OversightReviewStatus.SuccessfulFitnessForFunding:
+                                return View("~/Views/Roatp/ApplicationApprovedSupportingFitnessForFunding.cshtml",
+                                    model);
+                            case OversightReviewStatus.SuccessfulAlreadyActive:
+                                return View("~/Views/Roatp/ApplicationApprovedSupportingAlreadyActive.cshtml",
+                                    model);
+                            default:
+                                return View("~/Views/Roatp/ApplicationApprovedSupporting.cshtml", model);
+                        }
+                    }
+
                     switch (oversightReview?.Status)
                     {
                         case OversightReviewStatus.SuccessfulAlreadyActive:

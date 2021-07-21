@@ -6,8 +6,8 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
 {
     public interface IOversightReviewQueries
     {
-        Task<PendingOversightReviews> GetPendingOversightReviews();
-        Task<CompletedOversightReviews> GetCompletedOversightReviews();
+        Task<PendingOversightReviews> GetPendingOversightReviews(string searchTerm, string sortColumn, string sortOrder);
+        Task<CompletedOversightReviews> GetCompletedOversightReviews(string searchTerm, string sortColumn,string sortOrder);
         Task<ApplicationOversightDetails> GetOversightApplicationDetails(Guid applicationId);
         Task<OversightReview> GetOversightReview(Guid applicationId);
     }

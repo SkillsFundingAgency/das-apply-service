@@ -25,18 +25,20 @@ namespace SFA.DAS.ApplyService.Data.Queries
             return new SqlConnection(_config.SqlConnectionString);
         }
 
-        public async Task<PendingOversightReviews> GetPendingOversightReviews()
+        public async Task<PendingOversightReviews> GetPendingOversightReviews(string searchTerm, string sortColumn, string sortOrder)
         {
             using (var connection = GetConnection())
             {
-                var reviews = (await connection.QueryAsync<PendingOversightReview>(@"SELECT 
+                var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
+
+                var reviews = (await connection.QueryAsync<PendingOversightReview>($@"SELECT 
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus,
                             org.Name AS OrganisationName,
                             apply.GatewayReviewStatus,
                             apply.FinancialReviewStatus,
                             apply.ModerationStatus AS ModerationReviewStatus,
-					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+					        apply.UKPRN,
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate
@@ -44,14 +46,16 @@ namespace SFA.DAS.ApplyService.Data.Queries
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                          LEFT JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
+                          AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
                           and r.Status is null
-                          and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
+                          and ((GatewayReviewStatus in (@gatewayReviewStatusPass)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
 						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
                             OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusRejected)
                             OR apply.ApplicationStatus = @applicationStatusRemoved)
-                            order by CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
+                            ORDER BY {orderByClause}, org.Name ASC", new
                 {
+                    searchString = $"%{searchTerm}%",
                     gatewayReviewStatusPass = GatewayReviewStatus.Pass,
                     gatewayReviewStatusFail = GatewayReviewStatus.Fail,
                     GatewayReviewStatusRejected = GatewayReviewStatus.Rejected,
@@ -70,11 +74,13 @@ namespace SFA.DAS.ApplyService.Data.Queries
             }
         }
 
-        public async Task<CompletedOversightReviews> GetCompletedOversightReviews()
+        public async Task<CompletedOversightReviews> GetCompletedOversightReviews(string searchTerm, string sortColumn, string sortOrder)
         {
             using (var connection = GetConnection())
             {
-                var reviews = (await connection.QueryAsync<CompletedOversightReview>(@"SELECT 
+                var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
+
+                var reviews = (await connection.QueryAsync<CompletedOversightReview>($@"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
 							 org.Name AS OrganisationName,
@@ -89,8 +95,11 @@ namespace SFA.DAS.ApplyService.Data.Queries
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                           INNER JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
-                        order by CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC"
-                )).ToList();
+                          AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
+                        ORDER BY {orderByClause}, org.Name ASC", new
+                {
+                    searchString = $"%{searchTerm}%"
+                })).ToList();
 
                 return new CompletedOversightReviews
                 {
@@ -183,6 +192,17 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
                 return results.FirstOrDefault();
             }
+        }
+
+
+        private static string GetSortColumnForNew(string requestedColumn)
+        {
+            return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
+        }
+
+        private static string GetOrderByDirection(string sortOrder)
+        {
+            return "ascending".Equals(sortOrder, StringComparison.InvariantCultureIgnoreCase) ? " ASC " : " DESC ";
         }
     }
 }
