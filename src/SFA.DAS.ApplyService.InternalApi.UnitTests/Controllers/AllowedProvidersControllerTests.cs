@@ -113,5 +113,20 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             _mediator.Verify(x => x.Send(It.Is<GetAllowedProviderDetailsRequest>(y => y.Ukprn == ukprn), It.IsAny<CancellationToken>()), Times.Once);
             Assert.AreSame(expectedResult, actualResult);
         }
+
+        [Test]
+        public async Task RemoveAllowedProvider_returns_expected_result()
+        {
+            const int ukprn = 12345678;
+
+            var expectedResult = true;
+
+            _mediator.Setup(x => x.Send(It.Is<RemoveAllowedProviderRequest>(r => r.Ukprn == ukprn), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
+
+            var actualResult = await _controller.RemoveAllowedProvider(ukprn);
+
+            _mediator.Verify(x => x.Send(It.Is<RemoveAllowedProviderRequest>(y => y.Ukprn == ukprn), It.IsAny<CancellationToken>()), Times.Once);
+            Assert.AreEqual(expectedResult, actualResult);
+        }
     }
 }

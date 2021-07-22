@@ -14,5 +14,7 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         Task<bool> AddToAllowedProvidersList(int ukprn, DateTime startDateTime, DateTime endDateTime);
 
         Task<AllowedProvider> GetAllowedProviderDetails(int ukprn);
+
+        Task<bool> RemoveFromAllowedProvidersList(int ukprn);
     }
 }

@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Data
                 var orderByClause = $"{GetSortColumn(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
                 return (await connection.QueryAsync<AllowedProvider>($@"SELECT * FROM AllowedProviders
-                                                              ORDER BY {orderByClause}, UKPRN ASC")).ToList();
+                                                                        ORDER BY {orderByClause}, UKPRN ASC")).ToList();
             }
         }
 
@@ -54,8 +54,8 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return await connection.QuerySingleOrDefaultAsync<AllowedProvider>($@"SELECT * FROM AllowedProviders
-                                                                             WHERE UKPRN = @ukprn",
-                                                                  new { ukprn });
+                                                                                      WHERE UKPRN = @ukprn",
+                                                                                    new { ukprn });
             }
         }
 
@@ -74,6 +74,18 @@ namespace SFA.DAS.ApplyService.Data
                         });
 
                 return insertedUkprn.HasValue && insertedUkprn == ukprn;
+            }
+        }
+
+        public async Task<bool> RemoveFromAllowedProvidersList(int ukprn)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var rowsAffected = await connection.ExecuteAsync($@"DELETE FROM AllowedProviders
+                                                                    WHERE UKPRN = @ukprn",
+                                                                  new { ukprn });
+
+                return rowsAffected > 0;
             }
         }
 

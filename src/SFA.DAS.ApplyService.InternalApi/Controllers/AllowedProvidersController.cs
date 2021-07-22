@@ -41,5 +41,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new GetAllowedProviderDetailsRequest(ukprn));
         }
+
+        [HttpDelete("/AllowedProviders/{ukprn}")]
+        public async Task<bool> RemoveAllowedProvider(int ukprn)
+        {
+            return await _mediator.Send(new RemoveAllowedProviderRequest(ukprn));
+        }
     }
 }
