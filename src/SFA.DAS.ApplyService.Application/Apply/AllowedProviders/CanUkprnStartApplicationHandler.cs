@@ -5,11 +5,11 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.AllowedProviders
 {
-    public class CanUkprnStartApplicationRequestHandler : IRequestHandler<CanUkprnStartApplicationRequest, bool>
+    public class CanUkprnStartApplicationHandler : IRequestHandler<CanUkprnStartApplicationRequest, bool>
     {
         private readonly IAllowedProvidersRepository _repository;
 
-        public CanUkprnStartApplicationRequestHandler(IAllowedProvidersRepository repository)
+        public CanUkprnStartApplicationHandler(IAllowedProvidersRepository repository)
         {
             _repository = repository;
         }

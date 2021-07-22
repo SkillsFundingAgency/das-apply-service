@@ -7,7 +7,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.AllowedProviders
 {
     public class RemoveAllowedProviderHandler : IRequestHandler<RemoveAllowedProviderRequest, bool>
     {
-        private IAllowedProvidersRepository _repository;
+        private readonly IAllowedProvidersRepository _repository;
 
         public RemoveAllowedProviderHandler(IAllowedProvidersRepository repository)
         {

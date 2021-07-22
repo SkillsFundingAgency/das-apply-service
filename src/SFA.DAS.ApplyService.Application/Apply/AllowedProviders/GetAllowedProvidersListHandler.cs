@@ -9,7 +9,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.AllowedProviders
 {
     public class GetAllowedProvidersListHandler : IRequestHandler<GetAllowedProvidersListRequest, List<AllowedProvider>>
     {
-        private IAllowedProvidersRepository _repository;
+        private readonly IAllowedProvidersRepository _repository;
 
         public GetAllowedProvidersListHandler(IAllowedProvidersRepository repository)
         {
