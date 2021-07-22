@@ -16,7 +16,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         private Guid _applicationId;
         private int _sequenceId;
         private int _sectionId;
-        private string _pageContext;
         private string _redirectAction;
         private string _returnUrl;
         private string _sectionTitle;
@@ -27,7 +26,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _applicationId = Guid.NewGuid();
             _sequenceId = 1;
             _sectionId = 2;
-            _pageContext = "page context";
             _redirectAction = "TaskList";
             _returnUrl = "/return";
             _sectionTitle = "section title";
@@ -67,7 +65,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _sectionId,
                 pageId,
                 CreateTestPage(pageId, _sectionId),
-                _pageContext,
                 _redirectAction,
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
@@ -91,7 +88,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _sectionId,
                 pageId,
                 CreateTestPage(pageId, _sectionId),
-                _pageContext,
                 _redirectAction,
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
@@ -114,7 +110,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _sectionId,
                 pageId,
                 CreateTestPage(pageId, _sectionId),
-                _pageContext,
                 _redirectAction,
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
@@ -137,7 +132,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _sectionId,
                 pageId,
                 CreateTestPage(pageId, _sectionId),
-                _pageContext,
                 _redirectAction,
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
