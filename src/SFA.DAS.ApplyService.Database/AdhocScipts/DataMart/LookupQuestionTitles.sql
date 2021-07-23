@@ -274,6 +274,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (6, 2, '6201', 'PAT-21', 'Select all that apply'),
 (6, 2, '6202', 'PAT-22', 'Select all that apply'),
 (6, 2, '6203', 'PAT-23', 'Select all that apply'),
+(6, 2, '6203', 'PAT-24', 'Select all that apply'),
 (6, 2, '6230', 'PAT-30', 'How'),
 (6, 2, '6250', 'PAT-50', 'Has a transition plan'),
 (6, 2, '6252', 'PAT-52', 'How'),
