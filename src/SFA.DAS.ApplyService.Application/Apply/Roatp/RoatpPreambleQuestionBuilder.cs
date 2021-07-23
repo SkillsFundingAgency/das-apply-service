@@ -875,7 +875,8 @@
 
         private static void CreateRoatpQuestionAnswers(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
         {
-            var onRoatpRegisterTrue = "TRUE";
+            const string onRoatpRegisterTrue = "TRUE";
+
             var onRoatpRegister = string.Empty;
             if (applicationDetails.RoatpRegisterStatus != null &&
                 applicationDetails.RoatpRegisterStatus.UkprnOnRegister)
