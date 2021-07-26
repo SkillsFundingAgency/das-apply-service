@@ -70,7 +70,7 @@
     <Build Include="Sequences\RoatpAppReferenceSequence.sql" />
     <Build Include="Tables\Apply.sql" />
     <Build Include="Tables\ApplySnapshots.sql" />
-    <Build Include="Tables\WhitelistedProviders.sql" />
+    <Build Include="Tables\AllowedProviders.sql" />
     <Build Include="Tables\GatewayAnswer.sql" />
     <Build Include="Tables\AssessorPageReviewOutcome.sql" />
     <Build Include="Tables\ModeratorPageReviewOutcome.sql" />
