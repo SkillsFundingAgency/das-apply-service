@@ -191,7 +191,7 @@ namespace SFA.DAS.ApplyService.Web
             })
             .SetHandlerLifetime(handlerLifeTime);
 
-            services.AddHttpClient<IWhitelistedProvidersApiClient, WhitelistedProvidersApiClient>(config =>
+            services.AddHttpClient<IAllowedProvidersApiClient, AllowedProvidersApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
@@ -251,7 +251,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<ISubmitApplicationConfirmationEmailService, SubmitApplicationConfirmationEmailService>();
             services.AddTransient<ITabularDataService, TabularDataService>();
             services.AddTransient<ITabularDataRepository, TabularDataRepository>();
-            services.AddTransient<IUkprnWhitelistValidator, UkprnWhitelistValidator>();
+            services.AddTransient<IAllowedUkprnValidator, AllowedUkprnValidator>();
             services.AddTransient<IRoatpTaskListWorkflowService, RoatpTaskListWorkflowService>();
             services.AddTransient<IRoatpOrganisationVerificationService, RoatpOrganisationVerificationService>();
             services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
