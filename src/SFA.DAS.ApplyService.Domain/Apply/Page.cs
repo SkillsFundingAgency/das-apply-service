@@ -16,7 +16,6 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public List<PageOfAnswers> PageOfAnswers { get; set; }
         public List<Next> Next { get; set; }
         public bool Complete { get; set; }
-        public bool AllowMultipleAnswers { get; set; }
         public int? Order { get; set; }
         public bool Active { get; set; }
         public List<string> NotRequiredOrgTypes { get; set; }

@@ -270,8 +270,9 @@ src/Tools/PhantomJS/tools/phantomjs/ChangeLog
 .vscode/
 
 # Minified css and js
-*.min.js
-*.min.css
+src/SFA.DAS.ApplyService.Web/wwwroot/stylesheets/application.min.css
+src/SFA.DAS.ApplyService.Web/wwwroot/javascripts/application.min.js
+src/SFA.DAS.ApplyService.Web/wwwroot/javascripts/gov-uk-postcode-lookup-service.min.js
 
 # Developer appsettings
 *.development.json

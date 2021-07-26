@@ -1,22 +1,19 @@
 ﻿using MediatR;
-using SFA.DAS.ApplyService.Application.Email.Consts;
-using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
 {
     public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationRequest, Organisation>
     {
         private readonly IOrganisationRepository _organisationRepository;
-        private readonly IEmailService _emailService;
-
-        public CreateOrganisationHandler(IOrganisationRepository organisationRepository, IEmailService emailService)
+        
+        public CreateOrganisationHandler(IOrganisationRepository organisationRepository)
         {
             _organisationRepository = organisationRepository;
-            _emailService = emailService;
         }
 
         public async Task<Organisation> Handle(CreateOrganisationRequest request, CancellationToken cancellationToken)
@@ -51,7 +48,8 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
                 RoATPApproved = request.RoATPApproved
             };
 
-            return await _organisationRepository.CreateOrganisation(organisation, request.CreatedBy);
+            organisation.Id = await _organisationRepository.CreateOrganisation(organisation, request.CreatedBy);
+            return organisation;
         }
 
         private async Task<Organisation> UpdateOrganisationIfExists(CreateOrganisationRequest request)
@@ -68,7 +66,9 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
                 if (!existingOrganisation.RoEPAOApproved) existingOrganisation.RoEPAOApproved = request.RoEPAOApproved;
                 if (!existingOrganisation.RoATPApproved) existingOrganisation.RoATPApproved = request.RoATPApproved;
 
-                return await _organisationRepository.UpdateOrganisation(existingOrganisation, request.CreatedBy);
+                await _organisationRepository.UpdateOrganisation(existingOrganisation, request.CreatedBy);
+
+                return existingOrganisation;
             }
 
             return null;

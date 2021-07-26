@@ -16,7 +16,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         private Guid _applicationId;
         private int _sequenceId;
         private int _sectionId;
-        private string _pageContext;
         private string _redirectAction;
         private string _returnUrl;
         private string _sectionTitle;
@@ -27,7 +26,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _applicationId = Guid.NewGuid();
             _sequenceId = 1;
             _sectionId = 2;
-            _pageContext = "page context";
             _redirectAction = "TaskList";
             _returnUrl = "/return";
             _sectionTitle = "section title";
@@ -66,8 +64,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _sequenceId,
                 _sectionId,
                 pageId,
-                CreateTestPage(pageId, _sectionId.ToString()),
-                _pageContext,
+                CreateTestPage(pageId, _sectionId),
                 _redirectAction,
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
@@ -90,8 +87,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _sequenceId,
                 _sectionId,
                 pageId,
-                CreateTestPage(pageId, _sectionId.ToString()),
-                _pageContext,
+                CreateTestPage(pageId, _sectionId),
                 _redirectAction,
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
@@ -113,8 +109,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _sequenceId,
                 _sectionId,
                 pageId,
-                CreateTestPage(pageId, _sectionId.ToString()),
-                _pageContext,
+                CreateTestPage(pageId, _sectionId),
                 _redirectAction,
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
@@ -136,8 +131,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _sequenceId,
                 _sectionId,
                 pageId,
-                CreateTestPage(pageId, _sectionId.ToString()),
-                _pageContext,
+                CreateTestPage(pageId, _sectionId),
                 _redirectAction,
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
@@ -149,12 +143,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             model.HideCTA.Should().BeTrue();
         }
         
-        private Page CreateTestPage(string pageId, string sectionId)
+        private Page CreateTestPage(string pageId, int sectionId)
         {
             return new Page
             {
                 PageId = pageId,
-                SectionId = sectionId,
+                SectionId = sectionId.ToString(),
                 PageOfAnswers = new List<PageOfAnswers>(),
                 Questions = new List<Question>()
             };

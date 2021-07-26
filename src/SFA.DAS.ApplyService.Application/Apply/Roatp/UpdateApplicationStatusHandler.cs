@@ -1,6 +1,7 @@
 ﻿using System;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 {
@@ -21,7 +22,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             try
             {
-                _repository.UpdateApplicationStatus(request.ApplicationId, request.ApplicationStatus);
+                _repository.UpdateApplicationStatus(request.ApplicationId, request.ApplicationStatus, request.UserId);
             }
             catch (Exception updateException)
             {

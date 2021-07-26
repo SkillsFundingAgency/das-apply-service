@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
+    <ProjectGuid>{BC878D49-EE14-408B-B507-0307B961CEF0}</ProjectGuid>
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
@@ -9,17 +10,19 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="7.0.1" />
     <PackageReference Include="BuildBundlerMinifier" Version="2.8.391" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="8.0.100" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.3" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.1" />
     <PackageReference Include="Microsoft.ApplicationInsights.NLogTarget" Version="2.6.4" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="2.2.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.19.8" />
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.2.8" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
-    <PackageReference Include="SFA.DAS.QnA.Api.Views" Version="0.2.188" />
+    <PackageReference Include="SFA.DAS.AdminService.Common" Version="0.1.42" />
+    <PackageReference Include="SFA.DAS.QnA.Api.Views" Version="0.2.251" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.2" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.1.5" />
@@ -39,6 +42,7 @@
     <ProjectReference Include="..\SFA.DAS.ApplyService.Configuration\SFA.DAS.ApplyService.Configuration.csproj" />
     <ProjectReference Include="..\SFA.DAS.ApplyService.DfeSignIn\SFA.DAS.ApplyService.DfeSignIn.csproj" />
     <ProjectReference Include="..\SFA.DAS.ApplyService.EmailService\SFA.DAS.ApplyService.EmailService.csproj" />
+    <ProjectReference Include="..\SFA.DAS.ApplyService.Infrastructure\SFA.DAS.ApplyService.Infrastructure.csproj" />
     <ProjectReference Include="..\SFA.DAS.ApplyService.InternalApi.Types\SFA.DAS.ApplyService.InternalApi.Types.csproj" />
   </ItemGroup>
   <ItemGroup>

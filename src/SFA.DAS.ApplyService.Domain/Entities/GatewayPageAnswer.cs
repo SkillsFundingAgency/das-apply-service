@@ -1,21 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Application.Interfaces;
 
 namespace SFA.DAS.ApplyService.Domain.Entities
 {
-    public class GatewayPageAnswer
+    public class GatewayPageAnswer : IAuditable
     {
-        private Guid Id { get; set; }
+        public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
         public string PageId { get; set; }
         public string Status { get; set; }
-        public string GatewayPageData { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime? CreatedAt{ get; set; }
+        public string Comments { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public List<TabularData> Tables { get; set; }
+        public string ClarificationAnswer { get; set; }
+        public string ClarificationComments { get; set; }
+        public string ClarificationBy { get; set; }
+        public DateTime? ClarificationDate { get; set; }
     }
 }

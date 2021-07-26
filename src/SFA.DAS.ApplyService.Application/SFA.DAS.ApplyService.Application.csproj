@@ -1,10 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+      <ProjectGuid>{C32FBF75-32C0-40D4-A306-B240A13FCF87}</ProjectGuid>
+      <TargetFramework>netstandard2.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.3" />
       <PackageReference Include="MediatR">
         <Version>7.0.0</Version>
       </PackageReference>
@@ -28,7 +30,10 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SFA.DAS.ApplyService.Configuration\SFA.DAS.ApplyService.Configuration.csproj" />
+      <ProjectReference Include="..\SFA.DAS.ApplyService.Data\SFA.DAS.ApplyService.Data.csproj" />
       <ProjectReference Include="..\SFA.DAS.ApplyService.Domain\SFA.DAS.ApplyService.Domain.csproj" />
+      <ProjectReference Include="..\SFA.DAS.ApplyService.EmailService\SFA.DAS.ApplyService.EmailService.csproj" />
       <ProjectReference Include="..\SFA.DAS.ApplyService.InternalApi.Types\SFA.DAS.ApplyService.InternalApi.Types.csproj" />
     </ItemGroup>
+
 </Project>

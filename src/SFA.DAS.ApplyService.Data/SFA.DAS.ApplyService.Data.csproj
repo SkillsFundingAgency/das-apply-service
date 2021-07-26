@@ -1,15 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+      <ProjectGuid>{FE687ABB-F327-4EBC-ADB3-6AD3C7186E1A}</ProjectGuid>
+      <TargetFramework>netstandard2.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SFA.DAS.ApplyService.Application\SFA.DAS.ApplyService.Application.csproj" />
       <ProjectReference Include="..\SFA.DAS.ApplyService.Configuration\SFA.DAS.ApplyService.Configuration.csproj" />
+      <ProjectReference Include="..\SFA.DAS.ApplyService.Domain\SFA.DAS.ApplyService.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Azure.Storage.Blobs" Version="12.8.0" />
       <PackageReference Include="Dapper">
         <Version>1.50.5</Version>
       </PackageReference>

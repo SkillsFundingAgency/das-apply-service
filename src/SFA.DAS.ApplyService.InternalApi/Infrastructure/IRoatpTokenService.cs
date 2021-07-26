@@ -1,7 +1,9 @@
-﻿namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
+﻿using System;
+
+namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
     public interface IRoatpTokenService
     {
-        string GetToken(string url);
+        string GetToken(Uri baseUri);
     }
 }

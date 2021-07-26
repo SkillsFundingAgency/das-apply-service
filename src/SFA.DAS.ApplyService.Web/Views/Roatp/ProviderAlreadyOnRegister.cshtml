@@ -9,21 +9,13 @@
     var isError = showErrors ? "govuk-input--error" : "";
 }
 
-<partial name="~/Views/Roatp/PreambleHeader.cshtml" />
-
-@*
-<form asp-controller="RoatpApplicationPreamble" asp-action="ConfirmOrganisation" method="get" name="backForm">
-    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-</form>
-*@
-
 <main class="govuk-main-wrapper " id="main-content" role="main">
     
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @if (!ViewData.ModelState.IsValid || showErrors)
             {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
@@ -40,15 +32,23 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-m">Does your organisation want to change provider route?</h2>
             <p class="govuk-body">
-                Does your organisation want to change provider route?
+                We'll assess this as a new application and will not consider your organisation's current status on the RoATP.
             </p>
+        </div>
+        <div class="govuk-grid-column-two-thirds govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+                <span class="govuk-warning-text__assistive">Warning</span>
+                If your new application is unsuccessful, we may remove your organisation from the RoATP.
+            </strong>
         </div>
     </div>
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="post" asp-action="ChangeProviderRoute" asp-controller="RoatpApplicationPreamble">
+            <form method="post" asp-action="ChangeProviderRoute" asp-controller="RoatpApplicationPreamble" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="SequenceId" />
                 <input type="hidden" asp-for="SectionId" />
@@ -90,7 +90,9 @@
                         </div>
                     </fieldset>
                 </div>
-                <input type="submit" class="govuk-button" value="Save and continue" />
+                <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                    Save and continue
+                </button>
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>

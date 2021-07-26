@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "Session timeout";
+    Layout = "_Layout";
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Sorry, your session has timed out due to inactivity</h1>
+            <p class="govuk-body">Your application will be saved for 30 days. After this, we will delete your application and you will need to start again.</p>
+            <p class="govuk-body">
+            <p class="govuk-body">To continue with your application later, <a class="govuk-link" asp-action="SignIn" asp-controller="Users">sign in</a>.</p>
+            <p class="govuk-body">
+                <a class="govuk-link" href="https://www.gov.uk">Back to GOV.UK</a>
+            </p>
+        </div>
+    </div>
+</main>

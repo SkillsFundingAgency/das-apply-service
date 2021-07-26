@@ -15,9 +15,11 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
 {
+    // NOTE: I Don't think these have ever worked!
     [TestFixture]
     public class WhenCallingInviteUser
     {
@@ -28,13 +30,12 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
         {
             var configurationService = new Mock<IConfigurationService>();
             var contactRepository = new Mock<IContactRepository>();
-            contactRepository.Setup(r => r.CreateContact("email@email.com", "Fred", "Jones", "DfESignIn"))
+            contactRepository.Setup(r => r.CreateContact("email@email.com", "Fred", "Jones"))
                 .ReturnsAsync(new Contact() {Id = Guid.NewGuid()});
                 
             var dfeSignInService = new Mock<IDfeSignInService>();
             dfeSignInService.Setup(s => s.InviteUser("email@email.com", "Fred", "Jones", It.IsAny<Guid>()))
                 .ReturnsAsync(new InviteUserResponse() {IsSuccess = true});
-            var emailService = new Mock<IEmailService>();
             
             var factory = new WebApplicationFactory<Startup>();
 
@@ -45,7 +46,6 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
                     services.AddSingleton(p => configurationService.Object);
                     services.AddTransient(p => contactRepository.Object);
                     services.AddTransient(p => dfeSignInService.Object);
-                    services.AddTransient(p => emailService.Object);
                 });
             }).CreateClient(new WebApplicationFactoryClientOptions() {AllowAutoRedirect = false});
         }

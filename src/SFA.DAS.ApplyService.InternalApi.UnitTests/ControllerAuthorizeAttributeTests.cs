@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [Test]
         public void ControllersShouldHaveAuthorizeAttribute()
         {
-            var webAssembly = typeof(StandardSearchController).GetTypeInfo().Assembly;
+            var webAssembly = typeof(RoatpApplicationController).GetTypeInfo().Assembly;
 
             var controllers = webAssembly.DefinedTypes.Where(c => c.BaseType == typeof(Controller)).ToList();
 

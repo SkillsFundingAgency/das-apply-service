@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Web.Configuration;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,25 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Validations
         public CustomValidatorFactory(IOptions<List<CustomValidationConfiguration>> configuration)
         {
             _configuration = configuration.Value;
+        }
+
+        public IEnumerable<ICustomValidator> GetCustomValidationsForPage(Page page, IFormFileCollection files)
+        {
+            var validationConfigs = _configuration.Where(c => c.PageId == page?.PageId).ToList();
+
+            var validators = new List<ICustomValidator>();
+
+            foreach (var validationConfig in validationConfigs)
+            {
+                switch (validationConfig.Name)
+                {
+                    case "FileUploadRequired":
+                        validators.Add(new FileUploadRequiredValidator(validationConfig, page, files));
+                        break;
+                }
+            }
+
+            return validators;
         }
 
         public IEnumerable<ICustomValidator> GetCustomValidationsForQuestion(string pageId, string questionId, IFormFileCollection files)

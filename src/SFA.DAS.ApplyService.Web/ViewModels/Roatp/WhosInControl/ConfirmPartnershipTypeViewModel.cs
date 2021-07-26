@@ -14,7 +14,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string PartnershipType { get; set; }
 
         public string Title { get { return "What is your organisation's partner?"; } set { } }
-        public string SequenceId { get { return RoatpWorkflowSequenceIds.YourOrganisation.ToString(); } set { } }
+        public int SequenceId { get { return RoatpWorkflowSequenceIds.YourOrganisation; } set { } }
         public int SectionId { get { return RoatpWorkflowSectionIds.YourOrganisation.WhosInControl; } set { } }
         public string PageId { get; set; }
         public string GetHelpQuestion { get; set; }

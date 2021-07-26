@@ -21,14 +21,17 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
     /// There is a Web-Friendly version located at: https://beta.companieshouse.gov.uk/
     /// </summary>
     public class CompaniesHouseApiClient
-    { 
+    {
+        private const string _acceptHeaderName = "Accept";
+        protected const string _contentType = "application/json";
+
         private readonly HttpClient _client;
         private readonly ILogger<CompaniesHouseApiClient> _logger;
         private readonly IApplyConfig _config;
 
         public CompaniesHouseApiClient()
         {
-
+            // Constructor used for Mocking CompaniesHouseApiClient
         }
 
         public CompaniesHouseApiClient(HttpClient client, ILogger<CompaniesHouseApiClient> logger, IConfigurationService configurationService)
@@ -36,6 +39,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _client = client;
             _logger = logger;
             _config = configurationService.GetConfig().Result;
+
+            if (!client.DefaultRequestHeaders.Contains(_acceptHeaderName))
+            {
+                client.DefaultRequestHeaders.Add(_acceptHeaderName, _contentType);
+            }
         }
 
         public async virtual Task<ApiResponse<Company>> GetCompany(string companyNumber)

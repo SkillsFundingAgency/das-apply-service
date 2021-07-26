@@ -6,6 +6,7 @@ using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHandlerTests
 {

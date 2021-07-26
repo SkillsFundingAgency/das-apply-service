@@ -81,7 +81,7 @@
 }
 
 .app-check-your-answers {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -335,6 +335,7 @@
 @media (min-width: 28.125em) {
   .app-task-list__task-name {
     float: left;
+    width: 70%;
   }
 }
 
@@ -597,7 +598,7 @@
 
 .ui-autocomplete .ui-menu-item {
   cursor: pointer;
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.25;
   font-weight: 300;
@@ -618,11 +619,6 @@
     padding-bottom: 5px;
   }
 }
-
-/* .ui-autocomplete .ui-menu-item a:hover,
-.ui-autocomplete .ui-menu-item .ui-state-focus {
-    background: #dee0e2;
-} */
 
 .ui-menu .ui-menu-item .ui-state-hover,
 .ui-menu .ui-menu-item .ui-state-active {
@@ -706,7 +702,7 @@
 
 .app-navigation {
   border-bottom: 1px solid #bfc1c3;
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 700;
@@ -831,7 +827,7 @@
 }
 
 .roatp__navigation-item {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 14px;
@@ -861,6 +857,7 @@
     line-height: 1.25;
     width: auto;
     margin-bottom: 0;
+    position: relative;
   }
 
   .roatp__navigation-item--signout {
@@ -875,12 +872,27 @@
   }
 }
 
+.roatp__navigation-link--current {
+  text-decoration: none;
+}
+
+.roatp__navigation-link--current:after {
+  content: "";
+  height: 5px;
+  display: block;
+  position: absolute;
+  bottom: -12px;
+  left: 0;
+  right: 0;
+  background:#1d70b8;
+}
+
 .govuk-details--get-help {
   margin-bottom: 0;
 }
 
 .govuk-details--get-help .govuk-details__summary {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -924,7 +936,7 @@
 /* Cookie banner */
 
 .das-cookie-banner {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 14px;
@@ -1038,7 +1050,7 @@
 }
 
 .das-cookie-banner__hide-button {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 16px;
@@ -1131,7 +1143,7 @@
 }
 
 .das-notice__title {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 700;
@@ -1172,7 +1184,7 @@
 }
 
 .das-notice__description {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -1216,7 +1228,7 @@
 }
 
 .cookie-settings__confirmation {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -1244,4 +1256,68 @@
     font-size: 14pt;
     line-height: 1.15;
   }
+}
+
+.das-body--hint,
+.das-list--hint {
+  color: #6f777b;
+}
+
+
+/* Panel colours */ 
+.app-panel--muted {
+  background: #505a5f;
+  color: #fff;
+}
+
+.app-panel--warning {
+  background: #b58840;
+  color: #fff;
+}
+
+.app-panel--error {
+    background: #d4351c;
+    color: #fff;
+}
+
+.app-panel--success {
+    background: #00703c;
+    color: #fff;
+}
+
+
+.app-panel--inprogress {
+    background: #005ea5;
+    color: #fff;
+}
+
+.das-multiline-text {
+    white-space: pre-line;
+}
+
+.das-multiline-text-bottom-margin {
+    white-space: pre-line;
+    margin-bottom: 20px;
+}
+
+.app-inset-text--question-answer {
+  border-left-width: 5px;
+  padding: 0 15px;
+  font-size: 16px;
+  margin-top: 15px;
+}
+
+.app-list--bordered {
+  border-top: 1px solid #b1b4b6;
+}
+
+.app-list--bordered > li {
+  border-bottom: 1px solid #b1b4b6;
+  padding: 7px 0;
+  margin: 0;
+}
+
+
+.das-preformatted-body {
+    white-space: pre-wrap;
 }

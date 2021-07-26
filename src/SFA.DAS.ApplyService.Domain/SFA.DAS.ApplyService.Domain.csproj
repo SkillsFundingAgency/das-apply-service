@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+      <ProjectGuid>{62C55D30-AE24-4230-A7F8-627ECEBEA48E}</ProjectGuid>
+      <TargetFramework>netstandard2.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -9,6 +10,10 @@
       <PackageReference Include="Newtonsoft.Json">
         <Version>11.0.2</Version>
       </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SFA.DAS.ApplyService.Types\SFA.DAS.ApplyService.Types.csproj" />
     </ItemGroup>
 
 </Project>

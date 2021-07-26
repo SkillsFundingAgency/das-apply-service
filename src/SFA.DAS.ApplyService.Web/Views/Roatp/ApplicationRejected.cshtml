@@ -1,0 +1,50 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
+
+@{
+    ViewBag.Title = "Application rejected";
+    Layout = "_Layout";
+}
+
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel app-panel--warning">
+                <h1 class="govuk-panel__title">
+                    Application rejected
+                </h1>
+            </div>
+
+            <partial name="~/Views/Roatp/_ApplicationDetailsTable.cshtml" model="@Model" />
+
+            <h1 class="govuk-heading-l">Why your application was rejected</h1>
+            <p class="govuk-body das-multiline-text">
+                @Model.GatewayExternalComments
+            </p>
+
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+            <h2 class="govuk-heading-m">How to reapply</h2>
+            <p class="govuk-body">
+                Your rejected application does not count towards the 1 application within a 12-month period.
+            </p>
+            <p class="govuk-body">
+                To reapply, you'll need to <a class="govuk-link govuk-link--no-visited-state" asp-action="EnterNewUkprn" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">start a new application.</a>
+            </p>
+
+            <h1 class="govuk-heading-m">How to contact us</h1>
+            <p class="govuk-body">
+                If you have any questions, you can contact the Manage apprenticeships service helpdesk on:
+                <ul class="govuk-list govuk-list--bullet">
+                    <li><a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk">helpdesk@manage-apprenticeships.service.gov.uk</a></li>
+                    <li>08000 150 600</li>
+                </ul>
+            </p>
+        </div>
+    </div>
+</main>

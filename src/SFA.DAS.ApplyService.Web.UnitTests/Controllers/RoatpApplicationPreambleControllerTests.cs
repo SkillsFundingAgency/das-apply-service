@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -45,7 +46,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IApplicationApiClient> _applicationApiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IUkprnWhitelistValidator> _ukprnWhitelistValidator;
-
+        private Mock<IResetRouteQuestionsService> _resetRoutQuestionsService;
         private RoatpApplicationPreambleController _controller;
 
         private CompaniesHouseSummary _activeCompany;
@@ -54,6 +55,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Contact _user;
         private ApplicationDetails _applicationDetails;
         private CreateOrganisationRequest _expectedRequest;
+
 
         [SetUp]
         public void Before_each_test()
@@ -69,6 +71,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _applicationApiClient = new Mock<IApplicationApiClient>();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _ukprnWhitelistValidator = new Mock<IUkprnWhitelistValidator>();
+            _resetRoutQuestionsService = new Mock<IResetRouteQuestionsService>();
 
             _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
                 _ukrlpApiClient.Object,
@@ -78,7 +81,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 _usersApiClient.Object,
                 _applicationApiClient.Object,
                 _qnaApiClient.Object,
-                _ukprnWhitelistValidator.Object);
+                _ukprnWhitelistValidator.Object, _resetRoutQuestionsService.Object);
 
             _activeCompany = new CompaniesHouseSummary
             {
@@ -176,7 +179,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _applicationApiClient.Setup(x => x.GetExistingApplicationStatus(It.IsAny<string>())).ReturnsAsync(new List<RoatpApplicationStatus>());
 
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(_applicationDetails.RoatpRegisterStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(_applicationDetails.RoatpRegisterStatus);
 
             var applicationRoutes = new List<ApplicationRoute>
             {
@@ -273,7 +276,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase("1234567A")]
         public void Validation_error_is_triggered_if_UKPRN_not_in_correct_format(string ukprn)
         {
-            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(It.IsAny<long>())).ReturnsAsync(true);
+            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(It.IsAny<int>())).ReturnsAsync(true);
 
             var model = new SearchByUkprnViewModel
             {
@@ -297,11 +300,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase(12345678, true)]
         [TestCase(87654321, true)]
         [TestCase(99999999, false)]
-        public void Validation_error_is_triggered_if_UKPRN_is_not_in_whitelisted(long ukprn, bool isUkprnWhitelisted)
+        public void Validation_error_is_triggered_if_UKPRN_is_not_in_whitelisted(int ukprn, bool isUkprnWhitelisted)
         {
             var noResults = new UkrlpLookupResults { Success = true, Results = new List<ProviderDetails> { new ProviderDetails() } };
 
-            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(noResults);
+            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<int>())).ReturnsAsync(noResults);
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
@@ -340,7 +343,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var noResults = new UkrlpLookupResults {Success = true, Results = new List<ProviderDetails>()};
 
-            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(noResults);
+            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<int>())).ReturnsAsync(noResults);
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
@@ -376,7 +379,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     }
                 }
             };
-            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(matchingResult);
+            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<int>())).ReturnsAsync(matchingResult);
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
@@ -905,7 +908,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
-            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(_user);
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
             _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
@@ -1002,7 +1005,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
-            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(_user);
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
             _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
@@ -1064,7 +1067,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
-            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(_user);
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
             _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
@@ -1115,11 +1118,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Provider_routed_to_terms_and_conditions_if_levy_paying_employer()
+        public void Provider_routed_to_conditions_of_acceptance_if_levy_paying_employer()
         {
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
-            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(_user);
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
             _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
@@ -1146,7 +1149,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var viewResult = result as ViewResult;
             viewResult.ViewName.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("TermsAndConditions");
+            viewResult.ViewName.Should().Contain("ConditionsOfAcceptance");
         }
 
         [Test]
@@ -1210,12 +1213,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 UkprnOnRegister = true
             };
 
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(registerStatus);
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ProviderAlreadyOnRegister");
+            var redirectToActionResult = result as RedirectToActionResult;
+            redirectToActionResult.Should().NotBeNull();
+            redirectToActionResult.ActionName.Should().Contain("ProviderAlreadyOnRegister");
 
         }
 
@@ -1263,7 +1266,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 UkprnOnRegister = true
             };
 
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(registerStatus);
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             var redirectResult = result as RedirectToActionResult;
@@ -1302,8 +1305,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("ApplicationInProgress");
         }
 
-        [Test]
-        public void Application_already_submitted_for_UKPRN()
+        [TestCase(ApplicationStatus.Submitted)]
+        [TestCase(ApplicationStatus.GatewayAssessed)]
+        public void Application_already_submitted_for_UKPRN(string submittedStatus)
         {
             var providerDetails = new ProviderDetails
             {
@@ -1321,7 +1325,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 new RoatpApplicationStatus
                 {
                     ApplicationId = Guid.NewGuid(),
-                    Status = ApplicationStatus.Submitted
+                    Status = submittedStatus
                 }
             };
             _applicationApiClient.Setup(x => x.GetExistingApplicationStatus(It.IsAny<string>())).ReturnsAsync(existingApplicationStatuses);
@@ -1373,7 +1377,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var model = new ConfirmChangeRouteViewModel { ApplicationId = Guid.NewGuid(), ConfirmChangeRoute = "Y" };
 
-            var result = _controller.SubmitConfirmChangeRoute(model).GetAwaiter().GetResult();
+            var result = _controller.SubmitConfirmChangeRoute(model);
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -1385,7 +1389,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var model = new ConfirmChangeRouteViewModel { ApplicationId = Guid.NewGuid(), ConfirmChangeRoute = "N" };
 
-            var result = _controller.SubmitConfirmChangeRoute(model).GetAwaiter().GetResult();
+            var result = _controller.SubmitConfirmChangeRoute(model);
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -1395,7 +1399,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase(OrganisationStatus.Active)]
         [TestCase(OrganisationStatus.ActiveNotTakingOnApprentices)]
         [TestCase(OrganisationStatus.Onboarding)]
-        public void Provider_already_on_register_changes_route_and_cannot_select_current_route(int statusId)
+        public void Provider_already_on_register_goes_straight_to_select_application_route(int statusId)
         {
             var registerStatus = new OrganisationRegisterStatus
             {
@@ -1407,7 +1411,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 UkprnOnRegister = true
             };
 
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(registerStatus);
 
             var applicationDetails = new ApplicationDetails
             {
@@ -1422,9 +1426,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             var model = viewResult.Model as SelectApplicationRouteViewModel;
 
-            var currentApplicationRoute = model.ApplicationRoutes.FirstOrDefault(x => x.Id == registerStatus.ProviderTypeId);
-
-            currentApplicationRoute.Should().BeNull();
+            model.Should().NotBeNull();
         }
 
         [Test]
@@ -1440,7 +1442,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 UkprnOnRegister = true
             };
 
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(registerStatus);
 
             var applicationDetails = new ApplicationDetails
             {
@@ -1500,31 +1502,31 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             redirectResult.Should().NotBeNull();
 
-            redirectResult.ActionName.Should().Be("ChosenToRemainOnRegister");
+            redirectResult.ActionName.Should().Be("ConditionsOfAcceptance");
         }
 
-        [Test]
+        [Ignore("clearing of data will be done later")]
 
         public void Change_UKPRN_clears_application_data_and_redirects_to_enter_ukprn()
         {
-            var model = new ChangeUkprnViewModel { ApplicationId = Guid.NewGuid() };
+            //var model = new ChangeUkprnViewModel { ApplicationId = Guid.NewGuid() };
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()))
-                         .ReturnsAsync(new Answer { Value = "10001234" })
-                         .Verifiable();
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()))
+            //             .ReturnsAsync(new Answer { Value = "10001234" })
+            //             .Verifiable();
 
-            _applicationApiClient.Setup(x => x.UpdateApplicationStatus(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(true).Verifiable();
+            //_applicationApiClient.Setup(x => x.UpdateApplicationStatus(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(true).Verifiable();
 
-            _sessionService.Setup(x => x.Remove(It.IsAny<string>())).Verifiable();
+            //_sessionService.Setup(x => x.Remove(It.IsAny<string>())).Verifiable();
 
-            var result = _controller.ConfirmChangeUkprn(model).GetAwaiter().GetResult();
+            //var result = _controller.ConfirmChangeUkprn(model).GetAwaiter().GetResult();
 
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("EnterApplicationUkprn");
+            //var redirectResult = result as RedirectToActionResult;
+            //redirectResult.ActionName.Should().Be("EnterApplicationUkprn");
 
-            _applicationApiClient.Verify(x => x.UpdateApplicationStatus(It.IsAny<Guid>(), It.IsAny<string>()), Times.Once);
-            _qnaApiClient.VerifyAll();
-            _sessionService.VerifyAll();
+            //_applicationApiClient.Verify(x => x.UpdateApplicationStatus(It.IsAny<Guid>(), It.IsAny<string>()), Times.Once);
+            //_qnaApiClient.VerifyAll();
+            //_sessionService.VerifyAll();
         }
 
         [Test]
@@ -1549,7 +1551,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 UkprnOnRegister = false
             };
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(notOnRegisterStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(notOnRegisterStatus);
 
             var result =_controller.ChangeApplicationProviderRoute(applicationId).GetAwaiter().GetResult();
 
@@ -1561,10 +1563,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             model.ApplicationId.Should().Be(applicationId);
             model.ApplicationRouteId.Should().Be(applyApplicationRouteId);
             model.ApplicationRoutes.Count().Should().Be(3);
-        }
+          }
 
         [Test]
-        public void Provider_changing_route_mid_application_currently_active_on_the_register_is_only_offered_other_provider_routes()
+        public void Provider_changing_route_mid_application_currently_active_on_the_register_is_offered_all_provider_routes()
         {
             var applicationId = Guid.NewGuid();
             var applyApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute;
@@ -1586,7 +1588,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 UkprnOnRegister = true,
                 ProviderTypeId = ApplicationRoute.EmployerProviderApplicationRoute
             };
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(existingProviderStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(existingProviderStatus);
 
             var result = _controller.ChangeApplicationProviderRoute(applicationId).GetAwaiter().GetResult();
 
@@ -1597,7 +1599,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             model.ApplicationId.Should().Be(applicationId);
             model.ApplicationRouteId.Should().Be(applyApplicationRouteId);
-            model.ApplicationRoutes.Should().NotContain(route => route.Id == existingProviderStatus.ProviderTypeId);
+            model.ApplicationRoutes.Count().Should().Be(3);
         }
 
         [Test]
@@ -1624,7 +1626,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 StatusId = OrganisationStatus.Removed,
                 RemovedReasonId = RemovedReason.Merger
             };
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(notOnRegisterStatus);
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<int>())).ReturnsAsync(notOnRegisterStatus);
 
             var result = _controller.ChangeApplicationProviderRoute(applicationId).GetAwaiter().GetResult();
 
@@ -1640,7 +1642,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
         [TestCase(ApplicationRoute.MainProviderApplicationRoute)]
         [TestCase(ApplicationRoute.SupportingProviderApplicationRoute)]
-        public void Provider_changing_route_to_main_or_supporting_is_directed_to_terms_and_conditions_with_route_changed(int chosenApplicationRouteId)
+        public void Provider_changing_route_to_main_or_supporting_is_directed_to_conditions_of_acceptance_with_route_changed(int chosenApplicationRouteId)
         {
             var model = new SelectApplicationRouteViewModel
             {
@@ -1648,12 +1650,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationRouteId = chosenApplicationRouteId
             };
 
-            var preambleSection = new ApplicationSection { Id = Guid.NewGuid() };
-
-            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.Preamble,
-                                RoatpWorkflowSectionIds.Preamble)).ReturnsAsync(preambleSection).Verifiable();
-
-            _qnaApiClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), preambleSection.Id, It.IsAny<string>(), It.IsAny<List<Answer>>()))
+            _qnaApiClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.Preamble,
+                    RoatpWorkflowSectionIds.Preamble, It.IsAny<string>(), It.IsAny<List<Answer>>()))
                                .ReturnsAsync(new ApplyService.Application.Apply.SetPageAnswersResponse
                                {
                                    ValidationPassed = true
@@ -1663,10 +1661,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("TermsAndConditions");
+            redirectResult.ActionName.Should().Be("ConditionsOfAcceptance");
             redirectResult.ControllerName.Should().BeNull();
 
             _qnaApiClient.VerifyAll();
+            _resetRoutQuestionsService.Verify(x=>x.ResetRouteQuestions(model.ApplicationId,model.ApplicationRouteId));
         }
         
         [Test]
@@ -1714,7 +1713,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Provider_changing_route_to_employer_is_directed_to_terms_and_conditions_with_route_changed_if_levy_paying()
+        public void Provider_changing_route_to_employer_is_directed_to_conditions_of_acceptance_with_route_changed_if_levy_paying()
         {
             var model = new EmployerLevyStatusViewModel
             {
@@ -1724,12 +1723,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 LevyPayingEmployer = "Y"
             };
 
-            var preambleSection = new ApplicationSection { Id = Guid.NewGuid() };
-
-            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.Preamble,
-                                RoatpWorkflowSectionIds.Preamble)).ReturnsAsync(preambleSection).Verifiable();
-
-            _qnaApiClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), preambleSection.Id, It.IsAny<string>(), It.IsAny<List<Answer>>()))
+            _qnaApiClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.Preamble,
+                    RoatpWorkflowSectionIds.Preamble, It.IsAny<string>(), It.IsAny<List<Answer>>()))
                                .ReturnsAsync(new ApplyService.Application.Apply.SetPageAnswersResponse
                                {
                                    ValidationPassed = true
@@ -1739,7 +1734,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("TermsAndConditions");
+            redirectResult.ActionName.Should().Be("ConditionsOfAcceptance");
             redirectResult.ControllerName.Should().BeNull();
 
             _qnaApiClient.VerifyAll();

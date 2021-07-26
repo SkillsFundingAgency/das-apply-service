@@ -1,0 +1,22 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ExistingApplicationViewModel
+
+@{
+    ViewBag.Title = $"An application has been submitted for the UKPRN {Model.UKPRN}";
+    Layout = "_Layout";
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl">@ViewBag.Title</h1>
+            <p class="govuk-body">
+                To check the progress of this application, <a asp-action="Index" asp-controller="Home">sign in</a> using the account details that were used to start the application.
+            </p>
+            <p class="govuk-body">
+                If you think this is wrong, email <br /> <a class="govuk-link" href="mailto:helpdesk@manage-apprenticeships.service.gov.uk">helpdesk@manage-apprenticeships.service.gov.uk</a> or call 08000 150 600.
+            </p>
+        </div>
+    </div>
+</main>

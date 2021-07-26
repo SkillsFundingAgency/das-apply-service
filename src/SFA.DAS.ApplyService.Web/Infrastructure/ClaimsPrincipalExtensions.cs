@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Security.Claims;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
@@ -22,9 +21,25 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return value;
         }
 
-        public static string GetSignInId(this ClaimsPrincipal principal)
+        public static Guid GetSignInId(this ClaimsPrincipal principal)
         {
             string value = principal.FindFirstValue("sub");
+
+            Guid.TryParse(value, out var signInId);
+
+            return signInId;
+        }
+
+        public static string GetGivenName(this ClaimsPrincipal principal)
+        {
+            string value = principal.FindFirstValue("given_name");
+
+            return value;
+        }
+
+        public static string GetFirstName(this ClaimsPrincipal principal)
+        {
+            string value = principal.FindFirstValue("family_name");
 
             return value;
         }

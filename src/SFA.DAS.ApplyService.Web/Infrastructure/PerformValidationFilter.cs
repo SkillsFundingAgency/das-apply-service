@@ -28,7 +28,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             
             using (var httpClient = new HttpClient())
             {
-                httpClient.BaseAddress = new Uri(config.InternalApi.Uri);
+                httpClient.BaseAddress = new Uri(config.InternalApi.ApiBaseAddress);
                 var response = httpClient.PostAsJsonAsync(performValidationAttribute.ValidationEndpoint,
                     context.ActionArguments.Values.First()).Result;
                 var content = response.Content.ReadAsStringAsync().Result;

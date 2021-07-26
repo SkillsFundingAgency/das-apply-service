@@ -37,7 +37,7 @@
             
             <div class="cookie-settings__form-wrapper">
                 <p class="govuk-body">We use 3 types of cookie. You can choose which cookies you're happy for us to use.</p>
-                <form data-module="cookie-settings">
+                <form data-module="cookie-settings" novalidate>
 
                     <div class="govuk-form-group">
                         <fieldset class="govuk-fieldset" aria-describedby="hint-measure-usage">
@@ -110,8 +110,9 @@
                         </a>.
                     </p>
 
-
-                    <button class="govuk-button" type="submit">Save changes</button>
+                    <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                        Save changes
+                    </button>
 
                 </form>
             </div>

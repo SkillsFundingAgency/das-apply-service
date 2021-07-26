@@ -1,0 +1,38 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
+
+@{
+    ViewBag.Title = "Application unsuccessful";
+    Layout = "_Layout";
+}
+
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel app-panel--error">
+                <h1 class="govuk-panel__title">
+                    Application unsuccessful
+                </h1>
+            </div>
+
+            <partial name="~/Views/Roatp/_ApplicationDetailsTable.cshtml" model="@Model" />
+
+            <p class="govuk-body">
+                Your application to join the RoATP has been unsuccessful.
+            </p>
+
+            <h2 class="govuk-heading-m">Why your application was unsuccessful</h2>
+            <p class="govuk-body das-multiline-text">
+                @Model.GatewayExternalComments
+            </p>
+
+        </div>
+    </div>
+    <partial name="~/Views/Roatp/_AppealComplaintContact.cshtml" />
+</main>

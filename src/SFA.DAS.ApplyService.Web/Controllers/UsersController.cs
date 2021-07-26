@@ -5,11 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Validators;
@@ -24,31 +20,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     public class UsersController : Controller
     {
         private readonly IUsersApiClient _usersApiClient;
-        private readonly IApplicationApiClient _applicationApiClient;
         private readonly ISessionService _sessionService;
-        private readonly ILogger<UsersController> _logger;
-        private readonly IConfigurationService _config;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly CreateAccountValidator _createAccountValidator;
-        private readonly IOrganisationApiClient _organisationApiClient;
 
-        private const string TrainingProviderOrganisationType = "TrainingProvider";
-
-
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, 
-                               IConfigurationService config, IHttpContextAccessor contextAccessor, 
-                               CreateAccountValidator createAccountValidator, IApplicationApiClient applicationApiClient,
-                               IOrganisationApiClient organisationApiClient)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService,
+            CreateAccountValidator createAccountValidator)
         { 
             _usersApiClient = usersApiClient;
-            _applicationApiClient = applicationApiClient;
             _sessionService = sessionService;
-            _logger = logger;
-            _config = config;
-            _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
-            _applicationApiClient = applicationApiClient;
-            _organisationApiClient = organisationApiClient;
         }
         
         [HttpGet]
@@ -61,8 +41,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel vm)
         {
-            _createAccountValidator.Validate(vm);
-
             if (!ModelState.IsValid)
             {
                 return View(vm);
@@ -73,7 +51,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _sessionService.Set("NewAccount", vm);
 
             return inviteSuccess ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
-            
         }
 
         [HttpGet]
@@ -84,24 +61,28 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> SignOut()
+        public IActionResult SignOut()
         {
-            _contextAccessor.HttpContext.Session.Clear();
-            foreach (var cookie in _contextAccessor.HttpContext.Request.Cookies.Keys)
+            HttpContext.Session.Clear();
+            foreach (var cookie in HttpContext.Request.Cookies.Keys)
             {
-                _contextAccessor.HttpContext.Response.Cookies.Delete(cookie);
+                HttpContext.Response.Cookies.Delete(cookie);
             }
 
-            if (string.IsNullOrEmpty(_contextAccessor.HttpContext.User.FindFirstValue("display_name")))
+            if (!User.Identity.IsAuthenticated)
+            {
+                // If they are no longer authenticated then the cookie has expired. Don't try to signout.
+                return RedirectToAction("Index", "Home");
+            }
+            else
             {
                 var authenticationProperties = new AuthenticationProperties
                 {
                     RedirectUri = Url.Action("Index", "Home")
                 };
+
                 return SignOut(authenticationProperties, CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
             }
-
-            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult InviteSent()
@@ -118,37 +99,29 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public async Task<IActionResult> PostSignIn()
         {
-            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
-           
+            var signInId = User.GetSignInId();
+            var user = await _usersApiClient.GetUserBySignInId(signInId);
+
             if (user is null)
             {
-                return RedirectToAction("NotSetUp");
+                // User exists so we can create them an account automatically
+                if (await _usersApiClient.CreateUserFromAsLogin(signInId, User.GetEmail(), User.GetGivenName(), User.GetFirstName()))
+                {
+                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble"); 
+                }
+                else
+                {
+                    return RedirectToAction("NotSetUp");
+                }
             }
             else if (user.ApplyOrganisationId is null)
             {
                 return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
             }
-
-            var organisation = await _organisationApiClient.GetByUser(user.Id);
-
-            var selectedApplicationType = ApplicationTypes.EndpointAssessor;
-            if (organisation.OrganisationType == TrainingProviderOrganisationType)
-            {
-                selectedApplicationType = ApplicationTypes.RegisterTrainingProviders;
-            }           
             else
             {
-                var org = await _applicationApiClient.GetOrganisationByUserId(user.Id);
-
-                if (org != null)
-                {
-                    _logger.LogInformation($"Setting OrganisationName in Session: {org.Name}");
-                    _sessionService.Set("OrganisationName", $"{org.Name}");
-                }
+                return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
             }
-            
-            return RedirectToAction("Applications", "RoatpApplication", new { applicationType = selectedApplicationType });
-
         }
 
         [HttpGet("/Users/SignedOut")]
@@ -170,7 +143,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ConfirmExistingAccount(ExistingAccountViewModel model)
+        public IActionResult ConfirmExistingAccount(ExistingAccountViewModel model)
         {
             if (!ModelState.IsValid)
             {

@@ -6,11 +6,12 @@ using Microsoft.AspNetCore.Http;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
-using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
-
+using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
@@ -25,9 +26,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<bool> ChangeProviderRoute(ChangeProviderRouteRequest changeProviderRouteRequest);
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
-        Task<List<Domain.Entities.Apply>> GetApplications(Guid userId, bool createdBy);
+        Task<List<Domain.Entities.Apply>> GetApplications(Guid signinId, bool createdBy);
+        Task<Apply> GetApplicationByUserId(Guid applicationId, Guid signinId);
 
         Task<IEnumerable<RoatpSequences>> GetRoatpSequences();
+
+        Task<string> GetOrganisationTypeFromApplication(Guid applicationId);
 
 
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId);
@@ -43,9 +47,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task ImportWorkflow(IFormFile file);
         
        
-        Task<string> GetApplicationStatus(Guid applicationId, int standardCode);
-
-        Task<List<StandardCollation>> GetStandards();
         Task<List<Option>> GetQuestionDataFedOptions(string dataEndpoint);
         Task DeleteFile(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId);
         Task<Organisation> GetOrganisationByUserId(Guid userId);
@@ -53,6 +54,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Organisation> GetOrganisationByName(string name);
         Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn);
 
-        Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus);
+        Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus, string userId);
+
+
     }
 }

@@ -1,26 +1,23 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
 
 @{
-    ViewBag.Title = "Application submitted";
+    ViewBag.Title = "Application complete";
     Layout = "_Layout";
 }
 
-<nav>
-    <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
-        <li class="roatp__navigation-item roatp__navigation-item--signout">
-            <a class="govuk-link govuk-link--no-visited-state" asp-action="SignOut" asp-controller="Users">Save and sign out</a>
-        </li>
-    </ul>
-</nav>
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <div class="govuk-panel govuk-panel--confirmation">
+            <div class="govuk-panel govuk-panel--confirmation govuk-!-margin-bottom-5">
                 <h1 class="govuk-panel__title">
-                    Application submitted
+                    Application complete
                 </h1>
                 <div class="govuk-panel__body">
                     Your reference number<br>
@@ -28,47 +25,53 @@
                 </div>
             </div>
 
+            <h1 class="govuk-heading-m">What happens next</h1>
             <p class="govuk-body">
-                We have sent you a confirmation email.
+                We've sent you an email to confirm you've submitted your application. This will now be reviewed by our team of assessors for:
             </p>
-
-            <h2 class="govuk-heading-m">What happens next</h2>
-            <p class="govuk-body">
-                We have sent your application to the following RoATP application assessment teams:
-            </p>                
             <ul class="govuk-list govuk-list--bullet">
                 <li>
-                    gateway team - they assess your organisation, the people involved in your organisation and criminal and compliance checks
+                    financial health
                 </li>
                 <li>
-                    financial health assessment team - they assess your organisation's financial evidence
+                    due diligence
                 </li>
                 <li>
-                    assessor team - they assess the remaining application answers, policies and processes
+                    readiness and quality
                 </li>
             </ul>
             <p class="govuk-body">
-                If your application answers are unclear, we may ask for further information. You must reply within 5 working days or we may withdraw your application.
+                You'll need to allow approximately 12 weeks for them to assess your application. This may take longer during busy times.
             </p>
             <p class="govuk-body">
-                You will need to allow at least 12 weeks for us to process your application. It may take longer because this is a private beta service. We will send you an email when there's an update with your application.
+                Once they've done this, your organisation will receive an overall outcome, a financial health grade and next steps.
             </p>
             <p class="govuk-body">
-                Once your application has been assessed, your organisation will receive an outcome, a financial health grade and next steps.
-            </p>
-
-            <p class="govuk-body">
-                Find out more about how your organisation is assessed for <a href="https://www.gov.uk/government/publications/esfa-financial-health-assessment" target="_blank" class="govuk-link">financial health (opens in a new window or tab)</a>.
+                If your answers or file uploads are unclear, we may ask for clarification. You must reply within 5 working days or your application may be unsuccessful.
             </p>
             <p class="govuk-body">
-                If you want to know more about how the teams currently assess applications, how outcomes and financial health grades are given and next steps you can <a href="https://www.gov.uk/guidance/application-guidance-for-the-register-of-apprenticeship-training-providers-version-3-august-2019" target="_blank" class="govuk-link">read 'section 7 what happens next' (opens in a new window or tab)</a>. Some processes may differ, as the guidance is based on the current Bravo service.
+                We'll send all communications about this application to <span class="govuk-!-font-weight-bold">@Model.EmailAddress</span>
             </p>
             <p class="govuk-body">
-                If you have any questions, want to make a change or withdraw your application, email <a href="mailto:roatp.support@education.gov.uk" class="govuk-link">roatp.support@education.gov.uk</a>.
+                If you have any questions, want to make a change or withdraw your application, email <a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk" class="govuk-link">helpdesk@manage-apprenticeships.service.gov.uk</a> or call 08000 150 600.
             </p>
-
             <p class="govuk-body">
-                <a href="https://www.smartsurvey.co.uk/s/UDD7V/" target="_blank" class="govuk-link">What did you think of this service?</a> (takes 30 seconds)
+                For more information, <a href="https://help.apprenticeships.education.gov.uk/hc/en-gb" class="govuk-link" target="_blank" rel="noreferrer noopener">read our apprenticeship service help articles (opens in new tab)</a>.
+            </p>
+            <p class="govuk-body">
+                As an apprenticeship training provider, your organisation may receive an inspection by Ofsted within the first 3 years of receiving funding from ESFA.
+            </p>
+            <p class="govuk-body">To prepare for this, evaluate your organisation against the:</p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-5">
+                <li>
+                    <a href="https://www.gov.uk/government/publications/education-inspection-framework" class="govuk-link" target="_blank" rel="noreferrer noopener">Education Inspection Framework (opens in new tab)</a>
+                </li>
+                <li>
+                    <a href="https://www.gov.uk/government/publications/further-education-and-skills-inspection-handbook-eif" class="govuk-link" target="_blank" rel="noreferrer noopener">Further Education and Skills Inspection Handbook (opens in new tab)</a>
+                </li>
+            </ul>
+            <p class="govuk-body">
+                <a href="https://www.smartsurvey.co.uk/s/UDD7V/" class="govuk-link" target="_blank" rel="noreferrer noopener">What did you think of this service?</a>
             </p>
         </div>
     </div>

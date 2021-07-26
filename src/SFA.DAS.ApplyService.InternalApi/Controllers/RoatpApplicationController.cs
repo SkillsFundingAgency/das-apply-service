@@ -20,7 +20,7 @@
     {
         private ILogger<RoatpApplicationController> _logger;
 
-        private RoatpApiClient _apiClient;
+        private IRoatpApiClient _apiClient;
         
         private AsyncRetryPolicy _retryPolicy;
 
@@ -28,7 +28,7 @@
 
         private readonly List<RoatpSequences> _roatpSequences;
 
-        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, RoatpApiClient apiClient, IMediator mediator, IOptions<List<RoatpSequences>> roatpSequences)
+        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, IRoatpApiClient apiClient, IMediator mediator, IOptions<List<RoatpSequences>> roatpSequences)
         {
             _logger = logger;
             _apiClient = apiClient;
@@ -50,7 +50,7 @@
 
         [Route("ukprn-on-register")]
         [HttpGet]
-        public async Task<IActionResult> UkprnOnRegister(long ukprn)
+        public async Task<IActionResult> UkprnOnRegister(int ukprn)
         {
             var registerStatus = await _retryPolicy.ExecuteAsync(
                 context => _apiClient.GetOrganisationRegisterStatus(ukprn.ToString()),
@@ -62,7 +62,7 @@
 
         [Route("roatp-sequences")]
         [HttpGet]
-        public async Task<IActionResult> RoatpSequences()
+        public IActionResult RoatpSequences()
         {
             return Ok(_roatpSequences);
         }

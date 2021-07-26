@@ -1,16 +1,13 @@
 @model SFA.DAS.ApplyService.Web.ViewModels.PageViewModel
-
+@using SFA.DAS.ApplyService.Domain.Entities
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + (@Model.Title ?? "Page not active");
-
-    var hasSectionTitle = !string.IsNullOrEmpty(Model.SectionTitle);
 }
 
-<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
-
-@*
-<a class="govuk-back-link" asp-action="Back" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId" asp-route-redirectAction="TaskList">Back</a>
-*@
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -23,10 +20,10 @@
             }
             else
             {
-                @if (!ViewData.ModelState.IsValid)
+                if (!ViewData.ModelState.IsValid)
                 {
 
-                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                         <h2 class="govuk-error-summary__title" id="error-summary-title">
                             There is a problem
                         </h2>
@@ -43,24 +40,18 @@
                     </div>
                 }
 
-                @if (Model.Questions.Count() != 1)
+                if (Model.Questions.Count() != 1)
                 {
-                    var hasModelTitle = !string.IsNullOrEmpty(Model.Title);
-                    var hasBodyText = !string.IsNullOrEmpty(Model.BodyText);
+                    var hasSectionTitle = !string.IsNullOrWhiteSpace(Model.SectionTitle);
+                    var hasModelTitle = !string.IsNullOrWhiteSpace(Model.Title);
+                    var hasBodyText = !string.IsNullOrWhiteSpace(Model.BodyText);
 
                     if (hasSectionTitle)
                     {
                         <span class="govuk-caption-xl">@Model.SectionTitle</span>
                     }
 
-                    if ((hasModelTitle || hasBodyText) && !string.IsNullOrEmpty(Model.PageContext))
-                    {
-                        <span class="govuk-caption-xl">
-                            @Html.Raw(Model.PageContext)
-                        </span>
-                    }
-
-                    @if (Model.DisplayType == "PagesWithSections" || Model.DisplayType == "OtherPagesInPagesWithSections")
+                    if (Model.DisplayType == PageDisplayType.PagesWithSections || Model.DisplayType == PageDisplayType.OtherPagesInPagesWithSections)
                     {
                         <h1 class="govuk-heading-xl">
                             @Html.Raw(Model.BodyText)
@@ -75,14 +66,14 @@
                             </h1>
                         }
 
-                        @if (hasBodyText)
+                        if (hasBodyText)
                         {
                             @Html.Raw(Model.BodyText)
                         }
                     }
                 }
 
-                @if (Model.HasFeedback)
+                if (Model.HasFeedback)
                 {
                     <div class="govuk-inset-text">
                         <h2 class="govuk-heading-l">Feedback</h2>
@@ -94,209 +85,213 @@
                 }
 
                 @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
-                <form method="post" novalidate enctype="multipart/form-data" asp-action="SaveAnswers" asp-route-applicationId="@Model.ApplicationId"
-                      asp-route-sectionId="@Model.SectionId" asp-route-sequenceId="@Model.SequenceId" asp-route-pageId="@Model.PageId">
-                    <input type="hidden" asp-for="ApplicationId" />
-                    <input type="hidden" asp-for="RedirectAction" />
+        <form method="post" enctype="multipart/form-data" asp-action="SaveAnswers" asp-route-applicationId="@Model.ApplicationId"
+              asp-route-sectionId="@Model.SectionId" asp-route-sequenceId="@Model.SequenceId" asp-route-pageId="@Model.PageId" novalidate>
+            <input type="hidden" asp-for="ApplicationId" />
+            <input type="hidden" asp-for="RedirectAction" />
 
-                    @if (Model.Questions.Count() == 1)
-                    {
-                        foreach (var question in Model.Questions)
-                        {
-                            <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
-                                <fieldset class="govuk-fieldset">
-                                    @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList" || question.Type == "ComplexCheckBoxList")
+            @if (Model.Questions.Count() == 1)
+            {
+                foreach (var question in Model.Questions)
+                {
+                    <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
+                        <fieldset class="govuk-fieldset">
+                            @if (QuestionType.Checkbox.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase)
+                                || QuestionType.Radio.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase)
+                                || QuestionType.ComplexRadio.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase)
+                                || QuestionType.CheckboxList.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase)
+                                || QuestionType.ComplexCheckboxList.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                                    @if (!string.IsNullOrWhiteSpace(Model.SectionTitle))
                                     {
-                                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                                            @if (Model.PageContext != null)
-                                            {
-                                                <span class="govuk-caption-xl">
-                                                    @Html.Raw(Model.PageContext)
-                                                </span>
-                                            }
-                                            @if (hasSectionTitle)
-                                            {
-                                                <span class="govuk-caption-xl">@Model.SectionTitle</span>
-                                            }
+                                        <span class="govuk-caption-xl">@Model.SectionTitle</span>
+                                    }
 
-
-                                            @if (Model.DisplayType == "PagesWithSections" || Model.DisplayType == "OtherPagesInPagesWithSections")
-                                            {
-                                                <h1 class="govuk-heading-xl">
-                                                    @Html.Raw(Model.BodyText)
-                                                </h1>
-
-                                            }
-                                            else
-                                            {
-                                                <h1 class="govuk-fieldset__heading">
-                                                    @Html.Raw(question.Label)
-                                                </h1>
-                                            }
-                                        </legend>
-
-                                        if (!string.IsNullOrWhiteSpace(@Model.BodyText) && Model.DisplayType != "PagesWithSections" && Model.DisplayType != "OtherPagesInPagesWithSections")
-                                        {
+                                    @if (Model.DisplayType == PageDisplayType.PagesWithSections || Model.DisplayType == PageDisplayType.OtherPagesInPagesWithSections)
+                                    {
+                                        <h1 class="govuk-heading-xl">
                                             @Html.Raw(Model.BodyText)
-                                        }
-                                        else
-                                        {
-                                            @if (Model.DisplayType == "PagesWithSections" || Model.DisplayType == "OtherPagesInPagesWithSections")
-                                            {
-                                                <label class="govuk-label">
-                                                    @Html.Raw(question.Label)
-                                                </label>
-                                            }
-                                        }
+                                        </h1>
+
                                     }
                                     else
                                     {
-                                        if (!string.IsNullOrWhiteSpace(@Model.BodyText))
-                                        {
-                                            <div>
-                                                @Html.Raw(Model.BodyText)
-                                            </div>
-                                        }
-
-                                        @if (Model.PageContext != null)
-                                        {
-                                            <span class="govuk-caption-xl">
-                                                @Html.Raw(Model.PageContext)
-                                            </span>
-                                        }
-
-                                        @if (hasSectionTitle)
-                                        {
-                                            <span class="govuk-caption-xl">@Model.SectionTitle</span>
-                                        }
-
-                                        <h2 class="govuk-label-wrapper">
-                                            <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
-                                                @Html.Raw(question.Label)
-                                            </label>
-                                        </h2>
+                                        <h1 class="govuk-fieldset__heading">
+                                            @Html.Raw(question.Label)
+                                        </h1>
                                     }
+                                </legend>
 
-                                    @if (question.QuestionBodyText != null)
-                                    {
-                                        @Html.Raw(question.QuestionBodyText)
-                                    }
-
-                                    @if (question.Hint != null)
-                                    {
-                                        <span class="govuk-hint">
-                                            @Html.Raw(question.Hint)
-                                        </span>
-                                    }
-
-                                    @if ((question.Type == "ComplexRadio" || question.Type == "ComplexCheckBoxList") && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
-                                    {
-                                        question.ErrorMessages = Model.ErrorMessages;
-                                    }
-
-                                    @{
-                                        var questionType = question.Type.Replace("DataFed_", "");
-                                    }
-
-                                    <partial name="@($"~/Views/QuestionPartials/_{question.Type}.cshtml")" for="@question" />
-
-                                </fieldset>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        foreach (var question in Model.Questions)
-                        {
-                            <div class="govuk-form-group @(question.ErrorMessages?.Any() ?? false ? "govuk-form-group--error" : "")">
-
-                                @if (question.Type == "Address")
+                                if (!string.IsNullOrWhiteSpace(Model.BodyText) && Model.DisplayType != PageDisplayType.PagesWithSections
+                                    && Model.DisplayType != PageDisplayType.OtherPagesInPagesWithSections)
                                 {
-                                    <h2 class="govuk-heading-l">
-                                        @Html.Raw(question.Label)
-                                    </h2>
+                                    @Html.Raw(Model.BodyText)
                                 }
                                 else
                                 {
-                                    <label class="govuk-label" for="@question.QuestionId">
-                                        @Html.Raw(question.Label)
-                                    </label>
+                                    if (Model.DisplayType == PageDisplayType.PagesWithSections || Model.DisplayType == PageDisplayType.OtherPagesInPagesWithSections)
+                                    {
+                                        <label class="govuk-label">
+                                            @Html.Raw(question.Label)
+                                        </label>
+                                    }
                                 }
-
-                                @if (question.QuestionBodyText != null)
-                                {
-                                    @Html.Raw(question.QuestionBodyText)
-                                }
-
-                                @if (question.Hint != "")
-                                {
-                                    <span class="govuk-hint">
-                                        @Html.Raw(question.Hint)
-                                    </span>
-                                }
-
-                                @if ((question.Type == "ComplexRadio" || question.Type == "ComplexCheckBoxList") && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
-                                {
-                                    question.ErrorMessages = Model.ErrorMessages;
-                                }
-
-                                <partial name="@($"~/Views/QuestionPartials/_{question.Type}.cshtml")" for="@question" />
-                            </div>
-                        }
-                    }
-
-                    @* only a single Question of type Address is supported per page *@
-                    @if (Model.Questions?.Exists(p => p.Type == "Address") ?? false)
-                    {
-                        @section Scripts {
-                            <script src="@Url.Content("~/javascripts/lib/jquery/jquery.min.js")"></script>
-                            <script src="@Url.Content("~/javascripts/lib/jqueryui/jquery-ui.min.js")"></script>
-                            <script src="@Url.Content("~/javascripts/gov-uk-postcode-lookup-service.min.js")"></script>
-                        }
-                    }
-
-                    @if (Model.InfoText != null)
-                    {
-                        @Html.Raw(Model.InfoText)
-                    }
-
-                    <partial name="~/Views/Application/Pages/PeopleInControlComponent.cshtml" for="PeopleInControlDetails" />
-                    <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
-
-                    @if (!Model.HideCTA)
-                    {
-                        <button type="submit" class="govuk-button govuk-!-margin-right-3">@Model.CTAButtonText</button>
-                    }
-
-                    @foreach (var linksConfiguration in Model.LinksConfiguration)
-                    {
-                        var pageId = Model.PageId;
-                        var first = true;
-                        @foreach (var link in linksConfiguration.Links)
-                        {
-
-                            if (!string.IsNullOrEmpty(link.LinkPageId))
-                            {
-                                pageId = link.LinkPageId;
-                            }
-
-                            if (first && Model.SectionId != 1)
-                            {
-
-                                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="@link.Action" asp-controller="@link.Controller" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId">@link.Caption</a>
-
                             }
                             else
                             {
-                                first = false;
-                                <p class="govuk-body">
-                                    <a class="govuk-link" asp-action="@link.Action" asp-controller="@link.Controller" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId">@link.Caption</a>
-                                </p>
+                                if (!string.IsNullOrWhiteSpace(Model.BodyText))
+                                {
+                                    <div>
+                                        @Html.Raw(Model.BodyText)
+                                    </div>
+                                }
+
+                                if (!string.IsNullOrWhiteSpace(Model.SectionTitle))
+                                {
+                                    <span class="govuk-caption-xl">@Model.SectionTitle</span>
+                                }
+
+                                <h2 class="govuk-label-wrapper">
+                                    <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
+                                        @Html.Raw(question.Label)
+                                    </label>
+                                </h2>
                             }
+
+                            @if (!string.IsNullOrWhiteSpace(question.QuestionBodyText))
+                            {
+                                @Html.Raw(question.QuestionBodyText)
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(question.Hint))
+                            {
+                                <span class="govuk-hint">
+                                    @Html.Raw(question.Hint)
+                                </span>
+                            }
+
+                            @if ((QuestionType.ComplexRadio.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase) || QuestionType.ComplexCheckboxList.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase))
+                              && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
+                            {
+                                question.ErrorMessages = Model.ErrorMessages;
+                            }
+
+                            <partial name="@($"~/Views/QuestionPartials/_{question.Type}.cshtml")" for="@question" />
+
+                        </fieldset>
+                    </div>
+                }
+            }
+            else
+            {
+                foreach (var question in Model.Questions)
+                {
+                    <div class="govuk-form-group @(question.ErrorMessages?.Any() ?? false ? "govuk-form-group--error" : "")">
+
+                        @if (QuestionType.Address.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            <h2 class="govuk-heading-l">
+                                @Html.Raw(question.Label)
+                            </h2>
                         }
+                        else
+                        {
+                            <label class="govuk-label" for="@question.QuestionId">
+                                @Html.Raw(question.Label)
+                            </label>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(question.QuestionBodyText))
+                        {
+                            @Html.Raw(question.QuestionBodyText)
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(question.Hint))
+                        {
+                            <span class="govuk-hint">
+                                @Html.Raw(question.Hint)
+                            </span>
+                        }
+
+                        @if ((QuestionType.ComplexRadio.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase) || QuestionType.ComplexCheckboxList.Equals(question.Type, StringComparison.InvariantCultureIgnoreCase))
+                          && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
+                        {
+                            question.ErrorMessages = Model.ErrorMessages;
+                        }
+
+                        <partial name="@($"~/Views/QuestionPartials/_{question.Type}.cshtml")" for="@question" />
+                    </div>
+                }
+            }
+
+            @* only a single Question of type Address is supported per page *@
+            @if (Model.Questions?.Exists(p => QuestionType.Address.Equals(p.Type, StringComparison.InvariantCultureIgnoreCase)) ?? false)
+            {
+                @section Scripts {
+                    <script src="@Url.Content("~/javascripts/lib/jquery/jquery.min.js")"></script>
+                    <script src="@Url.Content("~/javascripts/lib/jqueryui/jquery-ui.min.js")"></script>
+                    <script src="@Url.Content("~/javascripts/gov-uk-postcode-lookup-service.min.js")"></script>
+                }
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.InfoText))
+            {
+                @Html.Raw(Model.InfoText)
+            }
+
+            <partial name="~/Views/Application/Pages/PeopleInControlComponent.cshtml" for="PeopleInControlDetails" />
+            <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
+
+            @if (!Model.HideCTA)
+            {
+                <button class="govuk-button govuk-!-margin-right-3" data-module="govuk-button" data-disable-on-submit="true">
+                    @Model.CTAButtonText
+                </button>
+            }
+
+            @foreach (var linksConfiguration in Model.LinksConfiguration)
+            {
+                var pageId = Model.PageId;
+                foreach (var link in linksConfiguration.Links)
+                {
+
+                    if (!string.IsNullOrWhiteSpace(link.LinkPageId))
+                    {
+                        pageId = link.LinkPageId;
                     }
 
-                </form>
+                    if (!string.IsNullOrWhiteSpace(link.CssClasses))
+                    {
+                        if (link.Action == "TaskList")
+                        {
+                            <a class="govuk-link @link.CssClasses" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-fragment="@($"Sequence_{Model.SequenceId}")">@link.Caption</a>
+                        }
+                        else
+                        {
+                            <a class="govuk-link @link.CssClasses" asp-action="@link.Action" asp-controller="@link.Controller" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId">@link.Caption</a>
+                        }
+
+                    }
+                    else
+                    {
+
+                        <p class="govuk-body govuk-!-margin-bottom-6">
+                        @if (link.Action == "TaskList")
+                        {
+                            <a class="govuk-link" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-fragment="@($"Sequence_{Model.SequenceId}")">@link.Caption</a>
+                        }
+                        else
+                        {
+                            <a class="govuk-link" asp-action="@link.Action" asp-controller="@link.Controller" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId">@link.Caption</a>
+                        }
+                        </p>
+
+                    }
+                }
+            }
+
+        </form>
             }
 
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />

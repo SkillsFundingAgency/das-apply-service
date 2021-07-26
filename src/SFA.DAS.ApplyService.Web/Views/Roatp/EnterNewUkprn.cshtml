@@ -1,0 +1,60 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.EnterNewUkprnViewModel
+
+@{
+    ViewBag.Title = "What is your organisation's UK provider reference number (UKPRN)?";
+    Layout = "_Layout";
+}
+
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <partial name="_ValidationSummaryPartial" />
+
+            <h1 class="govuk-heading-xl">What is your organisation's UK provider reference number (UKPRN)?</h1>
+            <p class="govuk-body">This is an 8-digit number from the UK Register of Learning Providers (UKRLP).</p>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="post" asp-action="EnterNewUkprn" asp-controller="RoatpApplication" novalidate>
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="CurrentUkprn" />
+
+                <div class="govuk-form-group @(!ViewContext.ModelState.IsValid ? "govuk-form-group--error" : "")" sfa-validation-for="UKPRN" sfa-validationerror-class="form-group-error">
+                    <span class="govuk-error-message">
+                        @Html.ValidationMessageFor(m => m.Ukprn, null, new { @class = "govuk-error-message error", id = "error-message-" + Html.IdFor(m => m.Ukprn) })
+                    </span>
+
+                    <label for="UKPRN" class="govuk-label">UKPRN</label>
+
+                    <input type="text" class="govuk-input govuk-!-width-one-third" asp-for="Ukprn"
+                           sfa-validation-for="UKPRN" sfa-validationerror-class="form-control-error" />
+                </div>
+
+                <details class="govuk-details" role="group">
+                    <summary class="govuk-details__summary" role="button" aria-controls="details-content-ukprn" aria-expanded="false">
+                        <span class="govuk-details__summary-text">
+                            I do not have a UKPRN
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text" id="details-content-ukprn" aria-hidden="true">
+                        <p class="govuk-body">To get a UKPRN, you'll need to <a href="https://www.ukrlp.co.uk/" target="_blank" class="govuk-link">register with the UKRLP (opens in a new window or tab)</a>.</p>
+                        <p class="govuk-body">After you've registered and received a UKPRN, sign back in to continue with this application.</p>
+                    </div>
+                </details>
+                <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                    Save and continue
+                </button>
+            </form>
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+        </div>
+    </div>
+</main>

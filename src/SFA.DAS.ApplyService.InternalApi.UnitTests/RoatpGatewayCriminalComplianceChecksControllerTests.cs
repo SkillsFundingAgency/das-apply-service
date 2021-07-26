@@ -10,15 +10,17 @@ using System;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
     [TestFixture]
-    public class RoatpGatewayCriminalComplianceChecksControllerTests
+    public class GatewayChecksControllerCriminalComplianceTests
     {
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<ICriminalComplianceChecksQuestionLookupService> _lookupService;
-        private RoatpGatewayCriminalComplianceChecksController _controller;
+        private Mock<ILogger<GatewayChecksController>> _logger;
+        private GatewayChecksController _controller;
         private Guid _applicationId;
         private string _gatewayPageId;
         private Page _qnaPageWithQuestion;
@@ -29,7 +31,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _applicationId = Guid.NewGuid();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _lookupService = new Mock<ICriminalComplianceChecksQuestionLookupService>();
-            _controller = new RoatpGatewayCriminalComplianceChecksController(_qnaApiClient.Object, _lookupService.Object);
+            _logger = new Mock<ILogger<GatewayChecksController>>();
+            _controller = new GatewayChecksController(_qnaApiClient.Object, _logger.Object,_lookupService.Object);
 
             _gatewayPageId = "Page1";
 
@@ -63,7 +66,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                                     {
                                         new Question
                                         {
-                                            QuestionId = "CC-22.1",
+                                            QuestionId = "CC-22-1",
                                             Input = new Input
                                             {
                                                 Type = "Text"
@@ -121,7 +124,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void Get_question_details_retrieves_question_details_and_answer_with_further_question()
         {
             _qnaPageWithQuestion.PageOfAnswers[0].Answers[0].Value = "Yes";
-            _qnaPageWithQuestion.PageOfAnswers[0].Answers.Add(new Answer { QuestionId = "CC-22.1", Value = "Lorem ipsum" });
+            _qnaPageWithQuestion.PageOfAnswers[0].Answers.Add(new Answer { QuestionId = "CC-22-1", Value = "Lorem ipsum" });
 
             var result = _controller.GetCriminalComplianceQuestionDetails(_applicationId, _gatewayPageId).GetAwaiter().GetResult();
 

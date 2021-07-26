@@ -9,7 +9,7 @@
     {
         public ApplicationRoute ApplicationRoute { get; set; }
         public ProviderDetails UkrlpLookupDetails { get; set; }
-        public long UKPRN { get; set; }
+        public int UKPRN { get; set; }
         public CompaniesHouseSummary CompanySummary { get; set; }
         public CharityCommissionSummary CharitySummary { get; set; }
         public OrganisationRegisterStatus RoatpRegisterStatus { get; set; }

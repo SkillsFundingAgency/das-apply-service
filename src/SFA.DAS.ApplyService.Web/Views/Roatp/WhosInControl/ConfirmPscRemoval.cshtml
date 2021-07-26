@@ -12,14 +12,10 @@
     var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
 }
 
-<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
-
-@*
-<form asp-controller="RoatpWhosInControlApplication" asp-action="@Model.BackAction" method="get" name="backForm">
-    <input type="hidden" asp-for="ApplicationId" />
-    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-</form>
-*@
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -27,7 +23,7 @@
         <div class="govuk-grid-column-two-thirds">
             @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
             {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
@@ -49,7 +45,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="post" asp-action="@Model.ActionName">
+            <form method="post" asp-action="@Model.ActionName" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="Index" />
                 <input type="hidden" asp-for="Name" />
@@ -92,7 +88,9 @@
                         </div>
                     </fieldset>
                 </div>
-                <input type="submit" class="govuk-button" value="Save and continue" />
+                <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                    Save and continue
+                </button>
 
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />

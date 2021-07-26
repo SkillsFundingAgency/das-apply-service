@@ -2,6 +2,7 @@
 using SFA.DAS.ApplyService.Domain.Entities;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation
 {
@@ -32,7 +33,9 @@ namespace SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation
                 existingOrganisation.RoEPAOApproved = request.RoEPAOApproved;
                 existingOrganisation.RoATPApproved = request.RoATPApproved;
 
-                return await _organisationRepository.UpdateOrganisation(existingOrganisation, request.UpdatedBy);
+                await _organisationRepository.UpdateOrganisation(existingOrganisation, request.UpdatedBy);
+
+                return existingOrganisation;
             }
 
             return null;

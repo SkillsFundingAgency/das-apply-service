@@ -60,25 +60,37 @@
     <Folder Include="Tables\" />
     <Folder Include="StoredProcedures" />
     <Folder Include="Sequences" />
+    <Folder Include="AdhocScipts" />
+    <Folder Include="AdhocScipts\DataMart" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Contacts.sql" />
     <Build Include="Tables\Organisations.sql" />
     <Build Include="Tables\EmailTemplates.sql" />
-    <Build Include="Sequences\AppRefSequence.sql" />
     <Build Include="Sequences\RoatpAppReferenceSequence.sql" />
     <Build Include="Tables\Apply.sql" />
     <Build Include="Tables\ApplySnapshots.sql" />
     <Build Include="Tables\WhitelistedProviders.sql" />
     <Build Include="Tables\GatewayAnswer.sql" />
+    <Build Include="Tables\AssessorPageReviewOutcome.sql" />
+    <Build Include="Tables\ModeratorPageReviewOutcome.sql" />
+    <Build Include="Tables\FinancialData.sql" />
+    <Build Include="Tables\Audit.sql" />
+    <Build Include="Tables\OversightReview.sql" />
+    <Build Include="Tables\AppealUpload.sql" />
+    <Build Include="Tables\Appeal.sql" />
+    <Build Include="Tables\ExtractedApplications.sql" />
+    <Build Include="Tables\SubmittedApplicationAnswers.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PreDeploy Include="Script.PreDeployment1.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="SFA.DAS.ApplyService.Database.publish.xml" />
+    <None Include="AdhocScipts\DataMart\LookupOversightReviewStatus.sql" />
+    <None Include="AdhocScipts\DataMart\LookupSequenceTitles.sql" />
+    <None Include="AdhocScipts\DataMart\LookupSectionTitles.sql" />
+    <None Include="AdhocScipts\DataMart\LookupPageTitles.sql" />
+    <None Include="AdhocScipts\DataMart\LookupQuestionTitles.sql" />
   </ItemGroup>
 </Project>

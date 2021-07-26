@@ -1,11 +1,9 @@
 ﻿using MediatR;
-using SFA.DAS.ApplyService.Application.Email.Consts;
-using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Submit
 {
@@ -39,8 +37,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                     
                     application.ApplyData.ApplyDetails.ApplicationSubmittedOn = DateTime.UtcNow;
                     application.ApplyData.ApplyDetails.ApplicationSubmittedBy = submittingContact.Id;
+                    application.ApplyData.ApplyDetails.OrganisationType = request.OrganisationType;
+                    application.ApplyData.ApplyDetails.Address = request.Address;
 
-                    foreach(var sequence in application.ApplyData.Sequences)
+                    foreach (var sequence in application.ApplyData.Sequences)
                     {
                         if (!sequence.NotRequired)
                         {
@@ -48,9 +48,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                         }
                     }
                     
-                    await _applyRepository.SubmitApplication(application.ApplicationId, application.ApplyData, submittingContact.Id);
-
-                    return true;
+                    return await _applyRepository.SubmitApplication(application.ApplicationId, application.ApplyData, request.FinancialData, submittingContact.Id);
                 }
             }
 

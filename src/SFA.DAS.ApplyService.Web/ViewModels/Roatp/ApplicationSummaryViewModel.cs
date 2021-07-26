@@ -10,6 +10,19 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string OrganisationName { get; set; }
         public string TradingName { get; set; }
         public string ApplicationRouteId { get; set; }
+        public DateTime? SubmittedDate { get; set; }
+        public string GatewayExternalComments { get; set; }
+        public string EmailAddress { get; set; }
+        public string FinancialGrade { get; set; }
+        public string FinancialReviewStatus { get; set; }
+        public string FinancialExternalComments { get; set; }
+        public string GatewayReviewStatus { get; set; }
+        public string ModerationStatus { get; set; }
+        public string OversightInProgressExternalComments { get; set; }
+
+        public int? SubcontractingLimit { get; set; }
+
+        public string SubcontractingLimitFormatted => SubcontractingLimit?.ToString("N0");
 
         public string ApplicationRouteShortText
         {

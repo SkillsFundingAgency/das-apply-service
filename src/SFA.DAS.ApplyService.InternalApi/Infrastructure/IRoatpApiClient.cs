@@ -12,5 +12,7 @@
         Task<IEnumerable<ProviderType>> GetProviderTypes();
         Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn);
         Task<UkprnLookupResponse> GetUkrlpDetails(string ukprn);
+
+        Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int? providerTypeId);
     }
 }

@@ -123,7 +123,10 @@
   <data name="MissingUkprn" xml:space="preserve">
     <value>Enter a UKPRN</value>
   </data>
+  <data name="NewUkprnMustNotBeSame" xml:space="preserve">
+    <value>Enter a new UKPRN</value>
+  </data>
   <data name="NotWhitelistedUkprn" xml:space="preserve">
-    <value>You need to contact roatp.support@education.gov.uk</value>
+    <value>You need to contact helpdesk@manage-apprenticeships.service.gov.uk</value>
   </data>
 </root>

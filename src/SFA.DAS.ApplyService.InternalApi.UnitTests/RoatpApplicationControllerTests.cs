@@ -6,7 +6,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
     using System.Collections.Generic;
     using System.Linq;
     using AutoMapper;
-    using Controllers;
     using FluentAssertions;
     using Infrastructure;
     using Microsoft.AspNetCore.Mvc;
@@ -15,6 +14,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
     using Moq;
     using NUnit.Framework;
     using SFA.DAS.ApplyService.Domain.Roatp;
+    using SFA.DAS.ApplyService.InternalApi.Controllers;
 
     [TestFixture, Ignore("Require rework following migration to .net core DI")]
     public class RoatpApplicationControllerTests

@@ -3,6 +3,7 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Financial.Applications
 {
@@ -17,7 +18,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial.Applications
 
         public async Task<List<RoatpFinancialSummaryItem>> Handle(OpenFinancialApplicationsRequest request, CancellationToken cancellationToken)
         {
-            return await _repository.GetOpenFinancialApplications();
+            return await _repository.GetOpenFinancialApplications(request.SearchTerm, request.SortColumn, request.SortOrder);
         }
     }
 }

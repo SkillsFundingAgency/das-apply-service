@@ -1,9 +1,9 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmDirectorsPscsViewModel
 
-<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
-
-
-<a class="govuk-back-link" asp-action="TaskList" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">Back</a>
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -13,7 +13,7 @@
             <h1 class="govuk-heading-xl">Confirm who's in control</h1>
             <p class="govuk-body">These are the details we found on Companies House</p>
 
-            <form method="post" asp-action="DirectorsPscsConfirmed" novalidate enctype="multipart/form-data">
+            <form method="post" asp-action="DirectorsPscsConfirmed" enctype="multipart/form-data" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="GetHelpAction" />
 
@@ -36,7 +36,9 @@
                     </div>
                 </details>
 
-                <button type="submit" class="govuk-button">Confirm and continue</button>
+                <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                    Confirm and continue
+                </button>
 
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />

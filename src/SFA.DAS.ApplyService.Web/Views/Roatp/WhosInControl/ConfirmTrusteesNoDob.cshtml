@@ -1,16 +1,9 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmTrusteesViewModel
 
-<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
-
-@*@if (Model.VerifiedCompaniesHouse)
+@section Navigation
 {
-    <a class="govuk-back-link" asp-action="ConfirmDirectorsPscs" asp-controller="RoatpWhosInControlApplication" asp-route-ApplicationId="@Model.ApplicationId">Back</a>
+    <partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
 }
-else
-{
-    <a class="govuk-back-link" asp-action="TaskList" asp-controller="RoatpApplication" asp-route-ApplicationId="@Model.ApplicationId">Back</a>
-}*@
-
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -29,7 +22,7 @@ else
 
         </div>
 
-        <form method="post" asp-action="TrusteesConfirmed" novalidate enctype="multipart/form-data">
+        <form method="post" asp-action="TrusteesConfirmed" enctype="multipart/form-data" novalidate>
             <input type="hidden" asp-for="ApplicationId" />
             <input type="hidden" asp-for="GetHelpAction" />
 
@@ -50,7 +43,9 @@ else
                     </div>
                 </details>
 
-                <button type="submit" class="govuk-button">Confirm and continue</button>
+                <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                    Confirm and continue
+                </button>
             </div>
         </form>
 

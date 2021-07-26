@@ -2,18 +2,14 @@
 @model SFA.DAS.ApplyService.Web.ViewModels.Roatp.AddEditManagementHierarchyViewModel
 
 @{
-    ViewBag.Title = "Who is in your organisation''s management hierarchy for apprenticeships?";
+    ViewBag.Title = "Who is in your organisation's management hierarchy for apprenticeships?";
     Layout = "_Layout";
 }
 
-<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
-
-@*
-<form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
-    <input type="hidden" asp-for="ApplicationId" />
-    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-</form>
-*@
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -21,7 +17,7 @@
         <div class="govuk-grid-column-two-thirds">
             @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
             {
-            <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                 <h2 class="govuk-error-summary__title" id="error-summary-title">
                     There is a problem
                 </h2>
@@ -29,13 +25,29 @@
                     <ul class="govuk-list govuk-error-summary__list">
                         @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
                             {
-                        <li><a href="#@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+
+                                var errorMessageField = errorMessage.Field;
+
+                                if (errorMessageField == "TimeInRole")
+                                {
+                                    errorMessageField = "TimeInRoleYears";
+                                }
+
+                                if (
+                                    errorMessage.ErrorMessage == "Enter the names of all these organisations using 750 characters or less" ||
+                                    errorMessage.ErrorMessage == "Enter the names of all these organisations"
+                                )
+                                {
+                                    errorMessageField = "OtherOrgName";
+                                }
+
+                                <li><a href="#@errorMessageField">@errorMessage.ErrorMessage</a></li>
                             }
                     </ul>
                 </div>
             </div>
             }
-            @*<span class="govuk-caption-l">@Model.SectionTitle</span>*@
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
             <h1 class="govuk-heading-xl">Who is in your organisation's management hierarchy for apprenticeships?</h1>
             <p class="govuk-body">
                 If there are more people, you can add them later.
@@ -44,15 +56,33 @@
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="post" asp-action="AddManagementHierarchyDetails">
+            <form method="post" asp-action="AddManagementHierarchyDetails" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="Identifier" />
                 <input type="hidden" asp-for="GetHelpAction" />
 
                 <partial name="~/Views/Roatp/ManagementHierarchy/AddEditManagementHierarchy.cshtml" for="@Model" />
-                <button type="submit" class="govuk-button  govuk-!-margin-right-3">Confirm and continue</button>
 
-                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">Return to this question later</a>
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            Your organisation's management hierarchy
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <p class="govuk-body">
+                            Your organisation's management hierarchy includes:
+                            <br/><br/>
+                            Shadow directors and any person who is a member of the administrative management or supervisory body of the provider or who has powers of representation, decision, influence, management or control of the provider organisation including through a blind trust, a connected party, a partner organisation or a parent organisation.
+                        </p>
+                    </div>
+                </details>
+
+                <button class="govuk-button govuk-!-margin-right-3" data-module="govuk-button" data-disable-on-submit="true">
+                    Confirm and continue
+                </button>
+
+                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">Return to this question later</a>
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>

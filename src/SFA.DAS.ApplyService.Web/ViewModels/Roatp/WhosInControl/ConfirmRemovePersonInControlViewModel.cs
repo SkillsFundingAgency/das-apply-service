@@ -13,7 +13,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string BackAction { get; set; }
 
         public string Title { get { return "Are you sure you want to remove person in control?"; } set { } }
-        public string SequenceId { get { return RoatpWorkflowSequenceIds.YourOrganisation.ToString(); } set { } }
+        public int SequenceId { get { return RoatpWorkflowSequenceIds.YourOrganisation; } set { } }
         public int SectionId { get { return RoatpWorkflowSectionIds.YourOrganisation.WhosInControl; } set { } }
         public string PageId { get; set; }
         public string GetHelpQuestion { get; set; }

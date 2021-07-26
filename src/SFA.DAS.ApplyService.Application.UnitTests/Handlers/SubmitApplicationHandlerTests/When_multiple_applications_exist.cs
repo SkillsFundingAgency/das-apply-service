@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitApplicationH
 
             Handler.Handle(request, new CancellationToken()).Wait();
 
-            ApplyRepository.Verify(r => r.SubmitApplication(It.IsAny<Guid>(), It.IsAny<ApplyData>(), It.IsAny<Guid>()), Times.Never);
+            ApplyRepository.Verify(r => r.SubmitApplication(It.IsAny<Guid>(), It.IsAny<ApplyData>(), It.IsAny<FinancialData>(), It.IsAny<Guid>()), Times.Never);
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitApplicationH
 
             Handler.Handle(request, new CancellationToken()).Wait();
 
-            ApplyRepository.Verify(r => r.SubmitApplication(It.IsAny<Guid>(), It.IsAny<ApplyData>(), It.IsAny<Guid>()), Times.Once);
+            ApplyRepository.Verify(r => r.SubmitApplication(It.IsAny<Guid>(), It.IsAny<ApplyData>(), It.IsAny<FinancialData>(), It.IsAny<Guid>()), Times.Once);
         }
     }
 }

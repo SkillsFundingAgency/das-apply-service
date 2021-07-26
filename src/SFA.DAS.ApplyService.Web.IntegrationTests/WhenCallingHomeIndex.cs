@@ -15,6 +15,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 
 namespace SFA.DAS.ApplyService.Web.IntegrationTests
 {
+    // NOTE: I Don't think these have ever worked!
     [TestFixture]
     public class WhenCallingHomeIndex
     {

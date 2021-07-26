@@ -9,7 +9,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     public interface IRoatpApiClient
     {
         Task<IEnumerable<ApplicationRoute>> GetApplicationRoutes();
-        Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(long ukprn);
+        Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(int ukprn);
         Task<IEnumerable<ProviderDetails>> GetUkrlpProviderDetails(string ukprn);
     }
 }

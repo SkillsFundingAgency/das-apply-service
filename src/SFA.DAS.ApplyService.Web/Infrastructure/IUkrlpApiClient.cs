@@ -5,6 +5,6 @@
 
     public interface IUkrlpApiClient
     {
-        Task<UkrlpLookupResults> GetTrainingProviderByUkprn(long ukprn);
+        Task<UkrlpLookupResults> GetTrainingProviderByUkprn(int ukprn);
     }
 }
