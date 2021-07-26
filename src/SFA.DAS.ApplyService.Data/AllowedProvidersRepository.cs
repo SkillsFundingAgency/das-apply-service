@@ -97,8 +97,10 @@ namespace SFA.DAS.ApplyService.Data
                     return "AddedDateTime";
 
                 case "StartDate":
-                default:
                     return "StartDateTime";
+
+                default:
+                    return "AddedDateTime";
             }
         }
 
