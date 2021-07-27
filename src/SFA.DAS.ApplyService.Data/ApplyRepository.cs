@@ -33,10 +33,10 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return await connection.QuerySingleAsync<Guid>(
-                    @"INSERT INTO Apply (ApplicationId, OrganisationId, ApplicationStatus, ApplyData, AssessorReviewStatus, GatewayReviewStatus, FinancialReviewStatus, CreatedBy, CreatedAt)
+                    @"INSERT INTO Apply (ApplicationId, OrganisationId, ApplicationStatus, ApplyData, AssessorReviewStatus, GatewayReviewStatus, CreatedBy, CreatedAt)
                                         OUTPUT INSERTED.[ApplicationId] 
-                                        VALUES (@applicationId, @organisationId, @applicationStatus, @applyData, @assessorReviewStatus, @gatewayReviewStatus, @financialReviewStatus, @createdBy, GETUTCDATE())",
-                    new { applicationId, organisationId, applicationStatus = ApplicationStatus.InProgress, applyData, assessorReviewStatus = AssessorReviewStatus.Draft, gatewayReviewStatus = GatewayReviewStatus.Draft, financialReviewStatus = FinancialReviewStatus.Draft, createdBy });
+                                        VALUES (@applicationId, @organisationId, @applicationStatus, @applyData, @assessorReviewStatus, @gatewayReviewStatus,@createdBy, GETUTCDATE())",
+                    new { applicationId, organisationId, applicationStatus = ApplicationStatus.InProgress, applyData, assessorReviewStatus = AssessorReviewStatus.Draft, gatewayReviewStatus = GatewayReviewStatus.Draft, createdBy });
             }
         }
 
@@ -82,6 +82,8 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task UpdateApplication(Apply application)
         {
+
+            // MFCMFC Financial
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(
@@ -89,8 +91,6 @@ namespace SFA.DAS.ApplyService.Data
                         ApplicationStatus = @ApplicationStatus,
                         GatewayReviewStatus = @GatewayReviewStatus,
                         AssessorReviewStatus = @AssessorReviewStatus,
-                        FinancialReviewStatus = @FinancialReviewStatus,
-                        FinancialGrade = @FinancialGrade,
                         Assessor1UserId = @Assessor1UserId,
                         Assessor2UserId = @Assessor2UserId,
                         Assessor1Name = @Assessor1Name,
@@ -156,7 +156,6 @@ namespace SFA.DAS.ApplyService.Data
                                                     ApplyData = @applyData, 
                                                     AssessorReviewStatus = @AssessorReviewStatus, 
                                                     GatewayReviewStatus = @GatewayReviewStatus, 
-                                                    FinancialReviewStatus = @FinancialReviewStatus,
                                                     UpdatedBy = @submittedBy, 
                                                     UpdatedAt = GETUTCDATE() 
                                                 WHERE  (Apply.ApplicationId = @applicationId)",
@@ -164,8 +163,7 @@ namespace SFA.DAS.ApplyService.Data
                                                       ApplicationStatus = ApplicationStatus.Submitted, 
                                                       applyData,
                                                       AssessorReviewStatus = AssessorReviewStatus.New, 
-                                                      GatewayReviewStatus = GatewayReviewStatus.New, 
-                                                      FinancialReviewStatus = FinancialReviewStatus.New,
+                                                      GatewayReviewStatus = GatewayReviewStatus.New,
                                                       submittedBy });
 
                 await connection.ExecuteAsync(@"insert into FinancialData ([ApplicationId]
@@ -193,12 +191,14 @@ namespace SFA.DAS.ApplyService.Data
                     ApplyDetails = currentApplication.ApplyData?.ApplyDetails
                 };
 
+
+                //MFCMFC FinancialReviewStatus, FinancialGrade removed
                 using (var connection = new SqlConnection(_config.SqlConnectionString))
                 {
                     return await connection.QuerySingleAsync<Guid>(
-                        @"INSERT INTO ApplySnapshots (ApplicationId, SnapshotApplicationId, SnapshotDate, OrganisationId, ApplicationStatus, ApplyData, GatewayReviewStatus, AssessorReviewStatus, FinancialReviewStatus, FinancialGrade)
+                        @"INSERT INTO ApplySnapshots (ApplicationId, SnapshotApplicationId, SnapshotDate, OrganisationId, ApplicationStatus, ApplyData, GatewayReviewStatus, AssessorReviewStatus)
                           OUTPUT INSERTED.[SnapshotApplicationId] 
-                          VALUES (@ApplicationId, @snapshotApplicationId, GETUTCDATE(), @OrganisationId, @ApplicationStatus, @newApplyData, @GatewayReviewStatus, @AssessorReviewStatus, @FinancialReviewStatus, @FinancialGrade)",
+                          VALUES (@ApplicationId, @snapshotApplicationId, GETUTCDATE(), @OrganisationId, @ApplicationStatus, @newApplyData, @GatewayReviewStatus, @AssessorReviewStatus)",
                         new
                         {
                             currentApplication.ApplicationId,
@@ -207,9 +207,7 @@ namespace SFA.DAS.ApplyService.Data
                             currentApplication.ApplicationStatus,
                             newApplyData,
                             currentApplication.GatewayReviewStatus,
-                            currentApplication.AssessorReviewStatus,
-                            currentApplication.FinancialReviewStatus,
-                            currentApplication.FinancialGrade
+                            currentApplication.AssessorReviewStatus
                         });
                 }
             }
@@ -245,6 +243,8 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
         {
+
+            //MFCMFC needs reworking
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirectionFinancial(sortOrder)}";
@@ -300,6 +300,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload()
         {
+            //MFCMFC needs reworking
             var sql = @"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
@@ -377,6 +378,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
         {
+            //MFCMFC needs reworking
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirectionFinancial(sortOrder)}";
@@ -432,6 +434,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
         {
+            //MFCMFC needs reworking
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn ?? "SubmittedDate")} { GetOrderByDirectionFinancial(sortOrder)}";
@@ -502,6 +505,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts(string searchTerm)
         {
+            // MFCMFC needs reworking
             // Note: For now it is easier to run all three queries. It may make sense to do something similar to that done with EPAO
             var openApplications = await GetOpenFinancialApplications(searchTerm, null, null);
             var clarificationApplications = await GetClarificationFinancialApplications(searchTerm, null, null);
@@ -517,6 +521,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> StartFinancialReview(Guid applicationId, string reviewer)
         {
+            // MFCMFC needs reworking
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE Apply SET FinancialReviewStatus = @financialReviewStatusInProgress,
@@ -541,6 +546,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus)
         {
+            // MFCMFC needs reworking
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE Apply 
@@ -560,6 +566,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> UpdateFinancialReviewDetails(Guid applicationId, FinancialReviewDetails financialReviewDetails)
         {
+            // MFCMFC needs reworking
             using (var connection = new SqlConnection(_config.SqlConnectionString))
                 {
                     await connection.ExecuteAsync(@"UPDATE Apply 
@@ -628,6 +635,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload(DateTime dateFrom, DateTime dateTo)
         {
+            // MFCMFC needs reworking for financials
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection.QueryAsync<ApplicationOversightDownloadDetails>(@"SELECT 
@@ -753,6 +761,7 @@ namespace SFA.DAS.ApplyService.Data
 
         private static string GetSortColumnForNew(string requestedColumn)
         {
+            // MFCMFC needs reworking
             switch (requestedColumn)
             {
                 case "SubmittedDate":
