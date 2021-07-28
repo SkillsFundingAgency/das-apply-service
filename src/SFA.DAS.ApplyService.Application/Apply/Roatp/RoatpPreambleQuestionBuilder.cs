@@ -219,7 +219,9 @@
 
         public static class ManagementHierarchy
         {
-              public const string AddManagementHierarchy = "7200";
+            public const string AddManagementHierarchy = "7200";
+            public const string EditManagementHierarchy = "EditManagementHierarchy";
+            public const string RemoveManagementHierarchy = "RemoveManagementHierarchy";
         }
 
         public static class DescribeYourOrganisation
