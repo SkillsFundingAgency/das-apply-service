@@ -40,7 +40,6 @@ namespace SFA.DAS.ApplyService.Web
     using SFA.DAS.Http.TokenGenerators;
     using SFA.DAS.Notifications.Api.Client;
     using SFA.DAS.ApplyService.Web.StartupExtensions;
-    using SFA.DAS.Validation.Mvc.Filters;
 
     public class Startup
     {
@@ -94,7 +93,7 @@ namespace SFA.DAS.ApplyService.Web
                 options.RequestCultureProviders.Clear();
             });
             
-            services.AddMvc(options => { options.Filters.Add<ValidateModelStateFilter>(int.MaxValue); })
+            services.AddMvc()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateAccountValidator>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
