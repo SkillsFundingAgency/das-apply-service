@@ -520,11 +520,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
-            if (!user.IsApproved)
-            {
-                await _usersApiClient.ApproveUser(user.Id);
-            }
-
             _logger.LogDebug("StartRoatpApplication completed");
 
             return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });

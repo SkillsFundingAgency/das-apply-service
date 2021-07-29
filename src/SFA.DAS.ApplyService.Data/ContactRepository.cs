@@ -65,17 +65,5 @@ namespace SFA.DAS.ApplyService.Data
                     new {contactId, signInId});
             }
         }
-
-        public async Task<bool> UpdateIsApproved(Guid contactId, bool isApproved)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                int rowsAffected = await connection.ExecuteAsync(
-                    @"UPDATE Contacts SET IsApproved = @isApproved, UpdatedAt = GETUTCDATE(), UpdatedBy = 'System' WHERE Id = @contactId",
-                    new { contactId, isApproved });
-
-                return rowsAffected > 0;
-            }
-        }
     }
 }
