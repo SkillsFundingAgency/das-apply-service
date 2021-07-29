@@ -12,6 +12,7 @@ using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
 using SFA.DAS.ApplyService.Application.Apply.Snapshot;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -47,6 +48,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<Domain.Entities.Apply>> GetApplication(Guid applicationId)
         {
             return await _mediator.Send(new GetApplicationRequest(applicationId));
+        }
+
+
+        [HttpGet("Application/FinancialReviewDetails/{applicationId}")]
+        public async Task<ActionResult<FinancialReviewDetails>> GetFinancialReviewDetails(Guid applicationId)
+        {
+            return await _mediator.Send(new GetFinancialReviewDetailsRequest(applicationId));
         }
 
         [HttpGet("Application/{applicationId}/Contact")]

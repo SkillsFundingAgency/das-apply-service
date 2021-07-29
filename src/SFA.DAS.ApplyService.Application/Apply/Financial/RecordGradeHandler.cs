@@ -23,13 +23,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
          
         public async Task<bool> Handle(RecordGradeRequest request, CancellationToken cancellationToken)
         {
+            // MFCMFC check this if this is reused after clarification.  Leave breakpoint on
+
             _logger.LogInformation($"Recording financial grade {request.FinancialReviewDetails.SelectedGrade} for application ID {request.ApplicationId}");
 
             var financialReviewStatus = GetApplicableFinancialReviewStatus(request.FinancialReviewDetails.SelectedGrade);
             var financialReviewDetails = request.FinancialReviewDetails;
             if (financialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification)
             {
-                financialReviewDetails.ClarificationRequestedOn = financialReviewDetails.GradedDateTime;
+                financialReviewDetails.ClarificationRequestedOn = financialReviewDetails.GradedOn;
                 financialReviewDetails.ClarificationRequestedBy = financialReviewDetails.GradedBy;
             }
 

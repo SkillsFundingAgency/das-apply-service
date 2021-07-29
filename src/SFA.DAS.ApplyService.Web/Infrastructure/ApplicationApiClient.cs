@@ -49,6 +49,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await Get<Domain.Entities.Apply>($"Application/{applicationId}");
         }
 
+        public async Task<FinancialReviewDetails> GetFinancialReviewDetails(Guid applicationId)
+        {
+            return await Get<FinancialReviewDetails>($"Application/FinancialReviewDetails/{applicationId}");
+        }
+
         public async Task<Apply> GetApplicationByUserId(Guid applicationId, Guid signinId)
         {
             return await Get<Domain.Entities.Apply>($"Application/{applicationId}/Contact/{ signinId}");

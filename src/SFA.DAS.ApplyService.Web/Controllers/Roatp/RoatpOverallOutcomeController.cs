@@ -44,7 +44,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> ProcessApplicationStatus(Guid applicationId)
         {
             var application = await _applicationApiClient.GetApplication(applicationId);
-            var model = _overallOutcomeService.BuildApplicationSummaryViewModel(application, User.GetEmail());
+            var financialReviewDetails = await _applicationApiClient.GetFinancialReviewDetails(applicationId);
+            var model = _overallOutcomeService.BuildApplicationSummaryViewModel(application, financialReviewDetails, User.GetEmail());
 
             switch (application.ApplicationStatus)
             {
@@ -84,7 +85,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
 
                     var unsuccessfulModel =
-                        await _overallOutcomeService.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(application,
+                        await _overallOutcomeService.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(application, financialReviewDetails,
                             User.GetEmail());
                     return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", unsuccessfulModel);
 

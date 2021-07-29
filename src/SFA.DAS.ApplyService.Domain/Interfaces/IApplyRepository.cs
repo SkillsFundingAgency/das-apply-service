@@ -15,7 +15,8 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         Task<Domain.Entities.Apply> GetApplicationByUserId(Guid applicationId, Guid signinId);
         Task<List<Domain.Entities.Apply>> GetUserApplications(Guid signinId);
         Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid signinId);
-               
+        Task<FinancialReviewDetails> GetFinancialReviewDetails(Guid applicationId);
+
         Task UpdateApplication(Domain.Entities.Apply application);
         
         Task<bool> CanSubmitApplication(Guid applicationId);

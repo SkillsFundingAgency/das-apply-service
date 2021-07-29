@@ -80,10 +80,21 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<FinancialReviewDetails> GetFinancialReviewDetails(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return await connection.QuerySingleOrDefaultAsync<FinancialReviewDetails>(
+                    @"SELECT * FROM FinancialReview WHERE ApplicationId = @applicationId",
+                    new { applicationId });
+            }
+        }
+    
+
         public async Task UpdateApplication(Apply application)
         {
 
-            // MFCMFC Financial
+            // MFCMFC Financial mya need to be updatd in this call, not sure, need to investigate
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(
@@ -191,8 +202,6 @@ namespace SFA.DAS.ApplyService.Data
                     ApplyDetails = currentApplication.ApplyData?.ApplyDetails
                 };
 
-
-                //MFCMFC FinancialReviewStatus, FinancialGrade removed
                 using (var connection = new SqlConnection(_config.SqlConnectionString))
                 {
                     return await connection.QuerySingleAsync<Guid>(
@@ -244,7 +253,6 @@ namespace SFA.DAS.ApplyService.Data
         public async Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
         {
 
-            //MFCMFC needs reworking
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirectionFinancial(sortOrder)}";
@@ -257,7 +265,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
-                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            IsNull(fr.Status,@financialStatusNew) AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
@@ -266,7 +274,8 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeDate,
                             CASE seq.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
 	                      FROM Apply apply
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	 
+                        LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
                         CROSS APPLY OPENJSON(apply.ApplyData)
                         WITH (
                             Sequences nvarchar(max) '$.Sequences' AS JSON
@@ -282,7 +291,7 @@ namespace SFA.DAS.ApplyService.Data
                         WHERE seq.SequenceNo = @financialHealthSequence
                           AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
                           AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-                          AND apply.FinancialReviewStatus IN (@financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
+                          AND isnull(fr.Status,@financialStatusDraft) IN (@financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
                           AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
                         ORDER BY {orderByClause}, org.Name ASC",
                         new
@@ -300,14 +309,13 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload()
         {
-            //MFCMFC needs reworking
             var sql = @"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
-                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            IsNull(fr.Status,@financialStatusDraft) AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
@@ -332,7 +340,8 @@ namespace SFA.DAS.ApplyService.Data
                             fd.AverageNumberofFTEEmployees
 	                      FROM Apply apply
                           LEFT JOIN FinancialData fd on fd.ApplicationId = apply.ApplicationId
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	         
+                            LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
                         CROSS APPLY OPENJSON(apply.ApplyData)
                         WITH (
                             Sequences nvarchar(max) '$.Sequences' AS JSON
@@ -347,7 +356,7 @@ namespace SFA.DAS.ApplyService.Data
                         ) seq
                         WHERE seq.SequenceNo = @financialHealthSequence
                           AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-                          AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
+                          AND IsNull(fr.Status,@financialStatusDraft) IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
                           AND apply.GatewayReviewStatus IN (@gatewayStatusPass)
                         ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC";
 
@@ -378,7 +387,6 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
         {
-            //MFCMFC needs reworking
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirectionFinancial(sortOrder)}";
@@ -391,18 +399,19 @@ namespace SFA.DAS.ApplyService.Data
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
-                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            fr.Status AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
-                            JSON_VALUE(apply.FinancialGrade, '$.ClarificationRequestedOn') AS ClarificationRequestedDate,
-                            JSON_VALUE(apply.FinancialGrade, '$.ClarificationRequestedBy') AS OutcomeMadeBy,
+                            fr.ClarificationRequestedOn AS ClarificationRequestedDate,
+                            fr.ClarificationRequestedBy AS OutcomeMadeBy,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeDate,
                             CASE seq.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
 	                      FROM Apply apply
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	 
+                          LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
                         CROSS APPLY OPENJSON(apply.ApplyData)
                         WITH (
                             Sequences nvarchar(max) '$.Sequences' AS JSON
@@ -418,7 +427,7 @@ namespace SFA.DAS.ApplyService.Data
                         WHERE seq.SequenceNo = @financialHealthSequence
                           AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
                           AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-                          AND apply.FinancialReviewStatus IN (@financialStatusClarificationSent)
+                          AND fr.Status IN (@financialStatusClarificationSent)
                           AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
                        ORDER BY {orderByClause}, org.Name ASC",
                         new
@@ -434,7 +443,6 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
         {
-            //MFCMFC needs reworking
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn ?? "SubmittedDate")} { GetOrderByDirectionFinancial(sortOrder)}";
@@ -447,7 +455,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
-                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            fr.Status AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
@@ -456,18 +464,19 @@ namespace SFA.DAS.ApplyService.Data
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
                                 WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
-                                ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime')
+                                ELSE fr.GradedOn
                             END AS OutcomeMadeDate,
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
                                 WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-                                ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedBy')
+                                ELSE fr.GradedBy
                             END AS OutcomeMadeBy,
-                            JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') AS SelectedGrade,
+                            fr.SelectedGrade AS SelectedGrade,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime') AS GatewayOutcomeDate,
                             CASE seq.NotRequired WHEN 'false' THEN 'Not exempt' ELSE 'Exempt' END AS DeclaredInApplication
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	
+                            LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
                         CROSS APPLY OPENJSON(apply.ApplyData)
                         WITH (
                             Sequences nvarchar(max) '$.Sequences' AS JSON
@@ -485,7 +494,7 @@ namespace SFA.DAS.ApplyService.Data
                           AND apply.DeletedAt IS NULL
                           AND (
                                apply.ApplicationStatus IN (@applicationStatusWithdrawn, @applicationStatusRemoved)
-                               OR apply.FinancialReviewStatus IN (@financialStatusApproved, @financialStatusDeclined, @financialStatusExempt)
+                               OR fr.Status IN (@financialStatusApproved, @financialStatusDeclined, @financialStatusExempt)
                               )
                           AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
                         ORDER BY {orderByClause}, org.Name ASC",
@@ -505,7 +514,6 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts(string searchTerm)
         {
-            // MFCMFC needs reworking
             // Note: For now it is easier to run all three queries. It may make sense to do something similar to that done with EPAO
             var openApplications = await GetOpenFinancialApplications(searchTerm, null, null);
             var clarificationApplications = await GetClarificationFinancialApplications(searchTerm, null, null);
@@ -521,23 +529,27 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> StartFinancialReview(Guid applicationId, string reviewer)
         {
-            // MFCMFC needs reworking
+            // MFCMFC CHECK THIS NEVER GETS CALLED AGAIN! LEAVE THE BREAKPOINT ON!
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Apply SET FinancialReviewStatus = @financialReviewStatusInProgress,
-                                                UpdatedAt = @updatedAt, UpdatedBy = @updatedBy
-                                                WHERE ApplicationId = @applicationId
-                                                AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-                                                AND FinancialReviewStatus IN ( @draftStatus, @newStatus )",
+                await connection.ExecuteAsync(@"if exists(select * from apply where ApplicationId = @applicationId 
+                                                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL)
+                                                        BEGIN
+                                                        if not exists (select * from FinancialReview where ApplicationId = @applicationId)
+	                                                        BEGIN
+	                                                         insert into FinancialReview (applicationId, Status)
+		                                                        values (@applicationId, @financialReviewStatusInProgress)
+
+	                                                        update Apply set updatedBy =@updatedBy, updatedAt=@updatedAt where applicationId = @applicationId
+	                                                        END
+                                                        END",
                         new
                         {
                             applicationId,
                             applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             financialReviewStatusInProgress = FinancialReviewStatus.InProgress,
                             updatedAt = DateTime.UtcNow,
-                            updatedBy = reviewer,
-                            draftStatus = FinancialReviewStatus.Draft,
-                            newStatus = FinancialReviewStatus.New
+                            updatedBy = reviewer
                         });
             }
 
@@ -546,17 +558,29 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus)
         {
-            // MFCMFC needs reworking
+            // MFCMFC 
+            // not sure if this is only used at first pass, so need to take care.
+            // coding as if it's first pass only
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Apply 
-                                                         SET FinancialGrade = @financialReviewDetails,
-                                                         FinancialReviewStatus = @financialReviewStatus
+                await connection.ExecuteAsync(@"UPDATE FinancialReview 
+                                                         SET FinancialDueDate = @financialDueDate,
+                                                         SelectedGrade = @selectedGrade,
+                                                         GradedBy = @GradedBy,
+                                                         GradedOn = @GradedOn,
+                                                         Comments = @Comments,
+                                                         ExternalComments = @ExternalComments,
+                                                         Status = @financialReviewStatus
                                                          WHERE ApplicationId = @applicationId",
                                                 new
                                                 {
                                                     applicationId,
-                                                    financialReviewDetails,
+                                                    financialReviewDetails.SelectedGrade,
+                                                    financialReviewDetails.FinancialDueDate,
+                                                    financialReviewDetails.GradedBy,
+                                                    GradedOn = financialReviewDetails.GradedOn,
+                                                    financialReviewDetails.Comments,
+                                                    financialReviewDetails.ExternalComments,
                                                     financialReviewStatus
                                                 });
             }
@@ -618,7 +642,6 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload(DateTime dateFrom, DateTime dateTo)
         {
-            // MFCMFC needs reworking for financials
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection.QueryAsync<ApplicationOversightDownloadDetails>(@"SELECT 
@@ -750,18 +773,18 @@ namespace SFA.DAS.ApplyService.Data
                 case "SubmittedDate":
                     return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
                 case "OutcomeMadeBy":
-                    return " JSON_VALUE(apply.FinancialGrade, '$.ClarificationRequestedBy') ";
+                    return " fr.ClarificationRequestedBy ";
                 case "OutcomeMadeByClosed":
                     return  $@" CASE 
                                 WHEN apply.ApplicationStatus = '{ApplicationStatus.Withdrawn}'THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
                                 WHEN apply.ApplicationStatus = '{ApplicationStatus.Removed}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-                                ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedBy')
+                                ELSE fr.GradedBy
                             END ";
                 case "OutcomeMadeDate":
                     return $@" CASE 
                                 WHEN apply.ApplicationStatus = '{ApplicationStatus.Withdrawn}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
                                 WHEN apply.ApplicationStatus = '{ApplicationStatus.Removed}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
-                                ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime')
+                                ELSE fr.GradedOn
                             END";
                 default:
                     return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
