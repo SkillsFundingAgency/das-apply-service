@@ -37,6 +37,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (0, 1, '1', 'PRE-65', 'UKRLP Verification Charity'),
 (0, 1, '1', 'PRE-70', 'UKRLP Verification Soletrader or Partnership'),
 (0, 1, '1', 'PRE-80', 'UKRLP Primary Verification Source'),
+(0, 1, '1', 'PRE-89', 'Apply Provider Route and On RoATP'),
 (0, 1, '1', 'PRE-90', 'On RoATP'),
 (0, 1, '1', 'PRE-91', 'RoATP Current Status'),
 (0, 1, '1', 'PRE-92', 'RoATP Removed Reason'),
