@@ -25,7 +25,8 @@ namespace SFA.DAS.ApplyService.Data
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
-            SqlMapper.AddTypeHandler(typeof(FinancialReviewDetails), new FinancialReviewDetailsDataHandler());
+            //SqlMapper.AddTypeHandler(typeof(FinancialReviewDetails), new FinancialReviewDetailsDataHandler());
+            SqlMapper.AddTypeHandler(typeof(List<FinancialEvidence>), new FinancialEvidencesDataHandler());
         }
 
         public async Task<Guid> StartApplication(Guid applicationId, ApplyData applyData, Guid organisationId, Guid createdBy)
@@ -89,7 +90,17 @@ namespace SFA.DAS.ApplyService.Data
                     new { applicationId });
             }
         }
-    
+
+        public async Task<List<ClarificationFile>> GetFinancialReviewClarificationFiles(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<ClarificationFile>(
+                    @"SELECT * FROM [FinancialReviewClarificationFile] WHERE ApplicationId = @applicationId",
+                    new { applicationId })).ToList();
+            }
+        }
+
 
         public async Task UpdateApplication(Apply application)
         {
@@ -568,9 +579,13 @@ namespace SFA.DAS.ApplyService.Data
                                                          SelectedGrade = @selectedGrade,
                                                          GradedBy = @GradedBy,
                                                          GradedOn = @GradedOn,
+                                                         ClarificationRequestedOn = @clarificationRequestedOn,
+                                                         ClarificationRequestedBy = @clarificationRequestedBy,
+                                                         FinancialEvidences= @financialEvidences,
                                                          Comments = @Comments,
                                                          ExternalComments = @ExternalComments,
-                                                         Status = @financialReviewStatus
+                                                         Status = @financialReviewStatus,
+                                                         ClarificationResponse=@ClarificationResponse
                                                          WHERE ApplicationId = @applicationId",
                                                 new
                                                 {
@@ -578,10 +593,14 @@ namespace SFA.DAS.ApplyService.Data
                                                     financialReviewDetails.SelectedGrade,
                                                     financialReviewDetails.FinancialDueDate,
                                                     financialReviewDetails.GradedBy,
-                                                    GradedOn = financialReviewDetails.GradedOn,
+                                                    gradedOn = financialReviewDetails.GradedOn,
+                                                    clarificationRequestedBy = financialReviewDetails.ClarificationRequestedBy,
+                                                    clarificationRequestedOn = financialReviewDetails.ClarificationRequestedOn,
+                                                    financialEvidences = financialReviewDetails.FinancialEvidences,
                                                     financialReviewDetails.Comments,
                                                     financialReviewDetails.ExternalComments,
-                                                    financialReviewStatus
+                                                    financialReviewStatus,
+                                                    financialReviewDetails.ClarificationResponse
                                                 });
             }
 
@@ -604,6 +623,34 @@ namespace SFA.DAS.ApplyService.Data
                         });
                 }
                 return true;
+        }
+
+        public async Task<bool> AddFinancialReviewClarificationFile(Guid applicationId, string filename)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"INSERT INTO [FinancialReviewClarificationFile] (ApplicationId, Filename) Values (@applicationId, @filename)  ",
+                    new
+                    {
+                        applicationId,
+                        filename
+                    });
+            }
+            return true;
+        }
+
+        public async Task<bool> RemoveFinancialReviewClarificationFile(Guid applicationId, string filename)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"DELETE FROM [FinancialReviewClarificationFile] WHERE ApplicationId=@applicationId and Filename= @filename  ",
+                    new
+                    {
+                        applicationId,
+                        filename
+                    });
+            }
+            return true;
         }
 
         public async Task UpdateApplicationStatus(Guid applicationId, string status, string userId)

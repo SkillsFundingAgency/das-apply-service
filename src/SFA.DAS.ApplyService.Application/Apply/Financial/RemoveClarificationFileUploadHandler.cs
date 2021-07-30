@@ -29,10 +29,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
             if (financialReviewDetails.ClarificationFiles == null)
                 financialReviewDetails.ClarificationFiles = new List<ClarificationFile>();
 
-            var updatedClarificationFiles = financialReviewDetails.ClarificationFiles.Where(file => file.Filename != request.FileName).ToList();
-            financialReviewDetails.ClarificationFiles = updatedClarificationFiles;
-            // MFCMFC this needs updating
-            return await _applyRepository.UpdateFinancialReviewDetails(request.ApplicationId, financialReviewDetails);
+            
+            return await _applyRepository.RemoveFinancialReviewClarificationFile(request.ApplicationId, request.FileName);
         }
     }
 }

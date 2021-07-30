@@ -9,6 +9,7 @@
 	[GradedOn] [datetime2](7) NULL,
 	[Comments] [nvarchar](max) NULL,
 	[ExternalComments] [nvarchar](max) NULL,
+	FinancialEvidences [nvarchar] (max) Null,
 	[ClarificationRequestedOn] [datetime2](7) NULL,
 	[ClarificationRequestedBy] [nvarchar](256) NULL,
 	[ClarificationResponse] [nvarchar](max) NULL

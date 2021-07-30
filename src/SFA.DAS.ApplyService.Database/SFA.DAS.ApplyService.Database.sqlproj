@@ -82,7 +82,6 @@
     <Build Include="Tables\ExtractedApplications.sql" />
     <Build Include="Tables\SubmittedApplicationAnswers.sql" />
     <Build Include="Tables\FinancialReview.sql" />
-    <Build Include="Tables\FinancialReviewEvidenceFile.sql" />
     <Build Include="Tables\FinancialReviewClarificationFile.sql" />
   </ItemGroup>
   <ItemGroup>

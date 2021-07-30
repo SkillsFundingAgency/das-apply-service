@@ -9,6 +9,7 @@ INSERT INTO [dbo].[FinancialReview]
            ,[GradedOn]
            ,[Comments]
            ,[ExternalComments]
+           ,FinancialEvidences
            ,[ClarificationRequestedOn]
            ,[ClarificationRequestedBy]
            ,[ClarificationResponse])
@@ -21,6 +22,7 @@ SELECT
 		JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS GradedOn,	
 		JSON_VALUE(apply.FinancialGrade, '$.Comments') AS Comments,	
 		JSON_VALUE(apply.FinancialGrade, '$.ExternalComments') AS ExternalComments,	
+        JSON_VALUE(apply.FinancialGrade, '$.FinancialEvidences') AS FinancialEvidences,	
 		JSON_VALUE(apply.FinancialGrade, '$.ClarificationRequestedOn') AS ClarificationRequestedOn,		
 		JSON_VALUE(apply.FinancialGrade, '$.ClarificationRequestedBy') AS ClarificationRequestedBy,		
 		JSON_VALUE(apply.FinancialGrade, '$.ClarificationResponse') AS ClarificationResponse
@@ -28,48 +30,7 @@ SELECT
   where applicationID not in (select applicationId from FinancialReview)
   and FinancialGrade is not null
 
-
-
-insert into FinancialReviewEvidenceFile (applicationId, Filename)
-SELECT 
-    [ApplicationId],
-		JSON_VALUE(apply.FinancialGrade, '$.FinancialEvidences[0].Filename') AS FinancialEvidenceFilename  
-  FROM [dbo].[Apply] apply
-  WHERE JSON_VALUE(apply.FinancialGrade, '$.FinancialEvidences[0].Filename') not in (select filename from FinancialReviewEvidenceFile)
-  AND FinancialGrade is not null
-  AND JSON_VALUE(apply.FinancialGrade, '$.FinancialEvidences[0].Filename') is not null
-
-
-insert into FinancialReviewEvidenceFile (applicationId, Filename)
-SELECT 
-    [ApplicationId],
-		JSON_VALUE(apply.FinancialGrade, '$.FinancialEvidences[1].Filename') AS FinancialEvidenceFilename  
-  FROM [dbo].[Apply] apply
-  WHERE JSON_VALUE(apply.FinancialGrade, '$.FinancialEvidences[1].Filename') not in (select filename from FinancialReviewEvidenceFile)
-  AND FinancialGrade is not null
-  AND JSON_VALUE(apply.FinancialGrade, '$.FinancialEvidences[1].Filename') is not null
-
-
-insert into FinancialReviewEvidenceFile (applicationId, Filename)
-SELECT 
-    [ApplicationId],
-		JSON_VALUE(apply.FinancialGrade, '$.FinancialEvidences[2].Filename') AS FinancialEvidenceFilename  
-  FROM [dbo].[Apply] apply
-  WHERE JSON_VALUE(apply.FinancialGrade, '$.FinancialEvidences[2].Filename') not in (select filename from FinancialReviewEvidenceFile)
-  AND FinancialGrade is not null
-  AND JSON_VALUE(apply.FinancialGrade, '$.FinancialEvidences[2].Filename') is not null
-
- 
- 
- insert into FinancialReviewEvidenceFile (applicationId, Filename)
-SELECT 
-    [ApplicationId],
-		JSON_VALUE(apply.FinancialGrade, '$.FinancialEvidences[3].Filename') AS FinancialEvidenceFilename  
-  FROM [dbo].[Apply] apply
-  WHERE JSON_VALUE(apply.FinancialGrade, '$.FinancialEvidences[3].Filename') not in (select filename from FinancialReviewEvidenceFile)
-  AND FinancialGrade is not null
-  AND JSON_VALUE(apply.FinancialGrade, '$.FinancialEvidences[3].Filename') is not null
-
+-- there can be up to 4 clarification files
 insert into FinancialReviewClarificationFile (applicationId, Filename)
 SELECT 
     [ApplicationId],

@@ -17,7 +17,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetApplications
 
         public async Task<FinancialReviewDetails> Handle(GetFinancialReviewDetailsRequest request, CancellationToken cancellationToken)
         {
-            return await _applyRepository.GetFinancialReviewDetails(request.ApplicationId);
+            var financialReviewDetails= await _applyRepository.GetFinancialReviewDetails(request.ApplicationId);
+
+            if (financialReviewDetails!=null)
+                financialReviewDetails.ClarificationFiles =
+                    await _applyRepository.GetFinancialReviewClarificationFiles(request.ApplicationId);
+
+            return financialReviewDetails;
         }
     }
 }
