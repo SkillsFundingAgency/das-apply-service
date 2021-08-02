@@ -356,6 +356,8 @@
     public static class RoatpWorkflowQuestionTags
     {
         public const string ProviderRoute = "ApplyProviderRoute";
+        public const string RouteAndOnRoatp = "RouteAndOnRoatp";
+        public const string OnRoatp = "OnROATP";
         public const string UKPRN = "UKPRN";
         public const string UkrlpLegalName = "UKRLPLegalName";
         public const string UkrlpVerificationCompany = "UKRLPVerificationCompany";
