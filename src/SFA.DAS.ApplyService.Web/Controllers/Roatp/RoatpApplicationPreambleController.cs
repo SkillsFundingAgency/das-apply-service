@@ -608,8 +608,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             };
 
-
-            
             var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.ProviderRoute, providerRouteAnswer);
 
             if (result.ValidationPassed)
@@ -645,10 +643,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                 if (preambleAnswers != null)
                 {
-                    foreach (var answer in preambleAnswers)
+                    foreach (var answer in preambleAnswers.Where(ans => ans.QuestionId == RoatpPreambleQuestionIdConstants.RouteAndOnRoatp))
                     {
-                        if (answer.QuestionId == RoatpPreambleQuestionIdConstants.RouteAndOnRoatp)
-                            answer.Value = routeAndOnRoatp;
+                        answer.Value = routeAndOnRoatp;
                     }
 
                     await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.Preamble,
