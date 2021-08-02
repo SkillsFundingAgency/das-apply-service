@@ -23,13 +23,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
         public async Task<bool> Handle(AddClarificationFileUploadRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Adding clarification file [{request.FileName}] for application ID {request.ApplicationId}");
-            var financialReviewDetails = await _applyRepository.GetFinancialReviewDetails(request.ApplicationId);
-
-            // if (financialReviewDetails.ClarificationFiles == null)
-            //     financialReviewDetails.ClarificationFiles = new List<ClarificationFile>();
-            //
-            // financialReviewDetails.ClarificationFiles.Add(new ClarificationFile {Filename = request.FileName});
-
             return await _applyRepository.AddFinancialReviewClarificationFile(request.ApplicationId, request.FileName);
         }
     }

@@ -29,7 +29,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
             if (financialReviewDetails.ClarificationFiles == null)
                 financialReviewDetails.ClarificationFiles = new List<ClarificationFile>();
 
-            
             return await _applyRepository.RemoveFinancialReviewClarificationFile(request.ApplicationId, request.FileName);
         }
     }
