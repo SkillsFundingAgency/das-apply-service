@@ -21,8 +21,8 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"INSERT INTO Contacts (Email, GivenNames, FamilyName, SignInType, CreatedAt, CreatedBy, Status, IsApproved) 
-                                                     VALUES (@email, @givenName, @familyName, 'ASLogin', @createdAt, @email, 'New', 0)",
+                await connection.ExecuteAsync(@"INSERT INTO Contacts (Email, GivenNames, FamilyName, SignInType, CreatedAt, CreatedBy, Status) 
+                                                     VALUES (@email, @givenName, @familyName, 'ASLogin', @createdAt, @email, 'New')",
                     new { email, givenName, familyName, createdAt = DateTime.UtcNow });
 
                 return await GetContactByEmail(email);
