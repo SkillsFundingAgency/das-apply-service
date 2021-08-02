@@ -123,12 +123,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ClarificationRequestedBy { get; set; }
         public string ClarificationResponse { get; set; }
     }
-
-    // public class FinancialEvidences
-    // {
-    //     public List<FinancialEvidence> Evidences { get; set; }
-    // }
-
     public class FinancialEvidence
     {
         public string Filename { get; set; }

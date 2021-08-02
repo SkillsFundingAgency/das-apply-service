@@ -101,7 +101,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
             _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
 
-
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
 
             var viewResult = result as ViewResult;
