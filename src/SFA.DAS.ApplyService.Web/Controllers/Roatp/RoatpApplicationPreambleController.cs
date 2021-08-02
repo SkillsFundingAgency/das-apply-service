@@ -608,7 +608,53 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             };
 
+
+            
             var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.ProviderRoute, providerRouteAnswer);
+
+            if (result.ValidationPassed)
+            {
+
+                var preambleDetails = await _qnaApiClient.GetPageBySectionNo(model.ApplicationId,
+                    RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble);
+
+                var preambleAnswers = preambleDetails?.PageOfAnswers[0]?.Answers;
+
+                var onRoatp =
+                    await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.OnRoatp);
+                var onRoatpRegisterTrue = onRoatp?.Value == "TRUE";
+                var routeAndOnRoatp = string.Empty;
+                switch (model.ApplicationRouteId)
+                {
+                    case ApplicationRoute.MainProviderApplicationRoute:
+                        routeAndOnRoatp = onRoatpRegisterTrue
+                            ? RouteAndOnRoatpTags.MainOnRoatp
+                            : RouteAndOnRoatpTags.MainNotOnRoatp;
+                        break;
+                    case ApplicationRoute.EmployerProviderApplicationRoute:
+                        routeAndOnRoatp = onRoatpRegisterTrue
+                            ? RouteAndOnRoatpTags.EmployerOnRoatp
+                            : RouteAndOnRoatpTags.EmployerNotOnRoatp;
+                        break;
+                    case ApplicationRoute.SupportingProviderApplicationRoute:
+                        routeAndOnRoatp = onRoatpRegisterTrue
+                            ? RouteAndOnRoatpTags.SupportingOnRoatp
+                            : RouteAndOnRoatpTags.SupportingNotOnRoatp;
+                        break;
+                }
+
+                if (preambleAnswers != null)
+                {
+                    foreach (var answer in preambleAnswers)
+                    {
+                        if (answer.QuestionId == RoatpPreambleQuestionIdConstants.RouteAndOnRoatp)
+                            answer.Value = routeAndOnRoatp;
+                    }
+
+                    await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.Preamble,
+                        RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, preambleAnswers);
+                }
+            }
 
             var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
             var selectedProviderRoute = providerRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId);
