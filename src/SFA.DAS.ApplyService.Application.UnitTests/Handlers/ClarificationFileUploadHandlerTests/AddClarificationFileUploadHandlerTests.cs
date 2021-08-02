@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Financial;
-using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ClarificationFileUploadHandlerTests
@@ -28,29 +24,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ClarificationFileU
             _handler = new AddClarificationFileUploadHandler(_repository.Object, Mock.Of<ILogger<AddClarificationFileUploadHandler>>());
         }
 
-        //MFCMFC
-        [Ignore("to be fixed")]
         [Test]
-        public void Update_Financial_Grade_with_clarification_Files_name_when_no_files_present()
+        public void Update_Financial_Grade_with_clarification_FileName()
         {
-            var application = new Domain.Entities.Apply(); //MFCMFC {FinancialGrade = new FinancialReviewDetails()};
-            _repository.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(application);
-            _repository.Setup(x => x.UpdateFinancialReviewDetails(_applicationId, It.Is<FinancialReviewDetails>(g=>g.ClarificationFiles.First().Filename==FileName))).ReturnsAsync(true);
-            var result = _handler.Handle(_request, new CancellationToken()).GetAwaiter().GetResult();
-            Assert.IsTrue(result);
-        }
-
-
-        //MFCMFC
-        [Ignore("to be fixed")]
-        [Test]
-        public void Update_Financial_Grade_with_clarification_Files_name_when_one_file_present()
-        {
-
-            var application = new Domain.Entities.Apply();
-            // { FinancialGrade = new FinancialReviewDetails {ClarificationFiles = new List<ClarificationFile> {new ClarificationFile {Filename = "first.pdf"}}} };
-            _repository.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(application);
-            _repository.Setup(x => x.UpdateFinancialReviewDetails(_applicationId, It.Is<FinancialReviewDetails>(g => g.ClarificationFiles.Count==2))).ReturnsAsync(true);
+            _repository.Setup(x => x.AddFinancialReviewClarificationFile(_applicationId,FileName)).ReturnsAsync(true);
             var result = _handler.Handle(_request, new CancellationToken()).GetAwaiter().GetResult();
             Assert.IsTrue(result);
         }

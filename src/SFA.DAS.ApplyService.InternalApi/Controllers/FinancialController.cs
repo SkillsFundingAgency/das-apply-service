@@ -71,7 +71,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("/Financial/{applicationId}/Grade")]
         public async Task<IActionResult> RecordGrade(Guid applicationId, [FromBody] FinancialReviewDetails financialReviewDetails)
         {
-            // MFCMFC check this if this is reused after clarification..... leave breakpoint on
             if(financialReviewDetails != null)
             {
                 // Note: This gets around the WAF block

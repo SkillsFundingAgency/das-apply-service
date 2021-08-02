@@ -34,9 +34,6 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts(string searchTerm);
         Task<bool> StartFinancialReview(Guid applicationId, string reviewer);
         Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus);
-
-        Task<bool> UpdateFinancialReviewDetails(Guid applicationId, FinancialReviewDetails financialReviewDetails);
-
         Task<bool> AddFinancialReviewClarificationFile(Guid applicationId, string filename);
         Task<bool> RemoveFinancialReviewClarificationFile(Guid applicationId, string filename);
         Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn);

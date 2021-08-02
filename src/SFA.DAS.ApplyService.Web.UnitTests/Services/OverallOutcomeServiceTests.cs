@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using Polly.Caching;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
@@ -296,8 +297,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 .Be(null);
         }
 
-        //MFCMFC
-        [Ignore("to be fixed")]
         [Test]
         public async Task BuildApplicationSummaryViewModel_builds_expected_viewModel()
         {
@@ -309,9 +308,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var applicationReference = "ABC";
             var submittedDate = DateTime.Today.AddDays(-32);
             var externalComments = "external comments";
-            var financialReviewStatus = Domain.Entities.FinancialReviewStatus.Fail;
-            var financialGrade = "pass";
+            var financialReviewStatus = Domain.Entities.FinancialReviewStatus.Pass;
+          
             var financialExternalComments = "financial external comments";
+            var financialReviewDetails = new FinancialReviewDetails
+            {
+                SelectedGrade = "Outstanding",
+                ExternalComments = financialExternalComments,
+                Status = financialReviewStatus
+            };
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var moderationStatus = Domain.Apply.ModerationStatus.Fail;
 
@@ -319,10 +324,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             {
                 ApplicationId = _applicationId, 
                 ExternalComments = externalComments,
-               // FinancialReviewStatus = financialReviewStatus,
-              //  FinancialGrade = new FinancialReviewDetails {
-               //     SelectedGrade = financialGrade,
-                 //   ExternalComments = financialExternalComments },
                 GatewayReviewStatus = gatewayReviewStatus,
                 ModerationStatus = moderationStatus,
                 ApplyData = new ApplyData
@@ -350,14 +351,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 ApplicationReference = applicationReference,
                 SubmittedDate = submittedDate,
                 GatewayExternalComments = externalComments,
-                FinancialReviewStatus = financialReviewStatus,
                 GatewayReviewStatus = gatewayReviewStatus,
                 ModerationStatus = moderationStatus,
-                FinancialGrade = financialGrade,
+                FinancialGrade = financialReviewDetails.SelectedGrade,
+                FinancialReviewStatus = financialReviewDetails.Status,
                 FinancialExternalComments = financialExternalComments
             };
 
-            var returnedModel = _service.BuildApplicationSummaryViewModel(application, null,emailAddress);
+            var returnedModel = _service.BuildApplicationSummaryViewModel(application, financialReviewDetails,emailAddress);
             expectedModel.Should().BeEquivalentTo(returnedModel);
         }
 

@@ -104,8 +104,6 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task UpdateApplication(Apply application)
         {
-
-            // MFCMFC Financial mya need to be updatd in this call, not sure, need to investigate
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(
@@ -540,7 +538,6 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> StartFinancialReview(Guid applicationId, string reviewer)
         {
-            // MFCMFC CHECK THIS NEVER GETS CALLED AGAIN! LEAVE THE BREAKPOINT ON!
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"if exists(select * from apply where ApplicationId = @applicationId 
@@ -605,24 +602,6 @@ namespace SFA.DAS.ApplyService.Data
             }
 
             return true;
-        }
-
-        public async Task<bool> UpdateFinancialReviewDetails(Guid applicationId, FinancialReviewDetails financialReviewDetails)
-        {
-            // MFCMFC needs reworking
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-                {
-                    await connection.ExecuteAsync(@"UPDATE Apply 
-                                                         SET FinancialGrade = @financialReviewDetails
-                                                         WHERE ApplicationId = @applicationId
-                                                            AND apply.DeletedAt IS NULL",
-                        new
-                        {
-                            applicationId,
-                            financialReviewDetails
-                        });
-                }
-                return true;
         }
 
         public async Task<bool> AddFinancialReviewClarificationFile(Guid applicationId, string filename)
@@ -814,7 +793,6 @@ namespace SFA.DAS.ApplyService.Data
 
         private static string GetSortColumnForNew(string requestedColumn)
         {
-            // MFCMFC needs reworking
             switch (requestedColumn)
             {
                 case "SubmittedDate":

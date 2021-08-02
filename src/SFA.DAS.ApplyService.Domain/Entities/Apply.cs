@@ -16,15 +16,9 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ApplicationStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
-        //MFCMFC remove this
-        //public string FinancialReviewStatus { get; set; }
         public string ModerationStatus { get; set; }
 
         public ApplyData ApplyData { get; set; }
-
-        //MFCMFC REMOVE THIS
-        // public FinancialReviewDetails FinancialGrade { get; set; }
-
         public string Assessor1UserId { get; set; }
         public string Assessor1Name{ get; set; }
         public string Assessor1ReviewStatus { get; set; }
