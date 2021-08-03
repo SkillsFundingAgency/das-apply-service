@@ -51,7 +51,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
 
-        [HttpGet("Application/FinancialReviewDetails/{applicationId}")]
+        [HttpGet("Application/{applicationId}/FinancialReviewDetails")]
         public async Task<ActionResult<FinancialReviewDetails>> GetFinancialReviewDetails(Guid applicationId)
         {
             return await _mediator.Send(new GetFinancialReviewDetailsRequest(applicationId));

@@ -31,41 +31,10 @@ SELECT
   and FinancialGrade is not null
 
 -- there can be up to 4 clarification files
-insert into FinancialReviewClarificationFile (applicationId, Filename)
-SELECT 
-    [ApplicationId],
-		JSON_VALUE(apply.FinancialGrade, '$.ClarificationFiles[0].Filename') AS Filename  
-  FROM [dbo].[Apply] apply
-  WHERE JSON_VALUE(apply.FinancialGrade, '$.ClarificationFiles[0].Filename') not in (select filename from FinancialReviewClarificationFile)
-  AND FinancialGrade is not null
-  AND JSON_VALUE(apply.FinancialGrade, '$.ClarificationFiles[0].Filename') is not null
-
-
-insert into FinancialReviewClarificationFile (applicationId, Filename)
-SELECT 
-    [ApplicationId],
-		JSON_VALUE(apply.FinancialGrade, '$.ClarificationFiles[1].Filename') AS Filename  
-  FROM [dbo].[Apply] apply
-  WHERE JSON_VALUE(apply.FinancialGrade, '$.ClarificationFiles[1].Filename') not in (select filename from FinancialReviewClarificationFile)
-  AND FinancialGrade is not null
-  AND JSON_VALUE(apply.FinancialGrade, '$.ClarificationFiles[1].Filename') is not null
-
-insert into FinancialReviewClarificationFile (applicationId, Filename)
-SELECT 
-    [ApplicationId],
-		JSON_VALUE(apply.FinancialGrade, '$.ClarificationFiles[2].Filename') AS Filename  
-  FROM [dbo].[Apply] apply
-  WHERE JSON_VALUE(apply.FinancialGrade, '$.ClarificationFiles[2].Filename') not in (select filename from FinancialReviewClarificationFile)
-  AND FinancialGrade is not null
-  AND JSON_VALUE(apply.FinancialGrade, '$.ClarificationFiles[2].Filename') is not null
-
-insert into FinancialReviewClarificationFile (applicationId, Filename)
-SELECT 
-    [ApplicationId],
-		JSON_VALUE(apply.FinancialGrade, '$.ClarificationFiles[3].Filename') AS Filename  
-  FROM [dbo].[Apply] apply
-  WHERE JSON_VALUE(apply.FinancialGrade, '$.ClarificationFiles[3].Filename') not in (select filename from FinancialReviewClarificationFile)
-  AND FinancialGrade is not null
-  AND JSON_VALUE(apply.FinancialGrade, '$.ClarificationFiles[3].Filename') is not null
+INSERT INTO FinancialReviewClarificationFile (applicationId, Filename)
+SELECT apply.ApplicationId, FinancialGrade.Filename
+FROM [dbo].[Apply] apply
+CROSS APPLY OPENJSON(apply.FinancialGrade,'$.ClarificationFiles') WITH (Filename varchar(255)) FinancialGrade
+WHERE apply.FinancialGrade IS NOT NULL
 
 -- END OF APR-2311

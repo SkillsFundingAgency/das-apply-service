@@ -300,7 +300,7 @@ namespace SFA.DAS.ApplyService.Data
                         WHERE seq.SequenceNo = @financialHealthSequence
                           AND apply.GatewayReviewStatus IN (@gatewayStatusPass) -- NOTE: If Gateway did not pass then it goes straight to Oversight
                           AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-                          AND isnull(fr.Status,@financialStatusDraft) IN (@financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
+                          AND isnull(fr.Status,@financialStatusNew) IN (@financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
                           AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
                         ORDER BY {orderByClause}, org.Name ASC",
                         new
@@ -365,7 +365,7 @@ namespace SFA.DAS.ApplyService.Data
                         ) seq
                         WHERE seq.SequenceNo = @financialHealthSequence
                           AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-                          AND IsNull(fr.Status,@financialStatusDraft) IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
+                          AND IsNull(fr.Status,@financialStatusNew) IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)
                           AND apply.GatewayReviewStatus IN (@gatewayStatusPass)
                         ORDER BY CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC, org.Name ASC";
 
@@ -566,9 +566,6 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus)
         {
-            // MFCMFC 
-            // not sure if this is only used at first pass, so need to take care.
-            // coding as if it's first pass only
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE FinancialReview 
