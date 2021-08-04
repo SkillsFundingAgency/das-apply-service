@@ -21,8 +21,8 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"INSERT INTO Contacts (Email, GivenNames, FamilyName, SignInType, CreatedAt, CreatedBy, Status, IsApproved) 
-                                                     VALUES (@email, @givenName, @familyName, 'ASLogin', @createdAt, @email, 'New', 0)",
+                await connection.ExecuteAsync(@"INSERT INTO Contacts (Email, GivenNames, FamilyName, SignInType, CreatedAt, CreatedBy, Status) 
+                                                     VALUES (@email, @givenName, @familyName, 'ASLogin', @createdAt, @email, 'New')",
                     new { email, givenName, familyName, createdAt = DateTime.UtcNow });
 
                 return await GetContactByEmail(email);
@@ -63,18 +63,6 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(
                     @"UPDATE Contacts SET SignInId = @signInId, UpdatedAt = GETUTCDATE(), UpdatedBy = 'ASLogin', Status = 'Live' WHERE Id = @contactId",
                     new {contactId, signInId});
-            }
-        }
-
-        public async Task<bool> UpdateIsApproved(Guid contactId, bool isApproved)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                int rowsAffected = await connection.ExecuteAsync(
-                    @"UPDATE Contacts SET IsApproved = @isApproved, UpdatedAt = GETUTCDATE(), UpdatedBy = 'System' WHERE Id = @contactId",
-                    new { contactId, isApproved });
-
-                return rowsAffected > 0;
             }
         }
     }
