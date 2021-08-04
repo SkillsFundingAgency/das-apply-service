@@ -308,6 +308,8 @@
             public const string TypeOfApprenticeshipTraining_Employer = "6202";
             public const string TypeOfApprenticeshipTraining_Supporting = "6203";
             public const string TypeOfApprenticeshipTraining_NewSupporting = "6204";
+            public const string ApprenticeshipStandards_NewMain = "6205";
+            public const string ApprenticeshipStandards_NewEmployer = "6206";
             public const string ApprenticeshipStandards = "6230";
             public const string ApplicationFrameworks_MainEmployer = "6250";
             public const string ApplicationFrameworks_Supporting = "6260";
