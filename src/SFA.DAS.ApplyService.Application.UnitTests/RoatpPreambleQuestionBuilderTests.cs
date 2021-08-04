@@ -458,6 +458,25 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
             question.Value.Should().Be(OrganisationStatus.Active.ToString());
         }
 
+        [TestCase(true, ApplicationRoute.MainProviderApplicationRoute, RouteAndOnRoatpTags.MainOnRoatp)]
+        [TestCase(false, ApplicationRoute.MainProviderApplicationRoute, RouteAndOnRoatpTags.MainNotOnRoatp)]
+        [TestCase(true, ApplicationRoute.EmployerProviderApplicationRoute, RouteAndOnRoatpTags.EmployerOnRoatp)]
+        [TestCase(false, ApplicationRoute.EmployerProviderApplicationRoute, RouteAndOnRoatpTags.EmployerNotOnRoatp)]
+        [TestCase(true, ApplicationRoute.SupportingProviderApplicationRoute, RouteAndOnRoatpTags.SupportingOnRoatp)]
+        [TestCase(false, ApplicationRoute.SupportingProviderApplicationRoute, RouteAndOnRoatpTags.SupportingNotOnRoatp)]
+        public void Preamble_questions_contains_roatp_RouteAndOnRoatp_status(bool onRegister, int route, string expectedValue)
+        {
+            _applicationDetails.RoatpRegisterStatus = new OrganisationRegisterStatus { UkprnOnRegister = onRegister};
+            _applicationDetails.ApplicationRoute = new ApplicationRoute {Id=route};
+
+            var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
+
+            questions.Should().NotBeNull();
+            var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.RouteAndOnRoatp);
+            question.Should().NotBeNull();
+            question.Value.Should().Be(expectedValue);
+        }
+
         [Test]
         public void Preamble_questions_contains_roatp_removed_reason()
         {
