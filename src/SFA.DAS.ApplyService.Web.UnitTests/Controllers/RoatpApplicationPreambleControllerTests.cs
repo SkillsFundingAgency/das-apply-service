@@ -909,7 +909,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
             _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
-            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
                 .ReturnsAsync(new Organisation()).Verifiable();
@@ -1006,7 +1005,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
             _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
-            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
                 .ReturnsAsync(new Organisation()).Verifiable();
@@ -1068,7 +1066,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
             _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
-            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
                 .ReturnsAsync(new Organisation()).Verifiable();
@@ -1123,7 +1120,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
             _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
-            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
                 .ReturnsAsync(new Organisation()).Verifiable();

@@ -93,7 +93,7 @@ namespace SFA.DAS.ApplyService.Web
                 options.RequestCultureProviders.Clear();
             });
             
-            services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
+            services.AddMvc()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateAccountValidator>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
