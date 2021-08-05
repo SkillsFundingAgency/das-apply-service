@@ -324,7 +324,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
-                            IsNull(fr.Status,@financialStatusDraft) AS FinancialReviewStatus,
+                            IsNull(fr.Status,@financialStatusNew) AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
