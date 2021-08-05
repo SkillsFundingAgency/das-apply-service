@@ -43,6 +43,7 @@ namespace SFA.DAS.ApplyService.InternalApi
     using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.EmailService.Infrastructure;
     using SFA.DAS.ApplyService.EmailService.Interfaces;
+    using SFA.DAS.ApplyService.Infrastructure.Database;
     using SFA.DAS.ApplyService.InternalApi.Authentication;
     using SFA.DAS.ApplyService.InternalApi.Authorization;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
@@ -209,6 +210,8 @@ namespace SFA.DAS.ApplyService.InternalApi
                  _configuration["ConfigurationStorageConnectionString"],
                  _version,
                  _serviceName));
+
+            services.AddTransient<IDbConnectionHelper, DbConnectionHelper>();
 
             services.AddTransient<IContactRepository, ContactRepository>();
             services.AddTransient<IApplyRepository, ApplyRepository>();
