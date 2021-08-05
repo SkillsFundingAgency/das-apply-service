@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Infrastructure.Database;
@@ -15,9 +16,10 @@ namespace SFA.DAS.ApplyService.Data.UnitTests.Database
         {
             var unitOfWorkType = typeof(UnitOfWork.UnitOfWork);
 
-            var constructorWithIDbConnectionHelper = unitOfWorkType.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.HasThis, new[] { IDbConnectionHelperType }, null);
+            var constructorParameters = unitOfWorkType.GetConstructors(BindingFlags.Instance | BindingFlags.Public).SelectMany(c => c.GetParameters());
+            var iDbConnectionHelperParameter = constructorParameters.FirstOrDefault(param => param.ParameterType == typeof(IDbConnectionHelper));
 
-            Assert.IsNotNull(constructorWithIDbConnectionHelper, $"{unitOfWorkType.FullName} does not use {IDbConnectionHelperType.FullName}");
+            Assert.IsNotNull(iDbConnectionHelperParameter, $"{unitOfWorkType.FullName} does not use {nameof(IDbConnectionHelper)}");
         }
     }
 }
