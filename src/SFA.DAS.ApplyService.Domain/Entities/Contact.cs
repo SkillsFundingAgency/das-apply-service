@@ -10,6 +10,5 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public Guid? SigninId { get; set; }
         public string SigninType { get; set; }
         public Guid? ApplyOrganisationId { get; set; }
-        public bool IsApproved { get; set; }
     }
 }
