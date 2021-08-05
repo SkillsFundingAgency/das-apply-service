@@ -8,26 +8,24 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data
 {
     public class OrganisationRepository : IOrganisationRepository
     {
-        private readonly IApplyConfig _config;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
 
-        public OrganisationRepository(IConfigurationService configurationService)
+        public OrganisationRepository(IDbConnectionHelper dbConnectionHelper)
         {
-            _config = configurationService.GetConfig().Result;
+            _dbConnectionHelper = dbConnectionHelper;
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
         }
 
         public async Task<Guid> CreateOrganisation(Organisation organisation, Guid userId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
                 var organisationId = await connection.QuerySingleAsync<Guid>(
                     "INSERT INTO [Organisations] ([Id],[Name],[OrganisationType],[OrganisationUKPRN], " +
                     "[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoEPAOApproved],[RoATPApproved]) " +
@@ -46,11 +44,8 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<Guid> CreateOrganisation(Organisation organisation)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
                 var organisationId = await connection.QuerySingleAsync<Guid>(
                     "INSERT INTO [Organisations] ([Id],[Name],[OrganisationType],[OrganisationUKPRN], " +
                     "[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoEPAOApproved],[RoATPApproved]) " +
@@ -66,11 +61,8 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<Organisation> GetOrganisationByApplicationId(Guid applicationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
                 var sql =
                     @"SELECT Organisations.*
                     FROM Organisations 
@@ -85,16 +77,13 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task UpdateOrganisation(Organisation organisation)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
                 await UpdateOrganisation(organisation, connection);
             }
         }
 
-        private Task UpdateOrganisation(Organisation organisation, SqlConnection connection)
+        private Task UpdateOrganisation(Organisation organisation, IDbConnection connection)
         {
             return connection.ExecuteAsync(
                 "UPDATE [Organisations] " +
@@ -107,11 +96,8 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task UpdateOrganisation(Organisation organisation, Guid userId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
                 await UpdateOrganisation(organisation, connection);
 
                     connection.Execute(
@@ -124,11 +110,8 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task UpdateOrganisation(Guid organisationId, Guid userId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                
                 connection.Execute(
                     "UPDATE [Organisations] " +
                     "SET CreatedBy = @userId " +
@@ -139,22 +122,16 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<Organisation> GetOrganisation(Guid organisationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
                 return await connection.QueryFirstAsync<Organisation>("SELECT * FROM Organisations WHERE Id = @organisationId", new {organisationId});
             }
         }
 
         public async Task<Organisation> GetOrganisationByName(string name)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
                 var sql =
                     "SELECT * " +
                     "FROM [Organisations] " +
@@ -168,11 +145,8 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<Organisation> GetOrganisationByContactEmail(string email)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
                 var sql =
                     "SELECT org.* " +
                     "FROM [Organisations] org " +
@@ -187,7 +161,7 @@ namespace SFA.DAS.ApplyService.Data
         
         public async Task<Organisation> GetUserOrganisation(Guid userId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleAsync<Organisation>(@"SELECT o.* 
                                                             FROM Contacts c 
@@ -198,11 +172,8 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<Organisation> GetOrganisationByUserId(Guid userId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
                 var sql =
                     "SELECT org.* " +
                     "FROM [Organisations] org " +
@@ -216,11 +187,8 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<Organisation> GetOrganisationByUkprn(string ukprn)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
                 var sql =
                     "SELECT * " +
                     "FROM Organisations " +

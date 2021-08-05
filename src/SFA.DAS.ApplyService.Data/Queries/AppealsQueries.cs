@@ -1,32 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Domain.QueryResults;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data.Queries
 {
     public class AppealsQueries : IAppealsQueries
     {
-        private readonly IApplyConfig _config;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
 
-        public AppealsQueries(IConfigurationService configurationService)
+        public AppealsQueries(IDbConnectionHelper dbConnectionHelper)
         {
-            _config = configurationService.GetConfig().Result;
-        }
-
-        private SqlConnection GetConnection()
-        {
-            return new SqlConnection(_config.SqlConnectionString);
+            _dbConnectionHelper = dbConnectionHelper;
         }
 
         public async Task<AppealFiles> GetStagedAppealFiles(Guid applicationId)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var files = (await connection.QueryAsync<AppealFile>(
                     @"SELECT Id, Filename FROM [AppealUpload] where ApplicationId = @applicationId and AppealId IS NULL ORDER BY CreatedOn ASC",
@@ -44,7 +38,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
         public async Task<Appeal> GetAppeal(Guid applicationId, Guid oversightReviewId)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 Appeal result = null;
 

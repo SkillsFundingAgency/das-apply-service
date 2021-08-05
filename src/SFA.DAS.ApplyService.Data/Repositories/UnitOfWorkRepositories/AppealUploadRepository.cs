@@ -1,29 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 {
     public class AppealUploadRepository : IAppealUploadRepository
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IApplyConfig _config;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
+        private readonly IUnitOfWork _unitOfWork;   
 
-        public AppealUploadRepository(IConfigurationService configurationService, IUnitOfWork unitOfWork)
+        public AppealUploadRepository(IDbConnectionHelper dbConnectionHelper, IUnitOfWork unitOfWork)
         {
-            _config = configurationService.GetConfig().Result;
+            _dbConnectionHelper = dbConnectionHelper;
             _unitOfWork = unitOfWork;
-        }
-
-        private SqlConnection GetConnection()
-        {
-            return new SqlConnection(_config.SqlConnectionString);
         }
 
         public void Add(AppealUpload entity)
@@ -43,7 +37,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 
         public async Task<AppealUpload> GetById(Guid entityId)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleAsync<AppealUpload>(
                     @"SELECT * FROM [AppealUpload] WHERE Id = @entityId",
@@ -53,7 +47,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 
         public async Task<IEnumerable<AppealUpload>> GetByApplicationId(Guid applicationId)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QueryAsync<AppealUpload>(
                     @"SELECT * FROM [AppealUpload] WHERE ApplicationId = @applicationId",

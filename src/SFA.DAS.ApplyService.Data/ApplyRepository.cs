@@ -1,27 +1,26 @@
 using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Types;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data
 {
     public class ApplyRepository : IApplyRepository
     {
-        private readonly IApplyConfig _config;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
 
-        public ApplyRepository(IConfigurationService configurationService)
+        public ApplyRepository(IDbConnectionHelper dbConnectionHelper)
         {
-            _config = configurationService.GetConfig().Result;
-            
+            _dbConnectionHelper = dbConnectionHelper;
+
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
@@ -30,7 +29,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<Guid> StartApplication(Guid applicationId, ApplyData applyData, Guid organisationId, Guid createdBy)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleAsync<Guid>(
                     @"INSERT INTO Apply (ApplicationId, OrganisationId, ApplicationStatus, ApplyData, AssessorReviewStatus, GatewayReviewStatus, FinancialReviewStatus, CreatedBy, CreatedAt)
@@ -42,7 +41,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<Apply> GetApplication(Guid applicationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<Apply>(
                     @"SELECT * FROM apply WHERE ApplicationId = @applicationId",
@@ -52,7 +51,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<Apply> GetApplicationByUserId(Guid applicationId, Guid signinId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return (await connection.QuerySingleOrDefaultAsync<Apply>(@"SELECT top 1 a.* FROM Contacts c
                                                     INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
@@ -62,7 +61,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<Apply>> GetUserApplications(Guid signinId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return (await connection.QueryAsync<Apply>(@"SELECT a.* FROM Contacts c
                                                     INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
@@ -72,7 +71,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<Apply>> GetOrganisationApplications(Guid signinId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return (await connection.QueryAsync<Apply>(@"SELECT a.* FROM Contacts c
                                                     INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
@@ -82,7 +81,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task UpdateApplication(Apply application)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 await connection.ExecuteAsync(
                     @"UPDATE [Apply] SET
@@ -111,7 +110,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             var canSubmit = false;
 
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var application = await GetApplication(applicationId);
 
@@ -148,9 +147,8 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> SubmitApplication(Guid applicationId, ApplyData applyData, FinancialData financialData, Guid submittedBy)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                await connection.OpenAsync();
                 var rowsAffected = await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET ApplicationStatus = @ApplicationStatus, 
                                                     ApplyData = @applyData, 
@@ -193,7 +191,7 @@ namespace SFA.DAS.ApplyService.Data
                     ApplyDetails = currentApplication.ApplyData?.ApplyDetails
                 };
 
-                using (var connection = new SqlConnection(_config.SqlConnectionString))
+                using (var connection = _dbConnectionHelper.GetDatabaseConnection())
                 {
                     return await connection.QuerySingleAsync<Guid>(
                         @"INSERT INTO ApplySnapshots (ApplicationId, SnapshotApplicationId, SnapshotDate, OrganisationId, ApplicationStatus, ApplyData, GatewayReviewStatus, AssessorReviewStatus, FinancialReviewStatus, FinancialGrade)
@@ -227,7 +225,7 @@ namespace SFA.DAS.ApplyService.Data
                 applyData.ApplyDetails.ProviderRoute = providerRoute;
                 applyData.ApplyDetails.ProviderRouteName = providerRouteName;
 
-                using (var connection = new SqlConnection(_config.SqlConnectionString))
+                using (var connection = _dbConnectionHelper.GetDatabaseConnection())
                 {
                     await connection.ExecuteAsync(@"UPDATE Apply
                                                     SET  ApplyData = @applyData
@@ -245,7 +243,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirectionFinancial(sortOrder)}";
 
@@ -360,7 +358,7 @@ namespace SFA.DAS.ApplyService.Data
                 gatewayStatusPass = GatewayReviewStatus.Pass
             };
 
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var results = await connection
                     .QueryAsync<RoatpFinancialSummaryDownloadItem, FinancialData, RoatpFinancialSummaryDownloadItem>(
@@ -377,7 +375,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirectionFinancial(sortOrder)}";
 
@@ -432,7 +430,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn ?? "SubmittedDate")} { GetOrderByDirectionFinancial(sortOrder)}";
 
@@ -517,7 +515,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> StartFinancialReview(Guid applicationId, string reviewer)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 await connection.ExecuteAsync(@"UPDATE Apply SET FinancialReviewStatus = @financialReviewStatusInProgress,
                                                 UpdatedAt = @updatedAt, UpdatedBy = @updatedBy
@@ -541,7 +539,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 await connection.ExecuteAsync(@"UPDATE Apply 
                                                          SET FinancialGrade = @financialReviewDetails,
@@ -560,7 +558,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> UpdateFinancialReviewDetails(Guid applicationId, FinancialReviewDetails financialReviewDetails)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
                 {
                     await connection.ExecuteAsync(@"UPDATE Apply 
                                                          SET FinancialGrade = @financialReviewDetails
@@ -577,7 +575,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task UpdateApplicationStatus(Guid applicationId, string status, string userId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET  ApplicationStatus = @status,
@@ -589,7 +587,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<Contact> GetContactForApplication(Guid applicationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<Contact>(@"SELECT con.* FROM Contacts con 
                                                                         INNER JOIN Apply appl ON appl.CreatedBy = con.Id
@@ -600,7 +598,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<Organisation>(@"SELECT org.* FROM Organisations org 
                                                                         INNER JOIN Apply appl ON appl.OrganisationId = org.Id
@@ -611,7 +609,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload(DateTime dateFrom, DateTime dateTo)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return (await connection.QueryAsync<ApplicationOversightDownloadDetails>(@"SELECT 
                             apply.Id AS Id,
@@ -661,7 +659,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var applicationStatuses = await connection.QueryAsync<RoatpApplicationStatus>(
                     @"select a.Id AS ApplicationId, a.ApplicationStatus AS Status
@@ -675,7 +673,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<string> GetNextRoatpApplicationReference()
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var nextInSequence = (await connection.QueryAsync<int>(@"SELECT NEXT VALUE FOR RoatpAppReferenceSequence")).FirstOrDefault();
 
@@ -685,7 +683,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> StartAssessorReview(Guid applicationId, string reviewer)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 await connection.ExecuteAsync(@"UPDATE Apply SET AssessorReviewStatus = @assessorReviewStatusInProgress,
                                                 UpdatedAt = @updatedAt, UpdatedBy = @updatedBy
@@ -707,7 +705,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<ApplyData> GetApplyData(Guid applicationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QueryFirstOrDefaultAsync<ApplyData>(@"SELECT ApplyData FROM Apply WHERE ApplicationId = @applicationId",
                     new { applicationId });
@@ -716,7 +714,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> UpdateApplyData(Guid applicationId, ApplyData applyData, string updatedBy)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 await connection.ExecuteAsync(@"UPDATE Apply SET ApplyData = @applyData,
                                                 UpdatedAt = @updatedAt, UpdatedBy = @updatedBy

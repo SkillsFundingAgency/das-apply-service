@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data
 {
     public class ClarificationRepository : IClarificationRepository
     {
-        private readonly IApplyConfig _config;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
 
-        public ClarificationRepository(IConfigurationService configurationService)
+        public ClarificationRepository(IDbConnectionHelper dbConnectionHelper)
         {
-            _config = configurationService.GetConfig().GetAwaiter().GetResult();
+            _dbConnectionHelper = dbConnectionHelper;
         }
 
         public async Task<List<ClarificationPageReviewOutcome>> GetClarificationPageReviewOutcomesForSection(Guid applicationId, int sequenceNumber, int sectionNumber)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var pageReviewOutcomeResults = await connection.QueryAsync<ClarificationPageReviewOutcome>(
                                                                 @"SELECT [ApplicationId]
@@ -53,7 +52,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<ClarificationPageReviewOutcome> GetClarificationPageReviewOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var pageReviewOutcomeResults = await connection.QueryAsync<ClarificationPageReviewOutcome>(
                                                                 @"SELECT [ApplicationId]
@@ -85,7 +84,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<ClarificationPageReviewOutcome>> GetAllClarificationPageReviewOutcomes(Guid applicationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var pageReviewOutcomeResults = await connection.QueryAsync<ClarificationPageReviewOutcome>(
                                                                 @"SELECT [ApplicationId]
@@ -114,7 +113,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task SubmitClarificationPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string userId, string userName, string status, string comment, string clarificationResponse, string clarificationFile)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 await connection.ExecuteAsync(
                     @"UPDATE [ModeratorPageReviewOutcome]
@@ -149,7 +148,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task DeleteClarificationFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string clarificationFile)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 await connection.ExecuteAsync(
                     @"UPDATE [ModeratorPageReviewOutcome]
