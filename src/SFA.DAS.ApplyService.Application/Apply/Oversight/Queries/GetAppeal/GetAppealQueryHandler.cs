@@ -6,6 +6,7 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppeal
 {
+    // TODO: APPEALREVIEW - Review once appeal work starts
     public class GetAppealQueryHandler : IRequestHandler<GetAppealQuery, GetAppealQueryResult>
     {
         private readonly IAppealsQueries _appealsQueries;
