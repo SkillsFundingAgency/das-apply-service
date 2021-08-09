@@ -19,7 +19,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<Contact> GetUserBySignInId(Guid signInId);
 
-        Task<bool> ApproveUser(Guid userId);
         Task Callback(SignInCallback callback);
     }
 
@@ -47,12 +46,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<Contact> GetUserBySignInId(Guid signInId)
         {
             return await Get<Contact>($"/Account/{signInId}");
-        }
-
-        public async Task<bool> ApproveUser(Guid contactId)
-        {
-            var result = await Post($"/Account/{contactId}/approve", new { });
-            return result == HttpStatusCode.OK;
         }
 
         public async Task Callback(SignInCallback callback)
