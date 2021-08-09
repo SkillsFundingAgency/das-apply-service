@@ -28,15 +28,10 @@
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="CurrentUkprn" />
 
-                <div class="govuk-form-group @(!ViewContext.ModelState.IsValid ? "govuk-form-group--error" : "")" sfa-validation-for="UKPRN" sfa-validationerror-class="form-group-error">
-                    <span class="govuk-error-message">
-                        @Html.ValidationMessageFor(m => m.Ukprn, null, new { @class = "govuk-error-message error", id = "error-message-" + Html.IdFor(m => m.Ukprn) })
-                    </span>
-
-                    <label for="UKPRN" class="govuk-label">UKPRN</label>
-
-                    <input type="text" class="govuk-input govuk-!-width-one-third" asp-for="Ukprn"
-                           sfa-validation-for="UKPRN" sfa-validationerror-class="form-control-error" />
+                <div class="govuk-form-group" sfa-validation-for="Ukprn" sfa-validationerror-class="govuk-form-group--error">
+                    <label asp-for="Ukprn" class="govuk-label">UKPRN</label>
+                    <span class="govuk-error-message" asp-validation-for="Ukprn"></span>
+                    <input type="text" class="govuk-input govuk-!-width-one-third" asp-for="Ukprn" sfa-validation-for="Ukprn" sfa-validationerror-class="govuk-input--error" />
                 </div>
 
                 <details class="govuk-details" role="group">
