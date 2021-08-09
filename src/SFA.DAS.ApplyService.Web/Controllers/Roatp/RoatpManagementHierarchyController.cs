@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +8,6 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
-using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp.ManagementHierarchy;
 
@@ -62,7 +60,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public IActionResult AddManagementHierarchy(Guid applicationId)
         {
             var model = new AddEditManagementHierarchyViewModel { ApplicationId = applicationId, GetHelpAction = "AddManagementHierarchy" };
-            AddErrorsFromModelState(model);
+
             PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.ManagementHierarchy.AddManagementHierarchy);
             return View("~/Views/Roatp/ManagementHierarchy/AddManagementHierarchy.cshtml", model);
         }
@@ -71,11 +69,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> AddManagementHierarchyDetails(AddEditManagementHierarchyViewModel model)
         {
-            var errorMessages = ManagementHierarchyValidator.Validate(model);
-
-            if (errorMessages.Any())
+            if (!ModelState.IsValid)
             {
-                AddErrorsToModelState(errorMessages);
                 return RedirectToAction("AddManagementHierarchy", new {model.ApplicationId});
             }
 
@@ -88,13 +83,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 Id = Guid.NewGuid().ToString(),
                 Columns = new List<string>
                 {
-                    model.FirstName,
-                    model.LastName,
+                   model.FirstName,
+                   model.LastName,
                    model.JobRole,
                    model.TimeInRoleYears,
                    model.TimeInRoleMonths,
                    model.IsPartOfOtherOrgThatGetsFunding,
-                   model.IsPartOfOtherOrgThatGetsFunding=="Yes"? model.OtherOrgName : string.Empty,
+                   model.IsPartOfOtherOrgThatGetsFunding == "Yes" ? model.OtherOrgName : string.Empty,
                    model.DobMonth,
                    model.DobYear,
                    model.Email,
@@ -149,7 +144,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         private async Task<IActionResult> RemoveItemFromManagementHierarchy(ConfirmRemoveManagementHierarchyViewModel model, string pageId, string questionId, string questionTag, string redirectAction, string backAction)
         {
-            if (String.IsNullOrEmpty(model.Confirmation))
+            if (string.IsNullOrEmpty(model.Confirmation))
             {
                 model.ErrorMessages = new List<ValidationErrorDetail>
                 {
@@ -203,6 +198,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
 
                 var person = personTableData.DataRows[index];
+
                 var firstName = person.Columns[0];
                 var lastName = person.Columns[1];
                 var jobRole = person.Columns[2];
@@ -215,6 +211,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 var dobYear = person.Columns[8];
                 var email = person.Columns[9];
                 var contactNumber = person.Columns[10];
+
                 var model = new AddEditManagementHierarchyViewModel
                 {
                     ApplicationId = applicationId,
@@ -233,8 +230,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     ContactNumber = contactNumber,
                     GetHelpAction = "EditManagementHierarchy"
                 };
+
                 PopulateGetHelpWithQuestion(model, "EditManagementHierarchy");
-                AddErrorsFromModelState(model);
+
                 return View($"~/Views/Roatp/ManagementHierarchy/EditManagementHierarchy.cshtml", model);
             }
             return RedirectToAction("ConfirmManagementHierarchy", new { applicationId });
@@ -244,11 +242,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> UpdateManagementHierarchyDetails(AddEditManagementHierarchyViewModel model)
         {
-            var errorMessages = ManagementHierarchyValidator.Validate(model);
-
-            if (errorMessages.Any())
+            if (!ModelState.IsValid)
             {
-                AddErrorsToModelState(errorMessages);
                 return RedirectToAction("EditManagementHierarchy", model);
             }
 
@@ -322,34 +317,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             PopulateGetHelpWithQuestion(model, actionName);
 
             return View("~/Views/Roatp/ManagementHierarchy/ConfirmManagementHierarchyRemoval.cshtml", model);
-        }
-
-        private void AddErrorsFromModelState(AddEditManagementHierarchyViewModel model)
-        {
-            model.ErrorMessages = new List<ValidationErrorDetail>();
-            ViewData.Model = model;
-            var explorer = ViewData.ModelExplorer;
-            foreach (var property in explorer.Properties)
-            {
-                var propertyName = property.Metadata.PropertyName;
-                var state = ViewData.ModelState[propertyName];
-                var errors = state?.Errors ?? null;
-                if (errors != null)
-                {
-                    foreach (var error in errors)
-                    {
-                        model.ErrorMessages.Add(new ValidationErrorDetail(propertyName, error.ErrorMessage));
-                    }
-                }
-            }
-        }
-
-        private void AddErrorsToModelState(List<ValidationErrorDetail> errors)
-        {
-            foreach (var error in errors)
-            {
-                ModelState.AddModelError(error.Field, error.ErrorMessage);
-            }
         }
     }
 }
