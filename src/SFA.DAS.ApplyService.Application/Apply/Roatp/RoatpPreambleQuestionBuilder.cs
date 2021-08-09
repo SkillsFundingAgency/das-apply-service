@@ -219,7 +219,7 @@
 
         public static class ManagementHierarchy
         {
-              public const string AddManagementHierarchy = "7200";
+            public const string AddManagementHierarchy = "7200";
         }
 
         public static class DescribeYourOrganisation
@@ -257,9 +257,11 @@
             public const string SubcontractorContractFile = "360";
         }
 
-        public static class FinancialEvidence
+        public static class YourOrganisationsFinancialEvidence
         {
-            public const string YourOrganisationsFinancialEvidence = "2131";
+            public const string FinancialEvidence_Other = "2120";
+            public const string FinancialEvidence_CompanyOrCharity = "2130";
+            public const string FinancialEvidence_SoleTraderOrPartnership = "2140";
         }
 
         public static class CriminalComplianceChecks

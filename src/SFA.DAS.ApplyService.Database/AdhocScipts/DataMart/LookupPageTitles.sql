@@ -228,6 +228,7 @@ INSERT INTO LookupPageTitles ([SequenceNumber],[SectionNumber],[PageId],[Title])
 (7, 2, '7100', 'Tell us who has overall accountability for apprenticeships in your organisation'),
 
 (7, 3, '7200', 'Confirm management hierarchy'),
+(7, 3, '7200-FHA', 'Turnover and full time equivalent (FTE) employees'),
 
 (7, 4, '7300', 'Upload your management hierarchy''s expectations for quality and high standards in apprenticeship training'),
 (7, 4, '7305', 'Tell us how these expectations for quality and high standards in apprenticeship training are monitored and evaluated'),

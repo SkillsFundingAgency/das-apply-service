@@ -101,14 +101,15 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             var allSectionsExclusingSectors = allSections.Where(sec => sec.SequenceNumber != RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining || sec.SectionNumber != RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees);
             var sectionPages = allSectionsExclusingSectors.SelectMany(sec => sec.Pages).ToList();
 
-            var expectedNumberOfOutcomes = sectionPages.Count + _sectors.Count;
+            var expectedNumberOfOutcomes = sectionPages.Count + _sectors.Count + 1; // Note: Add 1 due to inserted Management Hierarchy Financial page
 
             _mediator.Verify(x =>
                     x.Send(It.Is<CreateEmptyModeratorReviewRequest>(r =>
                             r.PageReviewOutcomes.Count == expectedNumberOfOutcomes &&
                             r.PageReviewOutcomes.TrueForAll(y =>
                                 _sectors.Exists(s => s.PageId == y.PageId) ||
-                                sectionPages.Exists(p => p.PageId == y.PageId))),
+                                sectionPages.Exists(p => p.PageId == y.PageId) ||
+                                y.PageId == RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial)),
                         It.IsAny<CancellationToken>()),
                 Times.Once);
         }

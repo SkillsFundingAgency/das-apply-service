@@ -21,7 +21,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         private const int _sequenceNumber = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining;
         private const int _sectionNumber = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
         private const string _firstPageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.OverallAccountability;
-        private readonly string _lastPageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
+        private const string _middlePageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
+        private const string _lastPageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial;
 
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<IAssessorSequenceService> _assessorSequenceService;
@@ -38,6 +39,18 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
 
             _assessorSequenceService.Setup(x => x.IsValidSequenceNumber(It.IsAny<int>())).Returns(true);
 
+            var finanicialSection = new ApplicationSection
+            {
+                ApplicationId = _applicationId,
+                SequenceId = RoatpWorkflowSequenceIds.FinancialEvidence,
+                SectionId = RoatpWorkflowSectionIds.FinancialEvidence.YourOrganisationsFinancialEvidence,
+                QnAData = new QnAData
+                {
+                    Pages = new List<Page> { GenerateFinanicialQnAPage() }
+                }
+            };
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(finanicialSection.ApplicationId, finanicialSection.SequenceId, finanicialSection.SectionId)).ReturnsAsync(finanicialSection);
+
             var section = new ApplicationSection
             {
                 ApplicationId = _applicationId,
@@ -45,12 +58,13 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
                 SectionId = _sectionNumber,
                 QnAData = new QnAData
                 {
-                    Pages = new List<Page> { GenerateQnAPage(_firstPageId), GenerateQnAPage(_lastPageId) }
+                    Pages = new List<Page> { GenerateQnAPage(_firstPageId), GenerateQnAPage(_middlePageId), GenerateQnAPage(_lastPageId) }
                 }
             };
 
             _qnaApiClient.Setup(x => x.GetSectionBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId)).ReturnsAsync(section);
-            _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _firstPageId)).ReturnsAsync(new SkipPageResponse { NextAction = NextAction.NextPage, NextActionId = _lastPageId });
+            _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _firstPageId)).ReturnsAsync(new SkipPageResponse { NextAction = NextAction.NextPage, NextActionId = _middlePageId });
+            _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _middlePageId)).ReturnsAsync(new SkipPageResponse { NextAction = NextAction.NextPage, NextActionId = _lastPageId });
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _lastPageId)).ReturnsAsync(new SkipPageResponse { NextAction = NextAction.ReturnToSection });
         }
 
@@ -71,7 +85,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
 
             Assert.That(actualPage, Is.Not.Null);
             Assert.That(actualPage.PageId, Is.EqualTo(_firstPageId));
-            Assert.That(actualPage.NextPageId, Is.EqualTo(_lastPageId));
+            Assert.That(actualPage.NextPageId, Is.EqualTo(_middlePageId));
         }
 
         [Test]
@@ -81,6 +95,16 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
 
             Assert.That(actualPage, Is.Not.Null);
             Assert.That(actualPage.PageId, Is.EqualTo(_firstPageId));
+            Assert.That(actualPage.NextPageId, Is.EqualTo(_middlePageId));
+        }
+
+        [Test]
+        public async Task GetAssessorPage_when_middle_page_gets_expected_page()
+        {
+            var actualPage = await _assessorPageService.GetPage(_applicationId, _sequenceNumber, _sectionNumber, _middlePageId);
+
+            Assert.That(actualPage, Is.Not.Null);
+            Assert.That(actualPage.PageId, Is.EqualTo(_middlePageId));
             Assert.That(actualPage.NextPageId, Is.EqualTo(_lastPageId));
         }
 
@@ -92,6 +116,20 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             Assert.That(actualPage, Is.Not.Null);
             Assert.That(actualPage.PageId, Is.EqualTo(_lastPageId));
             Assert.That(actualPage.NextPageId, Is.Null);
+        }
+
+        [Test]
+        public async Task GetAssessorPage_when_management_hierarchy_financial_page_gets_expected_page()
+        {
+            const int managementHierarchySequenceNumber = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining;
+            const int managementHierarchySectionNumber = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
+            const string managementHierarchyFinancialPage = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial;
+
+            var actualPage = await _assessorPageService.GetPage(_applicationId, managementHierarchySequenceNumber, managementHierarchySectionNumber, managementHierarchyFinancialPage);
+
+            Assert.That(actualPage, Is.Not.Null);
+            Assert.That(actualPage.PageId, Is.EqualTo(managementHierarchyFinancialPage));
+            CollectionAssert.IsNotEmpty(actualPage.Questions);
         }
 
         private static Page GenerateQnAPage(string pageId)
@@ -109,6 +147,42 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
                     }
                 },
                 PageOfAnswers = new List<PageOfAnswers> { new PageOfAnswers { Answers = new List<Answer> { new Answer { QuestionId = $"Q{pageId}", Value = "Value" } } } }
+            };
+        }
+
+        private static Page GenerateFinanicialQnAPage()
+        {
+            return new Page
+            {
+                PageId = RoatpWorkflowPageIds.YourOrganisationsFinancialEvidence.FinancialEvidence_CompanyOrCharity,
+                Questions = new List<Question>
+                {
+                    new Question
+                    {
+                        QuestionId = RoatpWorkflowQuestionTags.Turnover,
+                        QuestionTag = RoatpWorkflowQuestionTags.Turnover,
+                        QuestionBodyText = "QuestionBodyText",
+                        Input = new Input { Type = "TextArea" }
+                    },
+                    new Question
+                    {
+                        QuestionId = RoatpWorkflowQuestionTags.AverageNumberofFTEEmployees,
+                        QuestionTag = RoatpWorkflowQuestionTags.AverageNumberofFTEEmployees,
+                        QuestionBodyText = "QuestionBodyText",
+                        Input = new Input { Type = "TextArea" }
+                    }
+                },
+                PageOfAnswers = new List<PageOfAnswers>
+                {
+                    new PageOfAnswers
+                    {
+                        Answers = new List<Answer>
+                        {
+                            new Answer { QuestionId = RoatpWorkflowQuestionTags.Turnover, Value = "Value" },
+                            new Answer { QuestionId = RoatpWorkflowQuestionTags.AverageNumberofFTEEmployees, Value = "Value" }
+                        }
+                    }
+                }
             };
         }
     }

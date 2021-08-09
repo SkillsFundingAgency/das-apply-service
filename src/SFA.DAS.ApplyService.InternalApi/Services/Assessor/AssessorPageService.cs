@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
@@ -28,20 +29,55 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
 
             if (_assessorSequenceService.IsValidSequenceNumber(sequenceNumber))
             {
-                var qnaSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNumber, sectionNumber);
-                var qnaPage = qnaSection?.QnAData.Pages.FirstOrDefault(p => p.PageId == pageId || string.IsNullOrEmpty(pageId));
-
-                if (qnaPage != null)
+                if (sequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining
+                    && sectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy
+                    && pageId == RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial)
                 {
-                    page = qnaPage.ToAssessorPage(_assessorLookupService, applicationId, sequenceNumber, sectionNumber);
+                    page = await GetManagementHierarchFinancialPage(applicationId);
+                }
+                else
+                {
+                    var qnaSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNumber, sectionNumber);
+                    var qnaPage = qnaSection?.QnAData.Pages.FirstOrDefault(p => p.PageId == pageId || string.IsNullOrEmpty(pageId));
 
-                    var nextPageAction = await _qnaApiClient.SkipPageBySectionNo(page.ApplicationId, page.SequenceNumber, page.SectionNumber, page.PageId);
-
-                    if (nextPageAction != null && NextAction.NextPage.Equals(nextPageAction.NextAction, StringComparison.InvariantCultureIgnoreCase))
+                    if (qnaPage != null)
                     {
-                        page.NextPageId = nextPageAction.NextActionId;
+                        page = qnaPage.ToAssessorPage(_assessorLookupService, applicationId, sequenceNumber, sectionNumber);
+
+                        var nextPageAction = await _qnaApiClient.SkipPageBySectionNo(page.ApplicationId, page.SequenceNumber, page.SectionNumber, page.PageId);
+
+                        if (nextPageAction != null && NextAction.NextPage.Equals(nextPageAction.NextAction, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            page.NextPageId = nextPageAction.NextActionId;
+                        }
+                        else if (page.PageId == RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy)
+                        {
+                            // Move to injected page which shows Financial information to Assessor/Moderator
+                            page.NextPageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial;
+                        }
                     }
                 }
+            }
+
+            return page;
+        }
+
+        private async Task<AssessorPage> GetManagementHierarchFinancialPage(Guid applicationId)
+        {
+            AssessorPage page = null;
+
+            var qnaSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpWorkflowSequenceIds.FinancialEvidence, RoatpWorkflowSectionIds.FinancialEvidence.YourOrganisationsFinancialEvidence);
+            var qnaPage = qnaSection?.QnAData.Pages.FirstOrDefault(p => p.PageId == RoatpWorkflowPageIds.YourOrganisationsFinancialEvidence.FinancialEvidence_Other
+                                                                    || p.PageId == RoatpWorkflowPageIds.YourOrganisationsFinancialEvidence.FinancialEvidence_CompanyOrCharity
+                                                                    || p.PageId == RoatpWorkflowPageIds.YourOrganisationsFinancialEvidence.FinancialEvidence_SoleTraderOrPartnership);
+
+            if (qnaPage != null)
+            {
+                // Modify the qnaPage so it shows only relevant questions to the assessor and has an appropriate page id
+                qnaPage.Questions = qnaPage.Questions.Where(p => p.QuestionTag == RoatpWorkflowQuestionTags.Turnover || p.QuestionTag == RoatpWorkflowQuestionTags.AverageNumberofFTEEmployees).ToList();
+                qnaPage.PageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial;
+
+                page = qnaPage.ToAssessorPage(_assessorLookupService, applicationId, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining, RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
             }
 
             return page;

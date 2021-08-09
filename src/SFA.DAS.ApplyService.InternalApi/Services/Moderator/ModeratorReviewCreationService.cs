@@ -7,7 +7,6 @@ using SFA.DAS.ApplyService.Application.Apply.Moderator;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
@@ -67,6 +66,21 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
                         SequenceNumber = section.SequenceNumber,
                         SectionNumber = section.SectionNumber,
                         PageId = page.PageId,
+                        UserId = moderatorUserId,
+                        Status = null,
+                        Comment = null
+                    });
+                }
+
+                if (section.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining && section.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy)
+                {
+                    // Inject page to show Financial information to Moderator
+                    sectionReviewOutcomes.Add(new ModeratorPageReviewOutcome
+                    {
+                        ApplicationId = applicationId,
+                        SequenceNumber = section.SequenceNumber,
+                        SectionNumber = section.SectionNumber,
+                        PageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial,
                         UserId = moderatorUserId,
                         Status = null,
                         Comment = null

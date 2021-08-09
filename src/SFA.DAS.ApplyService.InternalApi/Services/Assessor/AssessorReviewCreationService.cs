@@ -51,7 +51,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
             await _mediator.Send(new CreateEmptyAssessorReviewRequest(applicationId, assessorUserId, assessorUserName, reviewOutcomes));
         }
 
-        private List<AssessorPageReviewOutcome> GenerateSectionReviewOutcomes(Guid applicationId, AssessorSection section, string assessorUserId, int assessorNumber)
+        private static List<AssessorPageReviewOutcome> GenerateSectionReviewOutcomes(Guid applicationId, AssessorSection section, string assessorUserId, int assessorNumber)
         {
             var sectionReviewOutcomes = new List<AssessorPageReviewOutcome>();
 
@@ -71,12 +71,28 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                         Comment = null
                     });
                 }
+
+                if (section.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining && section.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy)
+                {
+                    // Inject page to show Financial information to Assessor
+                    sectionReviewOutcomes.Add(new AssessorPageReviewOutcome
+                    {
+                        ApplicationId = applicationId,
+                        SequenceNumber = section.SequenceNumber,
+                        SectionNumber = section.SectionNumber,
+                        PageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial,
+                        UserId = assessorUserId,
+                        AssessorNumber = assessorNumber,
+                        Status = null,
+                        Comment = null
+                    });
+                }
             }
 
             return sectionReviewOutcomes;
         }
 
-        private List<AssessorPageReviewOutcome> GenerateSectorsReviewOutcomes(Guid applicationId, AssessorSection section, List<AssessorSector> selectedSectors, string assessorUserId, int assessorNumber)
+        private static List<AssessorPageReviewOutcome> GenerateSectorsReviewOutcomes(Guid applicationId, AssessorSection section, List<AssessorSector> selectedSectors, string assessorUserId, int assessorNumber)
         {
             var sectorReviewOutcomes = new List<AssessorPageReviewOutcome>();
 
