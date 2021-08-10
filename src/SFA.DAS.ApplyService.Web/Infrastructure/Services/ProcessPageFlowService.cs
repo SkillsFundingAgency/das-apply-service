@@ -24,6 +24,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
         public Task<string> GetIntroductionPageIdForSequence(int sequenceId,
             int providerTypeId)
         {
+            //APR-2610 has added a requirement to branch sequence 6 introductions based on being on the register or not
+            // the current code only uses this method to get details for seqeuence 1, so no code changes needed, but if this method
+            // ever gets used for getting sequence 6 starter page, some further work, either here or in the lower-level configuration, is needed
             var sequenceDescription = _configuration.FirstOrDefault(x => x.Id == sequenceId);
 
             return Task.FromResult(sequenceDescription?.StartupPages
