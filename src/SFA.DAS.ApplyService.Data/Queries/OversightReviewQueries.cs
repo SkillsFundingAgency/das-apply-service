@@ -30,7 +30,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
                             apply.ApplicationStatus,
                             org.Name AS OrganisationName,
                             apply.GatewayReviewStatus,
-                            apply.FinancialReviewStatus,
+                            fr.Status as FinancialReviewStatus,
                             apply.ModerationStatus AS ModerationReviewStatus,
 					        apply.UKPRN,
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
@@ -39,12 +39,13 @@ namespace SFA.DAS.ApplyService.Data.Queries
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                          LEFT JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
+                          LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
                           AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
                           and r.Status is null
                           and ((GatewayReviewStatus in (@gatewayReviewStatusPass)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
-						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
+						  and fr.Status in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
                             OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusRejected)
                             OR apply.ApplicationStatus = @applicationStatusRemoved)
                             ORDER BY {orderByClause}, org.Name ASC", new
@@ -126,12 +127,12 @@ namespace SFA.DAS.ApplyService.Data.Queries
 							apply.GatewayUserName as GatewayOutcomeMadeBy,
 							JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.Comments') AS GatewayComments,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.ExternalComments') AS GatewayExternalComments,
-							apply.FinancialReviewStatus,
-							JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') AS FinancialGradeAwarded,
-							JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS FinancialHealthAssessedOn,
-							JSON_VALUE(apply.FinancialGrade, '$.GradedBy') AS FinancialHealthAssessedBy,
-                            JSON_VALUE(apply.FinancialGrade, '$.Comments') AS FinancialHealthComments,
-                            JSON_VALUE(apply.FinancialGrade, '$.ExternalComments') AS FinancialHealthExternalComments,
+							fr.Status as FinancialReviewStatus,
+							fr.SelectedGrade AS FinancialGradeAwarded,
+							fr.GradedOn AS FinancialHealthAssessedOn,
+							fr.GradedBy AS FinancialHealthAssessedBy,
+                            fr.Comments AS FinancialHealthComments,
+                            fr.ExternalComments AS FinancialHealthExternalComments,
 							apply.ModerationStatus as ModerationReviewStatus,
 							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS ModerationOutcomeMadeOn,
 							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratedBy,
@@ -154,6 +155,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                           LEFT JOIN OversightReview outcome ON outcome.ApplicationId = apply.ApplicationId
 						  LEFT OUTER JOIN contacts on contacts.ApplyOrganisationId = org.Id
+                          LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
                         WHERE apply.ApplicationId = @applicationId",
                     new { applicationId });
 

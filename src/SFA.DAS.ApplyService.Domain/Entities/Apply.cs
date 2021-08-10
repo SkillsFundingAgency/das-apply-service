@@ -16,12 +16,9 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ApplicationStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
-        public string FinancialReviewStatus { get; set; }
         public string ModerationStatus { get; set; }
 
         public ApplyData ApplyData { get; set; }
-        public FinancialReviewDetails FinancialGrade { get; set; }
-
         public string Assessor1UserId { get; set; }
         public string Assessor1Name{ get; set; }
         public string Assessor1ReviewStatus { get; set; }
@@ -112,10 +109,12 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
     public class FinancialReviewDetails
     {
+        public Guid ApplicationId { get; set; }
+        public string Status { get; set; }
         public string SelectedGrade { get; set; }
         public DateTime? FinancialDueDate { get; set; }
         public string GradedBy { get; set; }
-        public DateTime? GradedDateTime { get; set; }
+        public DateTime? GradedOn { get; set; }
         public string Comments { get; set; }
         public string ExternalComments { get; set; }
         public List<FinancialEvidence> FinancialEvidences { get; set; }
@@ -124,7 +123,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ClarificationRequestedBy { get; set; }
         public string ClarificationResponse { get; set; }
     }
-
     public class FinancialEvidence
     {
         public string Filename { get; set; }

@@ -20,7 +20,6 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
             _unitOfWork = unitOfWork;
 
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
-            SqlMapper.AddTypeHandler(typeof(FinancialReviewDetails), new FinancialReviewDetailsDataHandler());
         }
 
         public async Task<Apply> GetApplication(Guid applicationId)

@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
             var financialReviewDetails = request.FinancialReviewDetails;
             if (financialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification)
             {
-                financialReviewDetails.ClarificationRequestedOn = financialReviewDetails.GradedDateTime;
+                financialReviewDetails.ClarificationRequestedOn = financialReviewDetails.GradedOn;
                 financialReviewDetails.ClarificationRequestedBy = financialReviewDetails.GradedBy;
             }
 

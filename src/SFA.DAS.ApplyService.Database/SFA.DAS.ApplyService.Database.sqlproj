@@ -81,6 +81,8 @@
     <Build Include="Tables\Appeal.sql" />
     <Build Include="Tables\ExtractedApplications.sql" />
     <Build Include="Tables\SubmittedApplicationAnswers.sql" />
+    <Build Include="Tables\FinancialReview.sql" />
+    <Build Include="Tables\FinancialReviewClarificationFile.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
@@ -92,5 +94,6 @@
     <None Include="AdhocScipts\DataMart\LookupSectionTitles.sql" />
     <None Include="AdhocScipts\DataMart\LookupPageTitles.sql" />
     <None Include="AdhocScipts\DataMart\LookupQuestionTitles.sql" />
+    <None Include="APR-2311.sql" />
   </ItemGroup>
 </Project>

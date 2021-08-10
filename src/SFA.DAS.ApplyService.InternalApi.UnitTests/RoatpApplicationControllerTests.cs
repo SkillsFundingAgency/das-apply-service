@@ -98,6 +98,5 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _apiClient.Verify(x => x.GetOrganisationRegisterStatus(It.IsAny<string>()), Times.Once);
         }
-
     }
 }

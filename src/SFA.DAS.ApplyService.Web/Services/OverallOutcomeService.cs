@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             _assessorLookupService = assessorLookupService;
         }
 
-        public async Task AugmentModelWithModerationFailDetails(ApplicationSummaryWithModeratorDetailsViewModel model,
+        public async Task AugmentModelWithModerationFailDetails(ApplicationSummaryWithModeratorDetailsViewModel model, 
             string userId)
         {
             var sequences = await _apiClient.GetClarificationSequences(model.ApplicationId);
@@ -71,7 +71,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 .ToList();
         }
 
-        public ApplicationSummaryViewModel BuildApplicationSummaryViewModel(Apply application, string emailAddress)
+        public ApplicationSummaryViewModel BuildApplicationSummaryViewModel(Apply application, FinancialReviewDetails financialReviewDetails, string emailAddress)
             {
                 var applicationData = application.ApplyData.ApplyDetails;
 
@@ -86,9 +86,9 @@ namespace SFA.DAS.ApplyService.Web.Services
                     SubmittedDate = applicationData?.ApplicationSubmittedOn,
                     GatewayExternalComments = application.ExternalComments ?? application.ApplyData.GatewayReviewDetails?.ExternalComments,
                     EmailAddress = emailAddress,
-                    FinancialReviewStatus = application?.FinancialReviewStatus,
-                    FinancialGrade = application?.FinancialGrade?.SelectedGrade,
-                    FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
+                    FinancialReviewStatus = financialReviewDetails?.Status,
+                    FinancialGrade = financialReviewDetails?.SelectedGrade,
+                    FinancialExternalComments = financialReviewDetails?.ExternalComments,
                     GatewayReviewStatus = application?.GatewayReviewStatus,
                     ModerationStatus = application?.ModerationStatus,
                     SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit
@@ -96,7 +96,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return model;
             }
 
-        public async Task<ApplicationSummaryWithModeratorDetailsViewModel> BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(Apply application, string emailAddress)
+        public async Task<ApplicationSummaryWithModeratorDetailsViewModel> BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(Apply application, FinancialReviewDetails financialReviewDetails, string emailAddress)
         {
             var applicationData = application.ApplyData.ApplyDetails;
 
@@ -154,9 +154,9 @@ namespace SFA.DAS.ApplyService.Web.Services
                 SubmittedDate = applicationData?.ApplicationSubmittedOn,
                 GatewayExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
                 EmailAddress = emailAddress,
-                FinancialReviewStatus = application?.FinancialReviewStatus,
-                FinancialGrade = application?.FinancialGrade?.SelectedGrade,
-                FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
+                FinancialReviewStatus = financialReviewDetails?.Status,
+                FinancialGrade = financialReviewDetails?.SelectedGrade,
+                FinancialExternalComments = financialReviewDetails?.ExternalComments,
                 GatewayReviewStatus = application?.GatewayReviewStatus,
                 ModerationStatus = application?.ModerationStatus,
                 ModerationPassOverturnedToFail = moderationPassOverturnedToFail,

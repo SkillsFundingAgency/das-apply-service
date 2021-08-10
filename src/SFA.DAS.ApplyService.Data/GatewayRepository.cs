@@ -118,7 +118,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
-                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            fr.Status AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             apply.UKPRN AS Ukprn,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
@@ -126,6 +126,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+                          LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
 	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
 	                        AND apply.GatewayReviewStatus = @gatewayReviewStatusNew
                             AND ( 
@@ -157,7 +158,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
-                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            fr.Status AS FinancialReviewStatus,
                             apply.GatewayUserName AS LastCheckedBy,
                             org.Name AS OrganisationName,
                             apply.UKPRN AS Ukprn,
@@ -167,6 +168,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.ClarificationRequestedOn') AS ClarificationRequestedDate
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+                          LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
 	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
 	                        AND apply.GatewayReviewStatus in (@gatewayReviewStatusInProgress, @gatewayReviewStatusClarificationSent)
                             AND ( 
@@ -199,7 +201,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
-                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            fr.Status AS FinancialReviewStatus,
                             apply.GatewayUserName AS LastCheckedBy,                            
                             org.Name AS OrganisationName,
                             apply.UKPRN AS Ukprn,
@@ -218,6 +220,7 @@ namespace SFA.DAS.ApplyService.Data
                             END AS OutcomeMadeBy
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+                          LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
                             AND (
                                     apply.ApplicationStatus in (@applicationStatusWithdrawn, @applicationStatusRemoved)
