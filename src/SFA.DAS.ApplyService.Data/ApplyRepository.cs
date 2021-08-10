@@ -82,7 +82,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<FinancialReviewDetails> GetFinancialReviewDetails(Guid applicationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<FinancialReviewDetails>(
                     @"SELECT * FROM FinancialReview WHERE ApplicationId = @applicationId",
@@ -92,7 +92,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<ClarificationFile>> GetFinancialReviewClarificationFiles(Guid applicationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return (await connection.QueryAsync<ClarificationFile>(
                     @"SELECT * FROM [FinancialReviewClarificationFile] WHERE ApplicationId = @applicationId",
@@ -600,7 +600,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> AddFinancialReviewClarificationFile(Guid applicationId, string filename)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 await connection.ExecuteAsync(@"INSERT INTO [FinancialReviewClarificationFile] (ApplicationId, Filename) Values (@applicationId, @filename)  ",
                     new
@@ -614,7 +614,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> RemoveFinancialReviewClarificationFile(Guid applicationId, string filename)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 await connection.ExecuteAsync(@"DELETE FROM [FinancialReviewClarificationFile] WHERE ApplicationId=@applicationId and Filename= @filename  ",
                     new
