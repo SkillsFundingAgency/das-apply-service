@@ -8,6 +8,7 @@ using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -34,13 +35,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
 
-        [HttpGet]
-        [Route("application/{applicationId}/appeal")]
-        public async Task<IActionResult> MakeAppeal(Guid applicationId)
+        [HttpGet("application/{applicationId}/appeal")]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public IActionResult MakeAppeal(Guid applicationId)
         {
-            return View("~/Views/Roatp/ApplicationAppeal.cshtml");
+            var model = new MakeAppealViewModel
+            {
+                ApplicationId = applicationId
+            };
+
+            return View("~/Views/Appeals/MakeAppeal.cshtml", model);
         }
 
+        [HttpPost("application/{applicationId}/appeal")]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        public IActionResult MakeAppeal(MakeAppealViewModel model)
+        {
+            return RedirectToAction("MakeAppeal", new { model.ApplicationId });
+        }
 
         [HttpGet]
         [Route("application/{applicationId}/sector/{pageId}")]
@@ -134,6 +146,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet("ClarificationDownload/{applicationId}/Sequence/{sequenceNumber}/Section/{sectionNumber}/Page/{pageId}/Download/{fileName}")]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> DownloadClarificationFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string fileName)
         {
             var response = await _apiClient.DownloadClarificationfile(applicationId, sequenceNumber, sectionNumber, pageId, fileName);
