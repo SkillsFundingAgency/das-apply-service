@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Serialization;
-using SFA.DAS.ApplyService.Application.Apply.Roatp;
+﻿using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Sectors;
 
 namespace SFA.DAS.ApplyService.Application.Services.Assessor

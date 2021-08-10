@@ -17,18 +17,29 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IOutcomeApiClient _apiClient;
         private readonly IApplicationApiClient _applicationApiClient;
         private readonly IOverallOutcomeService _overallOutcomeService;
+        private readonly IBankHolidayService _bankHolidayService;
         private readonly ILogger<RoatpOverallOutcomeController> _logger;
         private const string SupportingRouteId = "3";
+        private const int NumberOfWorkingDays = 10;
+
         public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, 
             IOverallOutcomeService overallOutcomeService, IApplicationApiClient applicationApiClient,
-            ILogger<RoatpOverallOutcomeController> logger)
+            ILogger<RoatpOverallOutcomeController> logger, IBankHolidayService bankHolidayService)
         {
             _apiClient = apiClient;
             _overallOutcomeService = overallOutcomeService;
             _logger = logger;
+            _bankHolidayService = bankHolidayService;
             _applicationApiClient = applicationApiClient;
         }
 
+
+        [HttpGet]
+        [Route("application/{applicationId}/appeal")]
+        public async Task<IActionResult> MakeAppeal(Guid applicationId)
+        {
+            return View("~/Views/Roatp/ApplicationAppeal.cshtml");
+        }
 
 
         [HttpGet]
@@ -79,13 +90,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                             return View("~/Views/Roatp/ApplicationApproved.cshtml", model);
                     }
 
-                case ApplicationStatus.Unsuccessful: 
+                case ApplicationStatus.Unsuccessful:
+                    var oversight = await _apiClient.GetOversightReview(applicationId);
+                    model.ApplicationDeterminedDate = oversight?.ApplicationDeterminedDate;
+                    model.AppealRequiredBy =
+                        _bankHolidayService.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, NumberOfWorkingDays);
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
                         return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
 
                     var unsuccessfulModel =
                         await _overallOutcomeService.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(application,
                             User.GetEmail());
+                    unsuccessfulModel.ApplicationDeterminedDate = oversight?.ApplicationDeterminedDate;
+                    unsuccessfulModel.AppealRequiredBy =
+                        _bankHolidayService.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, NumberOfWorkingDays);
                     return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", unsuccessfulModel);
 
                 case ApplicationStatus.FeedbackAdded:

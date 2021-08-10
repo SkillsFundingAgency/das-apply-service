@@ -257,6 +257,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
             services.AddTransient<ITaskListOrchestrator, TaskListOrchestrator>();
             services.AddTransient<IOverallOutcomeService, OverallOutcomeService>();
+            services.AddTransient<IBankHolidayService, BankHolidayService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

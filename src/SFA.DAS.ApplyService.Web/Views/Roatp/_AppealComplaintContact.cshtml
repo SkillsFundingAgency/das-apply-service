@@ -1,27 +1,54 @@
-﻿
+﻿@using SFA.DAS.AdminService.Common.Extensions
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        <h2 class="govuk-heading-l">How to make an appeal</h2>
-        <p class="govuk-body">
-            You can make an appeal by emailing <a href="mailto:roatp.appeals@education.gov.uk" target="_blank">roatp.appeals@education.gov.uk</a>. You’ll need to explain why your organisation is making an appeal and on what grounds.
-        </p>
-        <p class="govuk-body"> Your organisation can make an appeal within 10 working days of receiving this notification. ESFA will aim to review and respond within 15 working days.</p>
-        <p class="govuk-body"> If your appeal is successful, your organisation will remain on the register.</p>
-        <p class="govuk-body"> If your appeal is unsuccessful, or you decide not to make an appeal, ESFA will take action as explained in <a href="https://www.gov.uk/guidance/meeting-new-application-requirements-and-removal-from-register-of-apprenticeship-training-providers-roatp#consequences" target="_blank">the Consequences section</a> of the new policy.</p>
-        <p class="govuk-body"> Refer to the Make an appeal section in <a href="https://www.gov.uk/guidance/roatp-application-guidance-digital-may-2021" target="_blank">the application guidance</a> for more information.</p>
+        @if (Model.ApplicationDeterminedDate != null && Model.AppealRequiredBy < DateTime.Today)
+        {
+            <h2 class="govuk-heading-l">You cannot make an appeal</h2>
+            <p class="govuk-body">
+                This is because you did not respond by @Model.AppealRequiredBy.ToSfaShortDateString()
+            </p>
+        }
+        else
+        {
+            <h2 class="govuk-heading-l">How to make an appeal</h2>
+            <p class="govuk-body">
+                You can appeal this decision but you must do so by @Model.AppealRequiredBy.ToSfaShortDateString()
+            </p>
+            <p class="govuk-body">
+                You can only make an appeal on the following grounds:
+                <ol class="govuk-list govuk-list--number">
+                    <li>The ESFA has failed to follow its own policy or processes.</li>
+                    <li>The ESFA has failed to understand or recognise the evidence submitted.</li>
+                </ol>
+            </p>
+            <p class="govuk-body"> The ESFA will not consider any additional information you provide that was not included in your original application. </p>
+            <p class="govuk-body">The ESFA will aim to review and respond within 15 working days.</p>
+            <p class="govuk-body"> If your appeal is successful, your organisation will be published on the register.</p>
 
+
+            <p class="govuk-body">
+                If your appeal is unsuccessful or you decide not to make an appeal, the ESFA will take action as explained in <a href="https://www.gov.uk/guidance/meeting-new-application-requirements-and-removal-from-register-of-apprenticeship-training-providers-roatp#consequences" target="_blank">the Consequences section</a> of the new policy.
+            </p>
+
+            <p class="govuk-body">
+                <a class="govuk-button govuk-button--secondary govuk-!-margin-right-3" asp-action="MakeAppeal" asp-controller="RoatpOverallOutcome" asp-route-applicationId="@Model.ApplicationId">I want to appeal</a>
+            </p>
+        }
+        
         <h1 class="govuk-heading-m">How to make a complaint</h1>
-        <p class="govuk-body">
-            Your organisation can make a complaint by following <a href="https://www.gov.uk/government/organisations/department-for-education/about/complaints-procedure" target="_blank">DFE complaints procedure.</a>
-        </p>
-        <h2 class="govuk-heading-m">
-            How to contact us
-        </h2>
-        <p class="govuk-body">You can contact the Manage apprenticeships service helpdesk on:</p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li>08000 150 600</li>
-            <li><a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk" target="_blank">helpdesk@manage-apprenticeships.service.gov.uk</a></li>
-        </ul>
+            <p class="govuk-body">
+                Your organisation can make a complaint by following <a href="https://www.gov.uk/government/organisations/department-for-education/about/complaints-procedure" target="_blank">DFE complaints procedure.</a>
+            </p>
+            <h2 class="govuk-heading-m">
+                How to contact us
+            </h2>
+            <p class="govuk-body">You can contact the Manage apprenticeships service helpdesk on:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>08000 150 600</li>
+                <li><a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk" target="_blank">helpdesk@manage-apprenticeships.service.gov.uk</a></li>
+            </ul>
+        </div>
     </div>
-</div>

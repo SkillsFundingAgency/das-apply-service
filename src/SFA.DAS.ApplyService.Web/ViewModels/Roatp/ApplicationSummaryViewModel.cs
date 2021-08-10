@@ -5,6 +5,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     public class ApplicationSummaryViewModel
     {
         public Guid ApplicationId { get; set; }
+        public string ApplicationStatus { get; set; }
         public string ApplicationReference { get; set; }
         public string UKPRN { get; set; }
         public string OrganisationName { get; set; }
@@ -24,6 +25,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public string SubcontractingLimitFormatted => SubcontractingLimit?.ToString("N0");
 
+        public DateTime? ApplicationDeterminedDate { get; set; }
+        public DateTime? AppealRequiredBy { get; set; }
         public string ApplicationRouteShortText
         {
             get
