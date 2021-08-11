@@ -82,18 +82,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 try 
                 {
-                    var currentPage = await _qnaApiClient.GetPageBySectionNo(applicationId.Value, sequenceId, sectionId, pageId);
-                    if (!string.IsNullOrEmpty(currentPage?.Title))
-                    {
-                        getHelpQuery.PageTitle = currentPage.Title;
-                    }
-
-                    var currentSection = await _qnaApiClient.GetSectionBySectionNo(applicationId.Value, sequenceId, sectionId);
-                    if (!string.IsNullOrEmpty(currentSection?.Title))
-                    {
-                        getHelpQuery.ApplicationSection = currentSection.Title;
-                    }
-
                     var organisationName = await _qnaApiClient.GetAnswerByTag(applicationId.Value, RoatpWorkflowQuestionTags.UkrlpLegalName);
                     if (!string.IsNullOrWhiteSpace(organisationName?.Value))
                     {
@@ -104,6 +92,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     if (!string.IsNullOrWhiteSpace(organisationUKPRN?.Value))
                     {
                         getHelpQuery.UKPRN = organisationUKPRN.Value;
+                    }
+
+                    var currentSection = await _qnaApiClient.GetSectionBySectionNo(applicationId.Value, sequenceId, sectionId);
+                    if (!string.IsNullOrEmpty(currentSection?.Title))
+                    {
+                        getHelpQuery.ApplicationSection = currentSection.Title;
+                    }
+
+                    var currentPage = await _qnaApiClient.GetPageBySectionNo(applicationId.Value, sequenceId, sectionId, pageId);
+                    if (!string.IsNullOrEmpty(currentPage?.Title))
+                    {
+                        getHelpQuery.PageTitle = currentPage.Title;
                     }
                 }
                 catch(ApplyService.Infrastructure.Exceptions.ApiClientException)
