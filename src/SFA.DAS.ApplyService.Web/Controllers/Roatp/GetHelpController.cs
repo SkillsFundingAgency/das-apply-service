@@ -100,7 +100,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         getHelpQuery.ApplicationSection = currentSection.Title;
                     }
 
-                    var currentPage = await _qnaApiClient.GetPageBySectionNo(applicationId.Value, sequenceId, sectionId, pageId);
+                    var currentPage = currentSection.QnAData.Pages.FirstOrDefault( pg => pg.PageId == pageId);
                     if (!string.IsNullOrEmpty(currentPage?.Title))
                     {
                         getHelpQuery.PageTitle = currentPage.Title;
