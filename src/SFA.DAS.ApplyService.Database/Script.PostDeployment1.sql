@@ -8,5 +8,6 @@ Post-Deployment Script Template
  Example:      :setvar TableName MyTable							
                SELECT * FROM [$(TableName)]					
 --------------------------------------------------------------------------------------
+*/
 
 :r .\APR-2311.sql
