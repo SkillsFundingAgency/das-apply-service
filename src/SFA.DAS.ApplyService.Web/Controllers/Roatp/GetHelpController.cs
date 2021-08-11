@@ -50,7 +50,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [HttpPost]
         public async Task<IActionResult> Index(Guid? applicationId, int sequenceId, int sectionId, string pageId, string title, string getHelp, string controller, string action)
         {
-            var getHelpQuery = new GetHelpWithQuestion();
             var errorMessageKey = string.Format(GetHelpErrorMessageKey, pageId);
 
             if (string.IsNullOrWhiteSpace(getHelp))
@@ -69,78 +68,67 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction(action, controller, new { applicationId, sequenceId, sectionId, pageId });
             }
 
+            var sequenceConfig = _taskListConfiguration.FirstOrDefault(x => x.Id == sequenceId);
+            var getHelpQuery = new GetHelpWithQuestion
+            {
+                ApplicationSequence = sequenceConfig?.Title ?? $"Not available (Sequence {sequenceId})",
+                ApplicationSection = $"Not available (Section {sectionId}))",
+                PageTitle = title ?? action,
+                OrganisationName = "Not available",
+                UKPRN = "Not available"
+            };
+
             if (applicationId.HasValue && applicationId.Value != Guid.Empty)
             {
-                if (sequenceId > 0 && sectionId > 0) 
+                try 
                 {
-                    var page = await _qnaApiClient.GetPageBySectionNo (applicationId.Value, sequenceId, sectionId, pageId);
-                    if (page == null || string.IsNullOrEmpty(page.Title))
+                    var currentPage = await _qnaApiClient.GetPageBySectionNo(applicationId.Value, sequenceId, sectionId, pageId);
+                    if (!string.IsNullOrEmpty(currentPage?.Title))
                     {
-                        getHelpQuery.PageTitle = title ?? action;
-                    }
-                    else
-                    {
-                        getHelpQuery.PageTitle = page.Title;
-                    }
-
-                    var sequenceConfig = _taskListConfiguration.FirstOrDefault(x => x.Id == sequenceId);
-                    if (sequenceConfig != null)
-                    {
-                        getHelpQuery.ApplicationSequence = sequenceConfig.Title;
+                        getHelpQuery.PageTitle = currentPage.Title;
                     }
 
                     var currentSection = await _qnaApiClient.GetSectionBySectionNo(applicationId.Value, sequenceId, sectionId);
-                    if (currentSection != null)
+                    if (!string.IsNullOrEmpty(currentSection?.Title))
                     {
                         getHelpQuery.ApplicationSection = currentSection.Title;
                     }
-                }
-                else
-                {
-                    getHelpQuery.PageTitle = title ?? action;
-                    getHelpQuery.ApplicationSequence = "Not available";
-                    getHelpQuery.ApplicationSection = "Not available";
-                }
 
-                var organisationName = await _qnaApiClient.GetAnswerByTag(applicationId.Value, RoatpWorkflowQuestionTags.UkrlpLegalName);
-                if (organisationName != null && !string.IsNullOrWhiteSpace(organisationName.Value))
-                {
-                    getHelpQuery.OrganisationName = organisationName.Value;
-                }
-                else
-                {
-                    getHelpQuery.OrganisationName = "Not available";
-                }
+                    var organisationName = await _qnaApiClient.GetAnswerByTag(applicationId.Value, RoatpWorkflowQuestionTags.UkrlpLegalName);
+                    if (!string.IsNullOrWhiteSpace(organisationName?.Value))
+                    {
+                        getHelpQuery.OrganisationName = organisationName.Value;
+                    }
 
-                var organisationUKPRN = await _qnaApiClient.GetAnswerByTag(applicationId.Value, RoatpWorkflowQuestionTags.UKPRN);
-                if (organisationUKPRN != null && !string.IsNullOrWhiteSpace(organisationUKPRN.Value))
-                {
-                    getHelpQuery.UKPRN = organisationUKPRN.Value;
+                    var organisationUKPRN = await _qnaApiClient.GetAnswerByTag(applicationId.Value, RoatpWorkflowQuestionTags.UKPRN);
+                    if (!string.IsNullOrWhiteSpace(organisationUKPRN?.Value))
+                    {
+                        getHelpQuery.UKPRN = organisationUKPRN.Value;
+                    }
                 }
-                else
+                catch(ApplyService.Infrastructure.Exceptions.ApiClientException)
                 {
-                    getHelpQuery.UKPRN = "Not available";
+                    // Safe to ignore any QnA issues. We just want to send help with as much info as possible.
                 }
             }
             else
             {
                 // in preamble so we don't have an application set up yet
-                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-                getHelpQuery.PageTitle = title ?? action;
                 getHelpQuery.ApplicationSequence = "Preamble";
                 getHelpQuery.ApplicationSection = "Preamble";
-                var ukprn = applicationDetails?.UKPRN.ToString();
-                if (string.IsNullOrWhiteSpace(ukprn))
+
+                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);   
+
+                if(applicationDetails != null)
                 {
-                    ukprn = "Not available";
-                }
-                getHelpQuery.UKPRN = ukprn;
-                var organisationName = applicationDetails?.UkrlpLookupDetails?.ProviderName;
-                if (string.IsNullOrWhiteSpace(organisationName))
-                {
-                    organisationName = "Not available";
-                }
-                getHelpQuery.OrganisationName = organisationName;
+                    getHelpQuery.UKPRN = applicationDetails.UKPRN.ToString();
+
+                    var organisationName = applicationDetails.UkrlpLookupDetails?.ProviderName;
+                    if (!string.IsNullOrWhiteSpace(organisationName))
+                    {
+                        getHelpQuery.OrganisationName = organisationName;
+                    }
+                }                
             }
             
             getHelpQuery.GetHelpQuery = getHelp;
