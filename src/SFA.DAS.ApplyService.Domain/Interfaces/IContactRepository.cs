@@ -11,6 +11,5 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         Task<Contact> GetContactByEmail(string email);
         Task<Contact> GetContactBySignInId(Guid signInId);
         Task UpdateSignInId(Guid contactId, Guid? signInId);
-        Task<bool> UpdateIsApproved(Guid contactId, bool isApproved);
     }
 }

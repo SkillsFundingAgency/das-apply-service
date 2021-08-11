@@ -5,9 +5,9 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Validators.Account
 {
-    public class DfeSignInCallbackValidator : AbstractValidator<SignInCallback>
+    public class SignInCallbackValidator : AbstractValidator<SignInCallback>
     {
-        public DfeSignInCallbackValidator(IStringLocalizer<NewContact> localizer)
+        public SignInCallbackValidator(IStringLocalizer<NewContact> localizer)
         {
             RuleFor(m => m.Sub)
                 .NotEmpty().WithMessage(localizer["Sub must not be empty"])

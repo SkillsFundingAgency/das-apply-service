@@ -4,7 +4,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Application.Users.ApproveContact;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Application.Users.CreateAccountFromAsLogin;
 using SFA.DAS.ApplyService.Application.Users.GetContact;
@@ -67,20 +66,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             _logger.LogInformation($"Received callback from ASLogin: Sub: {callback.Sub} SourceId: {callback.SourceId}");
             await _mediator.Send(new UpdateSignInIdRequest(Guid.Parse(callback.Sub), Guid.Parse(callback.SourceId)));
-            return Ok();
-        }
-
-        [HttpPost("/Account/{contactId:Guid}/approve")]
-        [PerformValidation]
-        public async Task<ActionResult> ApproveContact(Guid contactId)
-        {
-            var successful = await _mediator.Send(new ApproveContactRequest(contactId));
-
-            if (!successful)
-            {
-                return BadRequest();
-            }
-
             return Ok();
         }
 
