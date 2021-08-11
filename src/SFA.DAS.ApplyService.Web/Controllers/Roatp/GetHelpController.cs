@@ -76,7 +76,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     var page = await _qnaApiClient.GetPageBySectionNo (applicationId.Value, sequenceId, sectionId, pageId);
                     if (page == null || string.IsNullOrEmpty(page.Title))
                     {
-                        getHelpQuery.PageTitle = title;
+                        getHelpQuery.PageTitle = title ?? action;
                     }
                     else
                     {
@@ -97,7 +97,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
                 else
                 {
-                    getHelpQuery.PageTitle = title;
+                    getHelpQuery.PageTitle = title ?? action;
                     getHelpQuery.ApplicationSequence = "Not available";
                     getHelpQuery.ApplicationSection = "Not available";
                 }
@@ -126,7 +126,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 // in preamble so we don't have an application set up yet
                 var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-                getHelpQuery.PageTitle = title;
+                getHelpQuery.PageTitle = title ?? action;
                 getHelpQuery.ApplicationSequence = "Preamble";
                 getHelpQuery.ApplicationSection = "Preamble";
                 var ukprn = applicationDetails?.UKPRN.ToString();
