@@ -3,6 +3,7 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 
 namespace SFA.DAS.ApplyService.Domain.Entities
 {
+    // TODO: APPEALREVIEW - Review once appeal work starts
     public class Appeal : IAuditable
     {
         public Guid Id { get; set; }

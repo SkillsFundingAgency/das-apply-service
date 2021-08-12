@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.ApplyService.Domain.Audit
 {
+    // TODO: APPEALREVIEW - Review once appeal work starts
     public enum UserAction
     {
         UpdateGatewayPageOutcome,

@@ -2,6 +2,7 @@
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 {
+    // TODO: APPEALREVIEW - Review once appeal work starts
     public class RemoveAppealFileCommandValidator : AbstractValidator<RemoveAppealFileCommand>
     {
         public RemoveAppealFileCommandValidator()
