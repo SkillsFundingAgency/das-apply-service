@@ -12,7 +12,9 @@ using SFA.DAS.ApplyService.Domain.Models;
 
 namespace SFA.DAS.ApplyService.Data.UnitTests.FileStorage
 {
+    // TODO: APPEALREVIEW - Review once appeal work starts
     [TestFixture]
+    [Ignore("placed on ignore as new appeal work to be done that will make use of this")]
     public class AppealsFileStorageTests
     {
         private Mock<BlobServiceClient> _blobServiceClient;

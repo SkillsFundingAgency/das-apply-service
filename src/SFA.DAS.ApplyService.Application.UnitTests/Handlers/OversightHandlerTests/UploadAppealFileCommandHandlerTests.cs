@@ -16,6 +16,7 @@ using SFA.DAS.ApplyService.Domain.Models;
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTests
 {
     [TestFixture]
+    [Ignore("placed on ignore as new appeal work to be done that will make use of this")]
     public class UploadAppealFileCommandHandlerTests
     {
         private UploadAppealFileCommandHandler _handler;

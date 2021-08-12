@@ -10,6 +10,7 @@ using SFA.DAS.ApplyService.Domain.QueryResults;
 
 namespace SFA.DAS.ApplyService.Data.Queries
 {
+    // TODO: APPEALREVIEW - Review once appeal work starts
     public class AppealsQueries : IAppealsQueries
     {
         private readonly IApplyConfig _config;

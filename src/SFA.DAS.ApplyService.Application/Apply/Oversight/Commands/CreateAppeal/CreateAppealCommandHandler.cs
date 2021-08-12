@@ -10,7 +10,8 @@ using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal
 {
-	public class CreateAppealCommandHandler : IRequestHandler<CreateAppealCommand>
+    // TODO: APPEALREVIEW - Review once appeal work starts
+    public class CreateAppealCommandHandler : IRequestHandler<CreateAppealCommand>
     {
         private readonly IOversightReviewRepository _oversightReviewRepository;
         private readonly IAppealRepository _appealRepository;

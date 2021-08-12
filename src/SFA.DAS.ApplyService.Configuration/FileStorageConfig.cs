@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.ApplyService.Configuration
 {
+    // TODO: APPEALREVIEW - Review once appeal work starts
     public class FileStorageConfig
     {
         public string FileEncryptionKey { get; set; }
