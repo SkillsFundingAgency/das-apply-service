@@ -59,8 +59,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                         }
                         else if (page.PageId == RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy)
                         {
-                            // Move to injected page which shows Financial information to Assessor/Moderator
-                            page.NextPageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial;
+                            // Sadly we have to cater for existing applications that never had this page as part of an Blind Assessor check
+                            if (await ShouldGetManagementHierarchFinancialPage(applicationId))
+                            {
+                                // Move to injected page which shows Financial information to Assessor/Moderator
+                                page.NextPageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial;
+                            }
                         }
                     }
                 }
