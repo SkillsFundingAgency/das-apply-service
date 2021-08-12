@@ -15,6 +15,7 @@ using SFA.DAS.ApplyService.Types;
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTests
 {
     [TestFixture]
+    [Ignore("placed on ignore as new appeal work to be done that will make use of this - will need to change namespace")]
     public class CreateAppealCommandHandlerTests
     {
         private CreateAppealCommandHandler _handler;

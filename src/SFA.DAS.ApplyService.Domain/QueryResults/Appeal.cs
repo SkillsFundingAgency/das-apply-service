@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Domain.QueryResults
 {
+    // TODO: APPEALREVIEW - Review once appeal work starts
     public class Appeal
     {
         public Guid Id { get; set; }

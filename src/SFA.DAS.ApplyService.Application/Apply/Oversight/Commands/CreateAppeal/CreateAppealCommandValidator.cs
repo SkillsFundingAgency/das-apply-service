@@ -1,10 +1,8 @@
 using FluentValidation;
-using System;
-using MediatR;
-using SFA.DAS.ApplyService.Domain.Models;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal
 {
+    // TODO: APPEALREVIEW - Review once appeal work starts
     public class CreateAppealCommandValidator : AbstractValidator<CreateAppealCommand>
     {
         public CreateAppealCommandValidator()

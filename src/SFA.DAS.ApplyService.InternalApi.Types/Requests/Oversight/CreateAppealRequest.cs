@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.ApplyService.InternalApi.Types.Requests.Oversight
 {
+    // TODO: APPEALREVIEW - Review once appeal work starts
     public class CreateAppealRequest
     {
         public string Message { get; set; }

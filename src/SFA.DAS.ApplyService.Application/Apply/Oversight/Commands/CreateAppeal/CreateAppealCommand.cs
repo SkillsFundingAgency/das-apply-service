@@ -3,7 +3,8 @@ using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal
 {
-	public class CreateAppealCommand : IRequest
+    // TODO: APPEALREVIEW - Review once appeal work starts
+    public class CreateAppealCommand : IRequest
 	{
         public Guid ApplicationId { get; set; }
         public Guid OversightReviewId { get; set; }

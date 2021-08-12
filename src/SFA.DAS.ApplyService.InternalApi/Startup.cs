@@ -221,6 +221,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IDfeSignInService, DfeSignInService>();
             services.AddTransient<IOversightReviewRepository, OversightReviewRepository>();
             services.AddTransient<IOversightReviewQueries, OversightReviewQueries>();
+
+            // TODO: APPEALREVIEW - Review once appeal work starts
             services.AddTransient<IAppealUploadRepository, AppealUploadRepository>();
             services.AddTransient<IAppealRepository, AppealRepository>();
             services.AddTransient<IAppealsQueries, AppealsQueries>();
