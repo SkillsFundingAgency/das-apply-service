@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -12,12 +13,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
 {
     public class AssessorPageService : IAssessorPageService
     {
+        private readonly IMediator _mediator;
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly IAssessorSequenceService _assessorSequenceService;
         private readonly IAssessorLookupService _assessorLookupService;
 
-        public AssessorPageService(IInternalQnaApiClient qnaApiClient, IAssessorSequenceService assessorSequenceService, IAssessorLookupService assessorLookupService)
+        public AssessorPageService(IMediator mediator, IInternalQnaApiClient qnaApiClient, IAssessorSequenceService assessorSequenceService, IAssessorLookupService assessorLookupService)
         {
+            _mediator = mediator;
             _qnaApiClient = qnaApiClient;
             _assessorSequenceService = assessorSequenceService;
             _assessorLookupService = assessorLookupService;
@@ -33,7 +36,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                     && sectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy
                     && pageId == RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial)
                 {
-                    page = await GetManagementHierarchFinancialPage(applicationId);
+                    // Sadly we have to cater for existing applications that never had this page as part of an Blind Assessor check
+                    if (await ShouldGetManagementHierarchFinancialPage(applicationId))
+                    {
+                        page = await GetManagementHierarchFinancialPage(applicationId);
+                    }
                 }
                 else
                 {
@@ -81,6 +88,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
             }
 
             return page;
+        }
+
+        private async Task<bool> ShouldGetManagementHierarchFinancialPage(Guid applicationId)
+        {
+            var request = new Application.Apply.Moderator.GetBlindAssessmentOutcomeRequest(applicationId, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining, RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy, RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial);
+            var blindAssessmentOutcome = await _mediator.Send(request);
+            return blindAssessmentOutcome != null;
         }
     }
 }

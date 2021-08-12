@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.Moderator;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
@@ -24,6 +28,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         private const string _middlePageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
         private const string _lastPageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial;
 
+        private Mock<IMediator> _mediator;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<IAssessorSequenceService> _assessorSequenceService;
         private AssessorLookupService _assessorLookupService;
@@ -32,10 +37,13 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         [SetUp]
         public void TestSetup()
         {
+            _mediator = new Mock<IMediator>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _assessorSequenceService = new Mock<IAssessorSequenceService>();
             _assessorLookupService = new AssessorLookupService();
-            _assessorPageService = new AssessorPageService(_qnaApiClient.Object, _assessorSequenceService.Object, _assessorLookupService);
+            _assessorPageService = new AssessorPageService(_mediator.Object, _qnaApiClient.Object, _assessorSequenceService.Object, _assessorLookupService);
+
+            _mediator.Setup(x => x.Send(It.Is<GetBlindAssessmentOutcomeRequest>(r => r.ApplicationId == _applicationId && r.SequenceNumber == _sequenceNumber && r.SectionNumber == _sectionNumber), It.IsAny<CancellationToken>())).ReturnsAsync(new BlindAssessmentOutcome());
 
             _assessorSequenceService.Setup(x => x.IsValidSequenceNumber(It.IsAny<int>())).Returns(true);
 
@@ -119,17 +127,37 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         }
 
         [Test]
-        public async Task GetAssessorPage_when_management_hierarchy_financial_page_gets_expected_page()
+        public async Task GetAssessorPage_when_management_hierarchy_financial_page_and_has_blindassessor_record_gets_expected_page()
         {
             const int managementHierarchySequenceNumber = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining;
             const int managementHierarchySectionNumber = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
             const string managementHierarchyFinancialPage = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial;
+
+            _mediator.Setup(x => x.Send(It.Is<GetBlindAssessmentOutcomeRequest>(r => r.ApplicationId == _applicationId && r.SequenceNumber == managementHierarchySequenceNumber
+                        && r.SectionNumber == managementHierarchySectionNumber && r.PageId == managementHierarchyFinancialPage), It.IsAny<CancellationToken>())).ReturnsAsync(new BlindAssessmentOutcome());
+
 
             var actualPage = await _assessorPageService.GetPage(_applicationId, managementHierarchySequenceNumber, managementHierarchySectionNumber, managementHierarchyFinancialPage);
 
             Assert.That(actualPage, Is.Not.Null);
             Assert.That(actualPage.PageId, Is.EqualTo(managementHierarchyFinancialPage));
             CollectionAssert.IsNotEmpty(actualPage.Questions);
+        }
+
+        [Test]
+        public async Task GetAssessorPage_when_management_hierarchy_financial_page_and_does_not_have_blindassessor_record_returns_null()
+        {
+            const int managementHierarchySequenceNumber = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining;
+            const int managementHierarchySectionNumber = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
+            const string managementHierarchyFinancialPage = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial;
+
+            _mediator.Setup(x => x.Send(It.Is<GetBlindAssessmentOutcomeRequest>(r => r.ApplicationId == _applicationId && r.SequenceNumber == managementHierarchySequenceNumber
+                        && r.SectionNumber == managementHierarchySectionNumber && r.PageId == managementHierarchyFinancialPage), It.IsAny<CancellationToken>())).ReturnsAsync(default (BlindAssessmentOutcome));
+
+
+            var actualPage = await _assessorPageService.GetPage(_applicationId, managementHierarchySequenceNumber, managementHierarchySectionNumber, managementHierarchyFinancialPage);
+
+            Assert.That(actualPage, Is.Null);
         }
 
         private static Page GenerateQnAPage(string pageId)
