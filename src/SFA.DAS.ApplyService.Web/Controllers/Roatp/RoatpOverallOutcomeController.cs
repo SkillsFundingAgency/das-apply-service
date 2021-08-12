@@ -34,7 +34,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _applicationApiClient = applicationApiClient;
         }
 
-
         [HttpGet("application/{applicationId}/appeal")]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public IActionResult MakeAppeal(Guid applicationId)
@@ -51,7 +50,32 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [ModelStatePersist(ModelStatePersist.Store)]
         public IActionResult MakeAppeal(MakeAppealViewModel model)
         {
-            return RedirectToAction("MakeAppeal", new { model.ApplicationId });
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("MakeAppeal", new { model.ApplicationId });
+            }
+            return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
+        }
+
+        [HttpGet("application/{applicationId}/grounds-of-appeal")]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public IActionResult GroundsOfAppeal(Guid applicationId, bool appealOnPolicyOrProcesses, bool appealOnEvidenceSubmitted)
+        {
+            var model = new GroundsOfAppealViewModel
+            {
+                ApplicationId = applicationId,
+                AppealOnPolicyOrProcesses = appealOnPolicyOrProcesses,
+                AppealOnEvidenceSubmitted = appealOnEvidenceSubmitted
+            };
+
+            return View("~/Views/Appeals/GroundsOfAppeal.cshtml", model);
+        }
+
+        [HttpPost("application/{applicationId}/grounds-of-appeal")]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        public IActionResult GroundsOfAppeal(GroundsOfAppealViewModel model)
+        {
+            return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
         }
 
         [HttpGet]

@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals
 {
-    public class MakeAppealViewModel
+    public class GroundsOfAppealViewModel
     {
         public Guid ApplicationId { get; set; }
 
