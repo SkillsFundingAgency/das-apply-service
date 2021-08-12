@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace SFA.DAS.ApplyService.InternalApi.Types.Requests.Oversight
 {
+    // TODO: APPEALREVIEW - Review once appeal work starts
     public class UploadAppealFileRequest
     {
         public Guid ApplicationId { get; set; }

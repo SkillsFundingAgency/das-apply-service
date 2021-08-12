@@ -82,6 +82,12 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
                     return "Type of apprenticeship training";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting:
                     return "Type of apprenticeship training";
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_NewSupporting:
+                    return "Type of apprenticeship training";
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApprenticeshipStandards_NewMain:
+                    return "Delivering training in apprenticeship standards";
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApprenticeshipStandards_NewEmployer:
+                    return "Delivering training in apprenticeship standards";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApprenticeshipStandards:
                     return "Delivering training in apprenticeship standards";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_MainEmployer:

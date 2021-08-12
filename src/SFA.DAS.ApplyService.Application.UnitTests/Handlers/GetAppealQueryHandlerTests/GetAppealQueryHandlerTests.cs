@@ -13,6 +13,7 @@ using SFA.DAS.ApplyService.Domain.QueryResults;
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAppealQueryHandlerTests
 {
     [TestFixture]
+    [Ignore("placed on ignore as new appeal work to be done that will make use of this")]
     public class GetAppealQueryHandlerTests
     {
         private GetAppealQueryHandler _handler;

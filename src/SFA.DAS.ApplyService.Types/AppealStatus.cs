@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.ApplyService.Types
 {
+    // TODO: APPEALREVIEW - Review once appeal work starts
     public enum AppealStatus
     {
         None = 0,

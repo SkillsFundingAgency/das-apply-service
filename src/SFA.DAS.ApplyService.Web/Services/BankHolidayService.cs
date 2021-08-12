@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Web.Services
 {
-    class BankHolidayService : IBankHolidayService
+    public class BankHolidayService : IBankHolidayService
     {
         public DateTime? GetWorkingDaysAheadDate(DateTime? startDate, int numberOfDaysAhead)
         {
