@@ -105,7 +105,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.Unsuccessful:
                     var oversight = await _apiClient.GetOversightReview(applicationId);
                     model.ApplicationDeterminedDate = oversight?.ApplicationDeterminedDate;
-                    model.AppealRequiredBy =
+                    model.AppealRequiredByDate =
                         _bankHolidayService.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, NumberOfWorkingDays);
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
                         return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
@@ -114,7 +114,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         await _overallOutcomeService.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(application,
                             User.GetEmail());
                     unsuccessfulModel.ApplicationDeterminedDate = oversight?.ApplicationDeterminedDate;
-                    unsuccessfulModel.AppealRequiredBy =
+                    unsuccessfulModel.AppealRequiredByDate =
                         _bankHolidayService.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, NumberOfWorkingDays);
                     return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", unsuccessfulModel);
 

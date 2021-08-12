@@ -4,18 +4,18 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        @if (Model.ApplicationDeterminedDate != null && Model.AppealRequiredBy < DateTime.Today)
+        @if (Model.ApplicationDeterminedDate != null && Model.AppealRequiredByDate < DateTime.Today)
         {
             <h2 class="govuk-heading-l">You cannot make an appeal</h2>
             <p class="govuk-body">
-                This is because you did not respond by @Model.AppealRequiredBy.ToSfaShortDateString()
+                This is because you did not respond by @Model.AppealRequiredByDate.ToSfaShortDateString()
             </p>
         }
         else
         {
             <h2 class="govuk-heading-l">How to make an appeal</h2>
             <p class="govuk-body">
-                You can appeal this decision but you must do so by @Model.AppealRequiredBy.ToSfaShortDateString()
+                You can appeal this decision but you must do so by @Model.AppealRequiredByDate.ToSfaShortDateString()
             </p>
             <p class="govuk-body">
                 You can only make an appeal on the following grounds:
@@ -30,7 +30,7 @@
 
 
             <p class="govuk-body">
-                If your appeal is unsuccessful or you decide not to make an appeal, the ESFA will take action as explained in <a href="https://www.gov.uk/guidance/meeting-new-application-requirements-and-removal-from-register-of-apprenticeship-training-providers-roatp#consequences" target="_blank">the Consequences section</a> of the new policy.
+                If you are currently on the register, the ESFA will write to you to advise what actions they will take, as explained in <a href="https://www.gov.uk/guidance/meeting-new-application-requirements-and-removal-from-register-of-apprenticeship-training-providers-roatp#consequences" target="_blank">the Consequences section</a> of the new policy.
             </p>
 
             <p class="govuk-body">
