@@ -129,62 +129,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("ConfirmManagementHierarchy", new { model.ApplicationId });
         }
 
-
-        [HttpPost]
-        public async Task<IActionResult> RemoveManagementHierarchy(ConfirmRemoveManagementHierarchyViewModel model)
-        {
-            return await RemoveItemFromManagementHierarchy(
-                model,
-                RoatpWorkflowPageIds.ManagementHierarchy.AddManagementHierarchy,
-                RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.ManagementHierarchy,
-                RoatpWorkflowQuestionTags.AddManagementHierarchy,
-                "ConfirmManagementHierarchy",
-                model.BackAction);
-        }
-
-        private async Task<IActionResult> RemoveItemFromManagementHierarchy(ConfirmRemoveManagementHierarchyViewModel model, string pageId, string questionId, string questionTag, string redirectAction, string backAction)
-        {
-            if (string.IsNullOrEmpty(model.Confirmation))
-            {
-                model.ErrorMessages = new List<ValidationErrorDetail>
-                {
-                    new ValidationErrorDetail
-                    {
-                        Field = "Confirmation",
-                        ErrorMessage = $"Tell us if you want to remove {model.Name}"
-                    }
-                };
-                model.BackAction = backAction;
-
-                return View("~/Views/Roatp/ManagementHierarchy/ConfirmManagementHierarchyRemoval.cshtml", model);
-            }
-
-            if (model.Confirmation != "Y")
-            {
-                return RedirectToAction(redirectAction, new { model.ApplicationId });
-            }
-
-            var managementHierarchyData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, questionTag);
-
-            if ((managementHierarchyData == null) || model.Index < 0 || model.Index + 1 > managementHierarchyData.DataRows.Count)
-            {
-                return RedirectToAction(redirectAction, new { model.ApplicationId });
-            }
-
-            managementHierarchyData.DataRows.RemoveAt(model.Index);
-
-            var managementHierarchySection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining, RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
-
-            var result = await _tabularDataRepository.SaveTabularDataAnswer(
-                model.ApplicationId,
-                managementHierarchySection.Id,
-                pageId,
-                questionId,
-                managementHierarchyData);
-
-            return RedirectToAction(redirectAction, new { model.ApplicationId });
-        }
-
         [HttpGet]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> EditManagementHierarchy(Guid applicationId, int index)
@@ -232,7 +176,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     GetHelpAction = "EditManagementHierarchy"
                 };
 
-                PopulateGetHelpWithQuestion(model, "EditManagementHierarchy");
+                PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.ManagementHierarchy.EditManagementHierarchy);
 
                 return View($"~/Views/Roatp/ManagementHierarchy/EditManagementHierarchy.cshtml", model);
             }
@@ -285,39 +229,68 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> RemoveManagementHierarchy(Guid applicationId, int index)
         {
             var personTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
 
-            if (index >= personTableData.DataRows.Count)
+            if (personTableData is null || index >= personTableData.DataRows.Count)
             {
                 return RedirectToAction("ConfirmManagementHierarchy", new { applicationId });
             }
 
-            var personName = personTableData.DataRows[index].Columns[0] + " " + personTableData.DataRows[index].Columns[1];
+            var model = new ConfirmRemoveManagementHierarchyViewModel
+            {
+                ApplicationId = applicationId,
+                Name = $"{personTableData.DataRows[index].Columns[0]} {personTableData.DataRows[index].Columns[1]}",
+                ActionName = "RemoveManagementHierarchy",
+                BackAction = "ConfirmManagementHierarchy",
+                GetHelpAction = "RemoveManagementHierarchy"
+            };
 
-            return ConfirmRemovalOfManagementHierarchy(applicationId, personName, "RemoveManagementHierarchy", "ConfirmManagementHierarchy");
+            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.ManagementHierarchy.RemoveManagementHierarchy);
+
+            return View("~/Views/Roatp/ManagementHierarchy/ConfirmManagementHierarchyRemoval.cshtml", model);
         }
+
+        [HttpPost]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        public async Task<IActionResult> RemoveManagementHierarchy(ConfirmRemoveManagementHierarchyViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("RemoveManagementHierarchy", new { model.ApplicationId, model.Index });
+            }
+
+            if (model.Confirmation == "Yes" && model.Index >= 0)
+            {
+                var managementHierarchyData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
+
+                if (managementHierarchyData is null || model.Index + 1 > managementHierarchyData.DataRows.Count)
+                {
+                    return RedirectToAction("ConfirmManagementHierarchy", new { model.ApplicationId });
+                }
+
+                managementHierarchyData.DataRows.RemoveAt(model.Index);
+
+                var managementHierarchySection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining, RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
+
+                var result = await _tabularDataRepository.SaveTabularDataAnswer(
+                    model.ApplicationId,
+                    managementHierarchySection.Id,
+                    RoatpWorkflowPageIds.ManagementHierarchy.AddManagementHierarchy,
+                    RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.ManagementHierarchy,
+                    managementHierarchyData);
+            }
+
+            return RedirectToAction("ConfirmManagementHierarchy", new { model.ApplicationId });
+        }
+
 
         [HttpPost]
         public IActionResult CompleteManagementHierarchySection(Guid applicationId)
         {
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, "Sequence_7");
-        }
-
-        private IActionResult ConfirmRemovalOfManagementHierarchy(Guid applicationId, string name, string actionName, string backActionName)
-        {
-            var model = new ConfirmRemoveManagementHierarchyViewModel
-            {
-                ApplicationId = applicationId,
-                Name = name,
-                ActionName = actionName,
-                BackAction = backActionName,
-                GetHelpAction = actionName
-            };
-            PopulateGetHelpWithQuestion(model, actionName);
-
-            return View("~/Views/Roatp/ManagementHierarchy/ConfirmManagementHierarchyRemoval.cshtml", model);
         }
     }
 }
