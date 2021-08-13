@@ -51,8 +51,8 @@ namespace SFA.DAS.ApplyService.Data
 				                                                          outcome.[SequenceNumber] = @sequenceNumber AND
 				                                                          outcome.[SectionNumber] = @sectionNumber AND
 				                                                          outcome.[PageId] = @pageId AND
-                                                                          outcome.[Assessor1UserId] = apply.[Assessor1UserId] AND
-                                                                          outcome.[Assessor2UserId] = apply.[Assessor2UserId]",
+                                                                          (apply.[Assessor1UserId] IS NULL OR outcome.[Assessor1UserId] = apply.[Assessor1UserId]) AND
+                                                                          (apply.[Assessor2UserId] IS NULL OR outcome.[Assessor2UserId] = apply.[Assessor2UserId])",
                     new { applicationId, sequenceNumber, sectionNumber, pageId });
 
                 return blindAssessmentOutcomeResults.FirstOrDefault();
