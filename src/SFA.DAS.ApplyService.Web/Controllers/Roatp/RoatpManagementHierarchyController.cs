@@ -49,7 +49,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction("AddManagementHierarchy", new { applicationId });
             }
 
-            var model = new ConfirmManagementHierarchyViewModel { ApplicationId = applicationId, ManagementHierarchyData = managementHierarchyData };
+            var model = new ConfirmManagementHierarchyViewModel { ApplicationId = applicationId, ManagementHierarchyData = managementHierarchyData, GetHelpAction = "ConfirmManagementHierarchy" };
             PopulateGetHelpWithQuestion(model, "ConfirmManagementHierarchy");
 
             return View("~/Views/Roatp/ManagementHierarchy/ConfirmManagementHierarchy.cshtml", model);
@@ -59,7 +59,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public IActionResult AddManagementHierarchy(Guid applicationId)
         {
-            var model = new AddEditManagementHierarchyViewModel { ApplicationId = applicationId, GetHelpAction = "AddManagementHierarchy" };
+            var model = new AddEditManagementHierarchyViewModel { ApplicationId = applicationId, Title = "Who is in your organisation's management hierarchy for apprenticeships?", GetHelpAction = "AddManagementHierarchy" };
 
             PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.ManagementHierarchy.AddManagementHierarchy);
             return View("~/Views/Roatp/ManagementHierarchy/AddManagementHierarchy.cshtml", model);
@@ -172,6 +172,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     DobYear = dobYear,
                     Email = email,
                     ContactNumber = contactNumber,
+                    Title = "Enter the person's details",
                     GetHelpAction = "EditManagementHierarchy"
                 };
 

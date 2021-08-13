@@ -13,6 +13,7 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTests
 {
     [TestFixture]
+    [Ignore("placed on ignore as new appeal work to be done that will make use of this")]
     public class RemoveAppealFileCommandHandlerTests
     {
         private RemoveAppealFileCommandHandler _handler;
