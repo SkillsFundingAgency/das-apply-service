@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SFA.DAS.ApplyService.Web.Services
+namespace SFA.DAS.ApplyService.Application.Services
 {
     public class BankHolidayService : IBankHolidayService
     {
