@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private const string SupportingRouteId = "3";
         private const int NumberOfWorkingDays = 10;
 
-        public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, 
+        public RoatpOverallOutcomeController(IOutcomeApiClient apiClient,
             IOverallOutcomeService overallOutcomeService, IApplicationApiClient applicationApiClient,
             ILogger<RoatpOverallOutcomeController> logger, IBankHolidayService bankHolidayService)
         {
@@ -36,8 +36,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         [HttpGet("application/{applicationId}/appeal")]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public IActionResult MakeAppeal(Guid applicationId)
+        public async Task<IActionResult> MakeAppeal(Guid applicationId)
         {
+            if (!await WithinAppealWindow(applicationId))
+            {
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+            }
+
             var model = new MakeAppealViewModel
             {
                 ApplicationId = applicationId
@@ -48,8 +53,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         [HttpPost("application/{applicationId}/appeal")]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public IActionResult MakeAppeal(MakeAppealViewModel model)
+        public async Task<IActionResult> MakeAppeal(MakeAppealViewModel model)
         {
+            if (!await WithinAppealWindow(model.ApplicationId))
+            {
+                return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
+            }
+
             if (!ModelState.IsValid)
             {
                 return RedirectToAction("MakeAppeal", new { model.ApplicationId });
@@ -59,8 +69,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         [HttpGet("application/{applicationId}/grounds-of-appeal")]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public IActionResult GroundsOfAppeal(Guid applicationId, bool appealOnPolicyOrProcesses, bool appealOnEvidenceSubmitted)
+        public async Task<IActionResult> GroundsOfAppeal(Guid applicationId, bool appealOnPolicyOrProcesses, bool appealOnEvidenceSubmitted)
         {
+            if (!await WithinAppealWindow(applicationId))
+            {
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+            }
+
             var model = new GroundsOfAppealViewModel
             {
                 ApplicationId = applicationId,
@@ -73,8 +88,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         [HttpPost("application/{applicationId}/grounds-of-appeal")]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public IActionResult GroundsOfAppeal(GroundsOfAppealViewModel model)
+        public async Task<IActionResult> GroundsOfAppeal(GroundsOfAppealViewModel model)
         {
+            if (!await WithinAppealWindow(model.ApplicationId))
+            {
+                return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
+            }
+
             return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
         }
 
@@ -84,6 +104,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             var model = await _overallOutcomeService.GetSectorDetailsViewModel(applicationId, pageId);
             return View("~/Views/Roatp/ApplicationUnsuccessfulSectorAnswers.cshtml", model);
+        }
+
+
+        private async Task<bool> WithinAppealWindow(Guid applicationId)
+        {
+            // NOTE: This is an effective workaround until we fully implement BankHolidayService and have AppealRequiredByDate in the OversightReview
+            var oversight = await _apiClient.GetOversightReview(applicationId);
+
+            var appealRequiredByDate = _bankHolidayService.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, NumberOfWorkingDays);
+
+            return appealRequiredByDate.HasValue && appealRequiredByDate >= DateTime.Today;
         }
 
         [HttpGet]
@@ -97,7 +128,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 case ApplicationStatus.New:
                 case ApplicationStatus.InProgress:
-                    return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
+                    return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
                 case ApplicationStatus.Successful:
 
                     var oversightReview = await _apiClient.GetOversightReview(applicationId);
@@ -156,7 +187,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
                 case ApplicationStatus.Rejected:
-                    return View("~/Views/Roatp/ApplicationRejected.cshtml", model);   
+                    return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
                 case ApplicationStatus.Submitted:
                 case ApplicationStatus.Resubmitted:
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
@@ -165,7 +196,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     model.OversightInProgressExternalComments = oversightReviewNotes?.InProgressExternalComments;
                     return View("~/Views/Roatp/ApplicationInProgress.cshtml", model);
                 default:
-                    return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
+                    return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
             }
         }
 

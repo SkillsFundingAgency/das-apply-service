@@ -476,18 +476,80 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task MakeAppeal_shows_make_appeal_page()
+        public async Task MakeAppeal_shows_make_appeal_page_if_within_appeal_window()
         {
             var _applicationId = Guid.NewGuid();
 
+            var applicationDeterminedDate = DateTime.Today;
+            var appealRequiredByDate = DateTime.Today.AddDays(10);
+
+            var oversightReview = new GetOversightReviewResponse { Status = OversightReviewStatus.Unsuccessful, ApplicationDeterminedDate = DateTime.Today };
+            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
+            _bankHolidayService.Setup(x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())).Returns(DateTime.Today.AddDays(10));
+
             var model = new MakeAppealViewModel {ApplicationId = _applicationId};
 
-            var result = _controller.MakeAppeal(_applicationId);
+            var result = await _controller.MakeAppeal(_applicationId);
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("MakeAppeal.cshtml");
             viewResult.Model.Should().BeEquivalentTo(model);
+        }
+
+        [Test]
+        public async Task MakeAppeal_shows_Tasklist_page_if_outside_appeal_window()
+        {
+            var _applicationId = Guid.NewGuid();
+
+            var oversightReview = new GetOversightReviewResponse { Status = OversightReviewStatus.Unsuccessful, ApplicationDeterminedDate = DateTime.Today };
+            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
+            _bankHolidayService.Setup(x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())).Returns(DateTime.Today.AddDays(-10));
+
+            var result = await _controller.MakeAppeal(_applicationId);
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("TaskList");
+        }
+
+        [Test]
+        public async Task GroundsOfAppeal_shows_make_appeal_page_if_within_appeal_window()
+        {
+            var _applicationId = Guid.NewGuid();
+            var _appealOnPolicyOrProcesses = false;
+            var _appealOnEvidenceSubmitted = false;
+
+            var oversightReview = new GetOversightReviewResponse { Status = OversightReviewStatus.Unsuccessful, ApplicationDeterminedDate = DateTime.Today };
+            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
+            _bankHolidayService.Setup(x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())).Returns(DateTime.Today.AddDays(10));
+
+            var model = new GroundsOfAppealViewModel { ApplicationId = _applicationId, AppealOnPolicyOrProcesses = _appealOnPolicyOrProcesses, AppealOnEvidenceSubmitted = _appealOnEvidenceSubmitted };
+
+            var result = await _controller.GroundsOfAppeal(_applicationId, _appealOnPolicyOrProcesses, _appealOnEvidenceSubmitted);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("GroundsOfAppeal.cshtml");
+            viewResult.Model.Should().BeEquivalentTo(model);
+        }
+
+        [Test]
+        public async Task GroundsOfAppeal_shows_Tasklist_page_if_outside_appeal_window()
+        {
+            var _applicationId = Guid.NewGuid();
+            var _appealOnPolicyOrProcesses = false;
+            var _appealOnEvidenceSubmitted = false;
+
+            var oversightReview = new GetOversightReviewResponse { Status = OversightReviewStatus.Unsuccessful, ApplicationDeterminedDate = DateTime.Today };
+            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
+            _bankHolidayService.Setup(x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())).Returns(DateTime.Today.AddDays(-10));
+
+            var result = await _controller.GroundsOfAppeal(_applicationId, _appealOnPolicyOrProcesses, _appealOnEvidenceSubmitted);
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("TaskList");
         }
 
         [Test]
