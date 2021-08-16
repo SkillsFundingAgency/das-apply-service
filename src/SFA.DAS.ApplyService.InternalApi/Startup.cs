@@ -20,6 +20,7 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
 using SFA.DAS.ApplyService.Data.FileStorage;
 using SFA.DAS.ApplyService.Data.Queries;
+using SFA.DAS.ApplyService.Data.Repositories;
 using SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.DfeSignIn;
@@ -228,6 +229,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IAppealsQueries, AppealsQueries>();
 
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
+
+            services.AddTransient<IBankHolidayRepository, BankHolidayRepository>();
 
             // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
             services.AddTransient<CharityCommissionService.ISearchCharitiesV1SoapClient, CharityCommissionService.SearchCharitiesV1SoapClient>();

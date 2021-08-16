@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
@@ -18,15 +16,16 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Data.Repositories;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Authorization;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Infrastructure.Services;
 using SFA.DAS.ApplyService.Web.Orchestrators;
-using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
 {
@@ -259,6 +258,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<ITaskListOrchestrator, TaskListOrchestrator>();
             services.AddTransient<IOverallOutcomeService, OverallOutcomeService>();
             services.AddTransient<IBankHolidayService, BankHolidayService>();
+            services.AddTransient<IBankHolidayRepository, BankHolidayRepository>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)
