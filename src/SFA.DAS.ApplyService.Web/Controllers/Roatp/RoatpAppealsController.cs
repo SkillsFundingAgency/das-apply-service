@@ -13,13 +13,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     public class RoatpAppealsController : Controller
     {
         private readonly IOutcomeApiClient _apiClient;
-        private readonly IOverallOutcomeService _overallOutcomeService;
         private readonly IBankHolidayService _bankHolidayService;
 
-        public RoatpAppealsController(IOutcomeApiClient apiClient, IOverallOutcomeService overallOutcomeService, IBankHolidayService bankHolidayService)
+        public RoatpAppealsController(IOutcomeApiClient apiClient, IBankHolidayService bankHolidayService)
         {
             _apiClient = apiClient;
-            _overallOutcomeService = overallOutcomeService;
             _bankHolidayService = bankHolidayService;
         }
 

@@ -11,7 +11,6 @@ using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Controllers.Roatp;
 using SFA.DAS.ApplyService.Web.Infrastructure;
-using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
@@ -24,7 +23,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
         private RoatpAppealsController _controller;
         private Mock<IOutcomeApiClient> _apiClient;
-        private Mock<IOverallOutcomeService> _outcomeService;
         private Mock<IBankHolidayService> _bankHolidayService;
 
         [SetUp]
@@ -34,7 +32,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _applicationDeterminedDate = DateTime.Today;
 
             _apiClient = new Mock<IOutcomeApiClient>();
-            _outcomeService = new Mock<IOverallOutcomeService>();
             _bankHolidayService=new Mock<IBankHolidayService>();
 
             var signInId = Guid.NewGuid();
@@ -55,7 +52,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _bankHolidayService.Setup((x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>()))).Returns(_applicationDeterminedDate.AddDays(10));
 
-            _controller = new RoatpAppealsController(_apiClient.Object, _outcomeService.Object, _bankHolidayService.Object)
+            _controller = new RoatpAppealsController(_apiClient.Object, _bankHolidayService.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
