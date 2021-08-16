@@ -2,9 +2,8 @@
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Services;
-using SFA.DAS.ApplyService.Web.Services;
 
-namespace SFA.DAS.ApplyService.Web.UnitTests.Services
+namespace SFA.DAS.ApplyService.Application.UnitTests.Services
 {
     [TestFixture]
     public class BankHolidayServiceTests

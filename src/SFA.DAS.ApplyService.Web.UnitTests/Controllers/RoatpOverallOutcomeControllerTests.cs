@@ -11,8 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Controllers.Roatp;
@@ -42,6 +42,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _applicationApiClient = new Mock<IApplicationApiClient>();
             _outcomeService = new Mock<IOverallOutcomeService>();
             _bankHolidayService=new Mock<IBankHolidayService>();
+            var appealRequiredByDate = DateTime.Today.AddDays(10);
 
             var signInId = Guid.NewGuid();
             var givenNames = "Test";
@@ -55,6 +56,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 new Claim("sub", signInId.ToString()),
                 new Claim("custom-claim", "example claim value"),
             }, "mock"));
+            
+            _bankHolidayService.Setup((x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())))
+                .Returns(appealRequiredByDate);
+
 
             _controller = new RoatpOverallOutcomeController(_apiClient.Object,
                 _outcomeService.Object, _applicationApiClient.Object, _logger.Object, _bankHolidayService.Object)
@@ -581,6 +586,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
+            var model = new ApplicationSummaryViewModel();
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+
 
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
@@ -599,14 +607,18 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase(OversightReviewStatus.Withdrawn)]
         public async Task Application_shows_removed_page_if_application_removed_and_oversight_status_is_not_removed(OversightReviewStatus status)
         {
+            var applicationDeterminedDate = DateTime.Today;
+            var appealRequiredByDate = DateTime.Today.AddDays(10);
             var submittedApp = new Apply
             {
                 ApplicationStatus = ApplicationStatus.Removed
             };
 
-            var oversightReview = new GetOversightReviewResponse { Status = status };
+            var oversightReview = new GetOversightReviewResponse { Status = status,ApplicationDeterminedDate = applicationDeterminedDate};
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
             _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
+            var model = new ApplicationSummaryViewModel();
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
 
             var viewResult = result as ViewResult;
