@@ -44,29 +44,9 @@ namespace SFA.DAS.ApplyService.Application.Services
         public  List<DateTime> BankHolidays {
             get
             {
-                // var bankHolidays = new List<DateTime>
-                // {
-                //     new DateTime(2021, 8, 30), 
-                //     new DateTime(2021, 12, 27),
-                //     new DateTime(2021, 12, 28),
-                //     new DateTime(2022, 1, 3),
-                //     new DateTime(2022, 4, 15), 
-                //     new DateTime(2022, 4, 18),  
-                //     new DateTime(2022, 5, 2), 
-                //     new DateTime(2022, 6, 2),  
-                //     new DateTime(2022, 6, 3),  
-                //     new DateTime(2022, 8, 29),  
-                //     new DateTime(2022, 12, 26),
-                //     new DateTime(2022, 12, 27)
-                // };
-                //
-                // return bankHolidays;
-
                 var holidays =  _bankHolidayRepository.GetBankHolidays().Result;
 
                 return holidays.Select(hol => hol.BankHolidayDate).ToList();
-
-
             }
         }
     }
