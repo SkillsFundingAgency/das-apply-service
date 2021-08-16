@@ -84,6 +84,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
             }
 
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
+            }
+
+            // TODO: Persist in the database
             return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
         }
 

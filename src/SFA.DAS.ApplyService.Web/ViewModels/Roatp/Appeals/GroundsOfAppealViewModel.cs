@@ -8,5 +8,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals
 
         public bool AppealOnPolicyOrProcesses { get; set; }
         public bool AppealOnEvidenceSubmitted { get; set; }
+
+        public string HowFailedOnPolicyOrProcesses { get; set; }
+        public string HowFailedOnEvidenceSubmitted { get; set; }
     }
 }
