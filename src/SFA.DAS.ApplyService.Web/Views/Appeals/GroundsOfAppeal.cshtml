@@ -30,7 +30,7 @@
         <div class="govuk-grid-column-two-thirds">
             <a id="overview" class="govuk-link govuk-link--no-visited-state" target="_blank" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">View your Application overview page (opens in new tab)</a>
 
-            <form method="post" asp-action="GroundsOfAppeal" asp-controller="RoatpOverallOutcome" novalidate>
+            <form method="post" asp-action="GroundsOfAppeal" asp-controller="RoatpAppealsController" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="AppealOnPolicyOrProcesses" />
                 <input type="hidden" asp-for="AppealOnEvidenceSubmitted" />

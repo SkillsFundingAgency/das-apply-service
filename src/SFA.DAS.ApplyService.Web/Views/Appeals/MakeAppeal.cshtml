@@ -33,7 +33,7 @@
                 You can upload a maximum of 4 files to support your appeal, but the ESFA will not consider any additional information you provide that was not included in your original application.
             </p>
 
-            <form method="post" asp-action="MakeAppeal" asp-controller="RoatpOverallOutcome" novalidate>
+            <form method="post" asp-action="MakeAppeal" asp-controller="RoatpAppealsController" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <div class="govuk-form-group" sfa-validation-for-list="AppealOnPolicyOrProcesses,AppealOnEvidenceSubmitted" sfa-validationerror-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
