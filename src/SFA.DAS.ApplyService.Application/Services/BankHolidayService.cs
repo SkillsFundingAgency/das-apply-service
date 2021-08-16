@@ -38,7 +38,6 @@ namespace SFA.DAS.ApplyService.Application.Services
                 {
                     new DateTime(2021, 8, 30), 
                     new DateTime(2021, 12, 27),
-                    new DateTime(2021, 12, 27),
                     new DateTime(2021, 12, 28),
                     new DateTime(2022, 1, 3),
                     new DateTime(2022, 4, 15), 

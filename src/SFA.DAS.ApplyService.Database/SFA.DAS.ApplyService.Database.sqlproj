@@ -81,12 +81,12 @@
     <Build Include="Tables\Appeal.sql" />
     <Build Include="Tables\ExtractedApplications.sql" />
     <Build Include="Tables\SubmittedApplicationAnswers.sql" />
+    <Build Include="Tables\BankHoliday.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SFA.DAS.ApplyService.Database.publish.xml" />
     <None Include="AdhocScipts\DataMart\LookupOversightReviewStatus.sql" />
     <None Include="AdhocScipts\DataMart\LookupSequenceTitles.sql" />
     <None Include="AdhocScipts\DataMart\LookupSectionTitles.sql" />
