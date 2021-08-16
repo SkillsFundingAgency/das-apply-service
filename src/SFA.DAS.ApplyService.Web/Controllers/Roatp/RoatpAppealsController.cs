@@ -87,15 +87,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
         }
 
-        [HttpGet]
-        [Route("application/{applicationId}/sector/{pageId}")]
-        public async Task<IActionResult> GetSectorDetails(Guid applicationId, string pageId)
-        {
-            var model = await _overallOutcomeService.GetSectorDetailsViewModel(applicationId, pageId);
-            return View("~/Views/Roatp/ApplicationUnsuccessfulSectorAnswers.cshtml", model);
-        }
-
-
         private async Task<bool> WithinAppealWindow(Guid applicationId)
         {
             // NOTE: This is an effective workaround until we fully implement BankHolidayService and have AppealRequiredByDate in the OversightReview
