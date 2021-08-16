@@ -230,8 +230,6 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
-            services.AddTransient<IBankHolidayRepository, BankHolidayRepository>();
-
             // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
             services.AddTransient<CharityCommissionService.ISearchCharitiesV1SoapClient, CharityCommissionService.SearchCharitiesV1SoapClient>();
             services.AddTransient<CharityCommissionApiClient, CharityCommissionApiClient>();

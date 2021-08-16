@@ -92,5 +92,6 @@
     <None Include="AdhocScipts\DataMart\LookupSectionTitles.sql" />
     <None Include="AdhocScipts\DataMart\LookupPageTitles.sql" />
     <None Include="AdhocScipts\DataMart\LookupQuestionTitles.sql" />
+    <None Include="ApplyService.publish.xml" />
   </ItemGroup>
 </Project>
