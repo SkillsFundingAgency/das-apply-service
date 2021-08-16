@@ -86,7 +86,7 @@
         public const string GradeWithinLast3YearsNonOfsFunded = "YO-311";
 
         public const string IsPostGradTrainingOnlyApprenticeship = "YO-250";
-		public const string HasDeliveredTrainingAsSubcontractor = "YO-350";
+        public const string HasDeliveredTrainingAsSubcontractor = "YO-350";
         public const string ContractFileName = "YO-360";
     }
 
@@ -221,6 +221,8 @@
         public static class ManagementHierarchy
         {
             public const string AddManagementHierarchy = "7200";
+            public const string EditManagementHierarchy = "EditManagementHierarchy";
+            public const string RemoveManagementHierarchy = "RemoveManagementHierarchy";
         }
 
         public static class DescribeYourOrganisation
@@ -254,7 +256,7 @@
             public const string GradeWithinLast3YearsOfsFunded = "310";
             public const string GradeWithinLast3YearsNonOfsFunded = "311";
             public const string IsPostGradTrainingOnlyApprenticeship = "250";
-			public const string SubcontractorDeclaration = "350";
+            public const string SubcontractorDeclaration = "350";
             public const string SubcontractorContractFile = "360";
         }
 
