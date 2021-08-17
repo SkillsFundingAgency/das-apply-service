@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services
@@ -22,7 +21,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 return null;
 
             var actualNumberOfDaysAhead = numberOfDaysAhead;
-            var bankHolidays =  GetBankHolidays;
+            var bankHolidays =  GetBankHolidays();
 
             var startDay = 0;
             while (startDay <= actualNumberOfDaysAhead)
@@ -41,14 +40,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             return startDate.Value.AddDays(actualNumberOfDaysAhead);
         }
 
-        public List<DateTime> GetBankHolidays {
-            get
-            {
-                var holidays =  _bankHolidayRepository.GetBankHolidays().Result;
+        public List<DateTime> GetBankHolidays()
+        {
+            var holidays = _bankHolidayRepository.GetBankHolidays().Result;
 
-                return holidays.Select(hol => hol.BankHolidayDate).ToList();
-            }
+            return holidays.Select(hol => hol.BankHolidayDate).ToList();
         }
+
     }
 }
 
