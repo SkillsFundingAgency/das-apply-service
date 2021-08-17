@@ -7,18 +7,18 @@ using SFA.DAS.ApplyService.InternalApi.Services;
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
     [Authorize]
-    public class BankHolidayController : Controller
+    public class WorkingDaysController : Controller
     {
         private readonly IBankHolidayService _service;
 
-        public BankHolidayController(IBankHolidayService service)
+        public WorkingDaysController(IBankHolidayService service)
         {
             _service = service;
         }
 
         [HttpGet]
         [Route("working-days/{startDate}/{numberOfDays}")]
-        public async Task<IActionResult> GetGetWorkingDays(DateTime? startDate, int numberOfDays)
+        public async Task<IActionResult> GetWorkingDays(DateTime? startDate, int numberOfDays)
         {
             var workingDays = _service.GetWorkingDaysAheadDate(startDate, numberOfDays);
             return Ok(workingDays);
