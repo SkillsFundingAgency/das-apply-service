@@ -18,19 +18,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IOutcomeApiClient _apiClient;
         private readonly IApplicationApiClient _applicationApiClient;
         private readonly IOverallOutcomeService _overallOutcomeService;
-        private readonly IBankHolidayService _bankHolidayService;
         private readonly ILogger<RoatpOverallOutcomeController> _logger;
         private const string SupportingRouteId = "3";
         private const int NumberOfWorkingDays = 10;
 
         public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, 
             IOverallOutcomeService overallOutcomeService, IApplicationApiClient applicationApiClient,
-            ILogger<RoatpOverallOutcomeController> logger, IBankHolidayService bankHolidayService)
+            ILogger<RoatpOverallOutcomeController> logger)
         {
             _apiClient = apiClient;
             _overallOutcomeService = overallOutcomeService;
             _logger = logger;
-            _bankHolidayService = bankHolidayService;
             _applicationApiClient = applicationApiClient;
         }
 
@@ -106,7 +104,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     var oversight = await _apiClient.GetOversightReview(applicationId);
                     model.ApplicationDeterminedDate = oversight?.ApplicationDeterminedDate;
                     model.AppealRequiredByDate =
-                        _bankHolidayService.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, NumberOfWorkingDays);
+                        await _apiClient.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, NumberOfWorkingDays);
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
                         return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
 
@@ -115,7 +113,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                             User.GetEmail());
                     unsuccessfulModel.ApplicationDeterminedDate = oversight?.ApplicationDeterminedDate;
                     unsuccessfulModel.AppealRequiredByDate =
-                        _bankHolidayService.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, NumberOfWorkingDays);
+                        await _apiClient.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, NumberOfWorkingDays);
                     return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", unsuccessfulModel);
 
                 case ApplicationStatus.FeedbackAdded:
@@ -126,7 +124,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     var oversightReviewDetails = await _apiClient.GetOversightReview(applicationId);
                     model.ApplicationDeterminedDate = oversightReviewDetails?.ApplicationDeterminedDate;
                     model.AppealRequiredByDate =
-                        _bankHolidayService.GetWorkingDaysAheadDate(oversightReviewDetails?.ApplicationDeterminedDate, NumberOfWorkingDays);
+                        await _apiClient.GetWorkingDaysAheadDate(oversightReviewDetails?.ApplicationDeterminedDate, NumberOfWorkingDays);
                     if (oversightReviewDetails?.Status == OversightReviewStatus.Removed)
                         return View("~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", model);
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
-namespace SFA.DAS.ApplyService.Application.Services
+namespace SFA.DAS.ApplyService.InternalApi.Services
 {
     public class BankHolidayService : IBankHolidayService
     {

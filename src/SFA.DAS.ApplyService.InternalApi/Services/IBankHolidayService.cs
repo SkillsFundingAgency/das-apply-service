@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SFA.DAS.ApplyService.Application.Services
+namespace SFA.DAS.ApplyService.InternalApi.Services
 {
     public interface IBankHolidayService
     {

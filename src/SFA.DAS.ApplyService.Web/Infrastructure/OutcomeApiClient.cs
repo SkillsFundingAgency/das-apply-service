@@ -43,6 +43,15 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await GetResponse($"/Clarification/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/Download/{filename}");
         }
 
+        public async Task<DateTime?> GetWorkingDaysAheadDate(DateTime? startDate, int numberOfDays)
+        {
+            if (startDate == null)
+                return null;
+
+            var startDateFormatted = startDate.Value.ToString("yyyy-MM-dd");
+            return await Get<DateTime>($"working-days/{startDateFormatted}/{numberOfDays}");
+        }
+
         public async Task<List<ClarificationPageReviewOutcome>> GetAllClarificationPageReviewOutcomes(Guid applicationId, string userId)
         {
             return await Post<GetAllClarificationPageReviewOutcomesRequest, List<ClarificationPageReviewOutcome>>($"/Clarification/Applications/{applicationId}/GetAllPageReviewOutcomes", new GetAllClarificationPageReviewOutcomesRequest(applicationId, userId));

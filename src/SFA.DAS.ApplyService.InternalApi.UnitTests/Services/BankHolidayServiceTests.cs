@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.InternalApi.Services;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests.Services
+namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
 {
     [TestFixture]
     public class BankHolidayServiceTests
     {
         private Mock<IBankHolidayRepository> _repository;
-
 
         [SetUp]
         public void TestSetup()

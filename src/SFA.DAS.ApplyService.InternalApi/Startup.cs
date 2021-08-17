@@ -248,6 +248,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IAssessorSectorDetailsService, AssessorSectorDetailsService>();
             services.AddTransient<IAssessorReviewCreationService, AssessorReviewCreationService>();
             services.AddTransient<IModeratorReviewCreationService, ModeratorReviewCreationService>();
+            services.AddTransient<IBankHolidayService, BankHolidayService>();
+            services.AddTransient<IBankHolidayRepository, BankHolidayRepository>();
 
             services.AddTransient<IApplicationRepository, ApplicationRepository>();
             services.AddTransient<IDiffService, DiffService>();

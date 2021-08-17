@@ -31,7 +31,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IApplicationApiClient> _applicationApiClient;
         private Mock<IOverallOutcomeService> _outcomeService;
         private Mock<ILogger<RoatpOverallOutcomeController>> _logger;
-        private Mock<IBankHolidayService> _bankHolidayService;
+       
 
 
         [SetUp]
@@ -41,7 +41,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _logger = new Mock<ILogger<RoatpOverallOutcomeController>>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
             _outcomeService = new Mock<IOverallOutcomeService>();
-            _bankHolidayService=new Mock<IBankHolidayService>();
             var appealRequiredByDate = DateTime.Today.AddDays(10);
 
             var signInId = Guid.NewGuid();
@@ -57,12 +56,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 new Claim("custom-claim", "example claim value"),
             }, "mock"));
             
-            _bankHolidayService.Setup((x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())))
-                .Returns(appealRequiredByDate);
+            _apiClient.Setup((x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())))
+                .ReturnsAsync(appealRequiredByDate);
 
 
             _controller = new RoatpOverallOutcomeController(_apiClient.Object,
-                _outcomeService.Object, _applicationApiClient.Object, _logger.Object, _bankHolidayService.Object)
+                _outcomeService.Object, _applicationApiClient.Object, _logger.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -436,8 +435,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
 
-            _bankHolidayService.Setup((x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())))
-                .Returns(appealRequiredByDate);
+            _apiClient.Setup((x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())))
+                .ReturnsAsync(appealRequiredByDate);
             
             var model = new ApplicationSummaryViewModel();
 
