@@ -168,8 +168,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             Assert.That(shouldInjectPage, Is.False);
         }
 
-        [Test]
-        public async Task ShouldInjectFinancialInformationPage_when_FinancialEvidence_Section_Required_returns_true()
+        [TestCase(RoatpWorkflowPageIds.YourOrganisationsFinancialEvidence.FinancialEvidence_Other)]
+        [TestCase(RoatpWorkflowPageIds.YourOrganisationsFinancialEvidence.FinancialEvidence_CompanyOrCharity)]
+        [TestCase(RoatpWorkflowPageIds.YourOrganisationsFinancialEvidence.FinancialEvidence_SoleTraderOrPartnership)]
+        public async Task ShouldInjectFinancialInformationPage_when_FinancialEvidence_Section_Required_and_Question_Answered_returns_true(string pageId)
         {
             var application = new Apply
             {
@@ -192,6 +194,26 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             };
 
             _mediator.Setup(x => x.Send(It.Is<GetApplicationRequest>(y => y.ApplicationId == _applicationId), It.IsAny<CancellationToken>())).ReturnsAsync(application);
+
+            var qnaFinancialEvidenceSection = new ApplicationSection
+            {
+                ApplicationId = _applicationId,
+                QnAData = new QnAData
+                {
+                    Pages = new List<Domain.Apply.Page>
+                    {
+                        new Domain.Apply.Page
+                        {
+                            PageId = pageId,
+                            Active = true,
+                            Complete = true
+                        }
+                    }
+                }
+            };
+
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId, RoatpWorkflowSequenceIds.FinancialEvidence, RoatpWorkflowSectionIds.FinancialEvidence.YourOrganisationsFinancialEvidence))
+                         .ReturnsAsync(qnaFinancialEvidenceSection);
 
             var shouldInjectPage = await _sequenceService.ShouldInjectFinancialInformationPage(_applicationId);
 

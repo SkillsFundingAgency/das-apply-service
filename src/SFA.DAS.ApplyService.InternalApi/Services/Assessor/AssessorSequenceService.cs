@@ -71,19 +71,28 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
 
             var application = await _mediator.Send(new GetApplicationRequest(applicationId));
 
-            if(application?.ApplyData != null)
+            if(application?.ApplyData?.Sequences != null)
             {
-                var financialSequence = application.ApplyData.Sequences?.FirstOrDefault(seq => seq.SequenceNo == RoatpWorkflowSequenceIds.FinancialEvidence);
+                var financialSequence = application.ApplyData.Sequences.FirstOrDefault(seq => seq.SequenceNo == RoatpWorkflowSequenceIds.FinancialEvidence);
+                var financialEvidenceSection = financialSequence?.Sections?.FirstOrDefault(sec => sec.SectionNo == RoatpWorkflowSectionIds.FinancialEvidence.YourOrganisationsFinancialEvidence);
 
-                if(financialSequence?.NotRequired != true)
+                if (financialSequence?.NotRequired != true && financialEvidenceSection?.NotRequired != true)
                 {
-                    var financialEvidenceSection = financialSequence.Sections?.FirstOrDefault(sec => sec.SectionNo == RoatpWorkflowSectionIds.FinancialEvidence.YourOrganisationsFinancialEvidence);
-                    
-                    shouldInjectPage = financialEvidenceSection?.NotRequired != true;
+                    shouldInjectPage = await HasQnAFinancialEvidencePageBeenAnswered(applicationId);
                 }
             }
 
             return shouldInjectPage;
+        }
+
+        private async Task<bool> HasQnAFinancialEvidencePageBeenAnswered(Guid applicationId)
+        {
+            var qnaFinancialEvidenceSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpWorkflowSequenceIds.FinancialEvidence, RoatpWorkflowSectionIds.FinancialEvidence.YourOrganisationsFinancialEvidence);
+            var qnaFinancialEvidencePage = qnaFinancialEvidenceSection?.QnAData.Pages.FirstOrDefault(p => p.PageId == RoatpWorkflowPageIds.YourOrganisationsFinancialEvidence.FinancialEvidence_Other
+                                                                    || p.PageId == RoatpWorkflowPageIds.YourOrganisationsFinancialEvidence.FinancialEvidence_CompanyOrCharity
+                                                                    || p.PageId == RoatpWorkflowPageIds.YourOrganisationsFinancialEvidence.FinancialEvidence_SoleTraderOrPartnership);
+
+            return qnaFinancialEvidencePage != null && qnaFinancialEvidencePage.Active && qnaFinancialEvidencePage.Complete;
         }
 
         private AssessorSequence GetSequence(int sequenceNumber, IEnumerable<ApplicationSection> qnaSectionsForSequence, ApplySequence applySequence)
