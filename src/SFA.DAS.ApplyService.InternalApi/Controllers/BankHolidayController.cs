@@ -21,16 +21,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<IActionResult> GetGetWorkingDays(DateTime? startDate, int numberOfDays)
         {
             var workingDays = _service.GetWorkingDaysAheadDate(startDate, numberOfDays);
-
-
-            if (workingDays == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(workingDays);
-            }
+            return Ok(workingDays);
         }
     }
 }
