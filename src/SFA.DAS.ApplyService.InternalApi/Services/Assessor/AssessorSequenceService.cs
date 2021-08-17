@@ -65,6 +65,27 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
             return sequences;
         }
 
+        public async Task<bool> ShouldInjectFinancialInformationPage(Guid applicationId)
+        {
+            var shouldInjectPage = false;
+
+            var application = await _mediator.Send(new GetApplicationRequest(applicationId));
+
+            if(application?.ApplyData != null)
+            {
+                var financialSequence = application.ApplyData.Sequences?.FirstOrDefault(seq => seq.SequenceNo == RoatpWorkflowSequenceIds.FinancialEvidence);
+
+                if(financialSequence?.NotRequired != true)
+                {
+                    var financialEvidenceSection = financialSequence.Sections?.FirstOrDefault(sec => sec.SectionNo == RoatpWorkflowSectionIds.FinancialEvidence.YourOrganisationsFinancialEvidence);
+                    
+                    shouldInjectPage = financialEvidenceSection?.NotRequired != true;
+                }
+            }
+
+            return shouldInjectPage;
+        }
+
         private AssessorSequence GetSequence(int sequenceNumber, IEnumerable<ApplicationSection> qnaSectionsForSequence, ApplySequence applySequence)
         {
             AssessorSequence sequence = null;

@@ -44,6 +44,23 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                     {
                         var sectionReviewOutcomes = GenerateSectionReviewOutcomes(applicationId, section, assessorUserId, assessorNumber);
                         reviewOutcomes.AddRange(sectionReviewOutcomes);
+
+                        if (section.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining
+                            && section.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy
+                            && await _sequenceService.ShouldInjectFinancialInformationPage(applicationId))
+                        {
+                            reviewOutcomes.Add(new AssessorPageReviewOutcome
+                            {
+                                ApplicationId = applicationId,
+                                SequenceNumber = section.SequenceNumber,
+                                SectionNumber = section.SectionNumber,
+                                PageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial,
+                                UserId = assessorUserId,
+                                AssessorNumber = assessorNumber,
+                                Status = null,
+                                Comment = null
+                            });
+                        }
                     }
                 }
             }
@@ -65,22 +82,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                         SequenceNumber = section.SequenceNumber,
                         SectionNumber = section.SectionNumber,
                         PageId = page.PageId,
-                        UserId = assessorUserId,
-                        AssessorNumber = assessorNumber,
-                        Status = null,
-                        Comment = null
-                    });
-                }
-
-                if (section.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining && section.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy)
-                {
-                    // Inject page to show Financial information to Assessor
-                    sectionReviewOutcomes.Add(new AssessorPageReviewOutcome
-                    {
-                        ApplicationId = applicationId,
-                        SequenceNumber = section.SequenceNumber,
-                        SectionNumber = section.SectionNumber,
-                        PageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial,
                         UserId = assessorUserId,
                         AssessorNumber = assessorNumber,
                         Status = null,

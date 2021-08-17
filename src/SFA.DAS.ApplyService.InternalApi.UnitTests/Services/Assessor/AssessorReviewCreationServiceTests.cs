@@ -93,16 +93,21 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             _assessorReviewCreationService = new AssessorReviewCreationService(_assessorSequenceService.Object, _assessorSectorService.Object, _mediator.Object);
         }
 
-        [Test]
-        public async Task CreateEmptyReview_creates_empty_review_outcomes()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task CreateEmptyReview_creates_empty_review_outcomes(bool injectFinancialInformationPage)
         {
+            _assessorSequenceService.Setup(x => x.ShouldInjectFinancialInformationPage(_applicationId)).ReturnsAsync(injectFinancialInformationPage);
+
             await _assessorReviewCreationService.CreateEmptyReview(_applicationId, _assessorUserId, _assessorUserName, _assessorNumber);
 
             var allSections = _sequences.SelectMany(seq => seq.Sections);
             var allSectionsExcludingSectors = allSections.Where(sec => sec.SequenceNumber != RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining || sec.SectionNumber != RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees);
             var sectionPages = allSectionsExcludingSectors.SelectMany(sec => sec.Pages).ToList();
 
-            var expectedNumberOfOutcomes = sectionPages.Count + _sectors.Count + 1; // Note: Add 1 due to inserted Management Hierarchy Financial page
+            var expectedNumberOfOutcomes = sectionPages.Count + _sectors.Count;
+
+            if (injectFinancialInformationPage) expectedNumberOfOutcomes += 1;
 
             _mediator.Verify(x =>
                     x.Send(It.Is<CreateEmptyAssessorReviewRequest>(r =>
