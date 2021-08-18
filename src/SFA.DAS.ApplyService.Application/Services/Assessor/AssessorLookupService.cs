@@ -142,6 +142,8 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
                     return "Overall accountability for apprenticeships";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy:
                     return "Management hierarchy for apprenticeships";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial:
+                    return "Turnover and full time equivalent (FTE) employees";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.QualityAndHighStandards:
                     return
                         "Management hierarchy's expectations for quality and high standards in apprenticeship training";
