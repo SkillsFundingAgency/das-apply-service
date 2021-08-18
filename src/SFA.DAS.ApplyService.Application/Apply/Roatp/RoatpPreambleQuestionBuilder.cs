@@ -86,7 +86,7 @@
         public const string GradeWithinLast3YearsNonOfsFunded = "YO-311";
 
         public const string IsPostGradTrainingOnlyApprenticeship = "YO-250";
-		public const string HasDeliveredTrainingAsSubcontractor = "YO-350";
+        public const string HasDeliveredTrainingAsSubcontractor = "YO-350";
         public const string ContractFileName = "YO-360";
     }
 
@@ -256,13 +256,15 @@
             public const string GradeWithinLast3YearsOfsFunded = "310";
             public const string GradeWithinLast3YearsNonOfsFunded = "311";
             public const string IsPostGradTrainingOnlyApprenticeship = "250";
-			public const string SubcontractorDeclaration = "350";
+            public const string SubcontractorDeclaration = "350";
             public const string SubcontractorContractFile = "360";
         }
 
-        public static class FinancialEvidence
+        public static class YourOrganisationsFinancialEvidence
         {
-            public const string YourOrganisationsFinancialEvidence = "2131";
+            public const string FinancialEvidence_Other = "2120";
+            public const string FinancialEvidence_CompanyOrCharity = "2130";
+            public const string FinancialEvidence_SoleTraderOrPartnership = "2140";
         }
 
         public static class CriminalComplianceChecks
