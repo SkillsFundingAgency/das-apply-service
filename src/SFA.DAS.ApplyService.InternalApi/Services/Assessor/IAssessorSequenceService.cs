@@ -9,5 +9,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
     {
         bool IsValidSequenceNumber(int sequenceNumber);
         Task<List<AssessorSequence>> GetSequences(Guid applicationId);
+        Task<bool> ShouldInjectFinancialInformationPage(Guid applicationId);
     }
 }
