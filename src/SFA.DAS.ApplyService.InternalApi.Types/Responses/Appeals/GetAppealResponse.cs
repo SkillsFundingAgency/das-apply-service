@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace SFA.DAS.ApplyService.Domain.QueryResults
+namespace SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals
 {
-    public class Appeal
+    public class GetAppealResponse
     {
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }

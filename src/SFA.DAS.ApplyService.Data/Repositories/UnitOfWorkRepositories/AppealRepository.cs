@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 
         public AppealRepository(IConfigurationService configurationService, IUnitOfWork unitOfWork)
         {
-            _config = configurationService.GetConfig().Result;
+            _config = configurationService.GetConfig().GetAwaiter().GetResult();
             _unitOfWork = unitOfWork;
         }
 
@@ -30,14 +30,18 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
             _unitOfWork.Register(() => PersistAdd(entity));
         }
 
-        // TODO: APPEALREVIEW - Review once appeal work starts
-        public async Task<Appeal> GetByOversightReviewId(Guid oversightReviewId)
+        public void Update(Appeal entity)
+        {
+            _unitOfWork.Register(() => PersistUpdate(entity));
+        }
+
+        public async Task<Appeal> GetByApplicationId(Guid applicationId)
         {
             using (var connection = GetConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<Appeal>(
-                    @"SELECT * FROM [Appeal] WHERE OversightReviewId = @oversightReviewId",
-                    new { oversightReviewId });
+                    @"SELECT * FROM [Appeal] WHERE ApplicationId = @applicationId",
+                    new { applicationId });
             }
         }
 
@@ -47,20 +51,64 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 
             await transaction.Connection.ExecuteAsync(
                 @"INSERT INTO [Appeal]
-                    ([Id],
-                    [OversightReviewId],
-                    [Message],
+                    ([ApplicationId],
+                    [Status],
+                    [HowFailedOnPolicyOrProcesses],
+                    [HowFailedOnEvidenceSubmitted],
+                    [AppealSubmitedDate],
+                    [AppealDeterminedDate],
+                    [InternalComments],
+                    [ExternalComments]
                     [UserId],
                     [UserName],
+                    [InProgressDate],
+                    [InProgressUserId],
+                    [InProgressUserName],
+                    [InProgressInternalComments],
+                    [InProgressExternalComments],
                     [CreatedOn])
                     VALUES (
                     @Id,
-                    @OversightReviewId,
-                    @Message,
+                    @ApplicationId,
+                    @Status,
+                    @HowFailedOnPolicyOrProcesses,
+                    @HowFailedOnEvidenceSubmitted,
+                    @InternalComments,
+                    @ExternalComments,
                     @UserId,
                     @UserName,
-                    @CreatedOn)",
+                    @InProgressDate,
+                    @InProgressUserId,
+                    @InProgressUserName,
+                    @InProgressInternalComments,
+                    @InProgressExternalComments,
+                    GETUTCDATE())",
                 entity, transaction);
+        }
+
+        public async Task PersistUpdate(Appeal entity)
+        {
+            var transaction = _unitOfWork.GetTransaction();
+
+            await transaction.Connection.ExecuteAsync(
+                @"UPDATE [Appeal]
+                    SET [Status] = @Status,
+                    [HowFailedOnPolicyOrProcesses] = @HowFailedOnPolicyOrProcesses,
+                    [HowFailedOnEvidenceSubmitted] = @HowFailedOnEvidenceSubmitted,
+                    [AppealDeterminedDate] = @AppealDeterminedDate,
+                    [InternalComments] = @InternalComments,
+                    [ExternalComments] = @ExternalComments,
+                    [UserId] =  @UserId,
+                    [UserName] =  @UserName,
+                    [InProgressDate] = @InProgressDate,
+                    [InProgressUserId] = @InProgressUserId,
+                    [InProgressUserName] = @InProgressUserName,
+                    [InProgressInternalComments] = @InProgressInternalComments,
+                    [InProgressExternalComments] = @InProgressExternalComments,
+                    [UpdatedOn] = GETUTCDATE(),
+                    WHERE [Id] = @id",
+                entity, transaction);
+
         }
     }
 }

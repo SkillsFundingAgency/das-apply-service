@@ -1,12 +1,19 @@
 ﻿namespace SFA.DAS.ApplyService.Types
 {
-    // TODO: APPEALREVIEW - Review once appeal work starts
     public enum AppealStatus
     {
         None = 0,
-        Successful = 1,
-        SuccessfulAlreadyActive = 2,
-        Unsuccessful = 3,
-        UnsuccessfulPartiallyUpheld = 4
+        Submitted = 1,
+
+        InProgress = 2,
+
+        // TODO: Not sure about these ones. Check when we're getting towards end of the appeal flow
+        Withdrawn = 3,
+        Overturned = 4,
+        Upheld = 5
+        //Successful = 4,
+        //SuccessfulAlreadyActive = 5,
+        //SuccessfulFitnessForFunding = 6,
+        //Unsuccessful = 7
     }
 }
