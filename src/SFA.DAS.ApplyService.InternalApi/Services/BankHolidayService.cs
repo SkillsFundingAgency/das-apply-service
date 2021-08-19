@@ -24,6 +24,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             var bankHolidays =  GetBankHolidays();
 
             var startDay = 0;
+
+            while (startDate.Value.DayOfWeek == DayOfWeek.Saturday || startDate.Value.DayOfWeek == DayOfWeek.Sunday ||
+                   bankHolidays.Contains(startDate.Value))
+            {
+                startDate = startDate.Value.AddDays(-1);
+            }
+
             while (startDay <= actualNumberOfDaysAhead)
             {
                 var currentDay = startDate.Value.AddDays(startDay);
