@@ -32,7 +32,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
             var currentAppeal = await _appealRepository.GetByApplicationId(request.ApplicationId);
             VerifyAppealNotSubmitted(currentAppeal);
 
-            _auditService.StartTracking(UserAction.CreateAppeal, request.UserId, request.UserName);
+            _auditService.StartTracking(UserAction.MakeAppeal, request.UserId, request.UserName);
 
             if(currentAppeal is null)
             {

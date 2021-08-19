@@ -6,14 +6,13 @@ using AutoFixture;
 using KellermanSoftware.CompareNetObjects;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppeal;
+using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppeal;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Domain.QueryResults;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAppealQueryHandlerTests
+namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.GetAppealQueryHandlerTests
 {
     [TestFixture]
-    [Ignore("placed on ignore as new appeal work to be done that will make use of this")]
     public class GetAppealQueryHandlerTests
     {
         private GetAppealQueryHandler _handler;
@@ -31,12 +30,12 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAppealQueryHand
             _queryResult = autoFixture.Create<Appeal>();
 
             _appealsQueries = new Mock<IAppealsQueries>();
-            _appealsQueries.Setup(x => x.GetAppeal(_query.ApplicationId, _query.OversightReviewId)).ReturnsAsync(() => _queryResult);
+            _appealsQueries.Setup(x => x.GetAppeal(_query.ApplicationId)).ReturnsAsync(() => _queryResult);
             _handler = new GetAppealQueryHandler(_appealsQueries.Object);
         }
 
         [Test]
-        public async Task Handle_Returns_Appeal_For_Requested_Application_And_OversightReview()
+        public async Task Handle_Returns_Appeal_For_Requested_Application()
         {
             var result = await _handler.Handle(_query, CancellationToken.None);
 
