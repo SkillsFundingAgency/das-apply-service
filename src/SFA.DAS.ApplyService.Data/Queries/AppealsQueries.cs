@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
                 await connection.QueryAsync<Appeal, Appeal.AppealUpload, Appeal>(
                     @"SELECT
-                        a.*,
+                        ap.*,
                         ul.Id, ul.Filename, ul.ContentType
                         FROM [Appeal] ap
                         LEFT JOIN [AppealUpload] ul on ul.AppealId = ap.Id

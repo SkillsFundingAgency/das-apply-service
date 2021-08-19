@@ -56,9 +56,8 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
                     [HowFailedOnPolicyOrProcesses],
                     [HowFailedOnEvidenceSubmitted],
                     [AppealSubmitedDate],
-                    [AppealDeterminedDate],
                     [InternalComments],
-                    [ExternalComments]
+                    [ExternalComments],
                     [UserId],
                     [UserName],
                     [InProgressDate],
@@ -68,11 +67,11 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
                     [InProgressExternalComments],
                     [CreatedOn])
                     VALUES (
-                    @Id,
                     @ApplicationId,
                     @Status,
                     @HowFailedOnPolicyOrProcesses,
                     @HowFailedOnEvidenceSubmitted,
+                    GETUTCDATE(),
                     @InternalComments,
                     @ExternalComments,
                     @UserId,

@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet]
-        [Route("Appeals/{applicationId}/appeal")]
+        [Route("Appeals/{applicationId}")]
         public async Task<ActionResult<GetAppealResponse>> GetAppeal([FromRoute] GetAppealRequest request)
         {
             var query = new GetAppealQuery
@@ -62,7 +62,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost]
-        [Route("Appeals/{applicationId}/appeal")]
+        [Route("Appeals/{applicationId}")]
         public async Task<IActionResult> MakeAppeal(Guid applicationId, [FromBody] MakeAppealRequest request)
         {
             var command = new MakeAppealCommand
