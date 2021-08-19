@@ -20,8 +20,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [Route("working-days/{startDate}/{numberOfDays}")]
         public async Task<IActionResult> GetWorkingDays(DateTime? startDate, int numberOfDays)
         {
-            var workingDays = _service.GetWorkingDaysAheadDate(startDate, numberOfDays);
-            return Ok(workingDays);
+            if(startDate.HasValue)
+            {
+                var workingDays = await _service.GetWorkingDaysAheadDate(startDate.Value, numberOfDays);
+                return Ok(workingDays);
+            }
+            else
+            {
+                return Ok(startDate);
+            }
         }
     }
 }

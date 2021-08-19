@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services
 {
     public interface IBankHolidayService
     {
-        DateTime? GetWorkingDaysAheadDate(DateTime? startDate, int numberOfDaysAhead);
-        List<DateTime> GetBankHolidays();
+        Task<DateTime> GetWorkingDaysAheadDate(DateTime startDate, int numberOfDaysAhead);
+        Task<List<DateTime>> GetBankHolidays();
     }
 }
