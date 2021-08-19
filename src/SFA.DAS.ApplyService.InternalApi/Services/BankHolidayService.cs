@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services
@@ -14,46 +15,57 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             _bankHolidayRepository = bankHolidayRepository;
         }
 
-        public DateTime? GetWorkingDaysAheadDate(DateTime? startDate, int numberOfDaysAhead)
+        public async Task<List<DateTime>> GetBankHolidays()
         {
+            var bankHolidays = await _bankHolidayRepository.GetBankHolidays();
 
-            if (startDate == null)
-                return null;
-
-            var actualNumberOfDaysAhead = numberOfDaysAhead;
-            var bankHolidays =  GetBankHolidays();
-
-            var startDay = 0;
-
-            while (startDate.Value.DayOfWeek == DayOfWeek.Saturday || startDate.Value.DayOfWeek == DayOfWeek.Sunday ||
-                   bankHolidays.Contains(startDate.Value))
-            {
-                startDate = startDate.Value.AddDays(-1);
-            }
-
-            while (startDay <= actualNumberOfDaysAhead)
-            {
-                var currentDay = startDate.Value.AddDays(startDay);
-
-                if (currentDay.DayOfWeek == DayOfWeek.Saturday || currentDay.DayOfWeek == DayOfWeek.Sunday ||
-                    bankHolidays.Contains(currentDay))
-                {
-                    actualNumberOfDaysAhead +=1;
-                }
-
-                startDay +=1;
-            }
-
-            return startDate.Value.AddDays(actualNumberOfDaysAhead);
+            return bankHolidays.Select(hol => hol.BankHolidayDate).ToList();
         }
 
-        public List<DateTime> GetBankHolidays()
+        public async Task<DateTime> GetWorkingDaysAheadDate(DateTime startDate, int numberOfDaysAhead)
         {
-            var holidays = _bankHolidayRepository.GetBankHolidays().Result;
+            var bankHolidays = await GetBankHolidays() as IReadOnlyCollection<DateTime>;
 
-            return holidays.Select(hol => hol.BankHolidayDate).ToList();
+            var startingDay = startDate;
+
+            // Must adjust to the next starting day if it's not a working day to begin with
+            if(IsWeekend(startingDay) || IsBankHoliday(bankHolidays, startingDay))
+            {
+                startingDay = GetNextWorkingDay(bankHolidays, startingDay);
+            }
+
+            var workingDays = new List<DateTime> { startingDay };
+
+            for(int count = 0; count < numberOfDaysAhead; count++)
+            {
+                var nextWorkingDay = GetNextWorkingDay(bankHolidays, startingDay);
+                workingDays.Add(nextWorkingDay);
+                startingDay = nextWorkingDay;
+            }
+
+            return workingDays.Last();
         }
 
+        private static DateTime GetNextWorkingDay(IReadOnlyCollection<DateTime> bankHolidays, DateTime date)
+        {
+            do
+            {
+                date = date.AddDays(1);
+            } while (IsWeekend(date) || IsBankHoliday(bankHolidays, date));
+
+            return date;
+        }
+
+        private static bool IsWeekend(DateTime date)
+        {
+            return date.DayOfWeek == DayOfWeek.Saturday
+                || date.DayOfWeek == DayOfWeek.Sunday;
+        }
+
+        private static bool IsBankHoliday(IReadOnlyCollection<DateTime> bankHolidays, DateTime date)
+        {
+            return bankHolidays.Contains(date);
+        }
     }
 }
 
