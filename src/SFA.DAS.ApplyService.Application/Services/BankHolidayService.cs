@@ -13,8 +13,15 @@ namespace SFA.DAS.ApplyService.Application.Services
 
             var actualNumberOfDaysAhead = numberOfDaysAhead;
             var bankHolidays = BankHolidays;
-
+            
             var startDay = 0;
+
+            while (startDate.Value.DayOfWeek == DayOfWeek.Saturday || startDate.Value.DayOfWeek == DayOfWeek.Sunday ||
+                bankHolidays.Contains(startDate.Value))
+            {
+                startDate = startDate.Value.AddDays(-1);
+            }
+
             while (startDay <= actualNumberOfDaysAhead)
             {
                 var currentDay = startDate.Value.AddDays(startDay);
@@ -36,6 +43,11 @@ namespace SFA.DAS.ApplyService.Application.Services
             {
                 var bankHolidays = new List<DateTime>
                 {
+                    new DateTime(2021,01,01),
+                    new DateTime(2021,04,02),
+                    new DateTime(2021,04,05),
+                    new DateTime(2021,05,03),
+                    new DateTime(2021,05,31),
                     new DateTime(2021, 8, 30), 
                     new DateTime(2021, 12, 27),
                     new DateTime(2021, 12, 27),
