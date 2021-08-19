@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection.QueryAsync<BankHoliday>(
-                    @"SELECT * FROM BankHoliday")).ToList();
+                    @"SELECT * FROM BankHoliday where Active=1")).ToList();
             }
         }
     }
