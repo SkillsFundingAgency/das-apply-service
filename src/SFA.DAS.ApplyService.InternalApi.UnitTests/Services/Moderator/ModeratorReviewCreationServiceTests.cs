@@ -9,6 +9,7 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Moderator;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Services.Moderator;
@@ -93,13 +94,43 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         }
 
         [Test]
-        public async Task CreateEmptyReview_creates_empty_review_outcomes()
+        public async Task CreateEmptyReview_creates_expected_empty_review_outcomes()
         {
+            _mediator.Setup(x => x.Send(It.IsAny<GetBlindAssessmentOutcomeRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new BlindAssessmentOutcome());
+
             await _reviewCreationService.CreateEmptyReview(_applicationId, _userId, _userName);
 
             var allSections = _sequences.SelectMany(seq => seq.Sections);
-            var allSectionsExclusingSectors = allSections.Where(sec => sec.SequenceNumber != RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining || sec.SectionNumber != RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees);
-            var sectionPages = allSectionsExclusingSectors.SelectMany(sec => sec.Pages).ToList();
+            var allSectionsExcludingSectors = allSections.Where(sec => sec.SequenceNumber != RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining || sec.SectionNumber != RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees);
+            var sectionPages = allSectionsExcludingSectors.SelectMany(sec => sec.Pages).ToList();
+
+            var expectedNumberOfOutcomes = sectionPages.Count + _sectors.Count + 1; // Note: Add 1 due to inserted Management Hierarchy Financial page
+
+            _mediator.Verify(x =>
+                    x.Send(It.Is<CreateEmptyModeratorReviewRequest>(r =>
+                            r.PageReviewOutcomes.Count == expectedNumberOfOutcomes &&
+                            r.PageReviewOutcomes.TrueForAll(y =>
+                                _sectors.Exists(s => s.PageId == y.PageId) ||
+                                sectionPages.Exists(p => p.PageId == y.PageId) ||
+                                y.PageId == RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial)),
+                        It.IsAny<CancellationToken>()),
+                Times.Once);
+        }
+
+        [Test]
+        public async Task CreateEmptyReview_creates_expected_empty_review_outcomes_when_ManagementHierarchyFinancial_page_not_BlindAssessed()
+        {
+            _mediator.Setup(x => x.Send(It.Is<GetBlindAssessmentOutcomeRequest>(r => r.ApplicationId == _applicationId
+                                                                                && r.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining
+                                                                                && r.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy
+                                                                                && r.PageId == RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial), It.IsAny<CancellationToken>()))
+                                                                               .ReturnsAsync(default(BlindAssessmentOutcome));
+
+            await _reviewCreationService.CreateEmptyReview(_applicationId, _userId, _userName);
+
+            var allSections = _sequences.SelectMany(seq => seq.Sections);
+            var allSectionsExcludingSectors = allSections.Where(sec => sec.SequenceNumber != RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining || sec.SectionNumber != RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees);
+            var sectionPages = allSectionsExcludingSectors.SelectMany(sec => sec.Pages).ToList();
 
             var expectedNumberOfOutcomes = sectionPages.Count + _sectors.Count;
 
