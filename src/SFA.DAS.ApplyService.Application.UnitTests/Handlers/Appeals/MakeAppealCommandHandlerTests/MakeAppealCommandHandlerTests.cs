@@ -140,12 +140,11 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.MakeAppeal
 
         [TestCase(OversightReviewStatus.InProgress)]
         [TestCase(OversightReviewStatus.Rejected)]
-        [TestCase(OversightReviewStatus.Removed)]
         [TestCase(OversightReviewStatus.Successful)]
         [TestCase(OversightReviewStatus.SuccessfulAlreadyActive)]
         [TestCase(OversightReviewStatus.SuccessfulFitnessForFunding)]
         [TestCase(OversightReviewStatus.Withdrawn)]
-        public void Handle_Throws_If_Oversight_Review_Is_Not_Unsuccessful(OversightReviewStatus status)
+        public void Handle_Throws_If_Oversight_Review_Is_Not_Unsuccessful_or_Removed(OversightReviewStatus status)
         {
             _oversightReview.Status = status;
             Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(_command, CancellationToken.None));

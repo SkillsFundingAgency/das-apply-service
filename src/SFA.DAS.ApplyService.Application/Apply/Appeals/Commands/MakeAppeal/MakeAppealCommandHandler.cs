@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
 		public async Task<Unit> Handle(MakeAppealCommand request, CancellationToken cancellationToken)
 		{
             var oversightReview = await _oversightReviewRepository.GetByApplicationId(request.ApplicationId);
-            VerifyOversightReviewIsUnsuccessful(oversightReview);
+            VerifyOversightReviewIsUnsuccessfulOrRemoved(oversightReview);
 
             var currentAppeal = await _appealRepository.GetByApplicationId(request.ApplicationId);
             VerifyAppealNotSubmitted(currentAppeal);
@@ -78,9 +78,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
 			return Unit.Value;
 		}
 
-        private void VerifyOversightReviewIsUnsuccessful(OversightReview oversightReview)
+        private void VerifyOversightReviewIsUnsuccessfulOrRemoved(OversightReview oversightReview)
         {
-            var allowedStatuses = new[] { OversightReviewStatus.Unsuccessful };
+            var allowedStatuses = new[] { OversightReviewStatus.Unsuccessful, OversightReviewStatus.Removed };
 
             if (oversightReview is null)
             {
