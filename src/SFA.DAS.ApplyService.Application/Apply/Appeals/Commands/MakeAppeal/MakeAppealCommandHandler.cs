@@ -13,17 +13,22 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
 {
     public class MakeAppealCommandHandler : IRequestHandler<MakeAppealCommand>
     {
+        private readonly IOversightReviewRepository _oversightReviewRepository;
         private readonly IAppealRepository _appealRepository;
         private readonly IAuditService _auditService;
 
-		public MakeAppealCommandHandler(IAppealRepository appealRepository, IAuditService auditService)
+		public MakeAppealCommandHandler(IOversightReviewRepository oversightReviewRepository, IAppealRepository appealRepository, IAuditService auditService)
         {
+            _oversightReviewRepository = oversightReviewRepository;
             _appealRepository = appealRepository;
             _auditService = auditService;
         }
 
 		public async Task<Unit> Handle(MakeAppealCommand request, CancellationToken cancellationToken)
 		{
+            var oversightReview = await _oversightReviewRepository.GetByApplicationId(request.ApplicationId);
+            VerifyOversightReviewIsUnsuccessful(oversightReview);
+
             var currentAppeal = await _appealRepository.GetByApplicationId(request.ApplicationId);
             VerifyAppealNotSubmitted(currentAppeal);
 
@@ -72,6 +77,20 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
 
 			return Unit.Value;
 		}
+
+        private void VerifyOversightReviewIsUnsuccessful(OversightReview oversightReview)
+        {
+            var allowedStatuses = new[] { OversightReviewStatus.Unsuccessful };
+
+            if (oversightReview is null)
+            {
+                throw new InvalidOperationException($"OversightReview for Application {oversightReview.ApplicationId} not found");
+            }
+            else if (!allowedStatuses.Contains(oversightReview.Status))
+            {
+                throw new InvalidOperationException($"OversightReview for Application {oversightReview.ApplicationId} has status {oversightReview.Status} and cannot be appealed");
+            }
+        }
 
         private void VerifyAppealNotSubmitted(Appeal appeal)
         {
