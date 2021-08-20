@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services
 {
@@ -26,7 +27,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         {
             var bankHolidays = await GetBankHolidays() as IReadOnlyCollection<DateTime>;
 
-            var startingDay = startDate;
+            var startingDay = startDate.Date;
 
             // Must adjust to the next starting day if it's not a working day to begin with
             if(IsWeekend(startingDay) || IsBankHoliday(bankHolidays, startingDay))
