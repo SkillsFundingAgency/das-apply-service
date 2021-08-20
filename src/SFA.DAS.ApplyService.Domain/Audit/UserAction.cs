@@ -1,6 +1,5 @@
 ﻿namespace SFA.DAS.ApplyService.Domain.Audit
 {
-    // TODO: APPEALREVIEW - Review once appeal work starts
     public enum UserAction
     {
         UpdateGatewayPageOutcome,
@@ -10,9 +9,10 @@
         RecordOversightGatewayFailOutcome,
         RecordOversightGatewayRemovedOutcome,
         UpdateGatewayReviewStatus,
+        WithdrawApplication,
+        MakeAppeal,
+        CancelAppeal,
         UploadAppealFile,
         RemoveAppealFile,
-        WithdrawApplication,
-        CreateAppeal
     }
 }

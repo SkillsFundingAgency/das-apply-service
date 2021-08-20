@@ -8,7 +8,6 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
-using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -23,7 +22,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private const string SupportingRouteId = "3";
         private const int NumberOfWorkingDays = 10;
 
-        public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, 
+        public RoatpOverallOutcomeController(IOutcomeApiClient apiClient,
             IOverallOutcomeService overallOutcomeService, IApplicationApiClient applicationApiClient,
             ILogger<RoatpOverallOutcomeController> logger, IBankHolidayService bankHolidayService)
         {
@@ -32,26 +31,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _logger = logger;
             _bankHolidayService = bankHolidayService;
             _applicationApiClient = applicationApiClient;
-        }
-
-
-        [HttpGet("application/{applicationId}/appeal")]
-        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public IActionResult MakeAppeal(Guid applicationId)
-        {
-            var model = new MakeAppealViewModel
-            {
-                ApplicationId = applicationId
-            };
-
-            return View("~/Views/Appeals/MakeAppeal.cshtml", model);
-        }
-
-        [HttpPost("application/{applicationId}/appeal")]
-        [ModelStatePersist(ModelStatePersist.Store)]
-        public IActionResult MakeAppeal(MakeAppealViewModel model)
-        {
-            return RedirectToAction("MakeAppeal", new { model.ApplicationId });
         }
 
         [HttpGet]
@@ -73,7 +52,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 case ApplicationStatus.New:
                 case ApplicationStatus.InProgress:
-                    return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
+                    return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
                 case ApplicationStatus.Successful:
 
                     var oversightReview = await _apiClient.GetOversightReview(applicationId);
@@ -135,7 +114,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
                 case ApplicationStatus.Rejected:
-                    return View("~/Views/Roatp/ApplicationRejected.cshtml", model);   
+                    return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
                 case ApplicationStatus.Submitted:
                 case ApplicationStatus.Resubmitted:
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
@@ -144,7 +123,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     model.OversightInProgressExternalComments = oversightReviewNotes?.InProgressExternalComments;
                     return View("~/Views/Roatp/ApplicationInProgress.cshtml", model);
                 default:
-                    return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
+                    return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
             }
         }
 

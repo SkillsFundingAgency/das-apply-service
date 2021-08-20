@@ -138,12 +138,6 @@ namespace SFA.DAS.ApplyService.Web
             })
             .SetHandlerLifetime(handlerLifeTime);
 
-            services.AddHttpClient<IOutcomeApiClient, OutcomeApiClient>(config =>
-                {
-                    config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
-                })
-                .SetHandlerLifetime(handlerLifeTime);
-
             services.AddHttpClient<IQnaApiClient, QnaApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.QnaApiAuthentication.ApiBaseAddress);
@@ -193,6 +187,18 @@ namespace SFA.DAS.ApplyService.Web
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IAllowedProvidersApiClient, AllowedProvidersApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IOutcomeApiClient, OutcomeApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IAppealsApiClient, AppealsApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
