@@ -20,6 +20,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Services
         [TestCase("2021-08-14", 10, "2021-08-27")]
         [TestCase("2021-08-15", 10, "2021-08-27")]
         [TestCase("2021-08-16", 10, "2021-08-31")]
+        [TestCase("2021-08-16 14:00:00", 10, "2021-08-31")]
         public void GetWorkingDaysAhead_returns_expectedDate(DateTime startDate,int daysAhead,DateTime? expectedDate)
         {
             var service = new BankHolidayService();
