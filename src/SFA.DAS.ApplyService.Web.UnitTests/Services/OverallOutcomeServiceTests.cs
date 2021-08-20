@@ -24,6 +24,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         private Mock<IOutcomeApiClient> _apiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IAssessorLookupService> _assessorLookupService;
+        private Mock<IAppealsApiClient> _appealsApiClient;
         private Guid _applicationId;
         private string _userId;
         private OverallOutcomeService _service;
@@ -43,6 +44,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _applicationId = Guid.NewGuid();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _apiClient = new Mock<IOutcomeApiClient>();
+            _appealsApiClient = new Mock<IAppealsApiClient>();
             _assessorLookupService = new Mock<IAssessorLookupService>();
             _userId = "test";
             _page121 = "page1.2.1";
@@ -62,7 +64,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 .ReturnsAsync(clarificationOutcomes);
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
             _service = new OverallOutcomeService(_apiClient.Object, _qnaApiClient.Object,
-                _assessorLookupService.Object);
+                _assessorLookupService.Object, _appealsApiClient.Object);
         }
 
         [Test]
@@ -355,7 +357,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 FinancialExternalComments = financialExternalComments
             };
 
-            var returnedModel = _service.BuildApplicationSummaryViewModel(application, emailAddress);
+            var returnedModel = await _service.BuildApplicationSummaryViewModel(application, emailAddress);
             expectedModel.Should().BeEquivalentTo(returnedModel);
         }
 

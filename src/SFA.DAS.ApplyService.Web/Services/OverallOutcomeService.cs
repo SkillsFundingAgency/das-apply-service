@@ -7,6 +7,7 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
+using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
@@ -17,13 +18,15 @@ namespace SFA.DAS.ApplyService.Web.Services
         private readonly IOutcomeApiClient _apiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IAssessorLookupService _assessorLookupService;
+        private readonly IAppealsApiClient _appealsApiClient;
 
         public OverallOutcomeService(IOutcomeApiClient apiClient, IQnaApiClient qnaApiClient,
-            IAssessorLookupService assessorLookupService)
+            IAssessorLookupService assessorLookupService, IAppealsApiClient appealsApiClient)
         {
             _apiClient = apiClient;
             _qnaApiClient = qnaApiClient;
             _assessorLookupService = assessorLookupService;
+            _appealsApiClient = appealsApiClient;
         }
 
         public async Task AugmentModelWithModerationFailDetails(ApplicationSummaryWithModeratorDetailsViewModel model,
@@ -71,37 +74,40 @@ namespace SFA.DAS.ApplyService.Web.Services
                 .ToList();
         }
 
-        public ApplicationSummaryViewModel BuildApplicationSummaryViewModel(Apply application, string emailAddress)
-            {
-                var applicationData = application.ApplyData.ApplyDetails;
+        public async Task<ApplicationSummaryViewModel> BuildApplicationSummaryViewModel(Apply application, string emailAddress)
+        {
+            var applicationData = application.ApplyData.ApplyDetails;
+            var appealSubmitted = await GetAppealSubmitted(application);
 
-                var model = new ApplicationSummaryViewModel
-                {
-                    ApplicationId = application.ApplicationId,
-                    UKPRN = applicationData.UKPRN,
-                    OrganisationName = applicationData.OrganisationName,
-                    TradingName = applicationData.TradingName,
-                    ApplicationRouteId = applicationData.ProviderRoute.ToString(),
-                    ApplicationReference = applicationData.ReferenceNumber,
-                    SubmittedDate = applicationData?.ApplicationSubmittedOn,
-                    GatewayExternalComments = application.ExternalComments ?? application.ApplyData.GatewayReviewDetails?.ExternalComments,
-                    EmailAddress = emailAddress,
-                    FinancialReviewStatus = application?.FinancialReviewStatus,
-                    FinancialGrade = application?.FinancialGrade?.SelectedGrade,
-                    FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
-                    GatewayReviewStatus = application?.GatewayReviewStatus,
-                    ModerationStatus = application?.ModerationStatus,
-                    SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit,
-                    ApplicationStatus = application?.ApplicationStatus
-                };
-                return model;
-            }
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationId = application.ApplicationId,
+                UKPRN = applicationData.UKPRN,
+                OrganisationName = applicationData.OrganisationName,
+                TradingName = applicationData.TradingName,
+                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
+                ApplicationReference = applicationData.ReferenceNumber,
+                SubmittedDate = applicationData?.ApplicationSubmittedOn,
+                GatewayExternalComments = application.ExternalComments ?? application.ApplyData.GatewayReviewDetails?.ExternalComments,
+                EmailAddress = emailAddress,
+                FinancialReviewStatus = application?.FinancialReviewStatus,
+                FinancialGrade = application?.FinancialGrade?.SelectedGrade,
+                FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
+                GatewayReviewStatus = application?.GatewayReviewStatus,
+                ModerationStatus = application?.ModerationStatus,
+                SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit,
+                ApplicationStatus = application?.ApplicationStatus,
+                AppealSubmitted = appealSubmitted
+            };
+            return model;
+        }
 
         public async Task<ApplicationSummaryWithModeratorDetailsViewModel> BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(Apply application, string emailAddress)
         {
             var applicationData = application.ApplyData.ApplyDetails;
 
             var oversightReview = await _apiClient.GetOversightReview(application.ApplicationId);
+            var appealSubmitted = await GetAppealSubmitted(application);
 
             var moderationFailedAndApproved = false;
             var moderationPassOverturnedToFail = false;
@@ -166,7 +172,8 @@ namespace SFA.DAS.ApplyService.Web.Services
                 ModerationFailApproved = moderationFailedAndApproved,
                 GatewayPassOverturnedToFail = gatewayPassOverturnedToFail,
                 OversightExternalComments = oversightReview?.ExternalComments,
-                ApplicationStatus = application?.ApplicationStatus
+                ApplicationStatus = application?.ApplicationStatus,
+                AppealSubmitted = appealSubmitted
             };
 
             if (moderationFailedAndApproved)
@@ -188,6 +195,13 @@ namespace SFA.DAS.ApplyService.Web.Services
             };
             return model;
         }
+
+        private async Task<bool> GetAppealSubmitted(Apply application)
+        {
+            var appeal = await _appealsApiClient.GetAppeal(application.ApplicationId);
+            return appeal != null && appeal.Status != AppealStatus.None;
+        }
+
         private void AddSequenceTitlesToSequences(List<AssessorSequence> sequencesWithModerationFails)
         {
             foreach (var sequence in sequencesWithModerationFails)
