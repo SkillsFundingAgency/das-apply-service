@@ -39,12 +39,26 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
         }
 
         [TestCase("2021-03-01", 1, "2021-03-02")] // Monday -> Tuesday
-        [TestCase("2021-03-02", 1, "2021-03-03")] // Tuesday -> Wednesday
+        [TestCase("2021-03-01 01:23", 1, "2021-03-02")]
+        [TestCase("2021-03-01 12:34", 1, "2021-03-02")]
+        [TestCase("2021-03-02 ", 1, "2021-03-03")] // Tuesday -> Wednesday
+        [TestCase("2021-03-02 01:23", 1, "2021-03-03")]
+        [TestCase("2021-03-02 12:34", 1, "2021-03-03")]
         [TestCase("2021-03-03", 1, "2021-03-04")] // Wednesday -> Thursday
+        [TestCase("2021-03-03 01:23", 1, "2021-03-04")]
+        [TestCase("2021-03-03 12:34", 1, "2021-03-04")]
         [TestCase("2021-03-04", 1, "2021-03-05")] // Thursday -> Friday
+        [TestCase("2021-03-04 01:23", 1, "2021-03-05")]
+        [TestCase("2021-03-04 12:34", 1, "2021-03-05")]
         [TestCase("2021-03-05", 1, "2021-03-08")] // Friday -> Monday (Saturday & Sunday are weekend)
+        [TestCase("2021-03-05 01:23", 1, "2021-03-08")]
+        [TestCase("2021-03-05 12:34", 1, "2021-03-08")]
         [TestCase("2021-03-06", 1, "2021-03-09")] // Saturday -> Tuesday (It's the weekend so Monday would be the starting working day)
+        [TestCase("2021-03-06 01:23", 1, "2021-03-09")]
+        [TestCase("2021-03-06 12:34", 1, "2021-03-09")]
         [TestCase("2021-03-07", 1, "2021-03-09")] // Sunday -> Tuesday (It's the weekend so Monday would be the starting working day)
+        [TestCase("2021-03-07 01:23", 1, "2021-03-09")]
+        [TestCase("2021-03-07 12:34", 1, "2021-03-09")]
         public async Task GetWorkingDaysAhead_one_day_in_period_with_no_bank_holidays_returns_expected_Date(DateTime startDate, int daysAhead, DateTime expectedDate)
         {
             var service = new BankHolidayService(_repository.Object);
