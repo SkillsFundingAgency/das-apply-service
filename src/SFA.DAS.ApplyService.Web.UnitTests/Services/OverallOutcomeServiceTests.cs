@@ -11,7 +11,9 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
+using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
@@ -62,6 +64,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
             _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationOutcomes);
+            _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
+                .ReturnsAsync(new GetAppealResponse {Status = AppealStatus.None});
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
             _service = new OverallOutcomeService(_apiClient.Object, _qnaApiClient.Object,
                 _assessorLookupService.Object, _appealsApiClient.Object);
@@ -298,8 +302,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 .Be(null);
         }
 
-        [Test]
-        public async Task BuildApplicationSummaryViewModel_builds_expected_viewModel()
+        [TestCase(AppealStatus.None, false)]
+        [TestCase(AppealStatus.Successful, true)]
+        [TestCase(AppealStatus.Unsuccessful, true)]
+        [TestCase(AppealStatus.InProgressOutcome, true)]
+        [TestCase(AppealStatus.Submitted, true)]
+        [TestCase(AppealStatus.SuccessfulFitnessForFunding, true)]
+        [TestCase(AppealStatus.SuccessfulAlreadyActive, true)]
+        public async Task BuildApplicationSummaryViewModel_builds_expected_viewModel(AppealStatus appealStatus, bool appealSubmitted)
         {
             var emailAddress = "test@test.com";
             var ukprn = "12345678";
@@ -314,6 +324,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var financialExternalComments = "financial external comments";
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var moderationStatus = Domain.Apply.ModerationStatus.Fail;
+            _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
+                .ReturnsAsync(new GetAppealResponse { Status = appealStatus });
 
             var application = new Apply
             {
@@ -354,7 +366,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 GatewayReviewStatus = gatewayReviewStatus,
                 ModerationStatus = moderationStatus,
                 FinancialGrade = financialGrade,
-                FinancialExternalComments = financialExternalComments
+                FinancialExternalComments = financialExternalComments,
+                AppealSubmitted = appealSubmitted
             };
 
             var returnedModel = await _service.BuildApplicationSummaryViewModel(application, emailAddress);
