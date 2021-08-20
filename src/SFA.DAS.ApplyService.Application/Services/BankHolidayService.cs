@@ -10,6 +10,7 @@ namespace SFA.DAS.ApplyService.Application.Services
 
             if (startDate == null)
                 return null;
+            startDate = startDate.Value.Date;
 
             var actualNumberOfDaysAhead = numberOfDaysAhead;
             var bankHolidays = BankHolidays;
