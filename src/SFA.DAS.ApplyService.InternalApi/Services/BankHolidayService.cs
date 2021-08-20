@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services
 {
