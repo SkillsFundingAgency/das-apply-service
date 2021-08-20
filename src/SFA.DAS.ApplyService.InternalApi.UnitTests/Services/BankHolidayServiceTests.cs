@@ -64,16 +64,16 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
             returnedDate.Should().BeSameDateAs(expectedDate);
         }
 
-        // [TestCase("2021-01-01", 10, "2021-01-15")]
-        // [TestCase("2022-02-01", 10, "2022-02-15")]
-        // [TestCase("2022-03-01", 15, "2022-03-22")]
-        // [TestCase("2022-04-01", 20, "2022-05-04")]
-        // [TestCase("2022-05-01", 30, "2022-06-16")]
-        // [TestCase("2022-06-01", 10, "2022-06-17")]
-        // [TestCase("2022-07-01", 10, "2022-07-15")]
-        // [TestCase("2022-08-01", 10, "2022-08-15")]
-        // [TestCase("2021-08-19", 1, "2021-08-20")]
-        // [TestCase("2021-03-01", 1, "2021-03-02")]
+        [TestCase("2021-01-01", 10, "2021-01-15")]
+        [TestCase("2022-02-01", 10, "2022-02-15")]
+        [TestCase("2022-03-01", 15, "2022-03-22")]
+        [TestCase("2022-04-01", 20, "2022-05-04")]
+        [TestCase("2022-05-01", 30, "2022-06-16")]
+        [TestCase("2022-06-01", 10, "2022-06-17")]
+        [TestCase("2022-07-01", 10, "2022-07-15")]
+        [TestCase("2022-08-01", 10, "2022-08-15")]
+        [TestCase("2021-08-19", 1, "2021-08-20")]
+        [TestCase("2021-03-01", 1, "2021-03-02")]
         [TestCase("2021-08-16 15:38:30.6366667",10,"2021-08-31")]
         public async Task GetWorkingDaysAhead_returns_expectedDate(DateTime startDate, int daysAhead, DateTime expectedDate)
         {
