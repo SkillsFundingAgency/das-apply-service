@@ -20,6 +20,7 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
 using SFA.DAS.ApplyService.Data.FileStorage;
 using SFA.DAS.ApplyService.Data.Queries;
+using SFA.DAS.ApplyService.Data.Repositories;
 using SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.DfeSignIn;
@@ -247,6 +248,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IAssessorSectorDetailsService, AssessorSectorDetailsService>();
             services.AddTransient<IAssessorReviewCreationService, AssessorReviewCreationService>();
             services.AddTransient<IModeratorReviewCreationService, ModeratorReviewCreationService>();
+            services.AddTransient<IBankHolidayService, BankHolidayService>();
+            services.AddTransient<IBankHolidayRepository, BankHolidayRepository>();
 
             services.AddTransient<IApplicationRepository, ApplicationRepository>();
             services.AddTransient<IDiffService, DiffService>();
