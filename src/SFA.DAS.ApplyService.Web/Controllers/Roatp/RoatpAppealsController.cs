@@ -2,9 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Web.Infrastructure;
-using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
@@ -13,12 +11,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     public class RoatpAppealsController : Controller
     {
         private readonly IOutcomeApiClient _apiClient;
-        private readonly IOverallOutcomeService _overallOutcomeService;
 
-        public RoatpAppealsController(IOutcomeApiClient apiClient, IOverallOutcomeService overallOutcomeService)
+        public RoatpAppealsController(IOutcomeApiClient apiClient)
         {
             _apiClient = apiClient;
-            _overallOutcomeService = overallOutcomeService;
         }
 
         [HttpGet("application/{applicationId}/appeal")]

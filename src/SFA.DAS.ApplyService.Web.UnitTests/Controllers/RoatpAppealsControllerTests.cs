@@ -10,7 +10,6 @@ using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Controllers.Roatp;
 using SFA.DAS.ApplyService.Web.Infrastructure;
-using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
@@ -23,7 +22,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
         private RoatpAppealsController _controller;
         private Mock<IOutcomeApiClient> _apiClient;
-        private Mock<IOverallOutcomeService> _outcomeService;
 
         [SetUp]
         public void Before_each_test()
@@ -32,7 +30,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _applicationDeterminedDate = DateTime.Today;
 
             _apiClient = new Mock<IOutcomeApiClient>();
-            _outcomeService = new Mock<IOverallOutcomeService>();
 
             var signInId = Guid.NewGuid();
             var givenNames = "Test";
@@ -52,7 +49,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(_applicationDeterminedDate.AddDays(10));
 
-            _controller = new RoatpAppealsController(_apiClient.Object, _outcomeService.Object)
+            _controller = new RoatpAppealsController(_apiClient.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
