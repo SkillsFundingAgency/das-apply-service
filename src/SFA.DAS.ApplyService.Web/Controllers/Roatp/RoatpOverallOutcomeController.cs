@@ -3,8 +3,8 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
@@ -124,6 +124,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return View("~/Views/Roatp/ApplicationWithdrawn.cshtml", model);
                 case ApplicationStatus.Removed:
                     var oversightReviewDetails = await _apiClient.GetOversightReview(applicationId);
+                    model.ApplicationDeterminedDate = oversightReviewDetails?.ApplicationDeterminedDate;
+                    model.AppealRequiredByDate =
+                        _bankHolidayService.GetWorkingDaysAheadDate(oversightReviewDetails?.ApplicationDeterminedDate, NumberOfWorkingDays);
                     if (oversightReviewDetails?.Status == OversightReviewStatus.Removed)
                         return View("~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", model);
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
