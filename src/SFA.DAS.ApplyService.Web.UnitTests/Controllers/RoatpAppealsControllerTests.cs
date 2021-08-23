@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Types;
@@ -24,7 +23,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
         private RoatpAppealsController _controller;
         private Mock<IOutcomeApiClient> _outcomeApiClient;
-        private Mock<IBankHolidayService> _bankHolidayService;
         private Mock<IAppealsApiClient> _appealsApiClient;
 
         [SetUp]
@@ -34,7 +32,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _applicationDeterminedDate = DateTime.Today;
 
             _outcomeApiClient = new Mock<IOutcomeApiClient>();
-            _bankHolidayService = new Mock<IBankHolidayService>();
             _appealsApiClient = new Mock<IAppealsApiClient>();
 
             var signInId = Guid.NewGuid();
@@ -53,11 +50,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var oversightReview = new GetOversightReviewResponse { Status = OversightReviewStatus.Unsuccessful, ApplicationDeterminedDate = _applicationDeterminedDate };
             _outcomeApiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(oversightReview);
 
-            _bankHolidayService.Setup(x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())).Returns(_applicationDeterminedDate.AddDays(10));
+            _outcomeApiClient.Setup(x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(_applicationDeterminedDate.AddDays(10));
 
             _appealsApiClient.Setup(x => x.GetAppeal(_applicationId)).ReturnsAsync(default(GetAppealResponse));
 
-            _controller = new RoatpAppealsController(_outcomeApiClient.Object, _bankHolidayService.Object, _appealsApiClient.Object)
+            _controller = new RoatpAppealsController(_outcomeApiClient.Object, _appealsApiClient.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -84,7 +81,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var oversightReview = new GetOversightReviewResponse { Status = OversightReviewStatus.Unsuccessful, ApplicationDeterminedDate = _applicationDeterminedDate };
             _outcomeApiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(oversightReview);
-            _bankHolidayService.Setup(x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())).Returns(_applicationDeterminedDate.AddDays(-10));
+            _outcomeApiClient.Setup(x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(_applicationDeterminedDate.AddDays(-10));
 
             var result = await _controller.MakeAppeal(_applicationId);
 
@@ -130,7 +127,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var oversightReview = new GetOversightReviewResponse { Status = OversightReviewStatus.Unsuccessful, ApplicationDeterminedDate = _applicationDeterminedDate };
             _outcomeApiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(oversightReview);
-            _bankHolidayService.Setup(x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())).Returns(_applicationDeterminedDate.AddDays(-10));
+            _outcomeApiClient.Setup(x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(_applicationDeterminedDate.AddDays(-10));
 
             var result = await _controller.GroundsOfAppeal(_applicationId, _appealOnPolicyOrProcesses, _appealOnEvidenceSubmitted);
 
