@@ -14,13 +14,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     {
         private readonly IOutcomeApiClient _apiClient;
         private readonly IOverallOutcomeService _overallOutcomeService;
-        private readonly IBankHolidayService _bankHolidayService;
 
-        public RoatpAppealsController(IOutcomeApiClient apiClient, IOverallOutcomeService overallOutcomeService, IBankHolidayService bankHolidayService)
+        public RoatpAppealsController(IOutcomeApiClient apiClient, IOverallOutcomeService overallOutcomeService)
         {
             _apiClient = apiClient;
             _overallOutcomeService = overallOutcomeService;
-            _bankHolidayService = bankHolidayService;
         }
 
         [HttpGet("application/{applicationId}/appeal")]
@@ -89,11 +87,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         private async Task<bool> WithinAppealWindow(Guid applicationId)
         {
-            // NOTE: This is an effective workaround until we fully implement BankHolidayService and have AppealRequiredByDate in the OversightReview
+            // NOTE: This is an effective workaround until we have AppealRequiredByDate in the OversightReview
             var oversight = await _apiClient.GetOversightReview(applicationId);
 
             const int numberOfWorkingDays = 10;
-            var appealRequiredByDate = _bankHolidayService.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, numberOfWorkingDays);
+            var appealRequiredByDate = await _apiClient.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, numberOfWorkingDays);
 
             return appealRequiredByDate.HasValue && appealRequiredByDate >= DateTime.Today;
         }
