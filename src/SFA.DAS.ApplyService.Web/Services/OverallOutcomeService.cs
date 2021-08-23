@@ -91,7 +91,8 @@ namespace SFA.DAS.ApplyService.Web.Services
                     FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
                     GatewayReviewStatus = application?.GatewayReviewStatus,
                     ModerationStatus = application?.ModerationStatus,
-                    SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit
+                    SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit,
+                    ApplicationStatus = application?.ApplicationStatus
                 };
                 return model;
             }
@@ -164,7 +165,8 @@ namespace SFA.DAS.ApplyService.Web.Services
                 ModerationFailOverturnedToPass = moderationFailedAndOverturned,
                 ModerationFailApproved = moderationFailedAndApproved,
                 GatewayPassOverturnedToFail = gatewayPassOverturnedToFail,
-                OversightExternalComments = oversightReview?.ExternalComments
+                OversightExternalComments = oversightReview?.ExternalComments,
+                ApplicationStatus = application?.ApplicationStatus
             };
 
             if (moderationFailedAndApproved)

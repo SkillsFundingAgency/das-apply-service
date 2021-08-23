@@ -1,0 +1,66 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals.MakeAppealViewModel
+
+@{
+    ViewBag.Title = "Make an appeal";
+    Layout = "_Layout";
+}
+
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">Make an appeal</h1>
+            <p class="govuk-body">
+                For this section, you’ll need to explain how the ESFA has failed to either:
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>follow its own policy or processes</li>
+                    <li>understand or recognise the evidence submitted</li>
+                </ul>
+            </p>
+            <p class="govuk-body">
+                or both. These are the only 2 grounds for making an appeal.
+            </p>
+            <p class="govuk-body">
+                After you select the ground, or grounds for appeal, you will have up to 10,000 characters to tell the ESFA how they have failed.
+            </p>
+            <p class="govuk-body">
+                You can upload a maximum of 4 files to support your appeal, but the ESFA will not consider any additional information you provide that was not included in your original application.
+            </p>
+
+            <form method="post" asp-action="MakeAppeal" asp-controller="RoatpOverallOutcome" novalidate>
+                <input type="hidden" asp-for="ApplicationId" />
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset">
+                        <h2 class="govuk-heading-m">What are your grounds for appealing?</h2>
+                        <span class="govuk-hint">Select all that apply</span>
+                        <div class="govuk-form-group">
+                            <span class="govuk-error-message"></span>
+                            <div class="govuk-checkboxes">
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" type="checkbox" />
+                                    <label class="govuk-label govuk-checkboxes__label">
+                                        the ESFA has failed to follow its own policy or processes.
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" type="checkbox" />
+                                    <label class="govuk-label govuk-checkboxes__label">
+                                        the ESFA has failed to understand or recognise the evidence submitted.
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                    Save and continue
+                </button>
+            </form>
+        </div>
+    </div>
+</main>

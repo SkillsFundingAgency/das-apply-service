@@ -19,6 +19,7 @@ using SFA.DAS.ApplyService.Web.Controllers.Roatp;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -30,6 +31,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IApplicationApiClient> _applicationApiClient;
         private Mock<IOverallOutcomeService> _outcomeService;
         private Mock<ILogger<RoatpOverallOutcomeController>> _logger;
+        private Mock<IBankHolidayService> _bankHolidayService;
+
 
         [SetUp]
         public void Before_each_test()
@@ -38,6 +41,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _logger = new Mock<ILogger<RoatpOverallOutcomeController>>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
             _outcomeService = new Mock<IOverallOutcomeService>();
+            _bankHolidayService=new Mock<IBankHolidayService>();
 
             var signInId = Guid.NewGuid();
             var givenNames = "Test";
@@ -53,7 +57,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             }, "mock"));
 
             _controller = new RoatpOverallOutcomeController(_apiClient.Object,
-                _outcomeService.Object, _applicationApiClient.Object, _logger.Object)
+                _outcomeService.Object, _applicationApiClient.Object, _logger.Object, _bankHolidayService.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -417,14 +421,33 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationStatus = ApplicationStatus.Unsuccessful,
                 GatewayReviewStatus = GatewayReviewStatus.Fail
             };
+
+            var applicationDeterminedDate = DateTime.Today;
+            var appealRequiredByDate = DateTime.Today.AddDays(10);
         
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
-        
+
+            var oversightReview = new GetOversightReviewResponse { Status = OversightReviewStatus.Unsuccessful, ApplicationDeterminedDate = applicationDeterminedDate };
+
+            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
+
+            _bankHolidayService.Setup((x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())))
+                .Returns(appealRequiredByDate);
+            
+            var model = new ApplicationSummaryViewModel();
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationUnsuccessful.cshtml");
+
+            var returnedModel = viewResult.Model as ApplicationSummaryViewModel;
+            returnedModel.AppealRequiredByDate.Should().Be(appealRequiredByDate);
+            returnedModel.ApplicationDeterminedDate.Should().Be(applicationDeterminedDate);
+
         }
         
         [Test]
@@ -436,14 +459,37 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
         
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
-        
+
+
+            var model = new ApplicationSummaryViewModel();
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+            var modelWithModeratorDetails = new ApplicationSummaryWithModeratorDetailsViewModel();
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(submittedApp, "test@test.com")).ReturnsAsync(modelWithModeratorDetails);
+
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationUnsuccessfulPostGateway.cshtml");
         }
-        
+
+        [Test]
+        public async Task MakeAppeal_shows_make_appeal_page()
+        {
+            var _applicationId = Guid.NewGuid();
+
+            var model = new MakeAppealViewModel {ApplicationId = _applicationId};
+
+            var result = _controller.MakeAppeal(_applicationId);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("MakeAppeal.cshtml");
+            viewResult.Model.Should().BeEquivalentTo(model);
+        }
+
         [Test]
         public async Task Application_shows_withdrawn_page_if_application_withdrawn()
         {
