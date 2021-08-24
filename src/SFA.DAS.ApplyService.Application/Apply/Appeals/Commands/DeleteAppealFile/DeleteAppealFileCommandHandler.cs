@@ -7,31 +7,30 @@ using SFA.DAS.ApplyService.Data.FileStorage;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
-namespace SFA.DAS.ApplyService.Application.Apply.Oversight
+namespace SFA.DAS.ApplyService.Application.Appeals.Commands.DeleteAppealFile
 {
-    // TODO: APPEALREVIEW - Review once appeal work starts
-    public class RemoveAppealFileCommandHandler : IRequestHandler<RemoveAppealFileCommand>
+    public class DeleteAppealFileCommandHandler : IRequestHandler<DeleteAppealFileCommand>
     {
-        private readonly IAppealUploadRepository _appealUploadRepository;
+        private readonly IAppealFileRepository _appealFileRepository;
         private readonly IAppealsFileStorage _appealsFileStorage;
         private readonly IAuditService _auditService;
 
-        public RemoveAppealFileCommandHandler(IAppealUploadRepository appealUploadRepository,
+        public DeleteAppealFileCommandHandler(IAppealFileRepository appealFileRepository,
             IAppealsFileStorage appealsFileStorage,
             IAuditService auditService)
         {
-            _appealUploadRepository = appealUploadRepository;
+            _appealFileRepository = appealFileRepository;
             _appealsFileStorage = appealsFileStorage;
             _auditService = auditService;
         }
 
-        public async Task<Unit> Handle(RemoveAppealFileCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteAppealFileCommand request, CancellationToken cancellationToken)
         {
-            var upload = await _appealUploadRepository.GetById(request.FileId);
+            var upload = await _appealFileRepository.Get(request.FileId);
 
             if (upload.ApplicationId != request.ApplicationId)
             {
-                throw new InvalidOperationException($"Appeal upload {request.FileId} does not belong to Application {request.ApplicationId}");
+                throw new InvalidOperationException($"Appeal file {request.FileId} does not belong to Application {request.ApplicationId}");
             }
 
             await _appealsFileStorage.Remove(request.ApplicationId, upload.FileStorageReference, cancellationToken);
@@ -39,7 +38,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             _auditService.StartTracking(UserAction.RemoveAppealFile, request.UserId, request.UserName);
 
             _auditService.AuditDelete(upload);
-            _appealUploadRepository.Remove(upload.Id);
+            _appealFileRepository.Remove(upload.Id);
 
             _auditService.Save();
 

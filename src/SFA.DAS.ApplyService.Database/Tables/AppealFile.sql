@@ -1,8 +1,7 @@
-﻿CREATE TABLE [dbo].[AppealUpload]
+﻿CREATE TABLE [dbo].[AppealFile]
 (
-	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWID(),
     [ApplicationId] UNIQUEIDENTIFIER NOT NULL,
-    [AppealId] UNIQUEIDENTIFIER NULL,
     [FileStorageReference] UNIQUEIDENTIFIER NOT NULL,
     [Filename] NVARCHAR(256) NOT NULL,
     [ContentType] NVARCHAR(256) NOT NULL,
@@ -13,7 +12,7 @@
 )
 GO
 
-ALTER TABLE [dbo].[AppealUpload] ADD CONSTRAINT [FK_AppealUpload_Apply] FOREIGN KEY(ApplicationId)
+ALTER TABLE [dbo].[AppealFile] ADD CONSTRAINT [FK_AppealFile_Apply] FOREIGN KEY(ApplicationId)
 REFERENCES [dbo].[Apply] ([ApplicationId])
 GO
 

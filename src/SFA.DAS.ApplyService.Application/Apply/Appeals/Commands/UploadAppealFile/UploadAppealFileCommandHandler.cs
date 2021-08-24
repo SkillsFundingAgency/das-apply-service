@@ -7,22 +7,21 @@ using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
-namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile
+namespace SFA.DAS.ApplyService.Application.Appeals.Commands.UploadAppealFile
 {
-    // TODO: APPEALREVIEW - Review once appeal work starts
     public class UploadAppealFileCommandHandler : IRequestHandler<UploadAppealFileCommand>
     {
-        private readonly IAppealUploadRepository _appealUploadRepository;
+        private readonly IAppealFileRepository _appealFileRepository;
         private readonly IAppealsFileStorage _appealsFileStorage;
         private readonly IAuditService _auditService;
 
         public UploadAppealFileCommandHandler(
-            IAppealUploadRepository appealUploadRepository,
+            IAppealFileRepository appealFileRepository,
             IAppealsFileStorage appealsFileStorage,
             IAuditService auditService
             )
         {
-            _appealUploadRepository = appealUploadRepository;
+            _appealFileRepository = appealFileRepository;
             _appealsFileStorage = appealsFileStorage;
             _auditService = auditService;
         }
@@ -31,22 +30,22 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppeal
         {
             _auditService.StartTracking(UserAction.UploadAppealFile, request.UserId, request.UserName);
 
-            var fileStorageReference = await _appealsFileStorage.Add(request.ApplicationId, request.File, cancellationToken);
+            var fileStorageReference = await _appealsFileStorage.Add(request.ApplicationId, request.AppealFile, cancellationToken);
 
-            var appealUpload = new AppealUpload
+            var appealFile = new AppealFile
             {
                 ApplicationId = request.ApplicationId,
                 FileStorageReference = fileStorageReference,
-                ContentType = request.File.ContentType,
-                Filename = request.File.Filename,
-                Size = request.File.Data.Length,
+                ContentType = request.AppealFile.ContentType,
+                Filename = request.AppealFile.Filename,
+                Size = request.AppealFile.Data.Length,
                 UserId = request.UserId,
                 UserName = request.UserName
             };
 
-            _appealUploadRepository.Add(appealUpload);
+            _appealFileRepository.Add(appealFile);
 
-            _auditService.AuditInsert(appealUpload);
+            _auditService.AuditInsert(appealFile);
             _auditService.Save();
 
             return Unit.Value;

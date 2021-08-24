@@ -10,13 +10,12 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 {
-    // TODO: APPEALREVIEW - Review once appeal work starts
-    public class AppealUploadRepository : IAppealUploadRepository
+    public class AppealFileRepository : IAppealFileRepository
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IApplyConfig _config;
 
-        public AppealUploadRepository(IConfigurationService configurationService, IUnitOfWork unitOfWork)
+        public AppealFileRepository(IConfigurationService configurationService, IUnitOfWork unitOfWork)
         {
             _config = configurationService.GetConfig().Result;
             _unitOfWork = unitOfWork;
@@ -27,7 +26,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
             return new SqlConnection(_config.SqlConnectionString);
         }
 
-        public void Add(AppealUpload entity)
+        public void Add(AppealFile entity)
         {
             _unitOfWork.Register(() => PersistAdd(entity));
         }
@@ -37,40 +36,33 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
             _unitOfWork.Register(() => PersistRemoval(entityId));
         }
 
-        public void Update(AppealUpload entity)
-        {
-            _unitOfWork.Register(() => PersistUpdate(entity));
-        }
-
-        public async Task<AppealUpload> GetById(Guid entityId)
+        public async Task<AppealFile> Get(Guid entityId)
         {
             using (var connection = GetConnection())
             {
-                return await connection.QuerySingleAsync<AppealUpload>(
-                    @"SELECT * FROM [AppealUpload] WHERE Id = @entityId",
+                return await connection.QuerySingleAsync<AppealFile>(
+                    @"SELECT * FROM [AppealFile] WHERE Id = @entityId",
                     new { entityId });
             }
         }
 
-        public async Task<IEnumerable<AppealUpload>> GetByApplicationId(Guid applicationId)
+        public async Task<IEnumerable<AppealFile>> GetAllForApplication(Guid applicationId)
         {
             using (var connection = GetConnection())
             {
-                return await connection.QueryAsync<AppealUpload>(
-                    @"SELECT * FROM [AppealUpload] WHERE ApplicationId = @applicationId",
+                return await connection.QueryAsync<AppealFile>(
+                    @"SELECT * FROM [AppealFile] WHERE ApplicationId = @applicationId",
                     new { applicationId });
             }
         }
 
-        public async Task PersistAdd(AppealUpload entity)
+        public async Task PersistAdd(AppealFile entity)
         {
             var transaction = _unitOfWork.GetTransaction();
 
             await transaction.Connection.ExecuteAsync(
-                @"INSERT INTO [AppealUpload]
-                    ([Id],
-                    [ApplicationId],
-                    [AppealId],
+                @"INSERT INTO [AppealFile]
+                    ([ApplicationId],
                     [FileStorageReference],
                     [Filename],
                     [ContentType],
@@ -79,35 +71,14 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
                     [UserName],
                     [CreatedOn])
                     VALUES (
-                    @Id,
                     @ApplicationId,
-                    @AppealId,
                     @FileStorageReference,
                     @Filename,
                     @ContentType,
                     @Size,
                     @UserId,
                     @UserName,
-                    @CreatedOn)",
-                entity, transaction);
-        }
-
-        public async Task PersistUpdate(AppealUpload entity)
-        {
-            var transaction = _unitOfWork.GetTransaction();
-
-            await transaction.Connection.ExecuteAsync(
-                @"UPDATE [AppealUpload] SET
-                    [ApplicationId] = @ApplicationId,
-                    [AppealId] = @AppealId,
-                    [FileStorageReference] = @FileStorageReference,
-                    [Filename] = @Filename,
-                    [ContentType] = @ContentType,
-                    [Size] = @Size,
-                    [UserId] = @UserId,
-                    [UserName] = @UserName,
-                    [CreatedOn] = @CreatedOn
-                    WHERE [Id] = @Id",
+                    GETUTCDATE())",
                 entity, transaction);
         }
 
@@ -116,7 +87,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
             var transaction = _unitOfWork.GetTransaction();
 
             await transaction.Connection.ExecuteAsync(
-                "DELETE FROM [AppealUpload] WHERE Id = @entityId",
+                "DELETE FROM [AppealFile] WHERE Id = @entityId",
                     new { entityId }, transaction);
         }
     }

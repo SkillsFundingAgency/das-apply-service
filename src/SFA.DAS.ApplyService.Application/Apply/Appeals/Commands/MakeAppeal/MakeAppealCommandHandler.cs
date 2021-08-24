@@ -61,18 +61,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
                 _auditService.AuditUpdate(currentAppeal);
             }
 
-
-
-
-            //var uploads = await _appealUploadRepository.GetByApplicationId(oversightReview.ApplicationId);
-
-            //foreach (var upload in uploads)
-            //{
-            //    _auditService.AuditUpdate(upload);
-            //    upload.AppealId = appeal.Id;
-            //    _appealUploadRepository.Update(upload);
-            //}
-
             _auditService.Save();
 
 			return Unit.Value;

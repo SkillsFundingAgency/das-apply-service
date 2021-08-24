@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.QueryResults;
 
@@ -8,6 +9,6 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
     {
         Task<Appeal> GetAppeal(Guid applicationId);
 
-        Task<AppealFiles> GetStagedAppealFiles(Guid applicationId);
+        Task<List<AppealFile>> GetAppealFilesForApplication(Guid applicationId);
     }
 }

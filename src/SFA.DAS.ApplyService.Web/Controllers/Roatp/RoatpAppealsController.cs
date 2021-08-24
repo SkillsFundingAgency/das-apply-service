@@ -62,13 +62,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
             }
 
-            // TODO: Will need to populate any previously uploaded files. THis is done in a different ticket
+            var appealFileList = await _appealsApiClient.GetAppealFileList(applicationId);
 
             var model = new GroundsOfAppealViewModel
             {
                 ApplicationId = applicationId,
                 AppealOnPolicyOrProcesses = appealOnPolicyOrProcesses,
-                AppealOnEvidenceSubmitted = appealOnEvidenceSubmitted
+                AppealOnEvidenceSubmitted = appealOnEvidenceSubmitted,
+                AppealFiles = appealFileList?.AppealFiles
             };
 
             return View("~/Views/Appeals/GroundsOfAppeal.cshtml", model);
@@ -90,9 +91,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var signInId = User.GetSignInId().ToString();
             var userName = User.Identity.Name;
-            await _appealsApiClient.MakeAppeal(model.ApplicationId, model.HowFailedOnPolicyOrProcesses, model.HowFailedOnEvidenceSubmitted, signInId, userName);
 
-            return RedirectToAction("AppealSubmitted", new { model.ApplicationId });
+            if(model.AppealFileToUpload != null)
+            {
+                await _appealsApiClient.UploadFile(model.ApplicationId, model.AppealFileToUpload, signInId, userName);
+            }
+
+            if (model.FormAction != GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION)
+            {
+                await _appealsApiClient.MakeAppeal(model.ApplicationId, model.HowFailedOnPolicyOrProcesses, model.HowFailedOnEvidenceSubmitted, signInId, userName);
+                return RedirectToAction("AppealSubmitted", new { model.ApplicationId });
+            }
+            else
+            {
+                return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
+            }  
         }
 
         [HttpGet("application/{applicationId}/appeal-submitted")]
@@ -106,6 +119,39 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             return View("~/Views/Appeals/AppealSubmitted.cshtml", model);
         }
+
+        [HttpGet("application/{applicationId}/appeal/file/{fileId}")]
+        public async Task<IActionResult> DownloadAppealFile(Guid applicationId, Guid fileId)
+        {
+            var response = await _appealsApiClient.DownloadFile(applicationId, fileId);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var fileStream = await response.Content.ReadAsStreamAsync();
+
+                return File(fileStream, response.Content.Headers.ContentType.MediaType, response.Content.Headers.ContentDisposition.FileNameStar);
+            }
+
+            return NotFound();
+        }
+
+        //[Authorize(Policy = "AccessInProgressApplication")]
+        [HttpGet("application/{applicationId}/appeal/file/{fileId}/remove")]
+        public async Task<IActionResult> DeleteAppealFile(Guid applicationId, Guid fileId, bool appealOnPolicyOrProcesses, bool appealOnEvidenceSubmitted)
+        {
+            if (!await CanMakeAppeal(applicationId))
+            {
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+            }
+
+            var signInId = User.GetSignInId().ToString();
+            var userName = User.Identity.Name;
+
+            await _appealsApiClient.DeleteFile(applicationId, fileId, signInId, userName);
+
+            return RedirectToAction("GroundsOfAppeal", new { applicationId, appealOnPolicyOrProcesses, appealOnEvidenceSubmitted });
+        }
+
 
         private async Task<bool> CanMakeAppeal(Guid applicationId)
         {

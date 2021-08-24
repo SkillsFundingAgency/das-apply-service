@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
@@ -99,7 +98,6 @@ namespace SFA.DAS.ApplyService.InternalApi
                 }
             }).AddFluentValidation(fv =>
             {
-                fv.RegisterValidatorsFromAssemblyContaining<GetStagedFilesQueryValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<Startup>();
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -223,8 +221,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IOversightReviewRepository, OversightReviewRepository>();
             services.AddTransient<IOversightReviewQueries, OversightReviewQueries>();
 
-            // TODO: APPEALREVIEW - Review once appeal work starts
-            services.AddTransient<IAppealUploadRepository, AppealUploadRepository>();
+            services.AddTransient<IAppealFileRepository, AppealFileRepository>();
             services.AddTransient<IAppealRepository, AppealRepository>();
             services.AddTransient<IAppealsQueries, AppealsQueries>();
 

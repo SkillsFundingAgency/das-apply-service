@@ -3,12 +3,10 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 
 namespace SFA.DAS.ApplyService.Domain.Entities
 {
-    // TODO: APPEALREVIEW - Review once appeal work starts
-    public class AppealUpload : IAuditable
+    public class AppealFile : IAuditable
     {
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
-        public Guid? AppealId { get; set; }
         public Guid FileStorageReference { get; set; }
         public string Filename { get; set; }
         public string ContentType { get; set; }
@@ -16,11 +14,5 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string UserId { get; set; }
         public string UserName { get; set; }
         public DateTime CreatedOn { get; set; }
-
-        public AppealUpload()
-        {
-            Id = Guid.NewGuid();
-            CreatedOn = DateTime.UtcNow;
-        }
     }
 }

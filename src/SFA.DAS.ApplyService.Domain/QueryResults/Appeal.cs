@@ -24,13 +24,6 @@ namespace SFA.DAS.ApplyService.Domain.QueryResults
         public string InProgressExternalComments { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }
-        public List<AppealUpload> Uploads { get; set; }
-
-        public class AppealUpload
-        {
-            public Guid Id { get; set; }
-            public string Filename { get; set; }
-            public string ContentType { get; set; }
-        }
+        public List<AppealFile> AppealFiles { get; set; } //change name?
     }
 }

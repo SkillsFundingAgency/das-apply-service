@@ -1,10 +1,9 @@
 ﻿using System;
 using MediatR;
 
-namespace SFA.DAS.ApplyService.Application.Apply.Oversight
+namespace SFA.DAS.ApplyService.Application.Appeals.Commands.DeleteAppealFile
 {
-    // TODO: APPEALREVIEW - Review once appeal work starts
-    public class RemoveAppealFileCommand : IRequest
+    public class DeleteAppealFileCommand : IRequest
     {
         public Guid ApplicationId { get; set; }
         public Guid FileId { get; set; }
