@@ -16,11 +16,11 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAppealUploadQue
     public class GetAppealUploadQueryHandlerTests
     {
         private GetAppealUploadQueryHandler _handler;
-        private Mock<IAppealUploadRepository> _appealUploadRepository;
+        private Mock<IAppealFileRepository> _appealUploadRepository;
         private Mock<IAppealsFileStorage> _appealFileStorage;
         private readonly Fixture _autoFixture = new Fixture();
         private GetAppealUploadQuery _request;
-        private AppealUpload _appealUpload;
+        private AppealFile _appealUpload;
 
         private readonly Guid _applicationId = Guid.NewGuid();
         private readonly Guid _oversightReviewId = Guid.NewGuid();
@@ -42,14 +42,14 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAppealUploadQue
             _request = new GetAppealUploadQuery
             {
                 ApplicationId = _applicationId,
-                AppealId = _appealId,
+                //AppealId = _appealId,
                 AppealUploadId = _appealUploadId
             };
 
-            _appealUploadRepository = new Mock<IAppealUploadRepository>();
+            _appealUploadRepository = new Mock<IAppealFileRepository>();
             _appealFileStorage = new Mock<IAppealsFileStorage>();
 
-            _appealUpload = new AppealUpload
+            _appealUpload = new AppealFile
             {
                 Filename = _fileName,
                 ContentType = _contentType,
@@ -63,7 +63,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAppealUploadQue
                 UserName = _autoFixture.Create<string>()
             };
 
-            _appealUploadRepository.Setup(x => x.GetById(_appealUploadId)).ReturnsAsync(_appealUpload);
+            _appealUploadRepository.Setup(x => x.Get(_appealUploadId)).ReturnsAsync(_appealUpload);
 
             _appealFileStorage.Setup(x => x.Get(_applicationId, _fileStorageReference, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(_content);

@@ -16,12 +16,12 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
     [Ignore("placed on ignore as new appeal work to be done that will make use of this")]
     public class RemoveAppealFileCommandHandlerTests
     {
-        private RemoveAppealFileCommandHandler _handler;
-        private Mock<IAppealUploadRepository> _appealUploadRepository;
+        private DeleteAppealFileCommandHandler _handler;
+        private Mock<IAppealFileRepository> _appealUploadRepository;
         private Mock<IAppealsFileStorage> _appealFileStorage;
         private Mock<IAuditService> _auditService;
 
-        private RemoveAppealFileCommand _command;
+        private DeleteAppealFileCommand _command;
         private readonly Guid _applicationId = Guid.NewGuid();
         private readonly Guid _fileStorageFileId = Guid.NewGuid();
         private readonly Guid _appealUploadId = Guid.NewGuid();
@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
         [SetUp]
         public void Setup()
         {
-            _command = new RemoveAppealFileCommand
+            _command = new DeleteAppealFileCommand
             {
                 ApplicationId = _applicationId,
                 FileId = _appealUploadId,
@@ -37,10 +37,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 UserName = "userName"
             };
 
-            var upload = new AppealUpload { Id = _appealUploadId, FileStorageReference = _fileStorageFileId, ApplicationId = _applicationId };
+            var upload = new AppealFile { Id = _appealUploadId, FileStorageReference = _fileStorageFileId, ApplicationId = _applicationId };
 
-            _appealUploadRepository = new Mock<IAppealUploadRepository>();
-            _appealUploadRepository.Setup(x => x.GetById(_appealUploadId)).ReturnsAsync(upload);
+            _appealUploadRepository = new Mock<IAppealFileRepository>();
+            _appealUploadRepository.Setup(x => x.Get(_appealUploadId)).ReturnsAsync(upload);
             _appealUploadRepository.Setup(x => x.Remove(It.IsAny<Guid>()));
 
             _appealFileStorage = new Mock<IAppealsFileStorage>();
@@ -49,9 +49,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
 
             _auditService = new Mock<IAuditService>();
             _auditService.Setup(x => x.StartTracking(UserAction.RemoveAppealFile, _command.UserId, _command.UserName));
-            _auditService.Setup(x => x.AuditDelete(It.IsAny<AppealUpload>()));
+            _auditService.Setup(x => x.AuditDelete(It.IsAny<AppealFile>()));
 
-            _handler = new RemoveAppealFileCommandHandler(_appealUploadRepository.Object, _appealFileStorage.Object, _auditService.Object);
+            _handler = new DeleteAppealFileCommandHandler(_appealUploadRepository.Object, _appealFileStorage.Object, _auditService.Object);
         }
 
         [Test]
@@ -77,7 +77,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
         {
             await _handler.Handle(_command, CancellationToken.None);
 
-            _auditService.Verify(x => x.AuditDelete(It.Is< AppealUpload>(upload => upload.Id == _command.FileId)));
+            _auditService.Verify(x => x.AuditDelete(It.Is< AppealFile>(upload => upload.Id == _command.FileId)));
         }
     }
 }

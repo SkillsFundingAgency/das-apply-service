@@ -3,7 +3,7 @@ using Moq.Language.Flow;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests
+namespace SFA.DAS.ApplyService.Web.UnitTests.Extensions
 {
     public static class MoqExtensions
     {

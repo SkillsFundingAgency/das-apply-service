@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
     public class UploadAppealFileCommandHandlerTests
     {
         private UploadAppealFileCommandHandler _handler;
-        private Mock<IAppealUploadRepository> _appealUploadRepository;
+        private Mock<IAppealFileRepository> _appealUploadRepository;
         private Mock<IAppealsFileStorage> _appealFileStorage;
         private Mock<IAuditService> _auditService;
 
@@ -39,8 +39,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
                 UserName = "userName"
             };
 
-            _appealUploadRepository = new Mock<IAppealUploadRepository>();
-            _appealUploadRepository.Setup(x => x.Add(It.IsAny<AppealUpload>()));
+            _appealUploadRepository = new Mock<IAppealFileRepository>();
+            _appealUploadRepository.Setup(x => x.Add(It.IsAny<AppealFile>()));
 
             _appealFileStorage = new Mock<IAppealsFileStorage>();
             _appealFileStorage.Setup(x => x.Add(_applicationId, It.IsAny<FileUpload>(), It.IsAny<CancellationToken>()))
@@ -48,7 +48,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
 
             _auditService = new Mock<IAuditService>();
             _auditService.Setup(x => x.StartTracking(UserAction.UploadAppealFile, _command.UserId, _command.UserName));
-            _auditService.Setup(x => x.AuditInsert(It.IsAny<AppealUpload>()));
+            _auditService.Setup(x => x.AuditInsert(It.IsAny<AppealFile>()));
 
             _handler = new UploadAppealFileCommandHandler(_appealUploadRepository.Object, _appealFileStorage.Object, _auditService.Object);
         }
@@ -67,7 +67,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
         {
             await _handler.Handle(_command, CancellationToken.None);
 
-            _appealUploadRepository.Verify(x => x.Add(It.Is<AppealUpload>(upload =>
+            _appealUploadRepository.Verify(x => x.Add(It.Is<AppealFile>(upload =>
                 upload.ApplicationId == _command.ApplicationId
                 && upload.Filename == _command.File.Filename
                 && upload.ContentType == _command.File.ContentType
@@ -83,7 +83,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
         {
             await _handler.Handle(_command, CancellationToken.None);
 
-            _auditService.Verify(x => x.AuditInsert(It.Is<AppealUpload>(upload =>
+            _auditService.Verify(x => x.AuditInsert(It.Is<AppealFile>(upload =>
                 upload.ApplicationId == _command.ApplicationId
                 && upload.Filename == _command.File.Filename
                 && upload.ContentType == _command.File.ContentType

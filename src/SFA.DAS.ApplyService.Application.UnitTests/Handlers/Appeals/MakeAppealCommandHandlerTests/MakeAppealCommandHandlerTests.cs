@@ -79,7 +79,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.MakeAppeal
 
             _auditService = new Mock<IAuditService>();
             _auditService.Setup(x => x.StartTracking(UserAction.UploadAppealFile, _command.UserId, _command.UserName));
-            _auditService.Setup(x => x.AuditInsert(It.IsAny<AppealUpload>()));
+            _auditService.Setup(x => x.AuditInsert(It.IsAny<AppealFile>()));
 
             _handler = new MakeAppealCommandHandler(_oversightReviewRepository.Object, _appealRepository.Object, _auditService.Object);
         }
