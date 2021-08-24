@@ -4,28 +4,25 @@ using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppealUpload;
+using SFA.DAS.ApplyService.Application.Appeals.Queries.GetAppealFile;
 using SFA.DAS.ApplyService.Data.FileStorage;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAppealUploadQueryHandlerTests
+namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.GetAppealFileQueryHandlerTests
 {
     [TestFixture]
-    [Ignore("placed on ignore as new appeal work to be done that will make use of this")]
-    public class GetAppealUploadQueryHandlerTests
+    public class GetAppealFileQueryHandlerTests
     {
-        private GetAppealUploadQueryHandler _handler;
-        private Mock<IAppealFileRepository> _appealUploadRepository;
+        private GetAppealFileQueryHandler _handler;
+        private Mock<IAppealFileRepository> _appealFileRepository;
         private Mock<IAppealsFileStorage> _appealFileStorage;
         private readonly Fixture _autoFixture = new Fixture();
-        private GetAppealUploadQuery _request;
-        private AppealFile _appealUpload;
+        private GetAppealFileQuery _request;
+        private AppealFile _appealFile;
 
         private readonly Guid _applicationId = Guid.NewGuid();
-        private readonly Guid _oversightReviewId = Guid.NewGuid();
-        private readonly Guid _appealId = Guid.NewGuid();
-        private readonly Guid _appealUploadId = Guid.NewGuid();
+        private readonly Guid _appealFileId = Guid.NewGuid();
 
         private readonly Guid _fileStorageReference = Guid.NewGuid();
         private string _fileName;
@@ -39,36 +36,34 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAppealUploadQue
             _contentType = _autoFixture.Create<string>();
             _content = _autoFixture.Create<byte[]>();
 
-            _request = new GetAppealUploadQuery
+            _request = new GetAppealFileQuery
             {
                 ApplicationId = _applicationId,
-                //AppealId = _appealId,
-                AppealUploadId = _appealUploadId
+                FileId = _appealFileId
             };
 
-            _appealUploadRepository = new Mock<IAppealFileRepository>();
+            _appealFileRepository = new Mock<IAppealFileRepository>();
             _appealFileStorage = new Mock<IAppealsFileStorage>();
 
-            _appealUpload = new AppealFile
+            _appealFile = new AppealFile
             {
                 Filename = _fileName,
                 ContentType = _contentType,
                 FileStorageReference = _fileStorageReference,
-                AppealId = _appealId,
                 ApplicationId = _applicationId,
-                Id = _appealUploadId,
+                Id = _appealFileId,
                 CreatedOn = _autoFixture.Create<DateTime>(),
                 Size = _autoFixture.Create<int>(),
                 UserId = _autoFixture.Create<string>(),
                 UserName = _autoFixture.Create<string>()
             };
 
-            _appealUploadRepository.Setup(x => x.Get(_appealUploadId)).ReturnsAsync(_appealUpload);
+            _appealFileRepository.Setup(x => x.Get(_appealFileId)).ReturnsAsync(_appealFile);
 
             _appealFileStorage.Setup(x => x.Get(_applicationId, _fileStorageReference, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(_content);
 
-            _handler = new GetAppealUploadQueryHandler(_appealUploadRepository.Object, _appealFileStorage.Object);
+            _handler = new GetAppealFileQueryHandler(_appealFileRepository.Object, _appealFileStorage.Object);
         }
 
         [Test]
@@ -84,14 +79,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAppealUploadQue
         [Test]
         public void Handle_Throws_If_Upload_Does_Not_Belong_To_Application()
         {
-            _appealUpload.ApplicationId = Guid.NewGuid();
-            Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(_request, CancellationToken.None));
-        }
-
-        [Test]
-        public void Handle_Throws_If_Upload_Does_Not_Belong_To_Appeal()
-        {
-            _appealUpload.AppealId = Guid.NewGuid();
+            _appealFile.ApplicationId = Guid.NewGuid();
             Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(_request, CancellationToken.None));
         }
     }

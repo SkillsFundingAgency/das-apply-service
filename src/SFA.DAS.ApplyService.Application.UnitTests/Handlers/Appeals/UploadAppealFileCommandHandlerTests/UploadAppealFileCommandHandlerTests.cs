@@ -1,11 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply.Oversight;
-using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile;
+using SFA.DAS.ApplyService.Application.Appeals.Commands.UploadAppealFile;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Data.FileStorage;
 using SFA.DAS.ApplyService.Domain.Audit;
@@ -13,10 +11,9 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Domain.Models;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTests
+namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.UploadAppealFileCommandHandlerTests
 {
     [TestFixture]
-    [Ignore("placed on ignore as new appeal work to be done that will make use of this")]
     public class UploadAppealFileCommandHandlerTests
     {
         private UploadAppealFileCommandHandler _handler;
@@ -34,7 +31,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             _command = new UploadAppealFileCommand
             {
                 ApplicationId = _applicationId,
-                File = GenerateTestFileUpload(),
+                AppealFile = new FileUpload { Filename = "test.pdf", Data = new byte[] { 0x25, 0x50, 0x44, 0x46 }, ContentType = "application/pdf" },
                 UserId = "userId",
                 UserName = "userName"
             };
@@ -58,7 +55,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
         {
             await _handler.Handle(_command, CancellationToken.None);
             _appealFileStorage.Verify(x => x.Add(_applicationId,
-                It.Is<FileUpload>(file => file == _command.File),
+                It.Is<FileUpload>(file => file == _command.AppealFile),
                 It.IsAny<CancellationToken>()));
         }
 
@@ -69,12 +66,12 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
 
             _appealUploadRepository.Verify(x => x.Add(It.Is<AppealFile>(upload =>
                 upload.ApplicationId == _command.ApplicationId
-                && upload.Filename == _command.File.Filename
-                && upload.ContentType == _command.File.ContentType
+                && upload.Filename == _command.AppealFile.Filename
+                && upload.ContentType == _command.AppealFile.ContentType
                 && upload.FileStorageReference == _fileStorageFileId
                 && upload.UserId == _command.UserId
                 && upload.UserName == _command.UserName
-                && upload.Size == _command.File.Data.Length
+                && upload.Size == _command.AppealFile.Data.Length
                 )));
         }
 
@@ -85,30 +82,13 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
 
             _auditService.Verify(x => x.AuditInsert(It.Is<AppealFile>(upload =>
                 upload.ApplicationId == _command.ApplicationId
-                && upload.Filename == _command.File.Filename
-                && upload.ContentType == _command.File.ContentType
+                && upload.Filename == _command.AppealFile.Filename
+                && upload.ContentType == _command.AppealFile.ContentType
                 && upload.FileStorageReference == _fileStorageFileId
                 && upload.UserId == _command.UserId
                 && upload.UserName == _command.UserName
-                && upload.Size == _command.File.Data.Length
+                && upload.Size == _command.AppealFile.Data.Length
                 )));
-        }
-
-        private FileUpload GenerateTestFileUpload()
-        {
-            var result = new FileUpload();
-
-            var ms = new MemoryStream();
-            var writer = new StreamWriter(ms);
-            writer.Write("This is test file content!");
-            writer.Flush();
-            ms.Position = 0;
-
-            result.Filename = "test.pdf";
-            result.Data = ms.ToArray();
-            result.ContentType = "application/pdf";
-
-            return result;
         }
     }
 }

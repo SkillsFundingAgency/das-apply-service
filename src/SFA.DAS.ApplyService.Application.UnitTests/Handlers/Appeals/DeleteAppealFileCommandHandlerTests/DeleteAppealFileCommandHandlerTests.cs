@@ -3,18 +3,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply.Oversight;
+using SFA.DAS.ApplyService.Application.Appeals.Commands.DeleteAppealFile;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Data.FileStorage;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTests
+namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.DeleteAppealFileCommandHandlerTests
 {
     [TestFixture]
-    [Ignore("placed on ignore as new appeal work to be done that will make use of this")]
-    public class RemoveAppealFileCommandHandlerTests
+    public class DeleteAppealFileCommandHandlerTests
     {
         private DeleteAppealFileCommandHandler _handler;
         private Mock<IAppealFileRepository> _appealUploadRepository;
@@ -77,7 +76,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
         {
             await _handler.Handle(_command, CancellationToken.None);
 
-            _auditService.Verify(x => x.AuditDelete(It.Is< AppealFile>(upload => upload.Id == _command.FileId)));
+            _auditService.Verify(x => x.AuditDelete(It.Is<AppealFile>(upload => upload.Id == _command.FileId)));
         }
     }
 }
