@@ -17,7 +17,6 @@ using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
-using SFA.DAS.ApplyService.Data.FileStorage;
 using SFA.DAS.ApplyService.Data.Queries;
 using SFA.DAS.ApplyService.Data.Repositories;
 using SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories;
@@ -256,18 +255,12 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddTransient<IFileStorageService, FileStorageService>();
-            services.AddTransient<IAppealsFileStorage, AppealsFileStorage>();
             
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
             ConfigureNotificationApiEmailService(services);
-
-            services.AddAzureClients(builder =>
-            {
-                builder.AddBlobServiceClient(_applyConfig.FileStorage.StorageConnectionString);
-            });
         }
 
         private void ConfigureNotificationApiEmailService(IServiceCollection services)

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Configuration;
 using System;

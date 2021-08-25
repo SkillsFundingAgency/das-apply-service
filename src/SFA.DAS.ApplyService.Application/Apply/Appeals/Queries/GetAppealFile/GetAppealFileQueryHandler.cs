@@ -1,40 +1,23 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using SFA.DAS.ApplyService.Data.FileStorage;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Domain.QueryResults;
 
 namespace SFA.DAS.ApplyService.Application.Appeals.Queries.GetAppealFile
 {
-    public class GetAppealFileQueryHandler : IRequestHandler<GetAppealFileQuery, GetAppealFileQueryResult>
+    public class GetAppealFileQueryHandler : IRequestHandler<GetAppealFileQuery, AppealFile>
     {
-        private readonly IAppealFileRepository _appealFileRepository;
-        private readonly IAppealsFileStorage _appealsFileStorage;
+        private readonly IAppealsQueries _appealsQueries;
 
-        public GetAppealFileQueryHandler(IAppealFileRepository appealFileRepository, IAppealsFileStorage appealsFileStorage)
+        public GetAppealFileQueryHandler(IAppealsQueries appealsQueries)
         {
-            _appealFileRepository = appealFileRepository;
-            _appealsFileStorage = appealsFileStorage;
+            _appealsQueries = appealsQueries;
         }
 
-        public async Task<GetAppealFileQueryResult> Handle(GetAppealFileQuery request, CancellationToken cancellationToken)
+        public async Task<AppealFile> Handle(GetAppealFileQuery request, CancellationToken cancellationToken)
         {
-            var upload = await _appealFileRepository.Get(request.FileId);
-
-            if (upload.ApplicationId != request.ApplicationId)
-            {
-                throw new InvalidOperationException();
-            }
-
-            var content = await _appealsFileStorage.Get(request.ApplicationId, upload.FileStorageReference, cancellationToken);
-
-            return new GetAppealFileQueryResult
-            {
-                Filename = upload.Filename,
-                ContentType = upload.ContentType,
-                Content = content
-            };
+            return await _appealsQueries.GetAppealFile(request.ApplicationId, request.FileName);
         }
     }
 }

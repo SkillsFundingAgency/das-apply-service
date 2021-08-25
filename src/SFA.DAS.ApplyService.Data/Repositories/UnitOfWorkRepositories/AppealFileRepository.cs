@@ -46,6 +46,16 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
             }
         }
 
+        public async Task<AppealFile> Get(Guid applicationId, string fileName)
+        {
+            using (var connection = GetConnection())
+            {
+                return await connection.QuerySingleAsync<AppealFile>(
+                    @"SELECT * FROM [AppealFile] WHERE ApplicationId = @applicationId AND FileName = @fileName",
+                    new { applicationId, fileName });
+            }
+        }
+
         public async Task<IEnumerable<AppealFile>> GetAllForApplication(Guid applicationId)
         {
             using (var connection = GetConnection())
@@ -63,8 +73,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
             await transaction.Connection.ExecuteAsync(
                 @"INSERT INTO [AppealFile]
                     ([ApplicationId],
-                    [FileStorageReference],
-                    [Filename],
+                    [FileName],
                     [ContentType],
                     [Size],
                     [UserId],
@@ -72,8 +81,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
                     [CreatedOn])
                     VALUES (
                     @ApplicationId,
-                    @FileStorageReference,
-                    @Filename,
+                    @FileName,
                     @ContentType,
                     @Size,
                     @UserId,

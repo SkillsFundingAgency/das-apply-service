@@ -10,6 +10,8 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         void Add(AppealFile entity);
         void Remove(Guid entityId);
         Task<AppealFile> Get(Guid entityId);
+
+        Task<AppealFile> Get(Guid applicationId, string fileName);
         Task<IEnumerable<AppealFile>> GetAllForApplication(Guid applicationId);
     }
 }

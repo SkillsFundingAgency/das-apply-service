@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +22,7 @@ using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppealFileList;
 using SFA.DAS.ApplyService.Domain.QueryResults;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
+using SFA.DAS.ApplyService.InternalApi.Services.Files;
 using SFA.DAS.ApplyService.InternalApi.Types.Requests.Appeals;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
 
@@ -32,6 +32,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
     {
         private Mock<ILogger<AppealsController>> _logger;
         private Mock<IMediator> _mediator;
+        private Mock<IFileStorageService> _fileStorageService;
 
         private AppealsController _controller;
         private static readonly Fixture AutoFixture = new Fixture();
@@ -41,7 +42,15 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         {
             _logger = new Mock<ILogger<AppealsController>>();
             _mediator = new Mock<IMediator>();
-            _controller = new AppealsController(_logger.Object, _mediator.Object);
+            _fileStorageService = new Mock<IFileStorageService>();
+
+            _controller = new AppealsController(_logger.Object, _mediator.Object, _fileStorageService.Object)
+            {
+                ControllerContext = new ControllerContext()
+                {
+                    HttpContext = new DefaultHttpContext()
+                }
+            };
         }
 
         [Test]
@@ -85,7 +94,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             var request = new GetAppealFileListRequest();
             var queryResult = new List<Domain.QueryResults.AppealFile>
             {
-                new Domain.QueryResults.AppealFile { Id = Guid.NewGuid(), Filename = AutoFixture.Create<string>() }
+                new Domain.QueryResults.AppealFile { Id = Guid.NewGuid(), FileName = AutoFixture.Create<string>() }
             };
 
             _mediator.Setup(x => x.Send(It.IsAny<GetAppealFileListQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
@@ -109,10 +118,14 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
                 UserName = AutoFixture.Create<string>()
             };
 
+            _fileStorageService.Setup(x => x.UploadApplicationFiles(request.ApplicationId, It.IsAny<IFormFileCollection>(), It.IsAny<ContainerType>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
             _mediator.Setup(x => x.Send(It.IsAny<UploadAppealFileCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
 
             var result = await _controller.UploadAppealFile(request);
             result.Should().BeOfType<OkResult>();
+
+            _fileStorageService.Verify(x => x.UploadApplicationFiles(request.ApplicationId, It.IsAny<IFormFileCollection>(), It.IsAny<ContainerType>(), It.IsAny<CancellationToken>()), Times.Once);
 
             string expectedFileData;
             using (var reader = new StreamReader(request.AppealFile.OpenReadStream()))
@@ -124,7 +137,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
                     c.ApplicationId == request.ApplicationId
                     && c.UserId == request.UserId
                     && c.UserName == request.UserName
-                    && c.AppealFile.Filename == request.AppealFile.FileName
+                    && c.AppealFile.FileName == request.AppealFile.FileName
                     && Encoding.UTF8.GetString(c.AppealFile.Data) == expectedFileData),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -132,26 +145,31 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         [Test]
         public async Task GetAppealFile_gets_AppealFile_for_Application_Appeal()
         {
-            var request = new GetAppealFileRequest();
-            var queryResult = new GetAppealFileQueryResult { Filename = AutoFixture.Create<string>(), Content = AutoFixture.Create<byte[]>(), ContentType = "application/pdf" };
+            var applicationId = AutoFixture.Create<Guid>();
+            var fileName = AutoFixture.Create<string>();
+            var contentType = "application/pdf";
 
-            _mediator.Setup(x => x.Send(It.IsAny<GetAppealFileQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(queryResult);
+            var request = new GetAppealFileRequest { ApplicationId = applicationId, FileName = fileName };
+            var appealFile = new Domain.QueryResults.AppealFile { ApplicationId = applicationId, FileName = fileName, ContentType = contentType };
+            _mediator.Setup(x => x.Send(It.IsAny<GetAppealFileQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(appealFile);
+
+            var storageFile = new DownloadFile { Stream = new MemoryStream(), ContentType = contentType, FileName = fileName };
+            _fileStorageService.Setup(x => x.DownloadApplicationFile(applicationId, storageFile.FileName, It.IsAny<ContainerType>(), It.IsAny<CancellationToken>())).ReturnsAsync(storageFile);
 
             var result = await _controller.GetAppealFile(request);
-            result.Should().BeOfType<FileContentResult>();
+            result.Should().BeOfType<FileStreamResult>();
 
-            var fileResult = result as FileContentResult;
+            var fileResult = result as FileStreamResult;
 
-            Assert.AreEqual(queryResult.Filename, fileResult.FileDownloadName);
-            Assert.AreEqual(queryResult.Content, fileResult.FileContents);
-            Assert.AreEqual(queryResult.ContentType, fileResult.ContentType);
+            Assert.AreEqual(storageFile.FileName, fileResult.FileDownloadName);
+            Assert.AreEqual(storageFile.ContentType, fileResult.ContentType);
         }
 
         [Test]
         public async Task DeleteAppealFile_removes_AppealFile_from_Application_Appeal()
         {
             var applicationId = AutoFixture.Create<Guid>();
-            var fileId = AutoFixture.Create<Guid>();
+            var fileName = AutoFixture.Create<string>();
 
             var request = new DeleteAppealFileRequest
             {
@@ -161,16 +179,20 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 
             _mediator.Setup(x => x.Send(It.IsAny<DeleteAppealFileCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
 
-            var result = await _controller.DeleteAppealFile(applicationId, fileId, request);
+            _fileStorageService.Setup(x => x.DeleteApplicationFile(applicationId, fileName, It.IsAny<ContainerType>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+            var result = await _controller.DeleteAppealFile(applicationId, fileName, request);
             result.Should().BeOfType<OkResult>();
 
             _mediator.Verify(
                 x => x.Send(It.Is<DeleteAppealFileCommand>(c =>
                     c.ApplicationId == applicationId
-                    && c.FileId == fileId
+                    && c.FileName == fileName
                     && c.UserId == request.UserId
                     && c.UserName == request.UserName),
                     It.IsAny<CancellationToken>()), Times.Once);
+
+            _fileStorageService.Verify(x => x.DeleteApplicationFile(applicationId, fileName, It.IsAny<ContainerType>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         private static IFormFile GenerateFile()

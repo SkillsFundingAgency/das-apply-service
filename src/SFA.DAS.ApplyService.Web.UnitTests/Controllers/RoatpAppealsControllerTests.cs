@@ -274,8 +274,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public async Task DownloadAppealFile_when_file_exists_downloads_the_requested_file()
         {
-            Guid fileId = Guid.NewGuid();
-            string filename = "test.pdf";
+            string fileName = "test.pdf";
             string contentType = "application/pdf";
 
             var response = new HttpResponseMessage(HttpStatusCode.OK);
@@ -285,39 +284,39 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 { 
                     ContentLength = 0,
                     ContentType = new MediaTypeHeaderValue(contentType),
-                    ContentDisposition = new ContentDispositionHeaderValue("attachment"){ FileName = filename, FileNameStar = filename }
+                    ContentDisposition = new ContentDispositionHeaderValue("attachment"){ FileName = fileName, FileNameStar = fileName }
                 }
             };
 
-            _appealsApiClient.Setup(x => x.DownloadFile(_applicationId, fileId)).ReturnsAsync(response);
+            _appealsApiClient.Setup(x => x.DownloadFile(_applicationId, fileName)).ReturnsAsync(response);
 
-            var result = await _controller.DownloadAppealFile(_applicationId, fileId) as FileStreamResult;
+            var result = await _controller.DownloadAppealFile(_applicationId, fileName) as FileStreamResult;
             
-            Assert.AreEqual(filename, result.FileDownloadName);
+            Assert.AreEqual(fileName, result.FileDownloadName);
             Assert.AreEqual(contentType, result.ContentType);
         }
 
         [Test]
         public async Task DownloadAppealFile_when_file_does_not_exists_then_gives_NotFound_result()
         {
-            Guid fileId = Guid.NewGuid();
+            string fileName = "test.pdf";
 
             var response = new HttpResponseMessage(HttpStatusCode.NotFound);
 
-            _appealsApiClient.Setup(x => x.DownloadFile(_applicationId, fileId)).ReturnsAsync(response);
+            _appealsApiClient.Setup(x => x.DownloadFile(_applicationId, fileName)).ReturnsAsync(response);
 
-            var result = await _controller.DownloadAppealFile(_applicationId, fileId) as NotFoundResult;
+            var result = await _controller.DownloadAppealFile(_applicationId, fileName) as NotFoundResult;
             Assert.IsNotNull(result);
         }
 
         [Test]
         public async Task DeleteAppealFile_deletes_the_file_and_redirects_to_GroundsOfAppeal()
         {
-            Guid fileId = Guid.NewGuid();
+            string fileName = "test.pdf";
 
-            _appealsApiClient.Setup(x => x.DeleteFile(_applicationId, fileId, It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
+            _appealsApiClient.Setup(x => x.DeleteFile(_applicationId, fileName, It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
 
-            var result = await _controller.DeleteAppealFile(_applicationId, fileId, true, true);
+            var result = await _controller.DeleteAppealFile(_applicationId, fileName, true, true);
 
             var viewResult = result as RedirectToActionResult;
             viewResult.Should().NotBeNull();

@@ -120,10 +120,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Appeals/AppealSubmitted.cshtml", model);
         }
 
-        [HttpGet("application/{applicationId}/appeal/file/{fileId}")]
-        public async Task<IActionResult> DownloadAppealFile(Guid applicationId, Guid fileId)
+        [HttpGet("application/{applicationId}/appeal/file/{fileName}")]
+        public async Task<IActionResult> DownloadAppealFile(Guid applicationId, string fileName)
         {
-            var response = await _appealsApiClient.DownloadFile(applicationId, fileId);
+            var response = await _appealsApiClient.DownloadFile(applicationId, fileName);
 
             if (response.IsSuccessStatusCode)
             {
@@ -136,8 +136,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         //[Authorize(Policy = "AccessInProgressApplication")]
-        [HttpGet("application/{applicationId}/appeal/file/{fileId}/remove")]
-        public async Task<IActionResult> DeleteAppealFile(Guid applicationId, Guid fileId, bool appealOnPolicyOrProcesses, bool appealOnEvidenceSubmitted)
+        [HttpGet("application/{applicationId}/appeal/file/delete/{fileName}")]
+        public async Task<IActionResult> DeleteAppealFile(Guid applicationId, string fileName, bool appealOnPolicyOrProcesses, bool appealOnEvidenceSubmitted)
         {
             if (!await CanMakeAppeal(applicationId))
             {
@@ -147,7 +147,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var signInId = User.GetSignInId().ToString();
             var userName = User.Identity.Name;
 
-            await _appealsApiClient.DeleteFile(applicationId, fileId, signInId, userName);
+            await _appealsApiClient.DeleteFile(applicationId, fileName, signInId, userName);
 
             return RedirectToAction("GroundsOfAppeal", new { applicationId, appealOnPolicyOrProcesses, appealOnEvidenceSubmitted });
         }

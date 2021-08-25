@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoFixture;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Appeals.Queries.GetAppealFile;
-using SFA.DAS.ApplyService.Data.FileStorage;
-using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Domain.QueryResults;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.GetAppealFileQueryHandlerTests
 {
@@ -15,72 +13,61 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.GetAppealF
     public class GetAppealFileQueryHandlerTests
     {
         private GetAppealFileQueryHandler _handler;
-        private Mock<IAppealFileRepository> _appealFileRepository;
-        private Mock<IAppealsFileStorage> _appealFileStorage;
-        private readonly Fixture _autoFixture = new Fixture();
-        private GetAppealFileQuery _request;
+        private Mock<IAppealsQueries> _appealsQueries;
         private AppealFile _appealFile;
 
         private readonly Guid _applicationId = Guid.NewGuid();
         private readonly Guid _appealFileId = Guid.NewGuid();
-
-        private readonly Guid _fileStorageReference = Guid.NewGuid();
-        private string _fileName;
-        private string _contentType;
-        private byte[] _content;
+        private readonly string _fileName = "file.pdf";
+        private readonly string _contentType = "application/pdf";
 
         [SetUp]
         public void Setup()
         {
-            _fileName = _autoFixture.Create<string>();
-            _contentType = _autoFixture.Create<string>();
-            _content = _autoFixture.Create<byte[]>();
-
-            _request = new GetAppealFileQuery
-            {
-                ApplicationId = _applicationId,
-                FileId = _appealFileId
-            };
-
-            _appealFileRepository = new Mock<IAppealFileRepository>();
-            _appealFileStorage = new Mock<IAppealsFileStorage>();
+            _appealsQueries = new Mock<IAppealsQueries>();
 
             _appealFile = new AppealFile
             {
-                Filename = _fileName,
+                FileName = _fileName,
                 ContentType = _contentType,
-                FileStorageReference = _fileStorageReference,
                 ApplicationId = _applicationId,
-                Id = _appealFileId,
-                CreatedOn = _autoFixture.Create<DateTime>(),
-                Size = _autoFixture.Create<int>(),
-                UserId = _autoFixture.Create<string>(),
-                UserName = _autoFixture.Create<string>()
+                Id = _appealFileId
             };
 
-            _appealFileRepository.Setup(x => x.Get(_appealFileId)).ReturnsAsync(_appealFile);
+            _appealsQueries.Setup(x => x.GetAppealFile(_applicationId, _fileName)).ReturnsAsync(_appealFile);
 
-            _appealFileStorage.Setup(x => x.Get(_applicationId, _fileStorageReference, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_content);
-
-            _handler = new GetAppealFileQueryHandler(_appealFileRepository.Object, _appealFileStorage.Object);
+            _handler = new GetAppealFileQueryHandler(_appealsQueries.Object);
         }
 
         [Test]
         public async Task Handle_Returns_Requested_Upload()
         {
-            var result = await _handler.Handle(_request, CancellationToken.None);
+            var request = new GetAppealFileQuery
+            {
+                ApplicationId = _applicationId,
+                FileName = _fileName
+            };
 
-            Assert.AreEqual(_fileName, result.Filename);
+            var result = await _handler.Handle(request, CancellationToken.None);
+
+            Assert.AreEqual(_appealFileId, result.Id);
+            Assert.AreEqual(_applicationId, result.ApplicationId);
+            Assert.AreEqual(_fileName, result.FileName);
             Assert.AreEqual(_contentType, result.ContentType);
-            Assert.AreEqual(_content, result.Content);
         }
 
         [Test]
-        public void Handle_Throws_If_Upload_Does_Not_Belong_To_Application()
+        public async Task Handle_Returns_Null_If_Upload_Does_Not_Belong_To_Application()
         {
-            _appealFile.ApplicationId = Guid.NewGuid();
-            Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(_request, CancellationToken.None));
+            var request = new GetAppealFileQuery
+            {
+                ApplicationId = Guid.NewGuid(),
+                FileName = _fileName
+            };
+
+            var result = await _handler.Handle(request, CancellationToken.None);
+
+            Assert.IsNull(result);
         }
     }
 }

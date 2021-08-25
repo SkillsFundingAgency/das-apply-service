@@ -9,6 +9,8 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
     {
         Task<Appeal> GetAppeal(Guid applicationId);
 
+        Task<AppealFile> GetAppealFile(Guid applicationId, string fileName);
+
         Task<List<AppealFile>> GetAppealFilesForApplication(Guid applicationId);
     }
 }
