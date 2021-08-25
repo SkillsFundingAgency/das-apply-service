@@ -5,7 +5,7 @@
     [Status] TINYINT NOT NULL,
     [HowFailedOnPolicyOrProcesses] NVARCHAR(MAX) NULL,
     [HowFailedOnEvidenceSubmitted] NVARCHAR(MAX) NULL,
-    [AppealSubmitedDate] DATETIME2 NULL,
+    [AppealSubmittedDate] DATETIME2 NULL,
     [AppealDeterminedDate] DATETIME2 NULL,
     [InternalComments] NVARCHAR(MAX) NULL,
     [ExternalComments] NVARCHAR(MAX) NULL,

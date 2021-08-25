@@ -55,7 +55,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
                     [Status],
                     [HowFailedOnPolicyOrProcesses],
                     [HowFailedOnEvidenceSubmitted],
-                    [AppealSubmitedDate],
+                    [AppealSubmittedDate],
                     [InternalComments],
                     [ExternalComments],
                     [UserId],
