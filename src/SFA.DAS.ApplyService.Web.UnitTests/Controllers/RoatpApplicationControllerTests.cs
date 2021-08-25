@@ -377,7 +377,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
 
         [Test]
-        public void Submit_application_presents_post_invitation_date_submission_not_allowed()
+        public void Submit_application_presents_post_invitation_window_closed_as_date_passed()
         {
             var ukprn = "123456";
             var organisationNameAnswer = new Answer
@@ -407,10 +407,42 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("PostInvitationEndDate.cshtml");
+            viewResult.ViewName.Should().Contain("InvitationWindowClosed.cshtml");
         }
 
+        [Test]
+        public void Submit_application_presents_post_invitation_window_closed_as_no_entry_in_allowed_providers()
+        {
+            var ukprn = "123456";
+            var organisationNameAnswer = new Answer
+            {
+                QuestionId = "ORG-1",
+                Value = "My organisation"
+            };
 
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpLegalName, It.IsAny<string>())).ReturnsAsync(organisationNameAnswer);
+
+            var application = new Apply
+            {
+                ApplicationId = Guid.NewGuid(),
+                ApplicationStatus = ApplicationStatus.InProgress,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails { UKPRN = ukprn },
+                    Sequences = new List<ApplySequence>()
+                }
+            };
+
+            _apiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
+            _apiClient.Setup(x => x.GetAllowedProvider(ukprn))
+                .ReturnsAsync((AllowedProvider)null);
+
+            var result = _controller.SubmitApplication(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("InvitationWindowClosed.cshtml");
+        }
 
         [Test]
         public async Task Confirm_submit_application_updates_application_status_and_sends_confirmation_email_if_they_have_confirmed_details_are_correct()

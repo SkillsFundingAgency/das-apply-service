@@ -1004,8 +1004,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var application = await _apiClient.GetApplication(applicationId);
             var ukprn = application?.ApplyData?.ApplyDetails?.UKPRN;
             var allowedProviderDetails = await _apiClient.GetAllowedProvider(ukprn);
-            if (allowedProviderDetails.EndDateTime< DateTime.Today)
-                return View("~/Views/Home/PostInvitationEndDate.cshtml");
+            if (allowedProviderDetails == null || allowedProviderDetails.EndDateTime< DateTime.Today)
+                return View("~/Views/Home/InvitationWindowClosed.cshtml");
 
 
            var model = new SubmitApplicationViewModel { ApplicationId = applicationId };
