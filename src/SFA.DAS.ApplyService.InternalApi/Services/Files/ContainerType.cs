@@ -5,6 +5,7 @@
         Unknown = 0,
         Gateway,
         Financial,
-        Assessor,        
+        Assessor,
+        Appeals
     }
 }
