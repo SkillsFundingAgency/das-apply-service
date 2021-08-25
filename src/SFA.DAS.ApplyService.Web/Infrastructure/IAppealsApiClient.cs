@@ -12,8 +12,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<bool> MakeAppeal(Guid applicationId, string howFailedOnPolicyOrProcesses, string howFailedOnEvidenceSubmitted, string signinId, string userName);
 
         Task<GetAppealFileListResponse> GetAppealFileList(Guid applicationId);
-        Task<HttpResponseMessage> DownloadFile(Guid applicationId, Guid fileId);
+        Task<HttpResponseMessage> DownloadFile(Guid applicationId, string fileName);
         Task<bool> UploadFile(Guid applicationId, IFormFile appealFileToUpload, string signinId, string userName);
-        Task<bool> DeleteFile(Guid applicationId, Guid fileId, string signinId, string userName);
+        Task<bool> DeleteFile(Guid applicationId, string fileName, string signinId, string userName);
     }
 }

@@ -5,7 +5,6 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Appeals.Commands.UploadAppealFile;
 using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.Data.FileStorage;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
@@ -18,12 +17,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.UploadAppe
     {
         private UploadAppealFileCommandHandler _handler;
         private Mock<IAppealFileRepository> _appealUploadRepository;
-        private Mock<IAppealsFileStorage> _appealFileStorage;
         private Mock<IAuditService> _auditService;
 
         private UploadAppealFileCommand _command;
         private readonly Guid _applicationId = Guid.NewGuid();
-        private readonly Guid _fileStorageFileId = Guid.NewGuid();
 
         [SetUp]
         public void Setup()
@@ -31,7 +28,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.UploadAppe
             _command = new UploadAppealFileCommand
             {
                 ApplicationId = _applicationId,
-                AppealFile = new FileUpload { Filename = "test.pdf", Data = new byte[] { 0x25, 0x50, 0x44, 0x46 }, ContentType = "application/pdf" },
+                AppealFile = new FileUpload { FileName = "test.pdf", Data = new byte[] { 0x25, 0x50, 0x44, 0x46 }, ContentType = "application/pdf" },
                 UserId = "userId",
                 UserName = "userName"
             };
@@ -39,24 +36,12 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.UploadAppe
             _appealUploadRepository = new Mock<IAppealFileRepository>();
             _appealUploadRepository.Setup(x => x.Add(It.IsAny<AppealFile>()));
 
-            _appealFileStorage = new Mock<IAppealsFileStorage>();
-            _appealFileStorage.Setup(x => x.Add(_applicationId, It.IsAny<FileUpload>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => _fileStorageFileId);
 
             _auditService = new Mock<IAuditService>();
             _auditService.Setup(x => x.StartTracking(UserAction.UploadAppealFile, _command.UserId, _command.UserName));
             _auditService.Setup(x => x.AuditInsert(It.IsAny<AppealFile>()));
 
-            _handler = new UploadAppealFileCommandHandler(_appealUploadRepository.Object, _appealFileStorage.Object, _auditService.Object);
-        }
-
-        [Test]
-        public async Task Handle_Adds_File_To_Appeals_File_Storage()
-        {
-            await _handler.Handle(_command, CancellationToken.None);
-            _appealFileStorage.Verify(x => x.Add(_applicationId,
-                It.Is<FileUpload>(file => file == _command.AppealFile),
-                It.IsAny<CancellationToken>()));
+            _handler = new UploadAppealFileCommandHandler(_appealUploadRepository.Object, _auditService.Object);
         }
 
         [Test]
@@ -66,9 +51,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.UploadAppe
 
             _appealUploadRepository.Verify(x => x.Add(It.Is<AppealFile>(upload =>
                 upload.ApplicationId == _command.ApplicationId
-                && upload.Filename == _command.AppealFile.Filename
+                && upload.FileName == _command.AppealFile.FileName
                 && upload.ContentType == _command.AppealFile.ContentType
-                && upload.FileStorageReference == _fileStorageFileId
                 && upload.UserId == _command.UserId
                 && upload.UserName == _command.UserName
                 && upload.Size == _command.AppealFile.Data.Length
@@ -82,9 +66,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.UploadAppe
 
             _auditService.Verify(x => x.AuditInsert(It.Is<AppealFile>(upload =>
                 upload.ApplicationId == _command.ApplicationId
-                && upload.Filename == _command.AppealFile.Filename
+                && upload.FileName == _command.AppealFile.FileName
                 && upload.ContentType == _command.AppealFile.ContentType
-                && upload.FileStorageReference == _fileStorageFileId
                 && upload.UserId == _command.UserId
                 && upload.UserName == _command.UserName
                 && upload.Size == _command.AppealFile.Data.Length

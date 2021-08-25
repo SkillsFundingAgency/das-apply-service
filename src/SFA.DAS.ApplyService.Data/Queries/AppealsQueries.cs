@@ -60,6 +60,20 @@ namespace SFA.DAS.ApplyService.Data.Queries
             }
         }
 
+        public async Task<AppealFile> GetAppealFile(Guid applicationId, string fileName)
+        {
+            using (var connection = GetConnection())
+            {
+                return await connection.QuerySingleOrDefaultAsync<AppealFile>(
+                    @"SELECT * FROM [AppealFile] where ApplicationId = @applicationId AND FileName = @fileName",
+                    new
+                    {
+                        applicationId,
+                        fileName
+                    });
+            }
+        }
+
         public async Task<List<AppealFile>> GetAppealFilesForApplication(Guid applicationId)
         {
             using (var connection = GetConnection())

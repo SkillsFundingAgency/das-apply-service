@@ -45,9 +45,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await Get<GetAppealFileListResponse>($"/Appeals/{applicationId}/files");
         }
 
-        public async Task<HttpResponseMessage> DownloadFile(Guid applicationId, Guid fileId)
+        public async Task<HttpResponseMessage> DownloadFile(Guid applicationId, string fileName)
         {
-            return await GetResponse($"/Appeals/{applicationId}/files/{fileId}");
+            return await GetResponse($"/Appeals/{applicationId}/files/{fileName}");
         }
 
         public async Task<bool> UploadFile(Guid applicationId, IFormFile appealFileToUpload, string signinId, string userName)
@@ -81,7 +81,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
-        public async Task<bool> DeleteFile(Guid applicationId, Guid fileId, string signinId, string userName)
+        public async Task<bool> DeleteFile(Guid applicationId, string fileName, string signinId, string userName)
         {
             var request = new DeleteAppealFileRequest
             {
@@ -89,7 +89,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 UserName = userName
             };
 
-            var result = await Post($"/Appeals/{applicationId}/files/{fileId}/delete", request);
+            var result = await Post($"/Appeals/{applicationId}/files/delete/{fileName}", request);
 
             return result == HttpStatusCode.OK;
         }

@@ -24,12 +24,12 @@
             {
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell govuk-table__cell--break-word" scope="row">
-                        <a class="govuk-link" asp-action="DownloadAppealFile" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId" asp-route-fileId="@file.Id">
-                            @file.Filename
+                        <a class="govuk-link" asp-action="DownloadAppealFile" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId" asp-route-fileName="@file.FileName">
+                            @file.FileName
                         </a>
                     </td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">
-                        <a class="govuk-link" asp-action="DeleteAppealFile" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId" asp-route-fileId="@file.Id" asp-route-appealOnPolicyOrProcesses="@Model.AppealOnPolicyOrProcesses" asp-route-appealOnEvidenceSubmitted="@Model.AppealOnEvidenceSubmitted">
+                        <a class="govuk-link" asp-action="DeleteAppealFile" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId" asp-route-fileName="@file.FileName" asp-route-appealOnPolicyOrProcesses="@Model.AppealOnPolicyOrProcesses" asp-route-appealOnEvidenceSubmitted="@Model.AppealOnEvidenceSubmitted">
                             Remove
                             <span class="govuk-visually-hidden"> file</span>
                         </a>

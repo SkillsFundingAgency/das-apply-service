@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.GetAppealF
 
             _queryResult = new List<AppealFile>
             {
-                new AppealFile{ Id = Guid.NewGuid(), Filename = "test.pdf"}
+                new AppealFile{ Id = Guid.NewGuid(), FileName = "test.pdf"}
             };
 
             _appealsQueries = new Mock<IAppealsQueries>();
