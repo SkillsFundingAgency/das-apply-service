@@ -70,6 +70,15 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddAuthorization(options =>
             {
+                options.AddPolicy("AccessAppeal", policy =>
+                {
+                    policy.Requirements.Add(new AccessApplicationRequirement());
+                });
+                options.AddPolicy("AccessAppealNotYetSubmitted", policy =>
+                {
+                    policy.Requirements.Add(new AccessApplicationRequirement());
+                    policy.Requirements.Add(new AppealNotYetSubmittedRequirement());
+                });
                 options.AddPolicy("AccessInProgressApplication", policy =>
                 {
                     policy.Requirements.Add(new AccessApplicationRequirement());

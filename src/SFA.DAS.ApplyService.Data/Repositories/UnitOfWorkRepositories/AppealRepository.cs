@@ -51,11 +51,12 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 
             await transaction.Connection.ExecuteAsync(
                 @"INSERT INTO [Appeal]
-                    ([ApplicationId],
+                    ([Id],
+                    [ApplicationId],
                     [Status],
                     [HowFailedOnPolicyOrProcesses],
                     [HowFailedOnEvidenceSubmitted],
-                    [AppealSubmitedDate],
+                    [AppealSubmittedDate],
                     [InternalComments],
                     [ExternalComments],
                     [UserId],
@@ -67,11 +68,12 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
                     [InProgressExternalComments],
                     [CreatedOn])
                     VALUES (
+                    @Id,
                     @ApplicationId,
                     @Status,
                     @HowFailedOnPolicyOrProcesses,
                     @HowFailedOnEvidenceSubmitted,
-                    GETUTCDATE(),
+                    @AppealSubmittedDate,
                     @InternalComments,
                     @ExternalComments,
                     @UserId,
@@ -81,7 +83,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
                     @InProgressUserName,
                     @InProgressInternalComments,
                     @InProgressExternalComments,
-                    GETUTCDATE())",
+                    @CreatedOn)",
                 entity, transaction);
         }
 
@@ -104,8 +106,8 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
                     [InProgressUserName] = @InProgressUserName,
                     [InProgressInternalComments] = @InProgressInternalComments,
                     [InProgressExternalComments] = @InProgressExternalComments,
-                    [UpdatedOn] = GETUTCDATE(),
-                    WHERE [Id] = @id",
+                    [UpdatedOn] = @UpdatedOn,
+                    WHERE [Id] = @Id",
                 entity, transaction);
 
         }

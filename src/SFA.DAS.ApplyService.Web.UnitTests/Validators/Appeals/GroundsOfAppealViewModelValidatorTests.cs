@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Http.Internal;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Web.Validators.Appeals;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
@@ -96,6 +98,81 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators.Appeals
             Assert.AreEqual(1, result.Errors.Count);
             Assert.AreEqual(nameof(_viewModel.HowFailedOnEvidenceSubmitted), result.Errors[0].PropertyName);
             Assert.AreEqual(GroundsOfAppealViewModelValidator.MaxLengthError, result.Errors[0].ErrorMessage);
+        }
+
+        [Test]
+        public void Validate_Returns_Valid_When_UPLOAD_APPEALFILE_FORMACTION_and_AppealFileToUpload_is_Valid_PDF()
+        {
+            _viewModel.FormAction = GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION;
+            _viewModel.AppealFileToUpload = GenerateAppealFileToUpload("file.pdf", true, GroundsOfAppealViewModelValidator.MaxFileSizeInBytes);
+
+            var result = _validator.Validate(_viewModel);
+
+            Assert.IsTrue(result.IsValid);
+        }
+
+        [Test]
+        public void Validate_Returns_Appropriate_Error_When_UPLOAD_APPEALFILE_FORMACTION_and_AppealFileToUpload_is_Missing()
+        {
+            _viewModel.FormAction = GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION;
+            _viewModel.AppealFileToUpload = null;
+
+            var result = _validator.Validate(_viewModel);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.AreEqual(nameof(_viewModel.AppealFileToUpload), result.Errors[0].PropertyName);
+            Assert.AreEqual(GroundsOfAppealViewModelValidator.AppealFileRequired, result.Errors[0].ErrorMessage);
+        }
+
+        [Test]
+        public void Validate_Returns_Appropriate_Error_When_AppealFileToUpload_is_Not_PDF()
+        {
+            _viewModel.FormAction = GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION;
+            _viewModel.AppealFileToUpload = GenerateAppealFileToUpload("file.txt", false, GroundsOfAppealViewModelValidator.MaxFileSizeInBytes);
+
+            var result = _validator.Validate(_viewModel);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.AreEqual(nameof(_viewModel.AppealFileToUpload), result.Errors[0].PropertyName);
+            Assert.AreEqual(GroundsOfAppealViewModelValidator.FileMustBePdf, result.Errors[0].ErrorMessage);
+        }
+
+        [Test]
+        public void Validate_Returns_Appropriate_Error_When_AppealFileToUpload_Exceeds_MaxFileSize()
+        {
+            _viewModel.FormAction = GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION;
+            _viewModel.AppealFileToUpload = GenerateAppealFileToUpload("file.pdf", true, GroundsOfAppealViewModelValidator.MaxFileSizeInBytes + 1);
+
+            var result = _validator.Validate(_viewModel);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.AreEqual(nameof(_viewModel.AppealFileToUpload), result.Errors[0].PropertyName);
+            Assert.AreEqual(GroundsOfAppealViewModelValidator.MaxFileSizeExceeded, result.Errors[0].ErrorMessage);
+        }
+
+        private static FormFile GenerateAppealFileToUpload(string fileName, bool hasPdfHeader, int length)
+        {
+            var pdfHeader = new byte[] { 0x25, 0x50, 0x44, 0x46 };
+
+            MemoryStream fileContent = new MemoryStream();
+
+            if (hasPdfHeader)
+            {
+                fileContent.Write(pdfHeader);
+            }
+
+            var remainingContentToGenerate = length - (int)fileContent.Length;
+
+            if (remainingContentToGenerate > 0)
+            {
+                var contentToGenerate = Enumerable.Repeat((byte)0x20, remainingContentToGenerate);
+                fileContent.Write(contentToGenerate.ToArray());
+            }
+
+            return new FormFile(fileContent, 0, fileContent.Length, fileName, fileName);
         }
     }
 }

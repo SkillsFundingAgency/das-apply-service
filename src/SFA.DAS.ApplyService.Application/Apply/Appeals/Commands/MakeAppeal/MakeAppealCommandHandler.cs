@@ -40,6 +40,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
                 { 
                     ApplicationId = request.ApplicationId ,
                     Status = AppealStatus.Submitted,
+                    AppealSubmittedDate = DateTime.UtcNow,
                     HowFailedOnPolicyOrProcesses = request.HowFailedOnPolicyOrProcesses,
                     HowFailedOnEvidenceSubmitted = request.HowFailedOnEvidenceSubmitted,
                     UserId = request.UserId,
@@ -52,26 +53,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
             else
             {
                 currentAppeal.Status = AppealStatus.Submitted;
+                currentAppeal.AppealSubmittedDate = DateTime.UtcNow;
                 currentAppeal.HowFailedOnPolicyOrProcesses = request.HowFailedOnPolicyOrProcesses;
                 currentAppeal.HowFailedOnEvidenceSubmitted = request.HowFailedOnEvidenceSubmitted;
                 currentAppeal.UserId = request.UserId;
                 currentAppeal.UserName = request.UserName;
+                currentAppeal.UpdatedOn = DateTime.UtcNow;
 
                 _appealRepository.Update(currentAppeal);
                 _auditService.AuditUpdate(currentAppeal);
             }
-
-
-
-
-            //var uploads = await _appealUploadRepository.GetByApplicationId(oversightReview.ApplicationId);
-
-            //foreach (var upload in uploads)
-            //{
-            //    _auditService.AuditUpdate(upload);
-            //    upload.AppealId = appeal.Id;
-            //    _appealUploadRepository.Update(upload);
-            //}
 
             _auditService.Save();
 
@@ -94,9 +85,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
 
         private void VerifyAppealNotSubmitted(Appeal appeal)
         {
-            var allowedStatuses = new[] { AppealStatus.None };
-
-            if (appeal != null && !allowedStatuses.Contains(appeal.Status))
+            if (appeal != null && !string.IsNullOrEmpty(appeal.Status))
             {
                 throw new InvalidOperationException($"Unable to create Appeal for Application {appeal.ApplicationId} as Appeal {appeal.Id} already submitted");
             }

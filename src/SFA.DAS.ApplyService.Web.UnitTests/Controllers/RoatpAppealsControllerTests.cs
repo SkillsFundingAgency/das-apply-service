@@ -1,9 +1,14 @@
 ﻿using System;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
@@ -54,12 +59,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _appealsApiClient.Setup(x => x.GetAppeal(_applicationId)).ReturnsAsync(default(GetAppealResponse));
 
+            _appealsApiClient.Setup(x => x.GetAppealFileList(_applicationId)).ReturnsAsync(default(GetAppealFileListResponse));
+
             _controller = new RoatpAppealsController(_outcomeApiClient.Object, _appealsApiClient.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
-                    HttpContext = new DefaultHttpContext() {User = user}
-                }
+                    HttpContext = new DefaultHttpContext() { User = user },
+                },
+                TempData = Mock.Of<ITempDataDictionary>()
             };
         }
 
@@ -93,7 +101,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public async Task MakeAppeal_shows_Tasklist_page_if_appeal_already_submitted()
         {
-            var appeal = new GetAppealResponse { Status = AppealStatus.Submitted };
+            var appeal = new GetAppealResponse { Status = AppealStatus.Submitted, AppealSubmittedDate = DateTime.UtcNow };
             _appealsApiClient.Setup(x => x.GetAppeal(_applicationId)).ReturnsAsync(appeal);
 
             var result = await _controller.MakeAppeal(_applicationId);
@@ -101,6 +109,23 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var viewResult = result as RedirectToActionResult;
             viewResult.Should().NotBeNull();
             viewResult.ActionName.Should().Be("TaskList");
+        }
+
+        [Test]
+        public async Task POST_MakeAppeal_shows_GroundsOfAppeal_page_when_valid_input_submitted()
+        {
+            var model = new MakeAppealViewModel
+            {
+                ApplicationId = _applicationId,
+                AppealOnEvidenceSubmitted = true,
+                AppealOnPolicyOrProcesses = true
+            };
+
+            var result = await _controller.MakeAppeal(model);
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("GroundsOfAppeal");
         }
 
         [Test]
@@ -142,7 +167,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var _appealOnPolicyOrProcesses = false;
             var _appealOnEvidenceSubmitted = false;
 
-            var appeal = new GetAppealResponse { Status = AppealStatus.Submitted };
+            var appeal = new GetAppealResponse { Status = AppealStatus.Submitted, AppealSubmittedDate = DateTime.UtcNow };
             _appealsApiClient.Setup(x => x.GetAppeal(_applicationId)).ReturnsAsync(appeal);
 
             var result = await _controller.GroundsOfAppeal(_applicationId, _appealOnPolicyOrProcesses, _appealOnEvidenceSubmitted);
@@ -151,6 +176,89 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             viewResult.ActionName.Should().Be("TaskList");
         }
+
+        [Test]
+        public async Task POST_GroundsOfAppeal_shows_AppealSubmitted_page_when_valid_input_submitted()
+        {
+            var howFailedOnEvidenceSubmitted = "valid input";
+            var howFailedOnPolicyOrProcesses = "valid input";
+
+            var model = new GroundsOfAppealViewModel
+            {
+                ApplicationId = _applicationId,
+                AppealOnEvidenceSubmitted = !string.IsNullOrEmpty(howFailedOnEvidenceSubmitted),
+                HowFailedOnEvidenceSubmitted = howFailedOnEvidenceSubmitted,
+                AppealOnPolicyOrProcesses = !string.IsNullOrEmpty(howFailedOnPolicyOrProcesses),
+                HowFailedOnPolicyOrProcesses = howFailedOnPolicyOrProcesses
+            };
+
+            var result = await _controller.GroundsOfAppeal(model);
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("AppealSubmitted");
+        }
+
+        [Test]
+        public async Task POST_GroundsOfAppeal_verify_MakeAppeal_api_call_when_valid_input_submitted()
+        {
+            var howFailedOnEvidenceSubmitted = "valid input";
+            var howFailedOnPolicyOrProcesses = "valid input";
+
+            var model = new GroundsOfAppealViewModel
+            {
+                ApplicationId = _applicationId,
+                AppealOnEvidenceSubmitted = !string.IsNullOrEmpty(howFailedOnEvidenceSubmitted),
+                HowFailedOnEvidenceSubmitted = howFailedOnEvidenceSubmitted,
+                AppealOnPolicyOrProcesses = !string.IsNullOrEmpty(howFailedOnPolicyOrProcesses),
+                HowFailedOnPolicyOrProcesses = howFailedOnPolicyOrProcesses
+            };
+
+            var result = await _controller.GroundsOfAppeal(model);
+
+            _appealsApiClient.Verify(x => x.MakeAppeal(_applicationId, howFailedOnPolicyOrProcesses, howFailedOnEvidenceSubmitted, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public async Task POST_GroundsOfAppeal_shows_GroundsOfAppeal_page_when_valid_UPLOAD_APPEALFILE_FORMACTION()
+        {
+            var appealFile = Mock.Of<IFormFile>();
+
+            var model = new GroundsOfAppealViewModel
+            {
+                ApplicationId = _applicationId,
+                AppealOnEvidenceSubmitted = true,
+                AppealOnPolicyOrProcesses = true,
+                FormAction = GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION,
+                AppealFileToUpload = appealFile
+            };
+
+            var result = await _controller.GroundsOfAppeal(model);
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("GroundsOfAppeal");
+        }
+
+        [Test]
+        public async Task POST_GroundsOfAppeal_verify_UploadFile_api_call_when_valid_UPLOAD_APPEALFILE_FORMACTION()
+        {
+            var appealFile = Mock.Of<IFormFile>();
+
+            var model = new GroundsOfAppealViewModel
+            {
+                ApplicationId = _applicationId,
+                AppealOnEvidenceSubmitted = true,
+                AppealOnPolicyOrProcesses = true,
+                FormAction = GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION,
+                AppealFileToUpload = appealFile
+            };
+
+            var result = await _controller.GroundsOfAppeal(model);
+
+            _appealsApiClient.Verify(x => x.UploadFile(_applicationId, appealFile, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+
 
         [Test]
         public void AppealSubmitted_shows_appeal_submitted_page()
@@ -163,6 +271,58 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("AppealSubmitted.cshtml");
             viewResult.Model.Should().BeEquivalentTo(model);
+        }
+
+        [Test]
+        public async Task DownloadAppealFile_when_file_exists_downloads_the_requested_file()
+        {
+            string fileName = "test.pdf";
+            string contentType = "application/pdf";
+
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StreamContent(new MemoryStream())
+            { 
+                Headers = 
+                { 
+                    ContentLength = 0,
+                    ContentType = new MediaTypeHeaderValue(contentType),
+                    ContentDisposition = new ContentDispositionHeaderValue("attachment"){ FileName = fileName, FileNameStar = fileName }
+                }
+            };
+
+            _appealsApiClient.Setup(x => x.DownloadFile(_applicationId, fileName)).ReturnsAsync(response);
+
+            var result = await _controller.DownloadAppealFile(_applicationId, fileName) as FileStreamResult;
+            
+            Assert.AreEqual(fileName, result.FileDownloadName);
+            Assert.AreEqual(contentType, result.ContentType);
+        }
+
+        [Test]
+        public async Task DownloadAppealFile_when_file_does_not_exists_then_gives_NotFound_result()
+        {
+            string fileName = "test.pdf";
+
+            var response = new HttpResponseMessage(HttpStatusCode.NotFound);
+
+            _appealsApiClient.Setup(x => x.DownloadFile(_applicationId, fileName)).ReturnsAsync(response);
+
+            var result = await _controller.DownloadAppealFile(_applicationId, fileName) as NotFoundResult;
+            Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public async Task DeleteAppealFile_deletes_the_file_and_redirects_to_GroundsOfAppeal()
+        {
+            string fileName = "test.pdf";
+
+            _appealsApiClient.Setup(x => x.DeleteFile(_applicationId, fileName, It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
+
+            var result = await _controller.DeleteAppealFile(_applicationId, fileName, true, true);
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("GroundsOfAppeal");
         }
     }
 }

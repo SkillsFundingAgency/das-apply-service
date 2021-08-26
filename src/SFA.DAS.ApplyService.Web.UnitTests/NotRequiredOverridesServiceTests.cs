@@ -10,7 +10,7 @@ using SFA.DAS.ApplyService.Web.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Application.UnitTests;
+using SFA.DAS.ApplyService.Web.UnitTests.Extensions;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests
 {

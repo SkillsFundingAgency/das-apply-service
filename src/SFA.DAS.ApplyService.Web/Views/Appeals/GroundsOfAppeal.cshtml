@@ -31,7 +31,7 @@
             <div class="govuk-form-group">
                 <a id="overview" class="govuk-link govuk-link--no-visited-state govuk-!-margin-bottom-3" target="_blank" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">View your Application overview page (opens in new tab)</a>
             </div>
-            <form method="post" asp-action="GroundsOfAppeal" asp-controller="RoatpAppealsController" novalidate>
+            <form method="post" enctype="multipart/form-data" asp-action="GroundsOfAppeal" asp-controller="RoatpAppeals" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="AppealOnPolicyOrProcesses" />
                 <input type="hidden" asp-for="AppealOnEvidenceSubmitted" />
@@ -57,7 +57,7 @@
 
                         @if (Model.AppealOnEvidenceSubmitted)
                         {
-                        <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="10000">
+                        <div class="govuk-character-count govuk-!-margin-bottom-6" data-module="govuk-character-count" data-maxlength="10000">
                             <div class="govuk-form-group" sfa-validation-for="HowFailedOnEvidenceSubmitted" sfa-validationerror-class="govuk-form-group--error">
                                 <label class="govuk-label govuk-!-font-weight-bold" asp-for="HowFailedOnEvidenceSubmitted" for="gethelp">
                                     How did the ESFA fail to understand or recognise the evidence submitted?
@@ -72,6 +72,16 @@
                             </span>
                         </div>
                         }
+
+                        <div>
+                            <p class="govuk-body">
+                                If you need to upload any files to support your appeal, you can do so here.
+                                Each file must be a pdf and smaller than 5MB. You can upload a maximum of 4 files.
+                            </p>
+                            <div class="govuk-form-group" sfa-validation-for="AppealFileToUpload" sfa-validationerror-class="govuk-form-group--error">
+                                <partial name="_FileUploadsTable.cshtml" for="@Model" />
+                            </div>
+                        </div>
                     </fieldset>
                 </div>
                 <button class="govuk-button govuk-!-margin-right-3" data-module="govuk-button" data-disable-on-submit="true">
