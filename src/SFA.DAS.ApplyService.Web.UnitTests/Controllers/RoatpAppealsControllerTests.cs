@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
@@ -64,8 +65,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 ControllerContext = new ControllerContext()
                 {
-                    HttpContext = new DefaultHttpContext() { User = user }
-                }
+                    HttpContext = new DefaultHttpContext() { User = user },
+                },
+                TempData = Mock.Of<ITempDataDictionary>()
             };
         }
 
@@ -99,7 +101,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public async Task MakeAppeal_shows_Tasklist_page_if_appeal_already_submitted()
         {
-            var appeal = new GetAppealResponse { Status = AppealStatus.Submitted };
+            var appeal = new GetAppealResponse { Status = AppealStatus.Submitted, AppealSubmittedDate = DateTime.UtcNow };
             _appealsApiClient.Setup(x => x.GetAppeal(_applicationId)).ReturnsAsync(appeal);
 
             var result = await _controller.MakeAppeal(_applicationId);
@@ -165,7 +167,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var _appealOnPolicyOrProcesses = false;
             var _appealOnEvidenceSubmitted = false;
 
-            var appeal = new GetAppealResponse { Status = AppealStatus.Submitted };
+            var appeal = new GetAppealResponse { Status = AppealStatus.Submitted, AppealSubmittedDate = DateTime.UtcNow };
             _appealsApiClient.Setup(x => x.GetAppeal(_applicationId)).ReturnsAsync(appeal);
 
             var result = await _controller.GroundsOfAppeal(_applicationId, _appealOnPolicyOrProcesses, _appealOnEvidenceSubmitted);
