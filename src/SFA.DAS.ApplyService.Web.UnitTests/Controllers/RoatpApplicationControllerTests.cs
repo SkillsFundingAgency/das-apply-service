@@ -27,6 +27,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
+using SFA.DAS.ApplyService.Domain.Apply.AllowedProviders;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Orchestrators;
@@ -340,6 +341,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Submit_application_presents_confirmation_page_with_legal_name_and_emailaddress()
         {
+            var ukprn = "123456";
             var organisationNameAnswer = new Answer
             {
                 QuestionId = "ORG-1",
@@ -347,6 +349,21 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpLegalName, It.IsAny<string>())).ReturnsAsync(organisationNameAnswer);
+
+            var application = new Apply
+            {
+                ApplicationId = Guid.NewGuid(),
+                ApplicationStatus = ApplicationStatus.InProgress,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails {UKPRN = ukprn},
+                    Sequences = new List<ApplySequence>()
+                }
+            };
+
+            _apiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
+            _apiClient.Setup(x => x.GetAllowedProvider(ukprn))
+                .ReturnsAsync(new AllowedProvider {EndDateTime = DateTime.Today});
 
             var result = _controller.SubmitApplication(Guid.NewGuid()).GetAwaiter().GetResult();
 
@@ -356,6 +373,75 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             model.Should().NotBeNull();
             model.OrganisationName.Should().Be(organisationNameAnswer.Value);
             model.EmailAddress.Should().NotBeNull();
+        }
+
+
+        [Test]
+        public void Submit_application_presents_post_invitation_window_closed_as_date_passed()
+        {
+            var ukprn = "123456";
+            var organisationNameAnswer = new Answer
+            {
+                QuestionId = "ORG-1",
+                Value = "My organisation"
+            };
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpLegalName, It.IsAny<string>())).ReturnsAsync(organisationNameAnswer);
+
+            var application = new Apply
+            {
+                ApplicationId = Guid.NewGuid(),
+                ApplicationStatus = ApplicationStatus.InProgress,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails { UKPRN = ukprn },
+                    Sequences = new List<ApplySequence>()
+                }
+            };
+
+            _apiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
+            _apiClient.Setup(x => x.GetAllowedProvider(ukprn))
+                .ReturnsAsync(new AllowedProvider { EndDateTime = DateTime.Today.AddDays(-1) });
+
+            var result = _controller.SubmitApplication(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("InvitationWindowClosed.cshtml");
+        }
+
+        [Test]
+        public void Submit_application_presents_post_invitation_window_closed_as_no_entry_in_allowed_providers()
+        {
+            var ukprn = "123456";
+            var organisationNameAnswer = new Answer
+            {
+                QuestionId = "ORG-1",
+                Value = "My organisation"
+            };
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpLegalName, It.IsAny<string>())).ReturnsAsync(organisationNameAnswer);
+
+            var application = new Apply
+            {
+                ApplicationId = Guid.NewGuid(),
+                ApplicationStatus = ApplicationStatus.InProgress,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails { UKPRN = ukprn },
+                    Sequences = new List<ApplySequence>()
+                }
+            };
+
+            _apiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
+            _apiClient.Setup(x => x.GetAllowedProvider(ukprn))
+                .ReturnsAsync((AllowedProvider)null);
+
+            var result = _controller.SubmitApplication(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("InvitationWindowClosed.cshtml");
         }
 
         [Test]
