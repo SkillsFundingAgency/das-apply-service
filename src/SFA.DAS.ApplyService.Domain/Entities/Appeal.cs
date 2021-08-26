@@ -1,6 +1,5 @@
 ﻿using System;
 using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.Domain.Entities
 {
@@ -8,7 +7,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
-        public AppealStatus Status { get; set; }
+        public string Status { get; set; }
         public string HowFailedOnPolicyOrProcesses {get; set; }
         public string HowFailedOnEvidenceSubmitted { get; set; }
         public DateTime? AppealSubmittedDate { get; set; }
@@ -24,5 +23,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string InProgressExternalComments { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }
+
+        public Appeal()
+        {
+            Id = Guid.NewGuid();
+            CreatedOn = DateTime.UtcNow;
+        }
     }
 }

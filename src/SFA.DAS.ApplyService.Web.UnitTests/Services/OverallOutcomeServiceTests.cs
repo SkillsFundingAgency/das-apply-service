@@ -65,7 +65,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationOutcomes);
             _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
-                .ReturnsAsync(new GetAppealResponse {Status = AppealStatus.None});
+                .ReturnsAsync((GetAppealResponse)null);
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
             _service = new OverallOutcomeService(_apiClient.Object, _qnaApiClient.Object,
                 _assessorLookupService.Object, _appealsApiClient.Object);
@@ -302,14 +302,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 .Be(null);
         }
 
-        [TestCase(AppealStatus.None, false)]
+        [TestCase(null, false)]
         [TestCase(AppealStatus.Successful, true)]
         [TestCase(AppealStatus.Unsuccessful, true)]
         [TestCase(AppealStatus.InProgressOutcome, true)]
         [TestCase(AppealStatus.Submitted, true)]
         [TestCase(AppealStatus.SuccessfulFitnessForFunding, true)]
         [TestCase(AppealStatus.SuccessfulAlreadyActive, true)]
-        public async Task BuildApplicationSummaryViewModel_builds_expected_viewModel(AppealStatus appealStatus, bool appealSubmitted)
+        public async Task BuildApplicationSummaryViewModel_builds_expected_viewModel(string appealStatus, bool appealSubmitted)
         {
             var emailAddress = "test@test.com";
             var ukprn = "12345678";
@@ -324,9 +324,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var financialExternalComments = "financial external comments";
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var moderationStatus = Domain.Apply.ModerationStatus.Fail;
-            _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
-                .ReturnsAsync(new GetAppealResponse { Status = appealStatus });
+            if (string.IsNullOrEmpty(appealStatus))
+            {
+                _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
+                    .ReturnsAsync((GetAppealResponse)null);
 
+            }
+            else
+            {
+                _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
+                    .ReturnsAsync(new GetAppealResponse {Status = appealStatus});
+            }
             var application = new Apply
             {
                 ApplicationId = _applicationId, 

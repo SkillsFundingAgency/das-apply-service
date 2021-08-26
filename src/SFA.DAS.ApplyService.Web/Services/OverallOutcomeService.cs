@@ -199,7 +199,7 @@ namespace SFA.DAS.ApplyService.Web.Services
         private async Task<bool> GetAppealSubmitted(Apply application)
         {
             var appeal = await _appealsApiClient.GetAppeal(application.ApplicationId);
-            return appeal != null && appeal.Status != AppealStatus.None;
+            return appeal != null;
         }
 
         private void AddSequenceTitlesToSequences(List<AssessorSequence> sequencesWithModerationFails)

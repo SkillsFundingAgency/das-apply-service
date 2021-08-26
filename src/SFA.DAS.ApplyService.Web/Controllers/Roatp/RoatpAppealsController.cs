@@ -2,7 +2,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
 
@@ -12,13 +11,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     public class RoatpAppealsController : Controller
     {
         private readonly IOutcomeApiClient _outcomeApiClient;
-        private readonly IBankHolidayService _bankHolidayService;
         private readonly IAppealsApiClient _appealsApiClient;
 
-        public RoatpAppealsController(IOutcomeApiClient apiClient, IBankHolidayService bankHolidayService, IAppealsApiClient appealsApiClient)
+        public RoatpAppealsController(IOutcomeApiClient apiClient, IAppealsApiClient appealsApiClient)
         {
             _outcomeApiClient = apiClient;
-            _bankHolidayService = bankHolidayService;
             _appealsApiClient = appealsApiClient;
         }
 
@@ -65,13 +62,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
             }
 
-            // TODO: Will need to populate any previously uploaded files. THis is done in a different ticket
+            var appealFileList = await _appealsApiClient.GetAppealFileList(applicationId);
 
             var model = new GroundsOfAppealViewModel
             {
                 ApplicationId = applicationId,
                 AppealOnPolicyOrProcesses = appealOnPolicyOrProcesses,
-                AppealOnEvidenceSubmitted = appealOnEvidenceSubmitted
+                AppealOnEvidenceSubmitted = appealOnEvidenceSubmitted,
+                AppealFiles = appealFileList?.AppealFiles
             };
 
             return View("~/Views/Appeals/GroundsOfAppeal.cshtml", model);
@@ -93,9 +91,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var signInId = User.GetSignInId().ToString();
             var userName = User.Identity.Name;
-            await _appealsApiClient.MakeAppeal(model.ApplicationId, model.HowFailedOnPolicyOrProcesses, model.HowFailedOnEvidenceSubmitted, signInId, userName);
 
-            return RedirectToAction("AppealSubmitted", new { model.ApplicationId });
+            if(model.AppealFileToUpload != null)
+            {
+                await _appealsApiClient.UploadFile(model.ApplicationId, model.AppealFileToUpload, signInId, userName);
+            }
+
+            if (model.FormAction != GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION)
+            {
+                await _appealsApiClient.MakeAppeal(model.ApplicationId, model.HowFailedOnPolicyOrProcesses, model.HowFailedOnEvidenceSubmitted, signInId, userName);
+                return RedirectToAction("AppealSubmitted", new { model.ApplicationId });
+            }
+            else
+            {
+                return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
+            }  
         }
 
         [HttpGet("application/{applicationId}/appeal-submitted")]
@@ -110,6 +120,39 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Appeals/AppealSubmitted.cshtml", model);
         }
 
+        [HttpGet("application/{applicationId}/appeal/file/{fileName}")]
+        public async Task<IActionResult> DownloadAppealFile(Guid applicationId, string fileName)
+        {
+            var response = await _appealsApiClient.DownloadFile(applicationId, fileName);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var fileStream = await response.Content.ReadAsStreamAsync();
+
+                return File(fileStream, response.Content.Headers.ContentType.MediaType, response.Content.Headers.ContentDisposition.FileNameStar);
+            }
+
+            return NotFound();
+        }
+
+        //[Authorize(Policy = "AccessInProgressApplication")]
+        [HttpGet("application/{applicationId}/appeal/file/delete/{fileName}")]
+        public async Task<IActionResult> DeleteAppealFile(Guid applicationId, string fileName, bool appealOnPolicyOrProcesses, bool appealOnEvidenceSubmitted)
+        {
+            if (!await CanMakeAppeal(applicationId))
+            {
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+            }
+
+            var signInId = User.GetSignInId().ToString();
+            var userName = User.Identity.Name;
+
+            await _appealsApiClient.DeleteFile(applicationId, fileName, signInId, userName);
+
+            return RedirectToAction("GroundsOfAppeal", new { applicationId, appealOnPolicyOrProcesses, appealOnEvidenceSubmitted });
+        }
+
+
         private async Task<bool> CanMakeAppeal(Guid applicationId)
         {
             var appeal = await _appealsApiClient.GetAppeal(applicationId);
@@ -119,11 +162,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         private async Task<bool> WithinAppealWindow(Guid applicationId)
         {
-            // NOTE: This is an effective workaround until we fully implement BankHolidayService and have AppealRequiredByDate in the OversightReview
+            // NOTE: This is an effective workaround until we have AppealRequiredByDate in the OversightReview
             var oversight = await _outcomeApiClient.GetOversightReview(applicationId);
 
             const int numberOfWorkingDays = 10;
-            var appealRequiredByDate = _bankHolidayService.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, numberOfWorkingDays);
+            var appealRequiredByDate = await _outcomeApiClient.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, numberOfWorkingDays);
 
             return appealRequiredByDate.HasValue && appealRequiredByDate >= DateTime.Today;
         }

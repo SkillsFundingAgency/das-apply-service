@@ -2,10 +2,10 @@
 (
 	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWID(),
     [ApplicationId] UNIQUEIDENTIFIER NOT NULL,
-    [Status] TINYINT NOT NULL,
+    [Status] NVARCHAR(30) NOT NULL,
     [HowFailedOnPolicyOrProcesses] NVARCHAR(MAX) NULL,
     [HowFailedOnEvidenceSubmitted] NVARCHAR(MAX) NULL,
-    [AppealSubmitedDate] DATETIME2 NULL,
+    [AppealSubmittedDate] DATETIME2 NULL,
     [AppealDeterminedDate] DATETIME2 NULL,
     [InternalComments] NVARCHAR(MAX) NULL,
     [ExternalComments] NVARCHAR(MAX) NULL,
@@ -16,7 +16,7 @@
     [InProgressUserName] NVARCHAR(256) NULL,
     [InProgressInternalComments] NVARCHAR(MAX) NULL,
     [InProgressExternalComments] NVARCHAR(MAX) NULL,
-    [CreatedOn] DATETIME2 NOT NULL,
+    [CreatedOn] DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
     [UpdatedOn] DATETIME2 NULL
 )
 GO

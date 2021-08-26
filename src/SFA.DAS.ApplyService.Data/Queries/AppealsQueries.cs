@@ -10,7 +10,6 @@ using SFA.DAS.ApplyService.Domain.QueryResults;
 
 namespace SFA.DAS.ApplyService.Data.Queries
 {
-    // TODO: APPEALREVIEW - Review once appeal work starts
     public class AppealsQueries : IAppealsQueries
     {
         private readonly IApplyConfig _config;
@@ -31,24 +30,24 @@ namespace SFA.DAS.ApplyService.Data.Queries
             {
                 Appeal result = null;
 
-                await connection.QueryAsync<Appeal, Appeal.AppealUpload, Appeal>(
+                await connection.QueryAsync<Appeal, AppealFile, Appeal>(
                     @"SELECT
                         ap.*,
-                        ul.Id, ul.Filename, ul.ContentType
+                        apFile.Id, apFile.ApplicationId, apFile.Filename, apFile.ContentType
                         FROM [Appeal] ap
-                        LEFT JOIN [AppealUpload] ul on ul.AppealId = ap.Id
+                        LEFT JOIN [AppealFile] apFile on apFile.ApplicationId = ap.ApplicationId
                         where ap.ApplicationId = @applicationId",
                         (appeal, upload) =>
                         {
                             if (result == null)
                             {
                                 result = appeal;
-                                result.Uploads = new List<Appeal.AppealUpload>();
+                                result.AppealFiles = new List<AppealFile>();
                             }
 
                             if (upload != null)
                             {
-                                result.Uploads.Add(upload);
+                                result.AppealFiles.Add(upload);
                             }
 
                             return result;
@@ -61,24 +60,31 @@ namespace SFA.DAS.ApplyService.Data.Queries
             }
         }
 
-        public async Task<AppealFiles> GetStagedAppealFiles(Guid applicationId)
+        public async Task<AppealFile> GetAppealFile(Guid applicationId, string fileName)
         {
             using (var connection = GetConnection())
             {
-                var files = (await connection.QueryAsync<AppealFile>(
-                    @"SELECT Id, Filename FROM [AppealUpload] where ApplicationId = @applicationId and AppealId IS NULL ORDER BY CreatedOn ASC",
+                return await connection.QuerySingleOrDefaultAsync<AppealFile>(
+                    @"SELECT * FROM [AppealFile] where ApplicationId = @applicationId AND FileName = @fileName",
+                    new
+                    {
+                        applicationId,
+                        fileName
+                    });
+            }
+        }
+
+        public async Task<List<AppealFile>> GetAppealFilesForApplication(Guid applicationId)
+        {
+            using (var connection = GetConnection())
+            {
+                return (await connection.QueryAsync<AppealFile>(
+                    @"SELECT * FROM [AppealFile] where ApplicationId = @applicationId ORDER BY CreatedOn ASC",
                     new
                     {
                         applicationId
                     })).ToList();
-
-                return new AppealFiles
-                {
-                    Files = files
-                };
             }
         }
-
-
     }
 }

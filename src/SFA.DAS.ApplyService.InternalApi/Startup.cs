@@ -12,14 +12,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
-using SFA.DAS.ApplyService.Data.FileStorage;
 using SFA.DAS.ApplyService.Data.Queries;
+using SFA.DAS.ApplyService.Data.Repositories;
 using SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.DfeSignIn;
@@ -98,7 +97,6 @@ namespace SFA.DAS.ApplyService.InternalApi
                 }
             }).AddFluentValidation(fv =>
             {
-                fv.RegisterValidatorsFromAssemblyContaining<GetStagedFilesQueryValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<Startup>();
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -222,8 +220,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IOversightReviewRepository, OversightReviewRepository>();
             services.AddTransient<IOversightReviewQueries, OversightReviewQueries>();
 
-            // TODO: APPEALREVIEW - Review once appeal work starts
-            services.AddTransient<IAppealUploadRepository, AppealUploadRepository>();
+            services.AddTransient<IAppealFileRepository, AppealFileRepository>();
             services.AddTransient<IAppealRepository, AppealRepository>();
             services.AddTransient<IAppealsQueries, AppealsQueries>();
 
@@ -247,6 +244,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IAssessorSectorDetailsService, AssessorSectorDetailsService>();
             services.AddTransient<IAssessorReviewCreationService, AssessorReviewCreationService>();
             services.AddTransient<IModeratorReviewCreationService, ModeratorReviewCreationService>();
+            services.AddTransient<IBankHolidayService, BankHolidayService>();
+            services.AddTransient<IBankHolidayRepository, BankHolidayRepository>();
 
             services.AddTransient<IApplicationRepository, ApplicationRepository>();
             services.AddTransient<IDiffService, DiffService>();
@@ -256,18 +255,12 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddTransient<IFileStorageService, FileStorageService>();
-            services.AddTransient<IAppealsFileStorage, AppealsFileStorage>();
             
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
             ConfigureNotificationApiEmailService(services);
-
-            services.AddAzureClients(builder =>
-            {
-                builder.AddBlobServiceClient(_applyConfig.FileStorage.StorageConnectionString);
-            });
         }
 
         private void ConfigureNotificationApiEmailService(IServiceCollection services)

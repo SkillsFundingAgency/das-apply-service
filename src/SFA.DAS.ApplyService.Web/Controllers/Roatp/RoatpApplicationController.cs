@@ -1000,7 +1000,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [Authorize(Policy = "AccessInProgressApplication")]
         public async Task<IActionResult> SubmitApplication(Guid applicationId)
         {
-            var model = new SubmitApplicationViewModel { ApplicationId = applicationId };
+
+            var application = await _apiClient.GetApplication(applicationId);
+            var ukprn = application?.ApplyData?.ApplyDetails?.UKPRN;
+            var allowedProviderDetails = await _apiClient.GetAllowedProvider(ukprn);
+            if (allowedProviderDetails == null || allowedProviderDetails.EndDateTime< DateTime.Today)
+                return View("~/Views/Home/InvitationWindowClosed.cshtml");
+
+
+           var model = new SubmitApplicationViewModel { ApplicationId = applicationId };
 
             var organisationName = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName);
             model.OrganisationName = organisationName.Value;

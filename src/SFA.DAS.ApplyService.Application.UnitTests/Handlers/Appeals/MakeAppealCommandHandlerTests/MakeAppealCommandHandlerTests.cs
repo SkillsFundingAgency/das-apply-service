@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoFixture;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal;
@@ -19,24 +17,16 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.MakeAppeal
     {
         private MakeAppealCommandHandler _handler;
         private Mock<IAppealRepository> _appealRepository;
-        //private Mock<IAppealUploadRepository> _appealUploadRepository;
         private Mock<IAuditService> _auditService;
         private Mock<IOversightReviewRepository> _oversightReviewRepository;
 
         private MakeAppealCommand _command;
         private readonly Guid _applicationId = Guid.NewGuid();
         private OversightReview _oversightReview;
-        //private List<AppealUpload> _appealUploads;
-        private Guid _appealId;
-        private Fixture _fixture;
 
         [SetUp]
         public void SetUp()
         {
-            _fixture = new Fixture();
-
-            _appealId = Guid.NewGuid();
-
             _oversightReview = new OversightReview
             {
                 ApplicationId = _applicationId,
@@ -46,40 +36,21 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.MakeAppeal
             _oversightReviewRepository = new Mock<IOversightReviewRepository>();
             _oversightReviewRepository.Setup(x => x.GetByApplicationId(_applicationId)).ReturnsAsync(() => _oversightReview);
 
-            //_appealUploads = new List<AppealUpload>
-            //{
-            //    new AppealUpload
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        ApplicationId = _applicationId
-            //    },
-            //    new AppealUpload
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        ApplicationId = _applicationId
-            //    }
-            //};
-
             _command = new MakeAppealCommand
             {
                 ApplicationId = _applicationId,
-                HowFailedOnPolicyOrProcesses = _fixture.Create<string>(),
-                HowFailedOnEvidenceSubmitted = _fixture.Create<string>(),
-                UserId = _fixture.Create<string>(),
-                UserName = _fixture.Create<string>()
+                HowFailedOnPolicyOrProcesses = "howFailedOnPolicyOrProcesses",
+                HowFailedOnEvidenceSubmitted = "howFailedOnEvidenceSubmitted",
+                UserId = "userId",
+                UserName = "userName"
             };
 
-
-
             _appealRepository = new Mock<IAppealRepository>();
-            _appealRepository.Setup(x => x.Add(It.IsAny<Appeal>())).Callback<Appeal>(appeal => _appealId = appeal.Id);
-
-            //_appealUploadRepository = new Mock<IAppealUploadRepository>();
-            //_appealUploadRepository.Setup(x => x.GetByApplicationId(_applicationId)).ReturnsAsync(_appealUploads);
+            _appealRepository.Setup(x => x.Add(It.IsAny<Appeal>()));
 
             _auditService = new Mock<IAuditService>();
             _auditService.Setup(x => x.StartTracking(UserAction.UploadAppealFile, _command.UserId, _command.UserName));
-            _auditService.Setup(x => x.AuditInsert(It.IsAny<AppealUpload>()));
+            _auditService.Setup(x => x.AuditInsert(It.IsAny<AppealFile>()));
 
             _handler = new MakeAppealCommandHandler(_oversightReviewRepository.Object, _appealRepository.Object, _auditService.Object);
         }
@@ -96,6 +67,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.MakeAppeal
                     appeal.HowFailedOnEvidenceSubmitted == _command.HowFailedOnEvidenceSubmitted &&
                     appeal.UserId == _command.UserId &&
                     appeal.UserName == _command.UserName)));
+
+            _auditService.Verify(x => x.Save());
         }
 
         [Test]
@@ -111,32 +84,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.MakeAppeal
                 appeal.HowFailedOnEvidenceSubmitted == _command.HowFailedOnEvidenceSubmitted &&
                 appeal.UserId == _command.UserId &&
                 appeal.UserName == _command.UserName)));
+
+            _auditService.Verify(x => x.Save());
         }
-
-        //[Test]
-        //public async Task Handle_Updates_Staged_Files_To_The_New_Appeal()
-        //{
-        //    await _handler.Handle(_command, CancellationToken.None);
-
-        //    foreach (var upload in _appealUploads)
-        //    {
-        //        _appealUploadRepository.Verify(x =>
-        //            x.Update(It.Is<AppealUpload>(u =>
-        //                u.Id == upload.Id && u.AppealId == _appealId)));
-        //    }
-        //}
-
-        //[Test]
-        //public async Task Handle_Audits_Updates_To_Staged_Files()
-        //{
-        //    await _handler.Handle(_command, CancellationToken.None);
-
-        //    foreach (var upload in _appealUploads)
-        //    {
-        //        _auditService.Verify(x => x.AuditUpdate(It.Is<AppealUpload>(u =>
-        //                u.Id == upload.Id && u.AppealId == _appealId)));
-        //    }
-        //}
 
         [TestCase(OversightReviewStatus.InProgress)]
         [TestCase(OversightReviewStatus.Rejected)]
@@ -156,7 +106,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.MakeAppeal
         [TestCase(AppealStatus.SuccessfulAlreadyActive)]
         [TestCase(AppealStatus.SuccessfulFitnessForFunding)]
         [TestCase(AppealStatus.Unsuccessful)]
-        public void Handle_Throws_If_Application_Already_Been_Appealed(AppealStatus status)
+        public void Handle_Throws_If_Application_Already_Been_Appealed(string status)
         {
             _appealRepository.Setup(x => x.GetByApplicationId(_applicationId))
                 .ReturnsAsync(() => new Appeal { Status = status });
