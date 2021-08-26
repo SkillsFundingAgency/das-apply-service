@@ -30,8 +30,8 @@ namespace SFA.DAS.ApplyService.Application.Appeals.Commands.DeleteAppealFile
 
             _auditService.StartTracking(UserAction.RemoveAppealFile, request.UserId, request.UserName);
 
-            _auditService.AuditDelete(upload);
             _appealFileRepository.Remove(upload.Id);
+            _auditService.AuditDelete(upload);
 
             _auditService.Save();
 
