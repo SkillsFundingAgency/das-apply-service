@@ -54,6 +54,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.DeleteAppe
             await _handler.Handle(_command, CancellationToken.None);
 
             _appealUploadRepository.Verify(x => x.Remove(It.Is<Guid>(id => id == _appealUploadId)), Times.Once);
+
+            _auditService.Verify(x => x.Save());
         }
 
         [Test]
@@ -61,7 +63,11 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.DeleteAppe
         {
             await _handler.Handle(_command, CancellationToken.None);
 
+            _auditService.Verify(x => x.StartTracking(UserAction.RemoveAppealFile, _command.UserId, _command.UserName), Times.Once);
+
             _auditService.Verify(x => x.AuditDelete(It.Is<AppealFile>(upload => upload.Id == _appealUploadId)));
+
+            _auditService.Verify(x => x.Save());
         }
     }
 }

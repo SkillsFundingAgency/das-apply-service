@@ -57,12 +57,16 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.UploadAppe
                 && upload.UserName == _command.UserName
                 && upload.Size == _command.AppealFile.Data.Length
                 )));
+
+            _auditService.Verify(x => x.Save());
         }
 
         [Test]
         public async Task Handle_Audits_Added_File()
         {
             await _handler.Handle(_command, CancellationToken.None);
+
+            _auditService.Verify(x => x.StartTracking(UserAction.UploadAppealFile, _command.UserId, _command.UserName), Times.Once);
 
             _auditService.Verify(x => x.AuditInsert(It.Is<AppealFile>(upload =>
                 upload.ApplicationId == _command.ApplicationId
@@ -72,6 +76,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.UploadAppe
                 && upload.UserName == _command.UserName
                 && upload.Size == _command.AppealFile.Data.Length
                 )));
+
+            _auditService.Verify(x => x.Save());
         }
     }
 }

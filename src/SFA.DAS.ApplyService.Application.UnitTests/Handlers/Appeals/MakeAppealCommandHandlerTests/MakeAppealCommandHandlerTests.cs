@@ -67,6 +67,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.MakeAppeal
                     appeal.HowFailedOnEvidenceSubmitted == _command.HowFailedOnEvidenceSubmitted &&
                     appeal.UserId == _command.UserId &&
                     appeal.UserName == _command.UserName)));
+
+            _auditService.Verify(x => x.Save());
         }
 
         [Test]
@@ -82,6 +84,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.MakeAppeal
                 appeal.HowFailedOnEvidenceSubmitted == _command.HowFailedOnEvidenceSubmitted &&
                 appeal.UserId == _command.UserId &&
                 appeal.UserName == _command.UserName)));
+
+            _auditService.Verify(x => x.Save());
         }
 
         [TestCase(OversightReviewStatus.InProgress)]
