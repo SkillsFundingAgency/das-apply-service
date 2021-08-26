@@ -333,7 +333,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             else
             {
                 _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
-                    .ReturnsAsync(new GetAppealResponse {Status = appealStatus});
+                    .ReturnsAsync(new GetAppealResponse {Status = appealStatus, AppealSubmittedDate = DateTime.Today});
             }
             var application = new Apply
             {
@@ -375,7 +375,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 ModerationStatus = moderationStatus,
                 FinancialGrade = financialGrade,
                 FinancialExternalComments = financialExternalComments,
-                AppealSubmitted = appealSubmitted
+                IsAppealSubmitted = appealSubmitted
             };
 
             var returnedModel = await _service.BuildApplicationSummaryViewModel(application, emailAddress);

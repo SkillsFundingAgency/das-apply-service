@@ -97,7 +97,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 ModerationStatus = application?.ModerationStatus,
                 SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit,
                 ApplicationStatus = application?.ApplicationStatus,
-                AppealSubmitted = appealSubmitted
+                IsAppealSubmitted = appealSubmitted
             };
             return model;
         }
@@ -173,7 +173,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 GatewayPassOverturnedToFail = gatewayPassOverturnedToFail,
                 OversightExternalComments = oversightReview?.ExternalComments,
                 ApplicationStatus = application?.ApplicationStatus,
-                AppealSubmitted = appealSubmitted
+                IsAppealSubmitted = appealSubmitted
             };
 
             if (moderationFailedAndApproved)
@@ -199,7 +199,7 @@ namespace SFA.DAS.ApplyService.Web.Services
         private async Task<bool> GetAppealSubmitted(Apply application)
         {
             var appeal = await _appealsApiClient.GetAppeal(application.ApplicationId);
-            return appeal != null;
+            return appeal != null && appeal.AppealSubmittedDate!=null;
         }
 
         private void AddSequenceTitlesToSequences(List<AssessorSequence> sequencesWithModerationFails)

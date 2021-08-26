@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public string SubcontractingLimitFormatted => SubcontractingLimit?.ToString("N0");
 
-        public bool AppealSubmitted { get; set; }
+        public bool IsAppealSubmitted { get; set; }
 
         public DateTime? ApplicationDeterminedDate { get; set; }
         public DateTime? AppealRequiredByDate { get; set; }
