@@ -11,7 +11,9 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
+using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
@@ -24,6 +26,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         private Mock<IOutcomeApiClient> _apiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IAssessorLookupService> _assessorLookupService;
+        private Mock<IAppealsApiClient> _appealsApiClient;
         private Guid _applicationId;
         private string _userId;
         private OverallOutcomeService _service;
@@ -43,6 +46,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _applicationId = Guid.NewGuid();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _apiClient = new Mock<IOutcomeApiClient>();
+            _appealsApiClient = new Mock<IAppealsApiClient>();
             _assessorLookupService = new Mock<IAssessorLookupService>();
             _userId = "test";
             _page121 = "page1.2.1";
@@ -60,9 +64,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
             _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationOutcomes);
+            _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
+                .ReturnsAsync((GetAppealResponse)null);
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
             _service = new OverallOutcomeService(_apiClient.Object, _qnaApiClient.Object,
-                _assessorLookupService.Object);
+                _assessorLookupService.Object, _appealsApiClient.Object);
         }
 
         [Test]
@@ -296,8 +302,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 .Be(null);
         }
 
-        [Test]
-        public async Task BuildApplicationSummaryViewModel_builds_expected_viewModel()
+        [TestCase(null, false)]
+        [TestCase(AppealStatus.Successful, true)]
+        [TestCase(AppealStatus.Unsuccessful, true)]
+        [TestCase(AppealStatus.InProgressOutcome, true)]
+        [TestCase(AppealStatus.Submitted, true)]
+        [TestCase(AppealStatus.SuccessfulFitnessForFunding, true)]
+        [TestCase(AppealStatus.SuccessfulAlreadyActive, true)]
+        public async Task BuildApplicationSummaryViewModel_builds_expected_viewModel(string appealStatus, bool appealSubmitted)
         {
             var emailAddress = "test@test.com";
             var ukprn = "12345678";
@@ -312,7 +324,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var financialExternalComments = "financial external comments";
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var moderationStatus = Domain.Apply.ModerationStatus.Fail;
+            if (string.IsNullOrEmpty(appealStatus))
+            {
+                _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
+                    .ReturnsAsync((GetAppealResponse)null);
 
+            }
+            else
+            {
+                _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
+                    .ReturnsAsync(new GetAppealResponse {Status = appealStatus, AppealSubmittedDate = DateTime.Today});
+            }
             var application = new Apply
             {
                 ApplicationId = _applicationId, 
@@ -352,10 +374,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 GatewayReviewStatus = gatewayReviewStatus,
                 ModerationStatus = moderationStatus,
                 FinancialGrade = financialGrade,
-                FinancialExternalComments = financialExternalComments
+                FinancialExternalComments = financialExternalComments,
+                IsAppealSubmitted = appealSubmitted
             };
 
-            var returnedModel = _service.BuildApplicationSummaryViewModel(application, emailAddress);
+            var returnedModel = await _service.BuildApplicationSummaryViewModel(application, emailAddress);
             expectedModel.Should().BeEquivalentTo(returnedModel);
         }
 

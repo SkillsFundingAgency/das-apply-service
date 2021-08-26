@@ -44,7 +44,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> ProcessApplicationStatus(Guid applicationId)
         {
             var application = await _applicationApiClient.GetApplication(applicationId);
-            var model = _overallOutcomeService.BuildApplicationSummaryViewModel(application, User.GetEmail());
+            var model = await _overallOutcomeService.BuildApplicationSummaryViewModel(application, User.GetEmail());
 
             switch (application.ApplicationStatus)
             {
@@ -84,6 +84,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     model.ApplicationDeterminedDate = oversight?.ApplicationDeterminedDate;
                     model.AppealRequiredByDate =
                         await _apiClient.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, NumberOfWorkingDays);
+
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
                         return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
 
