@@ -72,6 +72,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 AppealFiles = appealFileList?.AppealFiles
             };
 
+            RestoreUserInputFromTempData(model);
+
             return View("~/Views/Appeals/GroundsOfAppeal.cshtml", model);
         }
 
@@ -104,6 +106,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
             else
             {
+                StoreUserInputInTempData(model);
                 return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
             }  
         }
@@ -152,6 +155,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("GroundsOfAppeal", new { applicationId, appealOnPolicyOrProcesses, appealOnEvidenceSubmitted });
         }
 
+        private void StoreUserInputInTempData(GroundsOfAppealViewModel model)
+        {
+            TempData["HowFailedOnEvidenceSubmitted"] = model.HowFailedOnEvidenceSubmitted;
+            TempData["HowFailedOnPolicyOrProcesses"] = model.HowFailedOnPolicyOrProcesses;
+        }
+
+        private void RestoreUserInputFromTempData(GroundsOfAppealViewModel model)
+        {
+            if(TempData["HowFailedOnEvidenceSubmitted"] != null)
+            {
+                model.HowFailedOnEvidenceSubmitted = TempData["HowFailedOnEvidenceSubmitted"] as string;
+            }
+
+            if (TempData["HowFailedOnPolicyOrProcesses"] != null)
+            {
+                model.HowFailedOnPolicyOrProcesses = TempData["HowFailedOnPolicyOrProcesses"] as string;
+            }
+        }
 
         private async Task<bool> CanMakeAppeal(Guid applicationId)
         {
