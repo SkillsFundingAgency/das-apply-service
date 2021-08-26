@@ -480,21 +480,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task MakeAppeal_shows_make_appeal_page()
-        {
-            var _applicationId = Guid.NewGuid();
-
-            var model = new MakeAppealViewModel {ApplicationId = _applicationId};
-
-            var result = _controller.MakeAppeal(_applicationId);
-
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("MakeAppeal.cshtml");
-            viewResult.Model.Should().BeEquivalentTo(model);
-        }
-
-        [Test]
         public async Task Application_shows_withdrawn_page_if_application_withdrawn()
         {
             var submittedApp = new Apply

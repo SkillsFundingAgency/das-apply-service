@@ -1,0 +1,51 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals.GroundsOfAppealViewModel
+
+@{
+    ViewBag.Title = "Tell us about the grounds for your appeal";
+    Layout = "_Layout";
+}
+
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <partial name="_ValidationSummaryPartial" />
+            <h1 class="govuk-heading-l">Tell us about the grounds for your appeal</h1>
+            <p class="govuk-body">
+                The ESFA will not consider any additional information you provide that was not included in your original application.
+            </p>
+        </div>
+        <div class="govuk-grid-column-two-thirds govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+                <span class="govuk-warning-text__assistive">Warning</span>
+                Your answer will not be saved if you leave this page before you submit your appeal
+            </strong>
+        </div>
+        <div class="govuk-grid-column-two-thirds">
+            <a id="overview" class="govuk-link govuk-link--no-visited-state" target="_blank" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">View your Application overview page (opens in new tab)</a>
+
+            <form method="post" asp-action="GroundsOfAppeal" asp-controller="RoatpAppealsController" novalidate>
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="AppealOnPolicyOrProcesses" />
+                <input type="hidden" asp-for="AppealOnEvidenceSubmitted" />
+                <div class="govuk-form-group" sfa-validation-for-list="" sfa-validationerror-class="govuk-form-group--error">
+                    <fieldset class="govuk-fieldset">
+                        <div class="govuk-form-group">
+                            <span class="govuk-error-message">Holding page - to be fleshed out in APR-2621</span>
+                        </div>
+                    </fieldset>
+                </div>
+                <button class="govuk-button govuk-!-margin-right-3" data-module="govuk-button" data-disable-on-submit="true">
+                    Submit your appeal
+                </button>
+                <a id="cancel" class="govuk-link govuk-link--no-visited-state das-inline-button-link" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">Cancel this appeal</a>
+            </form>
+        </div>
+    </div>
+</main>
