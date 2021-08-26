@@ -119,9 +119,16 @@ namespace SFA.DAS.ApplyService.Web.Authorization
             {
                 var path = _httpContextAccessor.HttpContext.Request.Path.Value;
 
-                if (path.StartsWith("/Application/"))
+                if (path.StartsWith("/Application/", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    result = path.Split('/').Last();
+                    foreach(var substring in path.Split('/'))
+                    {
+                        if(Guid.TryParse(substring, out var applicationId))
+                        {
+                            result = applicationId.ToString();
+                            break;
+                        }
+                    }
                 }
             }
 
