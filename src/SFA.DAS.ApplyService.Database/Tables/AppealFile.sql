@@ -7,7 +7,7 @@
     [Size] INT NOT NULL,
     [UserId] NVARCHAR(256) NULL,
     [UserName] NVARCHAR(256) NULL,
-    [CreatedOn] DATETIME2 NOT NULL
+    [CreatedOn] DATETIME2 NOT NULL DEFAULT GETUTCDATE()
 )
 GO
 
