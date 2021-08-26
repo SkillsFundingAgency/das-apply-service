@@ -8,7 +8,7 @@ namespace SFA.DAS.ApplyService.Domain.QueryResults
     {
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
-        public AppealStatus Status { get; set; }
+        public string Status { get; set; }
         public string HowFailedOnPolicyOrProcesses { get; set; }
         public string HowFailedOnEvidenceSubmitted { get; set; }
         public DateTime? AppealSubmittedDate { get; set; }
@@ -24,6 +24,6 @@ namespace SFA.DAS.ApplyService.Domain.QueryResults
         public string InProgressExternalComments { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }
-        public List<AppealFile> AppealFiles { get; set; } //change name?
+        public List<AppealFile> AppealFiles { get; set; }
     }
 }

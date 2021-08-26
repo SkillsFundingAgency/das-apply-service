@@ -102,7 +102,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.MakeAppeal
         [TestCase(AppealStatus.SuccessfulAlreadyActive)]
         [TestCase(AppealStatus.SuccessfulFitnessForFunding)]
         [TestCase(AppealStatus.Unsuccessful)]
-        public void Handle_Throws_If_Application_Already_Been_Appealed(AppealStatus status)
+        public void Handle_Throws_If_Application_Already_Been_Appealed(string status)
         {
             _appealRepository.Setup(x => x.GetByApplicationId(_applicationId))
                 .ReturnsAsync(() => new Appeal { Status = status });

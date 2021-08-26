@@ -8,7 +8,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals
     {
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
-        public AppealStatus Status { get; set; }
+        public string Status { get; set; }
         public string HowFailedOnPolicyOrProcesses { get; set; }
         public string HowFailedOnEvidenceSubmitted { get; set; }
         public DateTime? AppealSubmittedDate { get; set; }

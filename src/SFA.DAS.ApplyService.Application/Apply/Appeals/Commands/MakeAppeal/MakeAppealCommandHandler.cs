@@ -82,9 +82,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
 
         private void VerifyAppealNotSubmitted(Appeal appeal)
         {
-            var allowedStatuses = new[] { AppealStatus.None };
-
-            if (appeal != null && !allowedStatuses.Contains(appeal.Status))
+            if (appeal != null && !string.IsNullOrEmpty(appeal.Status))
             {
                 throw new InvalidOperationException($"Unable to create Appeal for Application {appeal.ApplicationId} as Appeal {appeal.Id} already submitted");
             }
