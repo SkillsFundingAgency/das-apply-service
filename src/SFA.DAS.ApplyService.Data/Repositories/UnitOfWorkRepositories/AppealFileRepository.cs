@@ -72,7 +72,8 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 
             await transaction.Connection.ExecuteAsync(
                 @"INSERT INTO [AppealFile]
-                    ([ApplicationId],
+                    ([Id],
+                    [ApplicationId],
                     [FileName],
                     [ContentType],
                     [Size],
@@ -80,13 +81,14 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
                     [UserName],
                     [CreatedOn])
                     VALUES (
+                    @Id,
                     @ApplicationId,
                     @FileName,
                     @ContentType,
                     @Size,
                     @UserId,
                     @UserName,
-                    GETUTCDATE())",
+                    @CreatedOn)",
                 entity, transaction);
         }
 

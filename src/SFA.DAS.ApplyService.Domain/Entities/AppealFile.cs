@@ -13,5 +13,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string UserId { get; set; }
         public string UserName { get; set; }
         public DateTime CreatedOn { get; set; }
+
+        public AppealFile()
+        {
+            Id = Guid.NewGuid();
+            CreatedOn = DateTime.UtcNow;
+        }
     }
 }

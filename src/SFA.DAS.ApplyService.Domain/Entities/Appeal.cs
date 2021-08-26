@@ -23,5 +23,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string InProgressExternalComments { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }
+
+        public Appeal()
+        {
+            Id = Guid.NewGuid();
+            CreatedOn = DateTime.UtcNow;
+        }
     }
 }
