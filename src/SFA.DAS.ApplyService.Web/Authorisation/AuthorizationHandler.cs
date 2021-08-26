@@ -14,14 +14,17 @@ namespace SFA.DAS.ApplyService.Web.Authorization
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IApplicationApiClient _apiClient;
+        private readonly IAppealsApiClient _appealsApiClient;
         private readonly ILogger<AuthorizationHandler> _logger;
 
         public AuthorizationHandler(IHttpContextAccessor httpContextAccessor,
             IApplicationApiClient apiClient,
+            IAppealsApiClient appealsApiClient,
             ILogger<AuthorizationHandler> logger)
         {
             _httpContextAccessor = httpContextAccessor;
             _apiClient = apiClient;
+            _appealsApiClient = appealsApiClient;
             _logger = logger;
         }
 
@@ -30,7 +33,7 @@ namespace SFA.DAS.ApplyService.Web.Authorization
             _logger.LogInformation("AccessApplicationRequirementHandler invoked");
 
             var pendingRequirements = context.PendingRequirements.ToList();
-            if (!pendingRequirements.Exists(x => x is AccessApplicationRequirement || x is ApplicationStatusRequirement))
+            if (!pendingRequirements.Exists(x => x is AccessApplicationRequirement || x is ApplicationStatusRequirement || x is AppealNotYetSubmittedRequirement))
             {
                 return;
             }
@@ -80,6 +83,29 @@ namespace SFA.DAS.ApplyService.Web.Authorization
                         _logger.LogInformation($"Requirement {requirement.GetType().Name} not met - application status required: one of [{requiredStatus}], actual {actualStatus}");
                     }
                 }
+
+                if (requirement is AppealNotYetSubmittedRequirement)
+                {
+                    if (application != null)
+                    {
+                        var appeal = await _appealsApiClient.GetAppeal(application.ApplicationId);
+
+                        if (appeal?.AppealSubmittedDate is null)
+                        {
+                            context.Succeed(requirement);
+                            _logger.LogInformation($"Requirement {requirement.GetType().Name} met");
+                        }
+                        else
+                        {
+                            _logger.LogInformation($"Requirement {requirement.GetType().Name} not met - appeal has been submitted");
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"Requirement {requirement.GetType().Name} not met - application not found");
+                    }
+                }
+                
             }
         }
 
