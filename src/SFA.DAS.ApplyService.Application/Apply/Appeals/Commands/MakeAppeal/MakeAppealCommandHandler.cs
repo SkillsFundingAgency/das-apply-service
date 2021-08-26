@@ -40,6 +40,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
                 { 
                     ApplicationId = request.ApplicationId ,
                     Status = AppealStatus.Submitted,
+                    AppealSubmittedDate = DateTime.UtcNow,
                     HowFailedOnPolicyOrProcesses = request.HowFailedOnPolicyOrProcesses,
                     HowFailedOnEvidenceSubmitted = request.HowFailedOnEvidenceSubmitted,
                     UserId = request.UserId,
@@ -52,10 +53,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
             else
             {
                 currentAppeal.Status = AppealStatus.Submitted;
+                currentAppeal.AppealSubmittedDate = DateTime.UtcNow;
                 currentAppeal.HowFailedOnPolicyOrProcesses = request.HowFailedOnPolicyOrProcesses;
                 currentAppeal.HowFailedOnEvidenceSubmitted = request.HowFailedOnEvidenceSubmitted;
                 currentAppeal.UserId = request.UserId;
                 currentAppeal.UserName = request.UserName;
+                currentAppeal.UpdatedOn = DateTime.UtcNow;
 
                 _appealRepository.Update(currentAppeal);
                 _auditService.AuditUpdate(currentAppeal);
