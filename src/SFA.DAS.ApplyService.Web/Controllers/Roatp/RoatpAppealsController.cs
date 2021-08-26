@@ -10,18 +10,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     [Authorize]
     public class RoatpAppealsController : Controller
     {
-        private readonly IOutcomeApiClient _apiClient;
+        private readonly IOutcomeApiClient _outcomeApiClient;
+        private readonly IAppealsApiClient _appealsApiClient;
 
-        public RoatpAppealsController(IOutcomeApiClient apiClient)
+        public RoatpAppealsController(IOutcomeApiClient apiClient, IAppealsApiClient appealsApiClient)
         {
-            _apiClient = apiClient;
+            _outcomeApiClient = apiClient;
+            _appealsApiClient = appealsApiClient;
         }
 
         [HttpGet("application/{applicationId}/appeal")]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> MakeAppeal(Guid applicationId)
         {
-            if (!await WithinAppealWindow(applicationId))
+            if (!await CanMakeAppeal(applicationId))
             {
                 return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
             }
@@ -38,7 +40,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> MakeAppeal(MakeAppealViewModel model)
         {
-            if (!await WithinAppealWindow(model.ApplicationId))
+            if (!await CanMakeAppeal(model.ApplicationId))
             {
                 return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
             }
@@ -47,6 +49,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 return RedirectToAction("MakeAppeal", new { model.ApplicationId });
             }
+
             return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
         }
 
@@ -54,10 +57,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> GroundsOfAppeal(Guid applicationId, bool appealOnPolicyOrProcesses, bool appealOnEvidenceSubmitted)
         {
-            if (!await WithinAppealWindow(applicationId))
+            if (!await CanMakeAppeal(applicationId))
             {
                 return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
             }
+
+            // TODO: Will need to populate any previously uploaded files. THis is done in a different ticket
 
             var model = new GroundsOfAppealViewModel
             {
@@ -73,21 +78,49 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> GroundsOfAppeal(GroundsOfAppealViewModel model)
         {
-            if (!await WithinAppealWindow(model.ApplicationId))
+            if (!await CanMakeAppeal(model.ApplicationId))
             {
                 return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
             }
 
-            return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
+            }
+
+            var signInId = User.GetSignInId().ToString();
+            var userName = User.Identity.Name;
+            await _appealsApiClient.MakeAppeal(model.ApplicationId, model.HowFailedOnPolicyOrProcesses, model.HowFailedOnEvidenceSubmitted, signInId, userName);
+
+            return RedirectToAction("AppealSubmitted", new { model.ApplicationId });
+        }
+
+        [HttpGet("application/{applicationId}/appeal-submitted")]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public IActionResult AppealSubmitted(Guid applicationId)
+        {
+            var model = new AppealSubmittedViewModel
+            {
+                ApplicationId = applicationId
+            };
+
+            return View("~/Views/Appeals/AppealSubmitted.cshtml", model);
+        }
+
+        private async Task<bool> CanMakeAppeal(Guid applicationId)
+        {
+            var appeal = await _appealsApiClient.GetAppeal(applicationId);
+
+            return appeal is null && await WithinAppealWindow(applicationId);
         }
 
         private async Task<bool> WithinAppealWindow(Guid applicationId)
         {
             // NOTE: This is an effective workaround until we have AppealRequiredByDate in the OversightReview
-            var oversight = await _apiClient.GetOversightReview(applicationId);
+            var oversight = await _outcomeApiClient.GetOversightReview(applicationId);
 
             const int numberOfWorkingDays = 10;
-            var appealRequiredByDate = await _apiClient.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, numberOfWorkingDays);
+            var appealRequiredByDate = await _outcomeApiClient.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, numberOfWorkingDays);
 
             return appealRequiredByDate.HasValue && appealRequiredByDate >= DateTime.Today;
         }

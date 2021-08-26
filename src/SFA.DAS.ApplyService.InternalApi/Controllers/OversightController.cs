@@ -6,9 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
-using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.CreateAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Commands.UploadAppealFile;
-using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightDetails;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetOversightReview;
 using SFA.DAS.ApplyService.Application.Apply.Oversight.Queries.GetStagedFiles;
@@ -168,53 +166,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         //         Files = result.Files.Select(file => new GetStagedFilesResponse.AppealFile{ Id = file.Id, Filename = file.Filename}).ToList()
         //     };
         // }
-        //
-        // [HttpPost]
-        // [Route("Oversight/{applicationId}/oversight-reviews/{oversightReviewId}/appeal")]
-        // public async Task<IActionResult> CreateAppeal(Guid applicationId, Guid oversightReviewId, [FromBody] CreateAppealRequest request)
-        // {
-        //     var command = new CreateAppealCommand
-        //     {
-        //         ApplicationId = applicationId,
-        //         OversightReviewId = oversightReviewId,
-        //         Message = request.Message,
-        //         UserId = request.UserId,
-        //         UserName = request.UserName
-        //     };
-        //
-        //     await _mediator.Send(command);
-        //     return new OkResult();
-        // }
-        //
-        // [HttpGet]
-        // [Route("Oversight/{applicationId}/oversight-reviews/{oversightReviewId}/appeal")]
-        // public async Task<ActionResult<GetAppealResponse>> GetAppeal([FromRoute] GetAppealRequest request)
-        // {
-        //     var query = new GetAppealQuery
-        //     {
-        //         ApplicationId = request.ApplicationId,
-        //         OversightReviewId = request.OversightReviewId
-        //     };
-        //
-        //     var result = await _mediator.Send(query);
-        //
-        //     return result == null ? null : new GetAppealResponse
-        //     {
-        //         Id = result.Id,
-        //         Message = result.Message,
-        //         CreatedOn = result.CreatedOn,
-        //         UserId = result.UserId,
-        //         UserName = result.UserName,
-        //         Uploads = result.Uploads.Select(upload => new GetAppealResponse.AppealUpload
-        //         {
-        //             Id = upload.Id,
-        //             Filename = upload.Filename,
-        //             ContentType = upload.ContentType
-        //         }).ToList()
-        //     };
-        // }
-
-
 
         // [HttpGet]
         // [Route("Oversight/{applicationId}/appeals/{appealId}/uploads/{appealUploadId}")]
