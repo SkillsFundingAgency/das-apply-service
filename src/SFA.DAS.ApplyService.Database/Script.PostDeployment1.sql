@@ -49,3 +49,8 @@ if not exists(select * from BankHoliday where BankHolidayDate='2022-12-26')
 if not exists(select * from BankHoliday where BankHolidayDate='2022-12-27')
 	INSERT INTO [dbo].[BankHoliday] ([BankHolidayDate]) VALUES('2022-12-27')
 END
+
+---APR-2640.sql
+IF EXISTS(SELECT * FROM sys.tables WHERE SCHEMA_NAME(schema_id) LIKE 'dbo' AND name LIKE 'AppealUpload')  
+   DROP TABLE [dbo].[AppealUpload];
+GO
