@@ -196,7 +196,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var viewResult = result as RedirectToActionResult;
             viewResult.Should().NotBeNull();
-            viewResult.ActionName.Should().Be("IsAppealSubmitted");
+            viewResult.ActionName.Should().Be("AppealSubmitted");
         }
 
         [Test]
@@ -269,7 +269,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("IsAppealSubmitted.cshtml");
+            viewResult.ViewName.Should().Contain("AppealSubmitted.cshtml");
             viewResult.Model.Should().BeEquivalentTo(model);
         }
 
