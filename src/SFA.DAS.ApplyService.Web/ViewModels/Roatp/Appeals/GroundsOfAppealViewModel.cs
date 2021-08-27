@@ -5,8 +5,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals
 {
     public class GroundsOfAppealViewModel
     {
-        public const string UPLOAD_APPEALFILE_FORMACTION = "Upload";
-
+        public const string UPLOAD_APPEALFILE_FORMACTION = "UploadAppealFile";
+        public const string SUBMIT_APPEAL_FORMACTION = "SubmitAppeal";
 
         public Guid ApplicationId { get; set; }
 
