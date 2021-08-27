@@ -99,16 +99,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 await _appealsApiClient.UploadFile(model.ApplicationId, model.AppealFileToUpload, signInId, userName);
             }
 
-            if (model.FormAction != GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION)
+            switch(model.FormAction)
             {
-                await _appealsApiClient.MakeAppeal(model.ApplicationId, model.HowFailedOnPolicyOrProcesses, model.HowFailedOnEvidenceSubmitted, signInId, userName);
-                return RedirectToAction("AppealSubmitted", new { model.ApplicationId });
+                case GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION:
+                    StoreUserInputInTempData(model);
+                    return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
+
+                case GroundsOfAppealViewModel.SUBMIT_APPEAL_FORMACTION:
+                default:
+                    await _appealsApiClient.MakeAppeal(model.ApplicationId, model.HowFailedOnPolicyOrProcesses, model.HowFailedOnEvidenceSubmitted, signInId, userName);
+                    return RedirectToAction("AppealSubmitted", new { model.ApplicationId });
             }
-            else
-            {
-                StoreUserInputInTempData(model);
-                return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
-            }  
         }
 
         [HttpGet("application/{applicationId}/appeal-submitted")]
@@ -122,6 +123,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             return View("~/Views/Appeals/AppealSubmitted.cshtml", model);
         }
+
+        [HttpGet("application/{applicationId}/cancel-appeal")]
+        [Authorize(Policy = "AccessAppealNotYetSubmitted")]
+        public async Task<IActionResult> CancelAppeal(Guid applicationId)
+        {
+            var signInId = User.GetSignInId().ToString();
+            var userName = User.Identity.Name;
+
+            await _appealsApiClient.CancelAppeal(applicationId, signInId, userName);
+
+            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+        }
+
 
         [HttpGet("application/{applicationId}/appeal/file/{fileName}")]
         [Authorize(Policy = "AccessAppeal")]

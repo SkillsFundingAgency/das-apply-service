@@ -1,4 +1,6 @@
-﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals.GroundsOfAppealViewModel
+﻿@using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
+
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals.GroundsOfAppealViewModel
 
 @{
     ViewBag.Title = "Tell us about the grounds for your appeal";
@@ -39,38 +41,38 @@
                     <fieldset class="govuk-fieldset">
                         @if (Model.AppealOnPolicyOrProcesses)
                         {
-                        <div class="govuk-character-count govuk-!-margin-bottom-6" data-module="govuk-character-count" data-maxlength="10000">
-                            <div class="govuk-form-group" sfa-validation-for="HowFailedOnPolicyOrProcesses" sfa-validationerror-class="govuk-form-group--error">
-                                <label class="govuk-label govuk-!-font-weight-bold" asp-for="HowFailedOnPolicyOrProcesses">
-                                    How did the ESFA fail to follow its own policy or processes?
-                                </label>
-                                <span class="govuk-error-message" asp-validation-for="HowFailedOnPolicyOrProcesses"></span>
-                                <textarea class="govuk-textarea govuk-js-character-count" asp-for="HowFailedOnPolicyOrProcesses"
-                                          sfa-validation-for="HowFailedOnPolicyOrProcesses" sfa-validationerror-class="govuk-textarea--error"
-                                          rows="5" aria-describedby="HowFailedOnPolicyOrProcesses-info"></textarea>
+                            <div class="govuk-character-count govuk-!-margin-bottom-6" data-module="govuk-character-count" data-maxlength="10000">
+                                <div class="govuk-form-group" sfa-validation-for="HowFailedOnPolicyOrProcesses" sfa-validationerror-class="govuk-form-group--error">
+                                    <label class="govuk-label govuk-!-font-weight-bold" asp-for="HowFailedOnPolicyOrProcesses">
+                                        How did the ESFA fail to follow its own policy or processes?
+                                    </label>
+                                    <span class="govuk-error-message" asp-validation-for="HowFailedOnPolicyOrProcesses"></span>
+                                    <textarea class="govuk-textarea govuk-js-character-count" asp-for="HowFailedOnPolicyOrProcesses"
+                                              sfa-validation-for="HowFailedOnPolicyOrProcesses" sfa-validationerror-class="govuk-textarea--error"
+                                              rows="5" aria-describedby="HowFailedOnPolicyOrProcesses-info"></textarea>
+                                </div>
+                                <span id="HowFailedOnPolicyOrProcesses-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                                    You can enter up to 10000 characters
+                                </span>
                             </div>
-                            <span id="HowFailedOnPolicyOrProcesses-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
-                                You can enter up to 10000 characters
-                            </span>
-                        </div>
                         }
 
                         @if (Model.AppealOnEvidenceSubmitted)
                         {
-                        <div class="govuk-character-count govuk-!-margin-bottom-6" data-module="govuk-character-count" data-maxlength="10000">
-                            <div class="govuk-form-group" sfa-validation-for="HowFailedOnEvidenceSubmitted" sfa-validationerror-class="govuk-form-group--error">
-                                <label class="govuk-label govuk-!-font-weight-bold" asp-for="HowFailedOnEvidenceSubmitted" for="gethelp">
-                                    How did the ESFA fail to understand or recognise the evidence submitted?
-                                </label>
-                                <span class="govuk-error-message" asp-validation-for="HowFailedOnEvidenceSubmitted"></span>
-                                <textarea class="govuk-textarea govuk-js-character-count" asp-for="HowFailedOnEvidenceSubmitted"
-                                          sfa-validation-for="HowFailedOnEvidenceSubmitted" sfa-validationerror-class="govuk-textarea--error"
-                                          rows="5" aria-describedby="HowFailedOnEvidenceSubmitted-info"></textarea>
+                            <div class="govuk-character-count govuk-!-margin-bottom-6" data-module="govuk-character-count" data-maxlength="10000">
+                                <div class="govuk-form-group" sfa-validation-for="HowFailedOnEvidenceSubmitted" sfa-validationerror-class="govuk-form-group--error">
+                                    <label class="govuk-label govuk-!-font-weight-bold" asp-for="HowFailedOnEvidenceSubmitted" for="gethelp">
+                                        How did the ESFA fail to understand or recognise the evidence submitted?
+                                    </label>
+                                    <span class="govuk-error-message" asp-validation-for="HowFailedOnEvidenceSubmitted"></span>
+                                    <textarea class="govuk-textarea govuk-js-character-count" asp-for="HowFailedOnEvidenceSubmitted"
+                                              sfa-validation-for="HowFailedOnEvidenceSubmitted" sfa-validationerror-class="govuk-textarea--error"
+                                              rows="5" aria-describedby="HowFailedOnEvidenceSubmitted-info"></textarea>
+                                </div>
+                                <span id="HowFailedOnEvidenceSubmitted-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                                    You can enter up to 10000 characters
+                                </span>
                             </div>
-                            <span id="HowFailedOnEvidenceSubmitted-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
-                                You can enter up to 10000 characters
-                            </span>
-                        </div>
                         }
 
                         <div>
@@ -84,11 +86,11 @@
                         </div>
                     </fieldset>
                 </div>
-                <button class="govuk-button govuk-!-margin-right-3" data-module="govuk-button" data-disable-on-submit="true">
+                <button class="govuk-button govuk-!-margin-right-3" data-module="govuk-button" data-disable-on-submit="true" name="FormAction" value="@GroundsOfAppealViewModel.SUBMIT_APPEAL_FORMACTION">
                     Submit your appeal
                 </button>
-                <a id="cancel" class="govuk-link govuk-link--no-visited-state das-inline-button-link" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">Cancel this appeal</a>
+                <a id="cancel" class="govuk-link govuk-link--no-visited-state das-inline-button-link" asp-action="CancelAppeal" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Cancel this appeal</a>
             </form>
         </div>
-        </div>
+    </div>
 </main>
