@@ -7,7 +7,14 @@
 
 @section Navigation
 {
-    <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+    @if (Model.IsAppealSubmitted)
+    {
+        <partial name="~/Views/Application/Navigation/_AppealSubmittedHeader.cshtml" />
+    }
+    else
+    {
+        <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+    }
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -34,5 +41,5 @@
 
         </div>
     </div>
-    <partial name="~/Views/Roatp/_AppealComplaintContact.cshtml"  model="@Model" />
+    <partial name="~/Views/Roatp/_AppealComplaintContact.cshtml" model="@Model" />
 </main>
