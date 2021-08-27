@@ -40,7 +40,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         [HttpGet]
         [Route("application/{applicationId}/status")]
-        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> ProcessApplicationStatus(Guid applicationId)
         {
             var application = await _applicationApiClient.GetApplication(applicationId);
