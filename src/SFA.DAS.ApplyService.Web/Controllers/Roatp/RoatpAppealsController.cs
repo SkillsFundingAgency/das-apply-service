@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             if (!await CanMakeAppeal(applicationId))
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
             }
 
             var model = new MakeAppealViewModel
@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             if (!await CanMakeAppeal(model.ApplicationId))
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { model.ApplicationId });
             }
 
             if (!ModelState.IsValid)
@@ -59,7 +59,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             if (!await CanMakeAppeal(applicationId))
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
             }
 
             var appealFileList = await _appealsApiClient.GetAppealFileList(applicationId);
@@ -83,7 +83,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             if (!await CanMakeAppeal(model.ApplicationId))
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { model.ApplicationId });
             }
 
             if (!ModelState.IsValid)
@@ -119,7 +119,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             if(appeal?.AppealSubmittedDate is null)
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
             }
 
             var model = new AppealSubmittedViewModel
@@ -143,7 +143,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             await _appealsApiClient.CancelAppeal(applicationId, signInId, userName);
 
-            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+            return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
         }
 
 
@@ -169,7 +169,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             if (!await CanMakeAppeal(applicationId))
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
             }
 
             var signInId = User.GetSignInId().ToString();
