@@ -313,6 +313,42 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Files
         }
         #endregion
 
+        #region Delete Directory
+        [Test]
+        public async Task DeleteApplicationDirectory_when_directory_exists_Then_it_returns_true()
+        {
+            var result = await _fileStorageService.DeleteApplicationDirectory(_applicationId, _containerType, new CancellationToken()); ;
+
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public async Task DeleteDirectory_when_directory_exists_Then_it_returns_true()
+        {
+            var result = await _fileStorageService.DeleteDirectory(_applicationId, _sequenceNumber, _sectionNumber, _pageId, _containerType, new CancellationToken()); ;
+
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public async Task DeleteApplicationDirectory_when_directory_does_not_exists_Then_it_will_also_return_true()
+        {
+            var applicationThatDoesNotExist = Guid.NewGuid();
+            var result = await _fileStorageService.DeleteApplicationDirectory(applicationThatDoesNotExist, _containerType, new CancellationToken());
+
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public async Task DeleteDirectory_when_page_does_not_exists_Then_it_will_also_return_true()
+        {
+            var nameOfPageThatDoesNotExist = $"{Guid.NewGuid()}";
+            var result = await _fileStorageService.DeleteDirectory(_applicationId, _sequenceNumber, _sectionNumber, nameOfPageThatDoesNotExist, _containerType, new CancellationToken());
+
+            Assert.IsTrue(result);
+        }
+        #endregion
+
         private static FormFile GenerateFile(string fileName)
         {
             var content = "This is a dummy file";
