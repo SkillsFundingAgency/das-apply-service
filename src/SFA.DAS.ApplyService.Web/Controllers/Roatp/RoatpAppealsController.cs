@@ -113,12 +113,22 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet("application/{applicationId}/appeal-submitted")]
-        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public IActionResult AppealSubmitted(Guid applicationId)
+        public async Task<IActionResult> AppealSubmitted(Guid applicationId)
         {
+            var appeal = await _appealsApiClient.GetAppeal(applicationId);
+
+            if(appeal?.AppealSubmittedDate is null)
+            {
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+            }
+
             var model = new AppealSubmittedViewModel
             {
-                ApplicationId = applicationId
+                ApplicationId = appeal.ApplicationId,
+                AppealSubmittedDate = appeal.AppealSubmittedDate.Value,
+                HowFailedOnEvidenceSubmitted = appeal.HowFailedOnEvidenceSubmitted,
+                HowFailedOnPolicyOrProcesses = appeal.HowFailedOnPolicyOrProcesses,
+                AppealFiles = appeal.AppealFiles
             };
 
             return View("~/Views/Appeals/AppealSubmitted.cshtml", model);
