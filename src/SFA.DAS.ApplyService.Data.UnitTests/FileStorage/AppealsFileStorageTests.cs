@@ -12,9 +12,7 @@ using SFA.DAS.ApplyService.Domain.Models;
 
 namespace SFA.DAS.ApplyService.Data.UnitTests.FileStorage
 {
-    // TODO: APPEALREVIEW - Review once appeal work starts
     [TestFixture]
-    [Ignore("placed on ignore as new appeal work to be done that will make use of this")]
     public class AppealsFileStorageTests
     {
         private Mock<BlobServiceClient> _blobServiceClient;
@@ -31,7 +29,7 @@ namespace SFA.DAS.ApplyService.Data.UnitTests.FileStorage
         {
             var autoFixture = new Fixture();
 
-            _fileUpload = autoFixture.Create<FileUpload>();
+            _fileUpload = new FileUpload { Filename = autoFixture.Create<string>(), Data = autoFixture.Create<byte[]>(), ContentType = "application/pdf" };
 
             _configurationService = new Mock<IConfigurationService>();
             _configurationService.Setup(x => x.GetConfig()).ReturnsAsync(() => new ApplyConfig {FileStorage = _config});
@@ -82,13 +80,7 @@ namespace SFA.DAS.ApplyService.Data.UnitTests.FileStorage
             var result = await _appealFileStorage.Add(applicationId, _fileUpload, new CancellationToken());
             var expectedBlobName = $"{applicationId}/{result}";
             Assert.AreEqual(expectedBlobName, _capturedBlobName);
-        }
-
-        private static byte[] ReadByteArrayFromStream(Stream input)
-        {
-            using MemoryStream ms = new MemoryStream();
-            input.CopyTo(ms);
-            return ms.ToArray();
+            Assert.IsNotNull(_capturedUploadStream);
         }
     }
 }
