@@ -1,15 +1,8 @@
-﻿@using MoreLinq;
-@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmRemoveManagementHierarchyViewModel
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmRemoveManagementHierarchyViewModel
 
 @{
-    var title = $"Are you sure you want to remove {Model.Name}?";
-
-    ViewBag.Title = title;
+    ViewBag.Title = $"Are you sure you want to remove {Model.Name}?";
     Layout = "_Layout";
-
-    bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
-
-    var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
 }
 
 @section Navigation
@@ -21,25 +14,9 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
-            {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-                    <h2 class="govuk-error-summary__title" id="error-summary-title">
-                        There is a problem
-                    </h2>
-                    <div class="govuk-error-summary__body">
-                        <ul class="govuk-list govuk-error-summary__list">
-                            @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
-                            {
-                                <li><a href="#@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            }
-
+            <partial name="_ValidationSummaryPartial" />
             <span class="govuk-caption-l">@Model.SectionTitle</span>
-            <h1 class="govuk-heading-xl">@title</h1>
+            <h1 class="govuk-heading-xl">Are you sure you want to remove @Model.Name</h1>
         </div>
     </div>
 
@@ -52,39 +29,25 @@
                 <input type="hidden" asp-for="BackAction" />
                 <input type="hidden" asp-for="GetHelpAction" />
 
-                <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="Confirmation">
-                    @if (showErrors)
-                    {
-                        <span class="govuk-error-message">
-                            @Model.ErrorMessages.FirstOrDefault(x => x.Field == "Confirmation")?.ErrorMessage
-                        </span>
-                    }
+                <div class="govuk-form-group" sfa-validation-for="Confirmation" sfa-validationerror-class="govuk-form-group--error">
+                    <span class="govuk-error-message" asp-validation-for="Confirmation"></span>
                     <fieldset class="govuk-fieldset">
-
                         <div class="govuk-radios">
-
                             <div class="govuk-radios__item">
-
-                                <input asp-for="Confirmation" class="govuk-radios__input" id="Confirmation-Yes"
-                                       name="Confirmation" type="radio" value="Y"
-                                       sfa-validation-for="PartnershipType" sfa-validationerror-class="form-control-error">
-                                <label class="govuk-label govuk-radios__label" for="Confirmation-Yes">
-                                    Yes
-                                </label>
-
+                                <input class="govuk-radios__input"
+                                       asp-for="Confirmation"
+                                       type="radio"
+                                       value="Yes" />
+                                <label class="govuk-label govuk-radios__label" asp-for="Confirmation">Yes</label>
                             </div>
-
                             <div class="govuk-radios__item">
-
-                                <input asp-for="Confirmation" class="govuk-radios__input" id="Confirmation-No"
-                                       name="Confirmation" type="radio" value="N"
-                                       sfa-validation-for="Confirmation" sfa-validationerror-class="form-control-error">
-                                <label class="govuk-label govuk-radios__label" for="Confirmation-No">
-                                    No
-                                </label>
-
+                                <input class="govuk-radios__input"
+                                       asp-for="Confirmation"
+                                       id="Confirmation-No"
+                                       type="radio"
+                                       value="No" />
+                                <label class="govuk-label govuk-radios__label" for="Confirmation-No">No</label>
                             </div>
-
                         </div>
                     </fieldset>
                 </div>
@@ -97,5 +60,3 @@
         </div>
     </div>
 </main>
-
-

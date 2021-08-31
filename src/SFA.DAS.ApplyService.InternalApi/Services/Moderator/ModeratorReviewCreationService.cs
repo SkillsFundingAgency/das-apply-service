@@ -7,7 +7,6 @@ using SFA.DAS.ApplyService.Application.Apply.Moderator;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
@@ -40,11 +39,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
                     if (section.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining && section.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees)
                     {
                         var sectors = _sectorService.GetSectorsForEmptyReview(section);
-                        reviewOutcomes.AddRange(GeneratorSectorsReviewOutcomes(applicationId, section, sectors, moderatorUserId));
+                        reviewOutcomes.AddRange(GenerateSectorsReviewOutcomes(applicationId, section, sectors, moderatorUserId));
                     }
                     else
                     {
-                        var sectionReviewOutcomes = GenerateSectionReviewOutcomes(applicationId, section, moderatorUserId);
+                        var sectionReviewOutcomes = await GenerateSectionReviewOutcomes(applicationId, section, moderatorUserId);
                         reviewOutcomes.AddRange(sectionReviewOutcomes);
                     }
                 }
@@ -53,7 +52,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
             await _mediator.Send(new CreateEmptyModeratorReviewRequest(applicationId, moderatorUserId, moderatorUserName, reviewOutcomes));
         }
 
-        private List<ModeratorPageReviewOutcome> GenerateSectionReviewOutcomes(Guid applicationId, AssessorSection section, string moderatorUserId)
+        private async Task<List<ModeratorPageReviewOutcome>> GenerateSectionReviewOutcomes(Guid applicationId, AssessorSection section, string moderatorUserId)
         {
             var sectionReviewOutcomes = new List<ModeratorPageReviewOutcome>();
 
@@ -72,12 +71,38 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
                         Comment = null
                     });
                 }
+
+                if (section.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining && section.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy)
+                {
+                    // Sadly we have to cater for existing applications that never had this page as part of an Blind Assessor check
+                    if (await ShouldGenerateManagementHierarchFinancialPage(applicationId))
+                    {
+                        // Inject page to show Financial information to Moderator
+                        sectionReviewOutcomes.Add(new ModeratorPageReviewOutcome
+                        {
+                            ApplicationId = applicationId,
+                            SequenceNumber = section.SequenceNumber,
+                            SectionNumber = section.SectionNumber,
+                            PageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial,
+                            UserId = moderatorUserId,
+                            Status = null,
+                            Comment = null
+                        });
+                    }
+                }
             }
 
             return sectionReviewOutcomes;
         }
 
-        private List<ModeratorPageReviewOutcome> GeneratorSectorsReviewOutcomes(Guid applicationId, AssessorSection section, List<AssessorSector> selectedSectors, string moderatorUserId)
+        private async Task<bool> ShouldGenerateManagementHierarchFinancialPage(Guid applicationId)
+        {
+            var request = new GetBlindAssessmentOutcomeRequest(applicationId, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining, RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy, RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial);
+            var blindAssessmentOutcome = await _mediator.Send(request);
+            return blindAssessmentOutcome != null;
+        }
+
+        private List<ModeratorPageReviewOutcome> GenerateSectorsReviewOutcomes(Guid applicationId, AssessorSection section, List<AssessorSector> selectedSectors, string moderatorUserId)
         {
             var sectorReviewOutcomes = new List<ModeratorPageReviewOutcome>();
 

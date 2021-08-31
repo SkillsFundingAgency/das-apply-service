@@ -11,14 +11,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Controllers.Roatp;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -30,6 +31,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IApplicationApiClient> _applicationApiClient;
         private Mock<IOverallOutcomeService> _outcomeService;
         private Mock<ILogger<RoatpOverallOutcomeController>> _logger;
+       
+
 
         [SetUp]
         public void Before_each_test()
@@ -38,6 +41,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _logger = new Mock<ILogger<RoatpOverallOutcomeController>>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
             _outcomeService = new Mock<IOverallOutcomeService>();
+            var appealRequiredByDate = DateTime.Today.AddDays(10);
 
             var signInId = Guid.NewGuid();
             var givenNames = "Test";
@@ -51,6 +55,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 new Claim("sub", signInId.ToString()),
                 new Claim("custom-claim", "example claim value"),
             }, "mock"));
+            
+            _apiClient.Setup((x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())))
+                .ReturnsAsync(appealRequiredByDate);
+
 
             _controller = new RoatpOverallOutcomeController(_apiClient.Object,
                 _outcomeService.Object, _applicationApiClient.Object, _logger.Object)
@@ -96,7 +104,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var model = new ApplicationSummaryViewModel();
 
-            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).ReturnsAsync(model);
 
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
             _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
@@ -126,7 +134,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
 
             var model = new ApplicationSummaryViewModel();
-            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).ReturnsAsync(model);
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
             _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
         
@@ -163,7 +171,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
-            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).ReturnsAsync(model);
 
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
 
@@ -199,7 +207,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
-            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).ReturnsAsync(model);
             var oversightReview = new GetOversightReviewResponse
             {
                 Status = OversightReviewStatus.SuccessfulFitnessForFunding
@@ -240,7 +248,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
-            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).ReturnsAsync(model);
             var oversightReview = new GetOversightReviewResponse
             {
                 Status = OversightReviewStatus.SuccessfulAlreadyActive
@@ -271,7 +279,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             var model = new ApplicationSummaryViewModel();
-            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).ReturnsAsync(model);
 
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
             _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
@@ -294,7 +302,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var oversightReview = new GetOversightReviewResponse();
 
             var model = new ApplicationSummaryViewModel();
-            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).Returns(model);
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).ReturnsAsync(model);
 
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
             _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
@@ -417,14 +425,33 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationStatus = ApplicationStatus.Unsuccessful,
                 GatewayReviewStatus = GatewayReviewStatus.Fail
             };
+
+            var applicationDeterminedDate = DateTime.Today;
+            var appealRequiredByDate = DateTime.Today.AddDays(10);
         
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
-        
+
+            var oversightReview = new GetOversightReviewResponse { Status = OversightReviewStatus.Unsuccessful, ApplicationDeterminedDate = applicationDeterminedDate };
+
+            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
+
+            _apiClient.Setup((x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())))
+                .ReturnsAsync(appealRequiredByDate);
+            
+            var model = new ApplicationSummaryViewModel();
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).ReturnsAsync(model);
+
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationUnsuccessful.cshtml");
+
+            var returnedModel = viewResult.Model as ApplicationSummaryViewModel;
+            returnedModel.AppealRequiredByDate.Should().Be(appealRequiredByDate);
+            returnedModel.ApplicationDeterminedDate.Should().Be(applicationDeterminedDate);
+
         }
         
         [Test]
@@ -436,14 +463,22 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
         
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
-        
+
+
+            var model = new ApplicationSummaryViewModel();
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).ReturnsAsync(model);
+            var modelWithModeratorDetails = new ApplicationSummaryWithModeratorDetailsViewModel();
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(submittedApp, "test@test.com")).ReturnsAsync(modelWithModeratorDetails);
+
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationUnsuccessfulPostGateway.cshtml");
         }
-        
+
         [Test]
         public async Task Application_shows_withdrawn_page_if_application_withdrawn()
         {
@@ -473,6 +508,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
+            var model = new ApplicationSummaryViewModel();
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).ReturnsAsync(model);
+
 
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
         
@@ -491,14 +529,18 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase(OversightReviewStatus.Withdrawn)]
         public async Task Application_shows_removed_page_if_application_removed_and_oversight_status_is_not_removed(OversightReviewStatus status)
         {
+            var applicationDeterminedDate = DateTime.Today;
+            var appealRequiredByDate = DateTime.Today.AddDays(10);
             var submittedApp = new Apply
             {
                 ApplicationStatus = ApplicationStatus.Removed
             };
 
-            var oversightReview = new GetOversightReviewResponse { Status = status };
+            var oversightReview = new GetOversightReviewResponse { Status = status,ApplicationDeterminedDate = applicationDeterminedDate};
             _applicationApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(submittedApp);
             _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
+            var model = new ApplicationSummaryViewModel();
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(submittedApp, "test@test.com")).ReturnsAsync(model);
             var result = await _controller.ProcessApplicationStatus(It.IsAny<Guid>());
 
             var viewResult = result as ViewResult;

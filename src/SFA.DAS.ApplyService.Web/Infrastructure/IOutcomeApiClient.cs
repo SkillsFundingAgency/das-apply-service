@@ -21,6 +21,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<SectorDetails> GetClarificationSectorDetails(Guid applicationId, string pageId);
         Task<HttpResponseMessage> DownloadClarificationfile(Guid applicationId, int sequenceNumber, int sectionNumber,
             string pageId, string filename);
+
+        Task<DateTime?> GetWorkingDaysAheadDate(DateTime? startDate, int numberOfDays);
     }
 
 }

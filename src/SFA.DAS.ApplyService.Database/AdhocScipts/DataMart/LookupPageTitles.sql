@@ -192,6 +192,9 @@ INSERT INTO LookupPageTitles ([SequenceNumber],[SectionNumber],[PageId],[Title])
 (6, 2, '6201', 'What type of apprenticeship training will your organisation offer?'),
 (6, 2, '6202', 'What type of apprenticeship training will your organisation offer?'),
 (6, 2, '6203', 'What type of apprenticeship training will your organisation offer?'),
+(6, 2, '6204', 'What type of apprenticeship training will your organisation offer?'),
+(6, 2, '6205', 'Tell us how your organisation is ready to deliver training in apprenticeship standards'),
+(6, 2, '6206', 'Tell us how your organisation is ready to deliver training in apprenticeship standards'),
 (6, 2, '6230', 'Tell us how your organisation is ready to deliver training in apprenticeship standards'),
 (6, 2, '6250', 'Does your organisation have a plan to transition from apprenticeship frameworks to apprenticeship standards?'),
 (6, 2, '6252', 'How will your organisation transition from apprenticeship frameworks to apprenticeship standards?'),
@@ -228,6 +231,7 @@ INSERT INTO LookupPageTitles ([SequenceNumber],[SectionNumber],[PageId],[Title])
 (7, 2, '7100', 'Tell us who has overall accountability for apprenticeships in your organisation'),
 
 (7, 3, '7200', 'Confirm management hierarchy'),
+(7, 3, '7200-FHA', 'Turnover and full time equivalent (FTE) employees'),
 
 (7, 4, '7300', 'Upload your management hierarchy''s expectations for quality and high standards in apprenticeship training'),
 (7, 4, '7305', 'Tell us how these expectations for quality and high standards in apprenticeship training are monitored and evaluated'),

@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Extensions
         {
             return new FileUpload
             {
-                Filename = formFile.FileName,
+                FileName = formFile.FileName,
                 Data = await formFile.GetBytes(),
                 ContentType = formFile.ContentType
             };

@@ -575,23 +575,6 @@ namespace SFA.DAS.ApplyService.Data
                 return true;
         }
 
-        public async Task<bool> IsUkprnWhitelisted(int ukprn)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return await connection.QuerySingleAsync<bool>(@"SELECT
-                                                                      CASE WHEN EXISTS 
-                                                                      (
-                                                                            SELECT UKPRN FROM WhitelistedProviders WHERE UKPRN = @ukprn
-                                                                                AND GETUTCDATE() BETWEEN StartDateTime and EndDateTime
-                                                                      )
-                                                                      THEN 'TRUE'
-                                                                      ELSE 'FALSE'
-                                                                  END",
-                                                                  new { ukprn });
-            }
-        }
-
         public async Task UpdateApplicationStatus(Guid applicationId, string status, string userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

@@ -24,60 +24,66 @@ namespace SFA.DAS.ApplyService.Data.Queries
             return new SqlConnection(_config.SqlConnectionString);
         }
 
-        public async Task<AppealFiles> GetStagedAppealFiles(Guid applicationId)
-        {
-            using (var connection = GetConnection())
-            {
-                var files = (await connection.QueryAsync<AppealFile>(
-                    @"SELECT Id, Filename FROM [AppealUpload] where ApplicationId = @applicationId and AppealId IS NULL ORDER BY CreatedOn ASC",
-                    new
-                    {
-                        applicationId
-                    })).ToList();
-
-                return new AppealFiles
-                {
-                    Files = files
-                };
-            }
-        }
-
-        public async Task<Appeal> GetAppeal(Guid applicationId, Guid oversightReviewId)
+        public async Task<Appeal> GetAppeal(Guid applicationId)
         {
             using (var connection = GetConnection())
             {
                 Appeal result = null;
 
-                await connection.QueryAsync<Appeal, Appeal.AppealUpload, Appeal>(
+                await connection.QueryAsync<Appeal, AppealFile, Appeal>(
                     @"SELECT
-                        a.Id, a.Message, a.UserId, a.UserName, a.CreatedOn,
-                        u.Id, u.Filename, u.ContentType
-                        FROM [Appeal] a
-                        LEFT JOIN [AppealUpload] u on u.AppealId = a.Id
-                        JOIN [OversightReview] r ON r.Id = a.OversightReviewId
-                        where a.OversightReviewId = @oversightReviewId
-                        AND r.ApplicationId = @applicationId",
+                        ap.*,
+                        apFile.Id, apFile.ApplicationId, apFile.Filename, apFile.ContentType
+                        FROM [Appeal] ap
+                        LEFT JOIN [AppealFile] apFile on apFile.ApplicationId = ap.ApplicationId
+                        where ap.ApplicationId = @applicationId",
                         (appeal, upload) =>
                         {
                             if (result == null)
                             {
                                 result = appeal;
-                                result.Uploads = new List<Appeal.AppealUpload>();
+                                result.AppealFiles = new List<AppealFile>();
                             }
 
                             if (upload != null)
                             {
-                                result.Uploads.Add(upload);
+                                result.AppealFiles.Add(upload);
                             }
 
                             return result;
                         }, new
-                    {
-                        applicationId,
-                        oversightReviewId
-                    });
+                        {
+                            applicationId
+                        });
 
                 return result;
+            }
+        }
+
+        public async Task<AppealFile> GetAppealFile(Guid applicationId, string fileName)
+        {
+            using (var connection = GetConnection())
+            {
+                return await connection.QuerySingleOrDefaultAsync<AppealFile>(
+                    @"SELECT * FROM [AppealFile] where ApplicationId = @applicationId AND FileName = @fileName",
+                    new
+                    {
+                        applicationId,
+                        fileName
+                    });
+            }
+        }
+
+        public async Task<List<AppealFile>> GetAppealFilesForApplication(Guid applicationId)
+        {
+            using (var connection = GetConnection())
+            {
+                return (await connection.QueryAsync<AppealFile>(
+                    @"SELECT * FROM [AppealFile] where ApplicationId = @applicationId ORDER BY CreatedOn ASC",
+                    new
+                    {
+                        applicationId
+                    })).ToList();
             }
         }
     }

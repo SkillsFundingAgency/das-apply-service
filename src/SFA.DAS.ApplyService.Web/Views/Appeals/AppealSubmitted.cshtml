@@ -1,0 +1,44 @@
+﻿@using SFA.DAS.AdminService.Common.Extensions;
+
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals.AppealSubmittedViewModel
+
+@{
+    ViewBag.Title = "Make an appeal";
+    Layout = "_Layout";
+}
+
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-panel app-panel--success">
+                <h1 class="govuk-panel__title">
+                    Appeal submitted
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Appeal submitted date
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.AppealSubmittedDate.ToSfaShortDateString()
+                    </dd>
+                </div>
+            </dl>
+
+            <h2 class="govuk-heading-l">Your appeal</h2>
+            <p class="govuk-body"> Holding Page</p>
+        </div>
+    </div>
+</main>

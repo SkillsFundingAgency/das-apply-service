@@ -38,7 +38,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IUsersApiClient _usersApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
         private readonly IQnaApiClient _qnaApiClient;
-        private readonly IUkprnWhitelistValidator _ukprnWhitelistValidator;
+        private readonly IAllowedUkprnValidator _allowedUkprnValidator;
         private readonly IResetRouteQuestionsService _resetRouteQuestionsService;
 
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient,
@@ -49,7 +49,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                                                   IUsersApiClient usersApiClient,
                                                   IApplicationApiClient applicationApiClient,
                                                   IQnaApiClient qnaApiClient,
-                                                  IUkprnWhitelistValidator ukprnWhitelistValidator, 
+                                                  IAllowedUkprnValidator ukprnWhitelistValidator, 
                                                   IResetRouteQuestionsService resetRouteQuestionsService)
             : base(sessionService)
         {
@@ -63,7 +63,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _usersApiClient = usersApiClient;
             _applicationApiClient = applicationApiClient;
             _qnaApiClient = qnaApiClient;
-            _ukprnWhitelistValidator = ukprnWhitelistValidator;
+            _allowedUkprnValidator = ukprnWhitelistValidator;
             _resetRouteQuestionsService = resetRouteQuestionsService;
         }
 
@@ -163,7 +163,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 {
                     validationMessage = UkprnValidationMessages.InvalidUkprn;
                 }
-                else if (!await _ukprnWhitelistValidator.IsWhitelistedUkprn(ukprn))
+                else if (!await _allowedUkprnValidator.CanUkprnStartApplication(ukprn))
                 {
                     validationMessage = UkprnValidationMessages.NotWhitelistedUkprn;
                 }
@@ -520,11 +520,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
-            if (!user.IsApproved)
-            {
-                await _usersApiClient.ApproveUser(user.Id);
-            }
-
             _logger.LogDebug("StartRoatpApplication completed");
 
             return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
@@ -609,6 +604,49 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             };
 
             var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.ProviderRoute, providerRouteAnswer);
+
+            if (result.ValidationPassed)
+            {
+
+                var preambleDetails = await _qnaApiClient.GetPageBySectionNo(model.ApplicationId,
+                    RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble);
+
+                var preambleAnswers = preambleDetails?.PageOfAnswers[0]?.Answers;
+
+                var onRoatp =
+                    await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.OnRoatp);
+                var onRoatpRegisterTrue = onRoatp?.Value == "TRUE";
+                var routeAndOnRoatp = string.Empty;
+                switch (model.ApplicationRouteId)
+                {
+                    case ApplicationRoute.MainProviderApplicationRoute:
+                        routeAndOnRoatp = onRoatpRegisterTrue
+                            ? RouteAndOnRoatpTags.MainOnRoatp
+                            : RouteAndOnRoatpTags.MainNotOnRoatp;
+                        break;
+                    case ApplicationRoute.EmployerProviderApplicationRoute:
+                        routeAndOnRoatp = onRoatpRegisterTrue
+                            ? RouteAndOnRoatpTags.EmployerOnRoatp
+                            : RouteAndOnRoatpTags.EmployerNotOnRoatp;
+                        break;
+                    case ApplicationRoute.SupportingProviderApplicationRoute:
+                        routeAndOnRoatp = onRoatpRegisterTrue
+                            ? RouteAndOnRoatpTags.SupportingOnRoatp
+                            : RouteAndOnRoatpTags.SupportingNotOnRoatp;
+                        break;
+                }
+
+                if (preambleAnswers != null)
+                {
+                    foreach (var answer in preambleAnswers.Where(ans => ans.QuestionId == RoatpPreambleQuestionIdConstants.RouteAndOnRoatp))
+                    {
+                        answer.Value = routeAndOnRoatp;
+                    }
+
+                    await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.Preamble,
+                        RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, preambleAnswers);
+                }
+            }
 
             var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
             var selectedProviderRoute = providerRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId);

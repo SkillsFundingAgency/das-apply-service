@@ -8,6 +8,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             public const string OverallAccountability = "7100";
             public const string ManagementHierarchy = "7200";
+            public const string ManagementHierarchy_Financial = "7200-FHA";
             public const string QualityAndHighStandards = "7300";
             public const string QualityAndHighStandardsMonitoring = "7305";
             public const string QualityAndHighStandardsResponsible = "7310";

@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IUsersApiClient> _usersApiClient;
         private Mock<IApplicationApiClient> _applicationApiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
-        private Mock<IUkprnWhitelistValidator> _ukprnWhitelistValidator;
+        private Mock<IAllowedUkprnValidator> _allowedUkprnValidator;
         private Mock<IResetRouteQuestionsService> _resetRoutQuestionsService;
         private RoatpApplicationPreambleController _controller;
 
@@ -70,7 +70,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _usersApiClient = new Mock<IUsersApiClient>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
             _qnaApiClient = new Mock<IQnaApiClient>();
-            _ukprnWhitelistValidator = new Mock<IUkprnWhitelistValidator>();
+            _allowedUkprnValidator = new Mock<IAllowedUkprnValidator>();
             _resetRoutQuestionsService = new Mock<IResetRouteQuestionsService>();
 
             _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
@@ -81,7 +81,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 _usersApiClient.Object,
                 _applicationApiClient.Object,
                 _qnaApiClient.Object,
-                _ukprnWhitelistValidator.Object, _resetRoutQuestionsService.Object);
+                _allowedUkprnValidator.Object, _resetRoutQuestionsService.Object);
 
             _activeCompany = new CompaniesHouseSummary
             {
@@ -276,7 +276,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase("1234567A")]
         public void Validation_error_is_triggered_if_UKPRN_not_in_correct_format(string ukprn)
         {
-            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(It.IsAny<int>())).ReturnsAsync(true);
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(It.IsAny<int>())).ReturnsAsync(true);
 
             var model = new SearchByUkprnViewModel
             {
@@ -300,7 +300,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase(12345678, true)]
         [TestCase(87654321, true)]
         [TestCase(99999999, false)]
-        public void Validation_error_is_triggered_if_UKPRN_is_not_in_whitelisted(int ukprn, bool isUkprnWhitelisted)
+        public void Validation_error_is_triggered_if_UKPRN_is_not_on_allowed_list(int ukprn, bool isUkprnWhitelisted)
         {
             var noResults = new UkrlpLookupResults { Success = true, Results = new List<ProviderDetails> { new ProviderDetails() } };
 
@@ -308,7 +308,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
-            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(ukprn)).ReturnsAsync(isUkprnWhitelisted);        
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(ukprn)).ReturnsAsync(isUkprnWhitelisted);        
 
             var model = new SearchByUkprnViewModel
             {
@@ -347,7 +347,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
-            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(10001000)).ReturnsAsync(true);
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(10001000)).ReturnsAsync(true);
 
             var model = new SearchByUkprnViewModel
             {
@@ -365,7 +365,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void UKPRN_is_found_on_UKRLP()
         {
-            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(10001000)).ReturnsAsync(true);
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(10001000)).ReturnsAsync(true);
 
             var matchingResult = new UkrlpLookupResults
             {
@@ -909,7 +909,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
             _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
-            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
                 .ReturnsAsync(new Organisation()).Verifiable();
@@ -1006,7 +1005,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
             _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
-            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
                 .ReturnsAsync(new Organisation()).Verifiable();
@@ -1068,7 +1066,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
             _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
-            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
                 .ReturnsAsync(new Organisation()).Verifiable();
@@ -1123,7 +1120,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
             _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
-            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
                 .ReturnsAsync(new Organisation()).Verifiable();
