@@ -860,6 +860,17 @@
     position: relative;
   }
 
+  .roatp__navigation-item--current:after {
+    content: "";
+    height: 5px;
+    display: block;
+    position: absolute;
+    bottom: -12px;
+    left: 0;
+    right: 0;
+    background:#1d70b8;
+  }
+
   .roatp__navigation-item--signout {
     padding: 0;
     margin-left: auto;
@@ -876,7 +887,6 @@
   text-decoration: none;
 }
 
-.roatp__navigation-item--current:after, 
 .roatp__navigation-link--current:after {
   content: "";
   height: 5px;
@@ -1321,4 +1331,17 @@
 
 .das-preformatted-body {
     white-space: pre-wrap;
+}
+
+/* File upload component */
+
+.app-file-upload--button {
+  margin-top: 10px;
+}
+
+@media (min-width: 40.0625em) {
+  .app-file-upload--button {
+    margin-top: 0;
+    float: right;
+  }
 }
