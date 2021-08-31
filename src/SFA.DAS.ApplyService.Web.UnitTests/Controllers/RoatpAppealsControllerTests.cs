@@ -189,7 +189,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 AppealOnEvidenceSubmitted = !string.IsNullOrEmpty(howFailedOnEvidenceSubmitted),
                 HowFailedOnEvidenceSubmitted = howFailedOnEvidenceSubmitted,
                 AppealOnPolicyOrProcesses = !string.IsNullOrEmpty(howFailedOnPolicyOrProcesses),
-                HowFailedOnPolicyOrProcesses = howFailedOnPolicyOrProcesses
+                HowFailedOnPolicyOrProcesses = howFailedOnPolicyOrProcesses,
+                FormAction = GroundsOfAppealViewModel.SUBMIT_APPEAL_FORMACTION
             };
 
             var result = await _controller.GroundsOfAppeal(model);
@@ -211,7 +212,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 AppealOnEvidenceSubmitted = !string.IsNullOrEmpty(howFailedOnEvidenceSubmitted),
                 HowFailedOnEvidenceSubmitted = howFailedOnEvidenceSubmitted,
                 AppealOnPolicyOrProcesses = !string.IsNullOrEmpty(howFailedOnPolicyOrProcesses),
-                HowFailedOnPolicyOrProcesses = howFailedOnPolicyOrProcesses
+                HowFailedOnPolicyOrProcesses = howFailedOnPolicyOrProcesses,
+                FormAction = GroundsOfAppealViewModel.SUBMIT_APPEAL_FORMACTION
             };
 
             var result = await _controller.GroundsOfAppeal(model);
@@ -259,7 +261,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _appealsApiClient.Verify(x => x.UploadFile(_applicationId, appealFile, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
-
         [Test]
         public void AppealSubmitted_shows_appeal_submitted_page()
         {
@@ -271,6 +272,24 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("AppealSubmitted.cshtml");
             viewResult.Model.Should().BeEquivalentTo(model);
+        }
+
+        [Test]
+        public async Task CancelAppeal_shows_Tasklist_page()
+        {
+            var result = await _controller.CancelAppeal(_applicationId);
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("TaskList");
+        }
+
+        [Test]
+        public async Task CancelAppeal_verify_CancelAppeal_api_call()
+        {
+            var result = await _controller.CancelAppeal(_applicationId);
+
+            _appealsApiClient.Verify(x => x.CancelAppeal(_applicationId, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         [Test]

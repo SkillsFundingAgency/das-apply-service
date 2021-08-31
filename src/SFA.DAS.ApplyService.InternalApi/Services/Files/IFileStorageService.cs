@@ -22,5 +22,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
 
         Task<DownloadFile> DownloadApplicationFiles(Guid applicationId, ContainerType containerType, CancellationToken cancellationToken);
         Task<DownloadFile> DownloadFiles(Guid applicationId, int? sequenceNumber, int? sectionNumber, string pageId, ContainerType containerType, CancellationToken cancellationToken);
+
+        Task<bool> DeleteApplicationDirectory(Guid applicationId, ContainerType containerType, CancellationToken cancellationToken);
+        Task<bool> DeleteDirectory(Guid applicationId, int? sequenceNumber, int? sectionNumber, string pageId, ContainerType containerType, CancellationToken cancellationToken);
     }
 }

@@ -35,6 +35,11 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
             _unitOfWork.Register(() => PersistUpdate(entity));
         }
 
+        public void Remove(Guid entityId)
+        {
+            _unitOfWork.Register(() => PersistRemoval(entityId));
+        }
+
         public async Task<Appeal> GetByApplicationId(Guid applicationId)
         {
             using (var connection = GetConnection())
@@ -110,6 +115,15 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
                     WHERE [Id] = @Id",
                 entity, transaction);
 
+        }
+
+        public async Task PersistRemoval(Guid entityId)
+        {
+            var transaction = _unitOfWork.GetTransaction();
+
+            await transaction.Connection.ExecuteAsync(
+                "DELETE FROM [Appeal] WHERE Id = @entityId",
+                    new { entityId }, transaction);
         }
     }
 }

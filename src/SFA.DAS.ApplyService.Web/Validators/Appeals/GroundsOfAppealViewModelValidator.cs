@@ -25,8 +25,9 @@ namespace SFA.DAS.ApplyService.Web.Validators.Appeals
             {
                 RuleFor(x => x.AppealFileToUpload)
                         .NotEmpty().WithMessage(AppealFileRequired);
-            })
-            .Otherwise(() =>
+            });
+
+            When(x => x.FormAction == GroundsOfAppealViewModel.SUBMIT_APPEAL_FORMACTION, () =>
             {
                 When(x => x.AppealOnPolicyOrProcesses, () =>
                 {

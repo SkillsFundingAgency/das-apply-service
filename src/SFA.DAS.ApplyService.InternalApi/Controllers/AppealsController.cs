@@ -17,6 +17,8 @@ using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
 using SFA.DAS.ApplyService.InternalApi.Extensions;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppealFileList;
+using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.CancelAppeal;
+using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -83,6 +85,28 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 ApplicationId = applicationId,
                 HowFailedOnPolicyOrProcesses = request.HowFailedOnPolicyOrProcesses,
                 HowFailedOnEvidenceSubmitted = request.HowFailedOnEvidenceSubmitted,
+                UserId = request.UserId,
+                UserName = request.UserName
+            };
+
+            await _mediator.Send(command);
+            return new OkResult();
+        }
+
+        [HttpPost]
+        [Route("Appeals/{applicationId}/cancel")]
+        public async Task<IActionResult> CancelAppeal(Guid applicationId, [FromBody] CancelAppealRequest request)
+        {
+            var deletedSuccessfully = await _fileStorageService.DeleteApplicationDirectory(applicationId, ContainerType.Appeals, new CancellationToken());
+
+            if (!deletedSuccessfully)
+            {
+                _logger.LogError($"Unable to delete appeal files for application: {applicationId}");
+            }
+
+            var command = new CancelAppealCommand
+            {
+                ApplicationId = applicationId,
                 UserId = request.UserId,
                 UserName = request.UserName
             };
