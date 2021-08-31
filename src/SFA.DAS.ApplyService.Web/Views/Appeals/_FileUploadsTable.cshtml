@@ -31,7 +31,7 @@
                     <td class="govuk-table__cell govuk-table__cell--numeric">
                         <a class="govuk-link" asp-action="DeleteAppealFile" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId" asp-route-fileName="@file.FileName" asp-route-appealOnPolicyOrProcesses="@Model.AppealOnPolicyOrProcesses" asp-route-appealOnEvidenceSubmitted="@Model.AppealOnEvidenceSubmitted">
                             Remove
-                            <span class="govuk-visually-hidden"> file</span>
+                            <span class="govuk-visually-hidden"> file - @file.FileName</span>
                         </a>
                     </td>
                 </tr>
@@ -43,6 +43,7 @@
 @{
     if (Model.AppealFiles == null || Model.AppealFiles.Count < 4)
     {
+    <div class="govuk-form-group" sfa-validation-for="AppealFileToUpload" sfa-validationerror-class="govuk-form-group--error">
         <label class="govuk-label" asp-for="AppealFileToUpload">
             Upload a file
         </label>
@@ -52,5 +53,6 @@
         <button class="govuk-button govuk-button--secondary govuk-!-margin-right-3" data-module="govuk-button" data-disable-on-submit="true" name="FormAction" value="@GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION">
             Upload file
         </button>
+    </div>
     }
 }
