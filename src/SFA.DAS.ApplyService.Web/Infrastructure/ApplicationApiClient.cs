@@ -12,6 +12,7 @@ using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Apply.AllowedProviders;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
@@ -170,6 +171,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus, string userId)
         {
             return await Post<dynamic, bool>($"/Application/Status", new { applicationId, applicationStatus, userId });
+        }
+
+        public async Task<AllowedProvider> GetAllowedProvider(string ukprn)
+        {
+            return await Get<AllowedProvider>($"/AllowedProviders/{ukprn}");
         }
     }
 }

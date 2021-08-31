@@ -10,7 +10,7 @@ namespace SFA.DAS.ApplyService.Web.Services
     {
         Task AugmentModelWithModerationFailDetails(ApplicationSummaryWithModeratorDetailsViewModel model,
             string userId); 
-        ApplicationSummaryViewModel BuildApplicationSummaryViewModel(Apply application, FinancialReviewDetails financialReviewDetails, string emailAddress);
+        Task<ApplicationSummaryViewModel> BuildApplicationSummaryViewModel(Apply application, FinancialReviewDetails financialReviewDetails, string emailAddress);
         Task<ApplicationSummaryWithModeratorDetailsViewModel> BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(Apply application, FinancialReviewDetails financialReviewDetails,
             string emailAddress);
         Task<OutcomeSectorDetailsViewModel> GetSectorDetailsViewModel(Guid applicationId, string pageId);

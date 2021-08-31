@@ -12,6 +12,14 @@
         FinancialExternalComments = Model.FinancialExternalComments
     };
 
+    var applicationSummaryModel = new ApplicationSummaryViewModel
+    {
+        ApplicationDeterminedDate = Model.ApplicationDeterminedDate,
+        AppealRequiredByDate = Model.AppealRequiredByDate,
+        ApplicationId = Model.ApplicationId,
+        IsAppealSubmitted = Model.IsAppealSubmitted
+    };
+
 }
 
 @section Navigation
@@ -39,7 +47,7 @@
                 Your application has been reviewed by our team of assessors. You must pass every question for your application to be successful.
             </p>
             <p class="govuk-body">
-                You may wish to <a href="https://www.gov.uk/guidance/roatp-application-guidance-digital-may-2021" target="_blank">refer to the application guidance</a> to identify opportunities where your organisation may be able to improve on its policies, processes or approach.
+                You may wish to <a href="https://www.gov.uk/guidance/roatp-application-guidance-digital-may-2021" target="_blank">refer to the application guidance (opens in new tab)</a> to identify opportunities where your organisation may be able to improve on its policies, processes or approach.
             </p>
         </div>
     </div>
@@ -274,7 +282,6 @@
                                                         }
                                                     }
                                                 }
-
                                             }
                                             @if (Model.PagesWithGuidance != null && Model.PagesWithGuidance.Any(x => x.PageId == sectionPage.PageId))
                                             {
@@ -312,6 +319,6 @@
         </div>
     }
 }
-<partial name="~/Views/Roatp/_AppealComplaintContact.cshtml" />
+<partial name="~/Views/Roatp/_AppealComplaintContact.cshtml" Model="@applicationSummaryModel" />
 
-    </main>
+</main>

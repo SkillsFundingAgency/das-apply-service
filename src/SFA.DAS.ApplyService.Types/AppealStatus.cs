@@ -1,11 +1,12 @@
 ﻿namespace SFA.DAS.ApplyService.Types
 {
-    public enum AppealStatus
+    public class AppealStatus
     {
-        None = 0,
-        Successful = 1,
-        SuccessfulAlreadyActive = 2,
-        Unsuccessful = 3,
-        UnsuccessfulPartiallyUpheld = 4
+        public const string Submitted = "Submitted";
+        public const string InProgressOutcome = "In Progress Outcome";
+        public const string Successful = "Successful";
+        public const string SuccessfulAlreadyActive = "Successful Already Active";
+        public const string SuccessfulFitnessForFunding = "Successful Fitness For Funding";
+        public const string Unsuccessful = "Unsuccessful";
     }
 }

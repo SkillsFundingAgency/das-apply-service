@@ -1,18 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.Domain.Apply.Clarification;
+using SFA.DAS.ApplyService.Domain.Apply.AllowedProviders;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Types;
-using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
-using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
-using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -56,6 +51,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn);
 
         Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus, string userId);
+
+        Task<AllowedProvider> GetAllowedProvider(string ukprn);
 
 
     }

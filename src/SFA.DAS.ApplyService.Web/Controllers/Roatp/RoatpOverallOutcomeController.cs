@@ -3,8 +3,8 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
@@ -19,7 +19,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IOverallOutcomeService _overallOutcomeService;
         private readonly ILogger<RoatpOverallOutcomeController> _logger;
         private const string SupportingRouteId = "3";
-        public RoatpOverallOutcomeController(IOutcomeApiClient apiClient, 
+        private const int NumberOfWorkingDays = 10;
+
+        public RoatpOverallOutcomeController(IOutcomeApiClient apiClient,
             IOverallOutcomeService overallOutcomeService, IApplicationApiClient applicationApiClient,
             ILogger<RoatpOverallOutcomeController> logger)
         {
@@ -28,8 +30,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _logger = logger;
             _applicationApiClient = applicationApiClient;
         }
-
-
 
         [HttpGet]
         [Route("application/{applicationId}/sector/{pageId}")]
@@ -45,13 +45,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             var application = await _applicationApiClient.GetApplication(applicationId);
             var financialReviewDetails = await _applicationApiClient.GetFinancialReviewDetails(applicationId);
-            var model = _overallOutcomeService.BuildApplicationSummaryViewModel(application, financialReviewDetails, User.GetEmail());
+            var model = await _overallOutcomeService.BuildApplicationSummaryViewModel(application, financialReviewDetails, User.GetEmail());
 
             switch (application.ApplicationStatus)
             {
                 case ApplicationStatus.New:
                 case ApplicationStatus.InProgress:
-                    return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
+                    return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
                 case ApplicationStatus.Successful:
 
                     var oversightReview = await _apiClient.GetOversightReview(applicationId);
@@ -80,13 +80,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                             return View("~/Views/Roatp/ApplicationApproved.cshtml", model);
                     }
 
-                case ApplicationStatus.Unsuccessful: 
+                case ApplicationStatus.Unsuccessful:
+                    var oversight = await _apiClient.GetOversightReview(applicationId);
+                    model.ApplicationDeterminedDate = oversight?.ApplicationDeterminedDate;
+                    model.AppealRequiredByDate =
+                        await _apiClient.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, NumberOfWorkingDays);
+
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
                         return View("~/Views/Roatp/ApplicationUnsuccessful.cshtml", model);
 
                     var unsuccessfulModel =
                         await _overallOutcomeService.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(application, financialReviewDetails,
                             User.GetEmail());
+                    unsuccessfulModel.ApplicationDeterminedDate = oversight?.ApplicationDeterminedDate;
+                    unsuccessfulModel.AppealRequiredByDate =
+                        await _apiClient.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, NumberOfWorkingDays);
                     return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", unsuccessfulModel);
 
                 case ApplicationStatus.FeedbackAdded:
@@ -95,6 +103,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return View("~/Views/Roatp/ApplicationWithdrawn.cshtml", model);
                 case ApplicationStatus.Removed:
                     var oversightReviewDetails = await _apiClient.GetOversightReview(applicationId);
+                    model.ApplicationDeterminedDate = oversightReviewDetails?.ApplicationDeterminedDate;
+                    model.AppealRequiredByDate =
+                        await _apiClient.GetWorkingDaysAheadDate(oversightReviewDetails?.ApplicationDeterminedDate, NumberOfWorkingDays);
                     if (oversightReviewDetails?.Status == OversightReviewStatus.Removed)
                         return View("~/Views/Roatp/ApplicationWithdrawnESFA.cshtml", model);
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
@@ -103,7 +114,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
                 case ApplicationStatus.Rejected:
-                    return View("~/Views/Roatp/ApplicationRejected.cshtml", model);   
+                    return View("~/Views/Roatp/ApplicationRejected.cshtml", model);
                 case ApplicationStatus.Submitted:
                 case ApplicationStatus.Resubmitted:
                     return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
@@ -112,11 +123,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     model.OversightInProgressExternalComments = oversightReviewNotes?.InProgressExternalComments;
                     return View("~/Views/Roatp/ApplicationInProgress.cshtml", model);
                 default:
-                    return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
+                    return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
             }
         }
 
         [HttpGet("ClarificationDownload/{applicationId}/Sequence/{sequenceNumber}/Section/{sectionNumber}/Page/{pageId}/Download/{fileName}")]
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> DownloadClarificationFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string fileName)
         {
             var response = await _apiClient.DownloadClarificationfile(applicationId, sequenceNumber, sectionNumber, pageId, fileName);
