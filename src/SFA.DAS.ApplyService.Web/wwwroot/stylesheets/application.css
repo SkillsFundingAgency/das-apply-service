@@ -876,6 +876,7 @@
   text-decoration: none;
 }
 
+.roatp__navigation-item--current:after, 
 .roatp__navigation-link--current:after {
   content: "";
   height: 5px;
