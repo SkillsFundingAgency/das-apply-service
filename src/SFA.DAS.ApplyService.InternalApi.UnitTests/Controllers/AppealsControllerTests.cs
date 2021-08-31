@@ -17,6 +17,7 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Appeals.Commands.DeleteAppealFile;
 using SFA.DAS.ApplyService.Application.Appeals.Commands.UploadAppealFile;
 using SFA.DAS.ApplyService.Application.Appeals.Queries.GetAppealFile;
+using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.CancelAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppealFileList;
@@ -84,6 +85,38 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
                 c.ApplicationId == applicationId &&
                 c.HowFailedOnPolicyOrProcesses == request.HowFailedOnPolicyOrProcesses &&
                 c.HowFailedOnEvidenceSubmitted == request.HowFailedOnEvidenceSubmitted &&
+                c.UserId == request.UserId &&
+                c.UserName == request.UserName), It.IsAny<CancellationToken>()));
+        }
+
+        [Test]
+        public async Task CancelAppeal_removes_all_AppealFiles_from_Application_Appeal()
+        {
+            var applicationId = AutoFixture.Create<Guid>();
+
+            _fileStorageService.Setup(x => x.DeleteApplicationDirectory(applicationId, It.IsAny<ContainerType>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+            var request = AutoFixture.Create<CancelAppealRequest>();
+
+            var result = await _controller.CancelAppeal(applicationId, request);
+            result.Should().BeOfType<OkResult>();
+
+            _fileStorageService.Verify(x => x.DeleteApplicationDirectory(applicationId, It.IsAny<ContainerType>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Test]
+        public async Task CancelAppeal_sends_Command_to_cancel_Appeal()
+        {
+            var applicationId = AutoFixture.Create<Guid>();
+            var request = AutoFixture.Create<CancelAppealRequest>();
+
+            _mediator.Setup(x => x.Send(It.IsAny<CancelAppealCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
+
+            var result = await _controller.CancelAppeal(applicationId, request);
+            Assert.IsInstanceOf<OkResult>(result);
+
+            _mediator.Verify(x => x.Send(It.Is<CancelAppealCommand>(c =>
+                c.ApplicationId == applicationId &&
                 c.UserId == request.UserId &&
                 c.UserName == request.UserName), It.IsAny<CancellationToken>()));
         }

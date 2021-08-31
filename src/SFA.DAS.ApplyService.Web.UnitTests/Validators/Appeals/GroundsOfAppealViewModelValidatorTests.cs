@@ -22,7 +22,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators.Appeals
 
             _viewModel = new GroundsOfAppealViewModel
             {
-                ApplicationId = Guid.NewGuid()
+                ApplicationId = Guid.NewGuid(),
+                FormAction = GroundsOfAppealViewModel.SUBMIT_APPEAL_FORMACTION
             };
         }
 

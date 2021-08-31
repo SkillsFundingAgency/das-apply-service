@@ -8,6 +8,7 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
     {
         void Add(Appeal entity);
         void Update(Appeal entity);
+        void Remove(Guid entityId);
 
         Task<Appeal> GetByApplicationId(Guid applicationId);
     }
