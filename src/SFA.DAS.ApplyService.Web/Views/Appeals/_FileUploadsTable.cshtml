@@ -29,7 +29,7 @@
                         </a>
                     </td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">
-                        <a class="govuk-link" asp-action="DeleteAppealFile" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId" asp-route-fileName="@file.FileName" asp-route-appealOnPolicyOrProcesses="@Model.AppealOnPolicyOrProcesses" asp-route-appealOnEvidenceSubmitted="@Model.AppealOnEvidenceSubmitted">
+                        <button class="govuk-button govuk-button--secondary govuk-button--looks-like-link" data-module="govuk-button" data-disable-on-submit="true" name="FormAction" value="@($"{GroundsOfAppealViewModel.DELETE_APPEALFILE_FORMACTION}{GroundsOfAppealViewModel.FORMACTION_SEPERATOR}{file.FileName}")" data-filename="@file.FileName">
                             Remove
                             <span class="govuk-visually-hidden"> file - @file.FileName</span>
                         </a>
