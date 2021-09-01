@@ -127,7 +127,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             _logger.LogDebug("Applications controller action completed");
 
-            return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new {application.ApplicationId, application.ApplicationStatus});
+            return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new {application.ApplicationId });
         }
 
 
