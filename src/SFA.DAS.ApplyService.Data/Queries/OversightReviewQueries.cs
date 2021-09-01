@@ -108,6 +108,114 @@ namespace SFA.DAS.ApplyService.Data.Queries
             }
         }
 
+        public async Task<PendingAppealOutcomes> GetPendingAppealOutcomes(string searchTerm, string sortColumn, string sortOrder)
+        {
+            using (var connection = GetConnection())
+            {
+               var orderByClause = $"{GetSortColumnForAppeal(sortColumn)} { GetOrderByDirection(sortOrder)}";
+
+
+                var reviews = (await connection.QueryAsync<PendingAppealOutcome>($@"SELECT 
+                            apply.ApplicationId AS ApplicationId,
+                            apply.ApplicationStatus,
+                            org.Name AS OrganisationName,
+                            apply.GatewayReviewStatus,
+                            apply.FinancialReviewStatus,
+                            apply.ModerationStatus AS ModerationReviewStatus,
+                            apply.UKPRN,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,                          
+                            apply.createdat AS ApplicationSubmittedDate,
+                            appel.AppealSubmitedDate AS AppealSubmitedDate,
+                            apply.ApplicationDeterminedDate AS ApplicationDeterminedDate
+                                FROM Apply apply
+                            INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+                            LEFT JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
+                            LEFT JOIN Appeal appel ON appel.ApplicationId = apply.ApplicationId
+                            WHERE apply.DeletedAt IS NULL
+                            AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
+                            and r.Status is null
+                            and appel.Status in (0,1)
+                            and ((GatewayReviewStatus in (@gatewayReviewStatusPass)
+						    and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
+						    and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
+                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusRejected)
+                            OR apply.ApplicationStatus = @applicationStatusRemoved)
+                            ORDER BY {orderByClause}, org.Name ASC", new
+                {
+                    searchString = $"%{searchTerm}%",
+                    gatewayReviewStatusPass = GatewayReviewStatus.Pass,
+                    gatewayReviewStatusFail = GatewayReviewStatus.Fail,
+                    GatewayReviewStatusRejected = GatewayReviewStatus.Rejected,
+                    assessorReviewStatusApproved = AssessorReviewStatus.Approved,
+                    assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
+                    financialReviewStatusApproved = FinancialReviewStatus.Pass,
+                    financialReviewStatusDeclined = FinancialReviewStatus.Fail,
+                    financialReviewStatusExempt = FinancialReviewStatus.Exempt,
+                    applicationStatusRemoved = ApplicationStatus.Removed
+                })).ToList();
+
+                return new PendingAppealOutcomes
+                {
+                    Reviews = reviews
+                };
+            }
+        }
+
+
+        public async Task<CompletedAppealOutcomes> GetCompletedAppealOutcomes(string searchTerm, string sortColumn, string sortOrder)
+        {
+            using (var connection = GetConnection())
+            {
+                var orderByClause = $"{GetSortColumnForAppealOutcome(sortColumn)} { GetOrderByDirection(sortOrder)}";
+
+                var reviews = (await connection.QueryAsync<CompletedAppealOutcome>($@"SELECT 
+                            apply.ApplicationId AS ApplicationId,
+                            apply.ApplicationStatus,
+                            org.Name AS OrganisationName,
+                            apply.GatewayReviewStatus,
+                            apply.FinancialReviewStatus,
+                            apply.ModerationStatus AS ModerationReviewStatus,
+                            apply.UKPRN,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,                          
+                            apply.createdat AS ApplicationSubmittedDate,
+                            appel.AppealSubmitedDate AS AppealSubmitedDate,
+                            apply.ApplicationDeterminedDate AS ApplicationDeterminedDate
+                                FROM Apply apply
+                            INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+                            LEFT JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
+                            LEFT JOIN Appeal appel ON appel.ApplicationId = apply.ApplicationId
+                            WHERE apply.DeletedAt IS NULL
+                            AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
+                            and r.Status is null
+                            and appel.Status not in (0,1)
+                            and ((GatewayReviewStatus in (@gatewayReviewStatusPass)
+						    and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
+						    and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
+                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusRejected)
+                            OR apply.ApplicationStatus = @applicationStatusRemoved)
+                            ORDER BY {orderByClause}, org.Name ASC", new
+                {
+                    searchString = $"%{searchTerm}%",
+                    gatewayReviewStatusPass = GatewayReviewStatus.Pass,
+                    gatewayReviewStatusFail = GatewayReviewStatus.Fail,
+                    GatewayReviewStatusRejected = GatewayReviewStatus.Rejected,
+                    assessorReviewStatusApproved = AssessorReviewStatus.Approved,
+                    assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
+                    financialReviewStatusApproved = FinancialReviewStatus.Pass,
+                    financialReviewStatusDeclined = FinancialReviewStatus.Fail,
+                    financialReviewStatusExempt = FinancialReviewStatus.Exempt,
+                    applicationStatusRemoved = ApplicationStatus.Removed
+                })).ToList();
+
+                return new CompletedAppealOutcomes
+                {
+                    Reviews = reviews
+                };
+            }
+        }
+
 
         public async Task<ApplicationOversightDetails> GetOversightApplicationDetails(Guid applicationId)
         {
@@ -197,7 +305,39 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
         private static string GetSortColumnForNew(string requestedColumn)
         {
-            return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
+            return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";          
+        }
+        private static string GetSortColumnForAppeal(string requestedColumn)
+        {
+            switch (requestedColumn)
+            {
+                case "ApplicationDeterminedDate":
+                    return $" CAST({requestedColumn} AS DATE) ";                    
+                case "AppealDeterminedDate":
+                    return $" CAST({requestedColumn} AS DATE) ";                    
+                case "AppealSubmitedDate":
+                    return $" CAST({requestedColumn} AS DATE) ";                    
+                case "ApplicationSubmittedDate":
+                    return " CAST(AppealSubmitedDate AS DATE) ";                  
+                default:
+                    return " CAST(AppealSubmitedDate AS DATE) ";
+            }
+        }
+        private static string GetSortColumnForAppealOutcome(string requestedColumn)
+        {
+            switch (requestedColumn)
+            {
+                case "ApplicationDeterminedDate":
+                    return $" CAST({requestedColumn} AS DATE) ";
+                case "AppealDeterminedDate":
+                    return $" CAST({requestedColumn} AS DATE) ";
+                case "AppealSubmitedDate":
+                    return $" CAST({requestedColumn} AS DATE) ";
+                case "ApplicationSubmittedDate":
+                    return " CAST(AppealSubmitedDate AS DATE) ";
+                default:
+                    return " CAST(AppealDeterminedDate AS DATE) ";
+            }
         }
 
         private static string GetOrderByDirection(string sortOrder)

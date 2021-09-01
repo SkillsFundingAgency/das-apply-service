@@ -43,6 +43,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet]
+        [Route("Oversights/PendingAppeal")]
+        public async Task<ActionResult<PendingAppealOutcomes>> AppealPending(string searchTerm, string sortColumn, string sortOrder)
+        {
+            return await _mediator.Send(new GetPendingAppealRequest(searchTerm, sortColumn, sortOrder));
+        }
+
+        [HttpGet]
+        [Route("Oversights/CompletedAppeal")]
+        public async Task<ActionResult<CompletedAppealOutcomes>> AppealCompleted(string searchTerm, string sortColumn, string sortOrder)
+        {
+            return await _mediator.Send(new GetCompletedAppealRequest(searchTerm, sortColumn, sortOrder));
+        }
+
+        [HttpGet]
         [Route("Oversights/Download")]
         public async Task<ActionResult<List<ApplicationOversightDownloadDetails>>> OversightDownload(DateTime dateFrom, DateTime dateTo)
         {
