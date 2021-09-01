@@ -4,10 +4,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
+using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
+using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     [Authorize(Policy = "AccessAppeal")]
+    [FeatureToggle(nameof(FeatureToggles.EnableAppeals), "RoatpApplication", "Applications")]
     public class RoatpAppealsController : Controller
     {
         private readonly IOutcomeApiClient _outcomeApiClient;
