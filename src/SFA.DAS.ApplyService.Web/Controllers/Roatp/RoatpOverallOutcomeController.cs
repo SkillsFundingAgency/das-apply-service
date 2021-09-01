@@ -3,7 +3,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -11,7 +10,7 @@ using SFA.DAS.ApplyService.Web.Services;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
-    [Authorize]
+    [Authorize(Policy = "AccessApplication")]
     public class RoatpOverallOutcomeController : Controller
     {
         private readonly IOutcomeApiClient _apiClient;
@@ -40,7 +39,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
-        [Authorize(Policy = "AccessApplication")]
+        [Route("application/{applicationId}/status")]
         public async Task<IActionResult> ProcessApplicationStatus(Guid applicationId)
         {
             var application = await _applicationApiClient.GetApplication(applicationId);
