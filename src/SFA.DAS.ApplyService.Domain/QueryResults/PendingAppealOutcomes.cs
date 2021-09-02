@@ -17,7 +17,7 @@ namespace SFA.DAS.ApplyService.Domain.QueryResults
         public string ApplicationReferenceNumber { get; set; }
         public DateTime ApplicationSubmittedDate { get; set; }
         public DateTime ApplicationDeterminedDate { get; set; }
-        public DateTime AppealSubmitedDate { get; set; }
+        public DateTime AppealSubmittedDate { get; set; }
         public string AppealStatus { get; set; }
     }
 }

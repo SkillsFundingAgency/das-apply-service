@@ -108,6 +108,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
             }
         }
 
+
         public async Task<PendingAppealOutcomes> GetPendingAppealOutcomes(string searchTerm, string sortColumn, string sortOrder)
         {
             using (var connection = GetConnection())
@@ -124,8 +125,8 @@ namespace SFA.DAS.ApplyService.Data.Queries
                             apply.UKPRN,
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,                          
-                            apply.createdat AS ApplicationSubmittedDate,
-                            appeal.AppealSubmitedDate AS AppealSubmitedDate,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+                            appeal.AppealSubmittedDate AS AppealSubmittedDate,
                             apply.ApplicationDeterminedDate AS ApplicationDeterminedDate
                                 FROM Apply apply
                             INNER JOIN Organisations org ON org.Id = apply.OrganisationId
@@ -162,7 +163,6 @@ namespace SFA.DAS.ApplyService.Data.Queries
             }
         }
 
-
         public async Task<CompletedAppealOutcomes> GetCompletedAppealOutcomes(string searchTerm, string sortColumn, string sortOrder)
         {
             using (var connection = GetConnection())
@@ -179,8 +179,8 @@ namespace SFA.DAS.ApplyService.Data.Queries
                             apply.UKPRN,
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,                          
-                            apply.createdat AS ApplicationSubmittedDate,
-                            appeal.AppealSubmitedDate AS AppealSubmitedDate,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+                            appeal.AppealSubmittedDate AS AppealSubmittedDate,
                             apply.ApplicationDeterminedDate AS ApplicationDeterminedDate
                                 FROM Apply apply
                             INNER JOIN Organisations org ON org.Id = apply.OrganisationId
@@ -303,42 +303,43 @@ namespace SFA.DAS.ApplyService.Data.Queries
             }
         }
 
-
         private static string GetSortColumnForNew(string requestedColumn)
         {
-            return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
+            switch (requestedColumn)
+            {
+                default:
+                    return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
+            }
         }
 
         private static string GetSortColumnForAppeal(string requestedColumn)
         {
             switch (requestedColumn)
             {
-                case "ApplicationDeterminedDate":
-                    return $" CAST({requestedColumn} AS DATE) ";
-                case "AppealDeterminedDate":
-                    return $" CAST({requestedColumn} AS DATE) ";
-                case "AppealSubmitedDate":
-                    return $" CAST({requestedColumn} AS DATE) ";
                 case "ApplicationSubmittedDate":
-                    return " CAST(AppealSubmitedDate AS DATE) ";
+                    return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
+                case "ApplicationDeterminedDate":
+                    return $" apply.ApplicationDeterminedDate ";
+                case "AppealDeterminedDate":
+                    return $" appeal.AppealDeterminedDate ";
+                case "AppealSubmittedDate":
                 default:
-                    return " CAST(AppealSubmitedDate AS DATE) ";
+                    return $" appeal.AppealSubmittedDate ";
             }
         }
         private static string GetSortColumnForAppealOutcome(string requestedColumn)
         {
             switch (requestedColumn)
             {
-                case "ApplicationDeterminedDate":
-                    return $" CAST({requestedColumn} AS DATE) ";
-                case "AppealDeterminedDate":
-                    return $" CAST({requestedColumn} AS DATE) ";
-                case "AppealSubmitedDate":
-                    return $" CAST({requestedColumn} AS DATE) ";
                 case "ApplicationSubmittedDate":
-                    return " CAST(AppealSubmitedDate AS DATE) ";
+                    return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
+                case "ApplicationDeterminedDate":
+                    return $" apply.ApplicationDeterminedDate ";
+                case "AppealSubmittedDate":
+                    return $" appeal.AppealSubmittedDate ";
+                case "AppealDeterminedDate":
                 default:
-                    return " CAST(AppealDeterminedDate AS DATE) ";
+                    return $" appeal.AppealDeterminedDate ";
             }
         }
 
