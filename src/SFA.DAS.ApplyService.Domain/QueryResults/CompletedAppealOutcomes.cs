@@ -19,6 +19,6 @@ namespace SFA.DAS.ApplyService.Domain.QueryResults
         public DateTime AppealSubmittedDate { get; set; }
         public DateTime AppealDeterminedDate { get; set; }
         public OversightReviewStatus OversightStatus { get; set; }
-        public string ApplicationStatus { get; set; }
+        public string AppealStatus { get; set; }
     }
 }

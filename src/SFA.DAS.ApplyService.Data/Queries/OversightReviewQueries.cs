@@ -181,6 +181,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,                          
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
                             appeal.AppealSubmittedDate AS AppealSubmittedDate,
+                            appeal.Status AS AppealStatus,
                             apply.ApplicationDeterminedDate AS ApplicationDeterminedDate
                                 FROM Apply apply
                             INNER JOIN Organisations org ON org.Id = apply.OrganisationId
