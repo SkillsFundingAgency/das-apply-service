@@ -34,6 +34,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 
             if (application == null) return false;
 
+            _auditService.AuditUpdate(application);
+
             application.ApplicationStatus = ApplicationStatus.Submitted;
             application.GatewayReviewStatus = GatewayReviewStatus.ClarificationSent;
 
@@ -49,8 +51,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             application.ApplyData.GatewayReviewDetails.ClarificationRequestedBy = request.UserId;
 
             var updatedSuccessfully = await _gatewayRepository.UpdateGatewayReviewStatusAndComment(request.ApplicationId,
-                application.ApplyData, application.GatewayReviewStatus, request.UserId, request.UserName);
-            _auditService.AuditUpdate(application);
+                application.ApplyData, application.GatewayReviewStatus, request.UserId, request.UserName);     
 
             _auditService.Save();
             await _unitOfWork.Commit();

@@ -51,6 +51,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 application.ApplyData.GatewayReviewDetails = new ApplyGatewayDetails();
             }
 
+            _auditService.AuditUpdate(application);
+
             application.ApplicationStatus = request.GatewayReviewStatus == GatewayReviewStatus.Rejected ? ApplicationStatus.Rejected : ApplicationStatus.GatewayAssessed;
             application.GatewayReviewStatus = request.GatewayReviewStatus;
 
@@ -60,7 +62,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             application.ApplyData.GatewayReviewDetails.SubcontractingLimit = request.SubcontractingLimit;
 
             var updatedSuccessfully = await _gatewayRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, application.GatewayReviewStatus, request.UserId, request.UserName);
-            _auditService.AuditUpdate(application);
+            
 
             if (updatedSuccessfully && request.GatewayReviewStatus == GatewayReviewStatus.Rejected)
             {

@@ -36,6 +36,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             if (isNew)
             {
                 answer = CreateNewGatewayPageAnswer(request.ApplicationId, request.PageId);
+                _auditService.AuditInsert(answer);
+            }
+            else
+            {
+                _auditService.AuditUpdate(answer);
             }
 
             if (answer != null)
@@ -54,12 +59,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             if (isNew)
             {
                 updatedSuccessfully = await _gatewayRepository.InsertGatewayPageAnswerClarification(answer, request.UserId, request.UserName);
-                _auditService.AuditInsert(answer);
             }
             else
             {
                 updatedSuccessfully = await _gatewayRepository.UpdateGatewayPageAnswerClarification(answer, request.UserId, request.UserName);
-                _auditService.AuditUpdate(answer);
             }
 
             if (application.GatewayUserId != request.UserId || application.GatewayUserName != request.UserName)
