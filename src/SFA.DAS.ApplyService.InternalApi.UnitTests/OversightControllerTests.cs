@@ -158,6 +158,126 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
+        public async Task Check_count_of_appeals_pending_results_are_correct()
+        {
+            var pendingAppeals = new PendingAppealOutcomes
+            {
+                Reviews = new List<PendingAppealOutcome> {
+                new PendingAppealOutcome
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    OrganisationName = "XXX Limited",
+                    Ukprn = "12344321",
+                    ProviderRoute = "Main",
+                    ApplicationReferenceNumber = "APR000111"
+                },
+                new PendingAppealOutcome
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    OrganisationName = "ZZZ Limited",
+                    Ukprn = "43211234",
+                    ProviderRoute = "Employer",
+                    ApplicationReferenceNumber = "APR000112",
+                }
+            }
+            };
+
+            _mediator
+                .Setup(x => x.Send(It.IsAny<GetPendingAppealOutcomesRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(pendingAppeals);
+
+            var actualResult = await _controller.AppealsPending(null, null, null);
+            Assert.AreEqual(pendingAppeals.Reviews.Count, actualResult.Value.Reviews.Count);
+        }
+
+        [Test]
+        public async Task Check_appeals_pending_results_are_as_expected()
+        {
+            var pendingAppeals = new PendingAppealOutcomes
+            {
+                Reviews = new List<PendingAppealOutcome>
+                {
+                    new PendingAppealOutcome{
+                        ApplicationId = Guid.NewGuid(),
+                        OrganisationName = "XXX Limited",
+                        Ukprn = "12344321",
+                        ProviderRoute = "Main",
+                        ApplicationReferenceNumber = "APR000111"
+                    }
+                }
+            };
+
+            _mediator
+                .Setup(x => x.Send(It.IsAny<GetPendingAppealOutcomesRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(pendingAppeals);
+
+            var actualResult = await _controller.AppealsPending(null, null, null);
+            var returnedAppeal = actualResult.Value.Reviews.First();
+
+            Assert.That(returnedAppeal, Is.SameAs(pendingAppeals.Reviews.First()));
+        }
+
+        [Test]
+        public async Task Check_count_of_appeals_completed_results_are_correct()
+        {
+            var completedAppeals = new CompletedAppealOutcomes
+            {
+                Reviews = new List<CompletedAppealOutcome> {
+                new CompletedAppealOutcome
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    OrganisationName = "XXX Limited",
+                    Ukprn = "12344321",
+                    ProviderRoute = "Main",
+                    ApplicationReferenceNumber = "APR000111"
+                },
+                new CompletedAppealOutcome
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    OrganisationName = "ZZZ Limited",
+                    Ukprn = "43211234",
+                    ProviderRoute = "Employer",
+                    ApplicationReferenceNumber = "APR000112",
+                }
+            }
+            };
+
+            _mediator
+                .Setup(x => x.Send(It.IsAny<GetCompletedAppealOutcomesRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(completedAppeals);
+
+            var actualResult = await _controller.AppealsCompleted(null, null, null);
+            Assert.AreEqual(completedAppeals.Reviews.Count, actualResult.Value.Reviews.Count);
+        }
+
+        [Test]
+        public async Task Check_appeals_completed_results_are_as_expected()
+        {
+            var completedAppeals = new CompletedAppealOutcomes
+            {
+                Reviews = new List<CompletedAppealOutcome>
+                {
+                    new CompletedAppealOutcome{
+                        ApplicationId = Guid.NewGuid(),
+                        OrganisationName = "XXX Limited",
+                        Ukprn = "12344321",
+                        ProviderRoute = "Main",
+                        ApplicationReferenceNumber = "APR000111"
+                    }
+                }
+            };
+
+            _mediator
+                .Setup(x => x.Send(It.IsAny<GetCompletedAppealOutcomesRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(completedAppeals);
+
+            var actualResult = await _controller.AppealsCompleted(null, null, null);
+            var returnedAppeal = actualResult.Value.Reviews.First();
+
+            Assert.That(returnedAppeal, Is.SameAs(completedAppeals.Reviews.First()));
+        }
+
+        [Test]
         public async Task Check_oversight_details_result_is_as_expected()
         {
             var applicationId = Guid.NewGuid();
