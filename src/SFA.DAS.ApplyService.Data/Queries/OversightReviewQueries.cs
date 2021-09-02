@@ -117,43 +117,25 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
                 var reviews = (await connection.QueryAsync<PendingAppealOutcome>($@"SELECT 
                             apply.ApplicationId AS ApplicationId,
-                            apply.ApplicationStatus,
                             org.Name AS OrganisationName,
-                            apply.GatewayReviewStatus,
-                            apply.FinancialReviewStatus,
-                            apply.ModerationStatus AS ModerationReviewStatus,
                             apply.UKPRN,
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,                          
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+                            oversight.ApplicationDeterminedDate AS ApplicationDeterminedDate,
                             appeal.AppealSubmittedDate AS AppealSubmittedDate,
-                            apply.ApplicationDeterminedDate AS ApplicationDeterminedDate
+                            appeal.Status as AppealStatus
                                 FROM Apply apply
                             INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-                            LEFT JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
-                            LEFT JOIN Appeal appeal ON appeal.ApplicationId = apply.ApplicationId
+                            INNER JOIN OversightReview oversight ON oversight.ApplicationId = apply.ApplicationId
+                            INNER JOIN Appeal appeal ON appeal.ApplicationId = apply.ApplicationId
                             WHERE apply.DeletedAt IS NULL
                             AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
-                            and r.Status is null
-                            and appeal.Status in (@appealStatusSubmitted)
-                            and ((GatewayReviewStatus in (@gatewayReviewStatusPass)
-						    and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
-						    and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
-                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusRejected)
-                            OR apply.ApplicationStatus = @applicationStatusRemoved)
+                            AND appeal.Status IN (@appealStatusSubmitted)
                             ORDER BY {orderByClause}, org.Name ASC", new
                 {
                     searchString = $"%{searchTerm}%",
-                    appealStatusSubmitted = Types.AppealStatus.Submitted,
-                    gatewayReviewStatusPass = GatewayReviewStatus.Pass,
-                    gatewayReviewStatusFail = GatewayReviewStatus.Fail,
-                    GatewayReviewStatusRejected = GatewayReviewStatus.Rejected,
-                    assessorReviewStatusApproved = AssessorReviewStatus.Approved,
-                    assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
-                    financialReviewStatusApproved = FinancialReviewStatus.Pass,
-                    financialReviewStatusDeclined = FinancialReviewStatus.Fail,
-                    financialReviewStatusExempt = FinancialReviewStatus.Exempt,
-                    applicationStatusRemoved = ApplicationStatus.Removed
+                    appealStatusSubmitted = Types.AppealStatus.Submitted
                 })).ToList();
 
                 return new PendingAppealOutcomes
@@ -171,44 +153,26 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
                 var reviews = (await connection.QueryAsync<CompletedAppealOutcome>($@"SELECT 
                             apply.ApplicationId AS ApplicationId,
-                            apply.ApplicationStatus,
                             org.Name AS OrganisationName,
-                            apply.GatewayReviewStatus,
-                            apply.FinancialReviewStatus,
-                            apply.ModerationStatus AS ModerationReviewStatus,
                             apply.UKPRN,
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,                          
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
                             appeal.AppealSubmittedDate AS AppealSubmittedDate,
+                            appeal.AppealDeterminedDate AS AppealDeterminedDate
                             appeal.Status AS AppealStatus,
-                            apply.ApplicationDeterminedDate AS ApplicationDeterminedDate
+                            oversight.Status as OversightStatus
                                 FROM Apply apply
                             INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-                            LEFT JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
-                            LEFT JOIN Appeal appeal ON appeal.ApplicationId = apply.ApplicationId
+                            INNER JOIN OversightReview oversight ON oversight.ApplicationId = apply.ApplicationId
+                            INNER JOIN Appeal appeal ON appeal.ApplicationId = apply.ApplicationId
                             WHERE apply.DeletedAt IS NULL
                             AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
-                            and r.Status is null
-                            and appeal.Status not in (@appealStatusSubmitted)
-                            and ((GatewayReviewStatus in (@gatewayReviewStatusPass)
-						    and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
-						    and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
-                            OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusRejected)
-                            OR apply.ApplicationStatus = @applicationStatusRemoved)
+                            AND appeal.Status NOT IN (@appealStatusSubmitted)
                             ORDER BY {orderByClause}, org.Name ASC", new
                 {
                     searchString = $"%{searchTerm}%",
-                    appealStatusSubmitted = Types.AppealStatus.Submitted,
-                    gatewayReviewStatusPass = GatewayReviewStatus.Pass,
-                    gatewayReviewStatusFail = GatewayReviewStatus.Fail,
-                    GatewayReviewStatusRejected = GatewayReviewStatus.Rejected,
-                    assessorReviewStatusApproved = AssessorReviewStatus.Approved,
-                    assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
-                    financialReviewStatusApproved = FinancialReviewStatus.Pass,
-                    financialReviewStatusDeclined = FinancialReviewStatus.Fail,
-                    financialReviewStatusExempt = FinancialReviewStatus.Exempt,
-                    applicationStatusRemoved = ApplicationStatus.Removed
+                    appealStatusSubmitted = Types.AppealStatus.Submitted
                 })).ToList();
 
                 return new CompletedAppealOutcomes
