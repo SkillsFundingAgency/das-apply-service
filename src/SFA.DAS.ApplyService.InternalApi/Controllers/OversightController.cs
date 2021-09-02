@@ -56,6 +56,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost]
+        [Route("Oversight/Appeal")]
+        public async Task<ActionResult<bool>> RecordAppealOutcome([FromBody] RecordAppealOutcomeCommand command)
+        {
+            return await _mediator.Send(command);
+        }
+
+        [HttpPost]
         [Route("Oversight/GatewayFailOutcome")]
         public async Task<ActionResult> RecordOversightGatewayFailOutcome([FromBody] RecordOversightGatewayFailOutcomeCommand command)
         {
