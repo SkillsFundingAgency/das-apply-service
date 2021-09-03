@@ -159,7 +159,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,                          
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
                             appeal.AppealSubmittedDate AS AppealSubmittedDate,
-                            appeal.AppealDeterminedDate AS AppealDeterminedDate
+                            appeal.AppealDeterminedDate AS AppealDeterminedDate,
                             appeal.Status AS AppealStatus,
                             oversight.Status as OversightStatus
                                 FROM Apply apply
