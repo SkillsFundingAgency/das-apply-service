@@ -34,12 +34,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.UploadAppe
             };
 
             _appealUploadRepository = new Mock<IAppealFileRepository>();
+            _appealUploadRepository.Setup(x => x.Get(_command.ApplicationId, _command.AppealFile.FileName)).ReturnsAsync(default(AppealFile));
             _appealUploadRepository.Setup(x => x.Add(It.IsAny<AppealFile>()));
+            _appealUploadRepository.Setup(x => x.Update(It.IsAny<AppealFile>()));
 
 
             _auditService = new Mock<IAuditService>();
             _auditService.Setup(x => x.StartTracking(UserAction.UploadAppealFile, _command.UserId, _command.UserName));
             _auditService.Setup(x => x.AuditInsert(It.IsAny<AppealFile>()));
+            _auditService.Setup(x => x.AuditUpdate(It.IsAny<AppealFile>()));
 
             _handler = new UploadAppealFileCommandHandler(_appealUploadRepository.Object, _auditService.Object);
         }
@@ -69,6 +72,48 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.UploadAppe
             _auditService.Verify(x => x.StartTracking(UserAction.UploadAppealFile, _command.UserId, _command.UserName), Times.Once);
 
             _auditService.Verify(x => x.AuditInsert(It.Is<AppealFile>(upload =>
+                upload.ApplicationId == _command.ApplicationId
+                && upload.FileName == _command.AppealFile.FileName
+                && upload.ContentType == _command.AppealFile.ContentType
+                && upload.UserId == _command.UserId
+                && upload.UserName == _command.UserName
+                && upload.Size == _command.AppealFile.Data.Length
+                )));
+
+            _auditService.Verify(x => x.Save());
+        }
+
+        [Test]
+        public async Task Handle_Records_Uploaded_File_When_Existing()
+        {
+            var existingFile = new AppealFile { ApplicationId = _command.ApplicationId, FileName = _command.AppealFile.FileName };
+            _appealUploadRepository.Setup(x => x.Get(_command.ApplicationId, _command.AppealFile.FileName)).ReturnsAsync(existingFile);
+
+            await _handler.Handle(_command, CancellationToken.None);
+
+            _appealUploadRepository.Verify(x => x.Update(It.Is<AppealFile>(upload =>
+                upload.ApplicationId == _command.ApplicationId
+                && upload.FileName == _command.AppealFile.FileName
+                && upload.ContentType == _command.AppealFile.ContentType
+                && upload.UserId == _command.UserId
+                && upload.UserName == _command.UserName
+                && upload.Size == _command.AppealFile.Data.Length
+                )));
+
+            _auditService.Verify(x => x.Save());
+        }
+
+        [Test]
+        public async Task Handle_Audits_Added_File_When_Existing()
+        {
+            var existingFile = new AppealFile { ApplicationId = _command.ApplicationId, FileName = _command.AppealFile.FileName };
+            _appealUploadRepository.Setup(x => x.Get(_command.ApplicationId, _command.AppealFile.FileName)).ReturnsAsync(existingFile);
+
+            await _handler.Handle(_command, CancellationToken.None);
+
+            _auditService.Verify(x => x.StartTracking(UserAction.UploadAppealFile, _command.UserId, _command.UserName), Times.Once);
+
+            _auditService.Verify(x => x.AuditUpdate(It.Is<AppealFile>(upload =>
                 upload.ApplicationId == _command.ApplicationId
                 && upload.FileName == _command.AppealFile.FileName
                 && upload.ContentType == _command.AppealFile.ContentType
