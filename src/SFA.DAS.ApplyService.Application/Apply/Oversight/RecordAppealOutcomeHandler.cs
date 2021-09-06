@@ -60,6 +60,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             {
                 throw new InvalidOperationException($"Application {applicationId} not found");
             }
+
+         
+
             return application;
         }
 
@@ -72,7 +75,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             {
                 isNew = true;
                 appeal = new Appeal { ApplicationId = applicationId };
-              
+                _auditService.AuditInsert(appeal);
+
             }
             else
             {
@@ -80,7 +84,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 {
                     throw new InvalidOperationException($"Unable to modify appeal review for application {applicationId} with a status of {appeal.Status}");
                 }
-              
+                _auditService.AuditUpdate(appeal);
             }
 
             return (appeal, isNew);
@@ -122,15 +126,18 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
         {
             if (isNew)
             {
-                _auditService.AuditInsert(appeal);
                 _appealRepository.Add(appeal);
             }
             else
             {
-                _auditService.AuditUpdate(appeal);
                 _appealRepository.Update(appeal);
             }
 
+            if (!(application.ApplicationStatus == ApplicationStatus.Unsuccessful && appeal.Status == AppealStatus.Unsuccessful))
+            {
+                _auditService.AuditUpdate(application);
+            }
+            
             switch (appeal.Status)
             {
                 case AppealStatus.InProgress:
@@ -146,7 +153,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                     break;
             }
 
-            _auditService.AuditUpdate(application);
             _applyRepository.Update(application);
         }
     }
