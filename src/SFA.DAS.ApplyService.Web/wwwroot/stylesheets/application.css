@@ -19,14 +19,13 @@
 }
 
 .govuk-button--looks-like-link {
-  display: block;
+  display: inline-block;
   padding: 0;
   margin: 0;
   border: 0;
   text-decoration: underline;
   background: none;
   box-shadow: none;
-  text-align: left;
   color: #005ea5;
 }
 
@@ -39,7 +38,11 @@
 }
 
 .govuk-button--looks-like-link:focus {
-  background: #ffbf47;
+  outline: 3px solid rgba(0,0,0,0);
+  color: #0b0c0c;
+  background-color: #fd0;
+  box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
+  text-decoration: none;
 }
 
 .govuk-button--looks-like-link:visited {
@@ -860,6 +863,17 @@
     position: relative;
   }
 
+  .roatp__navigation-item--current:after {
+    content: "";
+    height: 5px;
+    display: block;
+    position: absolute;
+    bottom: -12px;
+    left: 0;
+    right: 0;
+    background:#1d70b8;
+  }
+
   .roatp__navigation-item--signout {
     padding: 0;
     margin-left: auto;
@@ -1320,4 +1334,17 @@
 
 .das-preformatted-body {
     white-space: pre-wrap;
+}
+
+/* File upload component */
+
+.app-file-upload--button {
+  margin-top: 10px;
+}
+
+@media (min-width: 40.0625em) {
+  .app-file-upload--button {
+    margin-top: 0;
+    float: right;
+  }
 }
