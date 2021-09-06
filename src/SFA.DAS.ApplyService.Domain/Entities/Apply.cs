@@ -178,6 +178,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
         public const string InProgressOutcome = "InProgessOutcome";
 
+        public const string InProgressAppeal = "InProgressAppeal";
+
         public const string Successful = "Successful";
         public const string Unsuccessful = "Unsuccessful";
         // Below are other statuses mentioned in the most recent status documentation

@@ -111,7 +111,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
                     [InProgressUserName] = @InProgressUserName,
                     [InProgressInternalComments] = @InProgressInternalComments,
                     [InProgressExternalComments] = @InProgressExternalComments,
-                    [UpdatedOn] = @UpdatedOn,
+                    [UpdatedOn] = @UpdatedOn
                     WHERE [Id] = @Id",
                 entity, transaction);
 

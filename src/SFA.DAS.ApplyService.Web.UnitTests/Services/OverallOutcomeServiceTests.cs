@@ -305,7 +305,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         [TestCase(null, false)]
         [TestCase(AppealStatus.Successful, true)]
         [TestCase(AppealStatus.Unsuccessful, true)]
-        [TestCase(AppealStatus.InProgressOutcome, true)]
+        [TestCase(AppealStatus.InProgress, true)]
         [TestCase(AppealStatus.Submitted, true)]
         [TestCase(AppealStatus.SuccessfulFitnessForFunding, true)]
         [TestCase(AppealStatus.SuccessfulAlreadyActive, true)]

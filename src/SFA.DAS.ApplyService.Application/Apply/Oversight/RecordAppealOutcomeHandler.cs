@@ -19,19 +19,17 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
         private readonly IAppealRepository _appealRepository;
         private readonly ILogger<RecordOversightOutcomeHandler> _logger;
         private readonly IAuditService _auditService;
-        private readonly IApplicationUpdatedEmailService _applicationUpdatedEmailService;
         private readonly IUnitOfWork _unitOfWork;
         public RecordAppealOutcomeHandler(ILogger<RecordOversightOutcomeHandler> logger,
             IAppealRepository appealRepository,
             IApplicationRepository applyRepository,
-            IAuditService auditService,
-            IApplicationUpdatedEmailService applicationUpdatedEmailService, IUnitOfWork unitOfWork)
+            IAuditService auditService, 
+            IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _appealRepository = appealRepository;
             _applyRepository = applyRepository;
             _auditService = auditService;
-            _applicationUpdatedEmailService = applicationUpdatedEmailService;
             _unitOfWork = unitOfWork;
         }
 
@@ -43,10 +41,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
             var application = await GetApplicationOrThrow(request.ApplicationId);
 
-            var (oversightReview, isNew) = await GetExistingOrNewAppealReview(request.ApplicationId);
+            var (appeal, isNew) = await GetExistingAppeal(request.ApplicationId);
 
-            ApplyChanges(oversightReview, request, isNew);
-            SaveChanges(oversightReview, application, isNew);
+            ApplyChanges(appeal, request, isNew);
+            SaveChanges(appeal, application, isNew);
 
             _auditService.Save();
             await _unitOfWork.Commit();
@@ -62,13 +60,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             {
                 throw new InvalidOperationException($"Application {applicationId} not found");
             }
-
-            _auditService.AuditUpdate(application);
-
             return application;
         }
 
-        private async Task<(Appeal, bool)> GetExistingOrNewAppealReview(Guid applicationId)
+        private async Task<(Appeal, bool)> GetExistingAppeal(Guid applicationId)
         {
             var isNew = false;
             var appeal = await _appealRepository.GetByApplicationId(applicationId);
@@ -77,15 +72,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             {
                 isNew = true;
                 appeal = new Appeal { ApplicationId = applicationId };
-                _auditService.AuditInsert(appeal);
+              
             }
             else
             {
-                if (appeal.Status != AppealStatus.InProgressOutcome)
+                if (appeal.Status != AppealStatus.InProgress && appeal.Status != AppealStatus.Submitted) 
                 {
                     throw new InvalidOperationException($"Unable to modify appeal review for application {applicationId} with a status of {appeal.Status}");
                 }
-                _auditService.AuditUpdate(appeal);
+              
             }
 
             return (appeal, isNew);
@@ -100,7 +95,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 appeal.UpdatedOn = DateTime.UtcNow;
             }
 
-            if (request.AppealStatus == AppealStatus.InProgressOutcome)
+            if (request.AppealStatus == AppealStatus.InProgress)
             {
                 appeal.InProgressDate = DateTime.UtcNow;
                 appeal.InProgressInternalComments = request.InternalComments;
@@ -108,8 +103,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 appeal.InProgressUserId = request.UserId;
                 appeal.InProgressUserName = request.UserName;
             }
-            else
+           
+
+            if(request.AppealStatus==AppealStatus.Successful
+                || request.AppealStatus==AppealStatus.Unsuccessful
+                || request.AppealStatus==AppealStatus.SuccessfulFitnessForFunding
+                || request.AppealStatus==AppealStatus.SuccessfulAlreadyActive)
             {
+                appeal.AppealDeterminedDate = DateTime.UtcNow;
                 appeal.InternalComments = request.InternalComments;
                 appeal.ExternalComments = request.ExternalComments;
                 appeal.UserId = request.UserId;
@@ -121,32 +122,32 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
         {
             if (isNew)
             {
+                _auditService.AuditInsert(appeal);
                 _appealRepository.Add(appeal);
             }
             else
             {
+                _auditService.AuditUpdate(appeal);
                 _appealRepository.Update(appeal);
             }
 
             switch (appeal.Status)
             {
-                // case AppealStatus.InProgressOutcome:
-                //     application.ApplicationStatus = ApplicationStatus.InProgressOutcome;
-                //     break;
+                case AppealStatus.InProgress:
+                    application.ApplicationStatus = ApplicationStatus.InProgressAppeal;
+                    break;
                 case AppealStatus.Successful:
                 case AppealStatus.SuccessfulAlreadyActive:
                 case AppealStatus.SuccessfulFitnessForFunding:
                     application.ApplicationStatus = ApplicationStatus.Successful;
-                    _applyRepository.Update(application);
                     break;
-                // case AppealStatus.Unsuccessful:
-                //     application.ApplicationStatus = application.GatewayReviewStatus == GatewayReviewStatus.Rejected
-                //         ? ApplicationStatus.Rejected :
-                //         ApplicationStatus.Unsuccessful;
-               //     break;
+                case AppealStatus.Unsuccessful:
+                    application.ApplicationStatus = ApplicationStatus.Unsuccessful;
+                    break;
             }
 
-            
+            _auditService.AuditUpdate(application);
+            _applyRepository.Update(application);
         }
     }
 }
