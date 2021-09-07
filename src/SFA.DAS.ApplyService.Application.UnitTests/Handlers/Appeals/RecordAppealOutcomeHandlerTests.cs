@@ -11,7 +11,6 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
-using SFA.DAS.ApplyService.EmailService.Interfaces;
 using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals
@@ -114,6 +113,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals
                 Times.Once);
         }
         
+
+
+        //MFCMFC addtests for new ApplicationStatus
+
         [TestCase(AppealStatus.InProgress, false)]
         [TestCase(AppealStatus.Successful, true)]
         [TestCase(AppealStatus.SuccessfulAlreadyActive, true)]

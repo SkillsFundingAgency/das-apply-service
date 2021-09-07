@@ -146,7 +146,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 case AppealStatus.Successful:
                 case AppealStatus.SuccessfulAlreadyActive:
                 case AppealStatus.SuccessfulFitnessForFunding:
-                    application.ApplicationStatus = ApplicationStatus.Successful;
+                    if (application.GatewayReviewStatus == GatewayReviewStatus.Fail ||
+                        application?.ApplyData?.ApplyDetails?.ApplicationRemovedOn != null)
+                        application.ApplicationStatus = ApplicationStatus.GatewayAppealSuccess;
+                            else
+                        application.ApplicationStatus = ApplicationStatus.Successful;
                     break;
                 case AppealStatus.Unsuccessful:
                     application.ApplicationStatus = ApplicationStatus.Unsuccessful;
