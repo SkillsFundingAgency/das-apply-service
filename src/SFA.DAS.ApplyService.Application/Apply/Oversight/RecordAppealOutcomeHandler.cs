@@ -17,10 +17,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
     {
         private readonly IApplicationRepository _applyRepository;
         private readonly IAppealRepository _appealRepository;
-        private readonly ILogger<RecordOversightOutcomeHandler> _logger;
+        private readonly ILogger<RecordAppealOutcomeHandler> _logger;
         private readonly IAuditService _auditService;
         private readonly IUnitOfWork _unitOfWork;
-        public RecordAppealOutcomeHandler(ILogger<RecordOversightOutcomeHandler> logger,
+        public RecordAppealOutcomeHandler(ILogger<RecordAppealOutcomeHandler> logger,
             IAppealRepository appealRepository,
             IApplicationRepository applyRepository,
             IAuditService auditService, 

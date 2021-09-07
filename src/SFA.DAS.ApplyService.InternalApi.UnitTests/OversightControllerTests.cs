@@ -203,6 +203,26 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             result.Value.Should().BeTrue();
         }
 
+        [TestCase(AppealStatus.Successful)]
+        [TestCase(AppealStatus.Unsuccessful)]
+        public async Task Record_appeal_outcome_updates_appeal_status(string appealStatus)
+        {
+            var command = new RecordAppealOutcomeCommand
+            {
+                AppealStatus = appealStatus,
+                ApplicationId = Guid.NewGuid(),
+                UserId = "User Id",
+                UserName = "Test user"
+            };
+
+            _mediator.Setup(x => x.Send(command, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+            var result = await _controller.RecordAppealOutcome(command);
+            result.Should().NotBeNull();
+            result.Value.Should().BeTrue();
+        }
+
+
         [Test]
         public async Task Record_oversight_gateway_fail_outcome_updates_oversight_status_and_determined_date()
         {
