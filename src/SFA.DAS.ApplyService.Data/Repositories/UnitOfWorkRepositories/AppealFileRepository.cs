@@ -31,6 +31,11 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
             _unitOfWork.Register(() => PersistAdd(entity));
         }
 
+        public void Update(AppealFile entity)
+        {
+            _unitOfWork.Register(() => PersistUpdate(entity));
+        }
+
         public void Remove(Guid entityId)
         {
             _unitOfWork.Register(() => PersistRemoval(entityId));
@@ -40,7 +45,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
         {
             using (var connection = GetConnection())
             {
-                return await connection.QuerySingleAsync<AppealFile>(
+                return await connection.QuerySingleOrDefaultAsync<AppealFile>(
                     @"SELECT * FROM [AppealFile] WHERE Id = @entityId",
                     new { entityId });
             }
@@ -50,7 +55,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
         {
             using (var connection = GetConnection())
             {
-                return await connection.QuerySingleAsync<AppealFile>(
+                return await connection.QuerySingleOrDefaultAsync<AppealFile>(
                     @"SELECT * FROM [AppealFile] WHERE ApplicationId = @applicationId AND FileName = @fileName",
                     new { applicationId, fileName });
             }
@@ -89,6 +94,22 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
                     @UserId,
                     @UserName,
                     @CreatedOn)",
+                entity, transaction);
+        }
+
+        public async Task PersistUpdate(AppealFile entity)
+        {
+            var transaction = _unitOfWork.GetTransaction();
+
+            await transaction.Connection.ExecuteAsync(
+                @"UPDATE [AppealFile]
+                    SET [FileName] = @FileName,
+                    [ContentType] = @ContentType,
+                    [Size] = @Size,
+                    [UserId] =  @UserId,
+                    [UserName] =  @UserName,
+                    [CreatedOn] = @CreatedOn
+                WHERE [Id] = @id",
                 entity, transaction);
         }
 

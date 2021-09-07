@@ -29,16 +29,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.CancelAppeal
             {
                 foreach(var file in appealFiles)
                 {
-                    _appealFileRepository.Remove(file.Id);
                     _auditService.AuditDelete(file);
+                    _appealFileRepository.Remove(file.Id);
                 }
             }
 
             var currentAppeal = await _appealRepository.GetByApplicationId(request.ApplicationId);
             if (currentAppeal != null)
             {
-                _appealRepository.Remove(currentAppeal.Id);
                 _auditService.AuditDelete(currentAppeal);
+                _appealRepository.Remove(currentAppeal.Id);
             }
 
             _auditService.Save();

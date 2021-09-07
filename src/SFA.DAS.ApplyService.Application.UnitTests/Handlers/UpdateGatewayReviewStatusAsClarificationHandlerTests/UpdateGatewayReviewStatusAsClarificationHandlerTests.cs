@@ -7,6 +7,8 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
+using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
@@ -24,7 +26,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateGatewayRevie
         {
             _repository = new Mock<IApplyRepository>();
             _gatewayRepository = new Mock<IGatewayRepository>();
-            _handler = new UpdateGatewayReviewStatusAsClarificationHandler(_repository.Object, _gatewayRepository.Object);
+            _handler = new UpdateGatewayReviewStatusAsClarificationHandler(_repository.Object, _gatewayRepository.Object, Mock.Of<IAuditService>(), Mock.Of<IUnitOfWork>());
 
             _gatewayRepository.Setup(x => x.UpdateGatewayReviewStatusAndComment(It.IsAny<Guid>(), It.IsAny<ApplyData>(), 
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
