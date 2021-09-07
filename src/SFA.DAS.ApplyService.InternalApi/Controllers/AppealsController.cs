@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Appeals.Commands.DeleteAppealFile;
 using SFA.DAS.ApplyService.Application.Appeals.Commands.UploadAppealFile;
 using SFA.DAS.ApplyService.Application.Appeals.Queries.GetAppealFile;
+using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppeal;
 using SFA.DAS.ApplyService.InternalApi.Types.Requests.Appeals;
@@ -18,7 +19,7 @@ using SFA.DAS.ApplyService.InternalApi.Extensions;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppealFileList;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.CancelAppeal;
-using System.Collections.Generic;
+using SFA.DAS.ApplyService.Application.Apply.Oversight;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -194,6 +195,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return File(file.Stream, file.ContentType, file.FileName);
         }
+
+        [HttpPost]
+        [Route("Oversight/Appeal")]
+        public async Task<ActionResult<bool>> RecordAppealOutcome([FromBody] RecordAppealOutcomeCommand command)
+        {
+            return await _mediator.Send(command);
+        }
+
 
         [HttpPost]
         [Route("Appeals/{applicationId}/files/delete/{fileName}")]

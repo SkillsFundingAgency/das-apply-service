@@ -1,7 +1,7 @@
 ﻿using System;
 using MediatR;
 
-namespace SFA.DAS.ApplyService.Application.Apply.Oversight
+namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands
 {
     public class RecordAppealOutcomeCommand : IRequest<bool>
     {
