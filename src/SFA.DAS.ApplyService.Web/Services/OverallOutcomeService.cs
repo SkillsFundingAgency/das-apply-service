@@ -7,6 +7,8 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
@@ -78,14 +80,16 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public async Task<ApplicationSummaryViewModel> BuildApplicationSummaryViewModel(Guid applicationId, string emailAddress)
         {
-            var getApplicationTask = _applicationApiClient.GetApplication(applicationId);
-            var getOversightReviewTask = _apiClient.GetOversightReview(applicationId);
-            var getAppealTask = _appealsApiClient.GetAppeal(applicationId);
-            await Task.WhenAll(getApplicationTask, getOversightReviewTask, getAppealTask);
+            var application = await _applicationApiClient.GetApplication(applicationId);
+            GetOversightReviewResponse oversightReview = null;
+            GetAppealResponse appeal = null;
 
-            var application = getApplicationTask.Result;
-            var oversightReview = getOversightReviewTask.Result;
-            var appeal = getAppealTask.Result;
+            var applyingJourneyStatuses = new List<string> { ApplicationStatus.New, ApplicationStatus.InProgress };
+            if(!applyingJourneyStatuses.Contains(application.Status))
+            {
+                oversightReview = await _apiClient.GetOversightReview(applicationId);
+                appeal = await _appealsApiClient.GetAppeal(applicationId);
+            }
 
             var applicationData = application.ApplyData.ApplyDetails;
 
