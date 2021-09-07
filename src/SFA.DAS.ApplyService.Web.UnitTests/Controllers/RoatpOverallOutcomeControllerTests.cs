@@ -472,6 +472,51 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.ViewName.Should().Contain("ApplicationSubmitted.cshtml");
         }
 
+        [Test]
+        public async Task Application_shows_appeal_submitted_page_if_when_appeal_submitted_and_pending_outcome()
+        {
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationStatus = ApplicationStatus.Unsuccessful,
+                OversightReviewStatus = OversightReviewStatus.Unsuccessful,
+                ApplicationDeterminedDate = DateTime.Today,
+                AppealRequiredByDate = DateTime.Today.AddDays(10),
+                AppealStatus = AppealStatus.Submitted,
+                IsAppealSubmitted = true
+            };
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
+
+            var result = await _controller.ProcessApplicationStatus(_applicationId);
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("AppealSubmitted");
+            redirectResult.ControllerName.Should().Be("RoatpAppeals");
+        }
+
+        [Test]
+        public async Task Application_shows_appeal_unsuccessful_page_if_when_appeal_submitted_and_unsuccessful_outcome()
+        {
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationStatus = ApplicationStatus.Unsuccessful,
+                OversightReviewStatus = OversightReviewStatus.Unsuccessful,
+                ApplicationDeterminedDate = DateTime.Today,
+                AppealRequiredByDate = DateTime.Today.AddDays(10),
+                AppealStatus = AppealStatus.Unsuccessful,
+                IsAppealSubmitted = true
+            };
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
+
+            var result = await _controller.ProcessApplicationStatus(_applicationId);
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("AppealUnsuccessful");
+            redirectResult.ControllerName.Should().Be("RoatpAppeals");
+        }
 
         [Test]
         public async Task Application_sectors_show_sector_details()
