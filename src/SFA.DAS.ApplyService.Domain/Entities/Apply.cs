@@ -183,7 +183,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Successful = "Successful";
         public const string Unsuccessful = "Unsuccessful";
 
-        public const string GatewayAppealSuccess = "GatewayAppealSuccess";
+        public const string AppealSuccessful = "AppealSuccessful";
         // Below are other statuses mentioned in the most recent status documentation
         // Please check the flow in RoatpApplicationController, under the line ' switch (application.ApplicationStatus)' if you add new statuses
         // GWResubmitted
