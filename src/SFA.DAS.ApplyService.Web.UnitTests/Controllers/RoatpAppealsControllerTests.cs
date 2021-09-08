@@ -263,6 +263,44 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+        public async Task POST_GroundsOfAppeal_shows_GroundsOfAppeal_page_when_valid_DELETE_APPEALFILE_FORMACTION()
+        {
+            string fileName = "test.pdf";
+
+            var model = new GroundsOfAppealViewModel
+            {
+                ApplicationId = _applicationId,
+                AppealOnEvidenceSubmitted = true,
+                AppealOnPolicyOrProcesses = true,
+                FormAction = $"{GroundsOfAppealViewModel.DELETE_APPEALFILE_FORMACTION}{GroundsOfAppealViewModel.FORMACTION_SEPERATOR}{fileName}",
+            };
+
+            var result = await _controller.GroundsOfAppeal(model);
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("GroundsOfAppeal");
+        }
+
+        [Test]
+        public async Task POST_GroundsOfAppeal_verify_DeleteFile_api_call_when_valid_DELETE_APPEALFILE_FORMACTION()
+        {
+            string fileName = "test.pdf";
+
+            var model = new GroundsOfAppealViewModel
+            {
+                ApplicationId = _applicationId,
+                AppealOnEvidenceSubmitted = true,
+                AppealOnPolicyOrProcesses = true,
+                FormAction = $"{GroundsOfAppealViewModel.DELETE_APPEALFILE_FORMACTION}{GroundsOfAppealViewModel.FORMACTION_SEPERATOR}{fileName}",
+            };
+
+            var result = await _controller.GroundsOfAppeal(model);
+
+            _appealsApiClient.Verify(x => x.DeleteFile(_applicationId, fileName, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
         public async Task AppealSubmitted_shows_ProcessApplicationStatus_page_if_no_appeal_submitted()
         {
             var result = await _controller.AppealSubmitted(_applicationId);
@@ -357,20 +395,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var result = await _controller.DownloadAppealFile(_applicationId, fileName) as NotFoundResult;
             Assert.IsNotNull(result);
-        }
-
-        [Test]
-        public async Task DeleteAppealFile_deletes_the_file_and_redirects_to_GroundsOfAppeal()
-        {
-            string fileName = "test.pdf";
-
-            _appealsApiClient.Setup(x => x.DeleteFile(_applicationId, fileName, It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
-
-            var result = await _controller.DeleteAppealFile(_applicationId, fileName, true, true);
-
-            var viewResult = result as RedirectToActionResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ActionName.Should().Be("GroundsOfAppeal");
         }
     }
 }

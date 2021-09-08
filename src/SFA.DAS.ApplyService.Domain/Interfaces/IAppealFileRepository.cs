@@ -8,6 +8,7 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
     public interface IAppealFileRepository
     {
         void Add(AppealFile entity);
+        void Update(AppealFile entity);
         void Remove(Guid entityId);
         Task<AppealFile> Get(Guid entityId);
 

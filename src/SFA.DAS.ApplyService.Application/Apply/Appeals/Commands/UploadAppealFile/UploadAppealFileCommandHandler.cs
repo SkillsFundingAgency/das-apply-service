@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApplyService.Application.Interfaces;
@@ -23,19 +24,36 @@ namespace SFA.DAS.ApplyService.Application.Appeals.Commands.UploadAppealFile
         {
             _auditService.StartTracking(UserAction.UploadAppealFile, request.UserId, request.UserName);
 
-            var appealFile = new AppealFile
+            var appealFile = await _appealFileRepository.Get(request.ApplicationId, request.AppealFile.FileName);
+
+            if (appealFile is null)
             {
-                ApplicationId = request.ApplicationId,
-                ContentType = request.AppealFile.ContentType,
-                FileName = request.AppealFile.FileName,
-                Size = request.AppealFile.Data.Length,
-                UserId = request.UserId,
-                UserName = request.UserName
-            };
+                appealFile = new AppealFile
+                {
+                    ApplicationId = request.ApplicationId,
+                    ContentType = request.AppealFile.ContentType,
+                    FileName = request.AppealFile.FileName,
+                    Size = request.AppealFile.Data.Length,
+                    UserId = request.UserId,
+                    UserName = request.UserName
+                };
 
-            _appealFileRepository.Add(appealFile);
+                _auditService.AuditInsert(appealFile);
+                _appealFileRepository.Add(appealFile);
+            }
+            else
+            {
+                _auditService.AuditUpdate(appealFile);
 
-            _auditService.AuditInsert(appealFile);
+                appealFile.ContentType = request.AppealFile.ContentType;
+                appealFile.Size = request.AppealFile.Data.Length;
+                appealFile.UserId = request.UserId;
+                appealFile.UserName = request.UserName;
+                appealFile.CreatedOn = DateTime.UtcNow;
+                
+                _appealFileRepository.Update(appealFile);
+            }
+             
             _auditService.Save();
 
             return await Task.FromResult(Unit.Value);

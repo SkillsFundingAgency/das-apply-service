@@ -38,34 +38,35 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-m">Your appeal</h2>
-            @if (!string.IsNullOrEmpty(Model.HowFailedOnPolicyOrProcesses))
-            {
-                <details class="govuk-details" data-module="govuk-details">
-                    <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">
-                            How did the ESFA has failed to follow its own policy or process?
-                        </span>
-                    </summary>
-                    <div class="govuk-details__text">
-                        <pre class="govuk-body das-preformatted-body">@Model.HowFailedOnPolicyOrProcesses</pre>
-                    </div>
-                </details>
-            }
+            <div class="govuk-!-margin-bottom-5">
+                @if (!string.IsNullOrEmpty(Model.HowFailedOnPolicyOrProcesses))
+                {
+                    <details class="govuk-details govuk-!-margin-bottom-1" data-module="govuk-details">
+                        <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text">
+                                How did the ESFA has failed to follow its own policy or process?
+                            </span>
+                        </summary>
+                        <div class="govuk-details__text">
+                            <pre class="govuk-body das-preformatted-body">@Model.HowFailedOnPolicyOrProcesses</pre>
+                        </div>
+                    </details>
+                }
 
-            @if (!string.IsNullOrEmpty(Model.HowFailedOnEvidenceSubmitted))
-            {
-                <details class="govuk-details" data-module="govuk-details">
-                    <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">
-                            How did the ESFA has failed to understand or recognise the evidence submitted?
-                        </span>
-                    </summary>
-                    <div class="govuk-details__text">
-                        <pre class="govuk-body das-preformatted-body">@Model.HowFailedOnEvidenceSubmitted</pre>
-                    </div>
-                </details>
-            }
-
+                @if (!string.IsNullOrEmpty(Model.HowFailedOnEvidenceSubmitted))
+                {
+                    <details class="govuk-details govuk-!-margin-bottom-1" data-module="govuk-details">
+                        <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text">
+                                How did the ESFA has failed to understand or recognise the evidence submitted?
+                            </span>
+                        </summary>
+                        <div class="govuk-details__text">
+                            <pre class="govuk-body das-preformatted-body">@Model.HowFailedOnEvidenceSubmitted</pre>
+                        </div>
+                    </details>
+                }
+            </div>
             <p class="govuk-body">Your uploaded files:</p>
 
             @if (Model.AppealFiles == null || Model.AppealFiles.Count == 0)
