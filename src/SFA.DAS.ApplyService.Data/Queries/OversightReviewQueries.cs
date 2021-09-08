@@ -284,9 +284,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
                 case "ApplicationSubmittedDate":
                     return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
                 case "ApplicationDeterminedDate":
-                    return $" apply.ApplicationDeterminedDate ";
-                case "AppealDeterminedDate":
-                    return $" appeal.AppealDeterminedDate ";
+                    return $" oversight.ApplicationDeterminedDate ";
                 case "AppealSubmittedDate":
                 default:
                     return $" appeal.AppealSubmittedDate ";
@@ -296,10 +294,6 @@ namespace SFA.DAS.ApplyService.Data.Queries
         {
             switch (requestedColumn)
             {
-                case "ApplicationSubmittedDate":
-                    return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
-                case "ApplicationDeterminedDate":
-                    return $" apply.ApplicationDeterminedDate ";
                 case "AppealSubmittedDate":
                     return $" appeal.AppealSubmittedDate ";
                 case "AppealDeterminedDate":
