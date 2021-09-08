@@ -177,6 +177,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Removed = "Removed";
 
         public const string InProgressOutcome = "InProgessOutcome";
+        public const string InProgressAppeal = "InProgessAppeal";
 
         public const string Successful = "Successful";
         public const string Unsuccessful = "Unsuccessful";
