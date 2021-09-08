@@ -343,12 +343,10 @@ namespace SFA.DAS.ApplyService.Data
             {
                 applicationStatus = ApplicationStatus.Submitted;
             }
-
-            if (gatewayReviewStatus == GatewayReviewStatus.Rejected)
+            else if (gatewayReviewStatus == GatewayReviewStatus.Rejected)
             {
                 applicationStatus = ApplicationStatus.Rejected;
             }
-
 
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
