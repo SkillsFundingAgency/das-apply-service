@@ -155,6 +155,25 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
         }
 
+        [HttpGet("application/{applicationId}/appeal/in-progress")]
+        public async Task<IActionResult> AppealInProgress(Guid applicationId)
+        {
+            var appeal = await _appealsApiClient.GetAppeal(applicationId);
+            if (appeal?.Status != AppealStatus.InProgress)
+            {
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
+            }
+
+            var model = new AppealInProgressViewModel
+            {
+                ApplicationId = applicationId,
+                AppealSubmittedDate = appeal.AppealSubmittedDate.Value,
+                ExternalComments = appeal.InProgressExternalComments
+            };
+
+            return View("~/Views/Appeals/AppealInProgress.cshtml", model);
+        }
+
         [HttpGet("application/{applicationId}/appeal/unsuccessful")]
         public async Task<IActionResult> AppealUnsuccessful(Guid applicationId)
         {

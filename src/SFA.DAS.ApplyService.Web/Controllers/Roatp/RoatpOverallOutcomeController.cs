@@ -43,6 +43,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 {
                     case AppealStatus.Submitted:
                         return RedirectToAction("AppealSubmitted", "RoatpAppeals", new { applicationId });
+                    case AppealStatus.InProgress:
+                        return RedirectToAction("AppealInProgress", "RoatpAppeals", new { applicationId });
                     case AppealStatus.Unsuccessful:
                         return RedirectToAction("AppealUnsuccessful", "RoatpAppeals", new { applicationId });
                     default:
@@ -84,6 +86,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         }
                     }
 
+                case ApplicationStatus.InProgressAppeal:
                 case ApplicationStatus.Unsuccessful:
                     if (model.GatewayReviewStatus == GatewayReviewStatus.Fail)
                     {
