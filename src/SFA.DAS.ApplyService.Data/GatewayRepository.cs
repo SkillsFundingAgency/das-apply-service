@@ -221,7 +221,7 @@ namespace SFA.DAS.ApplyService.Data
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
                             AND (
-                                    apply.ApplicationStatus in (@applicationStatusWithdrawn, @applicationStatusRemoved,@applicationStatusInProgressAppeal,@applicationStatusAppealSuccessful)
+                                    apply.ApplicationStatus in (@applicationStatusWithdrawn, @applicationStatusRemoved)
                                     OR apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusFailed, @gatewayReviewStatusRejected)
                                 )
                             AND ( 
@@ -234,8 +234,6 @@ namespace SFA.DAS.ApplyService.Data
                         {
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                             applicationStatusRemoved = ApplicationStatus.Removed,
-                            applicationStatusInProgressAppeal = ApplicationStatus.InProgressAppeal,
-                            applicationStatusAppealSuccessful = ApplicationStatus.AppealSuccessful,
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
                             gatewayReviewStatusFailed = GatewayReviewStatus.Fail,
                             gatewayReviewStatusRejected = GatewayReviewStatus.Rejected,

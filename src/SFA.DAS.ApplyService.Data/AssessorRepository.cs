@@ -71,7 +71,7 @@ namespace SFA.DAS.ApplyService.Data
 
         private const string ClosedApplicationsWhereClause = @"
                             apply.DeletedAt IS NULL
-                            AND ( apply.ApplicationStatus IN (@applicationStatusWithdrawn, @applicationStatusRemoved, @applicationStatusInProgressAppeal, @applicationStatusAppealSuccessful)
+                            AND ( apply.ApplicationStatus IN (@applicationStatusWithdrawn, @applicationStatusRemoved)
                                   OR (
                                       Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus
                                       AND ModerationStatus IN (@passModerationStatus, @failModerationStatus)
@@ -400,8 +400,6 @@ namespace SFA.DAS.ApplyService.Data
                         {
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                             applicationStatusRemoved = ApplicationStatus.Removed,
-                            applicationStatusInProgressAppeal = ApplicationStatus.InProgressAppeal,
-                            applicationStatusAppealSuccessful = ApplicationStatus.AppealSuccessful,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             passModerationStatus = ModerationStatus.Pass,
                             failModerationStatus = ModerationStatus.Fail,
