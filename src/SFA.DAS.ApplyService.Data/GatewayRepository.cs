@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
@@ -11,6 +6,11 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Gateway;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -197,7 +197,9 @@ namespace SFA.DAS.ApplyService.Data
                         $@"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
-                            apply.ApplicationStatus AS ApplicationStatus,
+                            CASE 
+                                WHEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN @applicationStatusRemoved
+                                ELSE apply.ApplicationStatus END AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
                             apply.FinancialReviewStatus AS FinancialReviewStatus,
@@ -210,18 +212,24 @@ namespace SFA.DAS.ApplyService.Data
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
                                 WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
+                                WHEN apply.ApplicationStatus = @applicationStatusInProgressAppeal AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
+                                WHEN apply.ApplicationStatus = @applicationStatusAppealSuccessful AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
+                       
                                 ELSE JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.OutcomeDateTime')
                             END AS OutcomeMadeDate,
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
                                 WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
+		                        WHEN apply.ApplicationStatus = @applicationStatusInProgressAppeal AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
+                    			WHEN apply.ApplicationStatus = @applicationStatusAppealSuccessful AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
+					
                                 ELSE apply.GatewayUserName
                             END AS OutcomeMadeBy
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
                             AND (
-                                    apply.ApplicationStatus in (@applicationStatusWithdrawn, @applicationStatusRemoved)
+                                    apply.ApplicationStatus in (@applicationStatusWithdrawn, @applicationStatusRemoved,@applicationStatusInProgressAppeal,@applicationStatusAppealSuccessful)
                                     OR apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusFailed, @gatewayReviewStatusRejected)
                                 )
                             AND ( 
@@ -234,6 +242,8 @@ namespace SFA.DAS.ApplyService.Data
                         {
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                             applicationStatusRemoved = ApplicationStatus.Removed,
+                            applicationStatusInProgressAppeal = ApplicationStatus.InProgressAppeal,
+                            applicationStatusAppealSuccessful = ApplicationStatus.AppealSuccessful,
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
                             gatewayReviewStatusFailed = GatewayReviewStatus.Fail,
                             gatewayReviewStatusRejected = GatewayReviewStatus.Rejected,
