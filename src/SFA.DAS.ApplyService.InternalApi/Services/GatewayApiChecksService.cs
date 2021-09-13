@@ -15,12 +15,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
     public class GatewayApiChecksService : IGatewayApiChecksService
     {
         private readonly CompaniesHouseApiClient _companiesHouseApiClient;
-        private readonly CharityCommissionApiClient _charityCommissionClient;
+        private readonly ICharityCommissionApiClient _charityCommissionClient;
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly ILogger<GatewayApiChecksService> _logger;
 
-        public GatewayApiChecksService(CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiClient,
+        public GatewayApiChecksService(CompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient,
                                        IRoatpApiClient roatpApiClient, IInternalQnaApiClient qnaApiClient,
                                        ILogger<GatewayApiChecksService> logger)
         {

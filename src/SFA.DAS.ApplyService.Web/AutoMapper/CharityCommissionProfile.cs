@@ -23,7 +23,6 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
         public CharityTrusteeProfile()
         {
             CreateMap<InternalApi.Types.CharityCommission.Trustee, Trustee>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForAllOtherMembers(opt => opt.Ignore());
         }

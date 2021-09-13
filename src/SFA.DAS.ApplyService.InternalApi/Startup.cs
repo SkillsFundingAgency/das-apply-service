@@ -178,6 +178,12 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .SetHandlerLifetime(handlerLifeTime);
 
+            services.AddHttpClient<ICharityCommissionApiClient, CharityCommissionApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.CharityCommissionApiAuthentication.ApiBaseAddress);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.ApiBaseAddress);
@@ -225,11 +231,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IAppealsQueries, AppealsQueries>();
 
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
-
-            // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
-            services.AddTransient<CharityCommissionService.ISearchCharitiesV1SoapClient, CharityCommissionService.SearchCharitiesV1SoapClient>();
-            services.AddTransient<CharityCommissionApiClient, CharityCommissionApiClient>();
-            // End of SOAP Services
 
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();

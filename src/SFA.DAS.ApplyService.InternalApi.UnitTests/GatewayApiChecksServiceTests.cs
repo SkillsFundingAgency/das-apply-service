@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
     public class GatewayApiChecksServiceTests
     {
         private Mock<CompaniesHouseApiClient> _companiesHouseApiClient;
-        private Mock<CharityCommissionApiClient> _charityCommissionApiClient;
+        private Mock<ICharityCommissionApiClient> _charityCommissionApiClient;
         private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<ILogger<GatewayApiChecksService>> _logger;
@@ -50,7 +50,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _ukprn = "10001234";
             _applicationId = Guid.NewGuid();
             _companiesHouseApiClient = new Mock<CompaniesHouseApiClient>();
-            _charityCommissionApiClient = new Mock<CharityCommissionApiClient>();
+            _charityCommissionApiClient = new Mock<ICharityCommissionApiClient>();
             _roatpApiClient = new Mock<IRoatpApiClient>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _logger = new Mock<ILogger<GatewayApiChecksService>>();
