@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.AdminService.Common.Extensions
+@using SFA.DAS.ApplyService.Domain.Entities
 @model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -10,6 +11,16 @@
                 <h2 class="govuk-heading-l">You cannot make an appeal</h2>
                 <p class="govuk-body">
                     This is because you did not respond by @Model.AppealRequiredByDate.ToSfaShortDateString()
+                </p>
+            }
+            else if (Model.ApplicationStatus == ApplicationStatus.Removed)
+            {
+            <h2 class="govuk-heading-l">How to make an appeal</h2>
+            <p class="govuk-body">
+                You can appeal this decision but you must do so by @Model.AppealRequiredByDate.ToSfaShortDateString()
+            </p>
+                <p class="govuk-body">
+                    Please email X
                 </p>
             }
             else
