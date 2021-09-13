@@ -22,7 +22,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators.Appeals
 
             _viewModel = new GroundsOfAppealViewModel
             {
-                ApplicationId = Guid.NewGuid()
+                ApplicationId = Guid.NewGuid(),
+                FormAction = GroundsOfAppealViewModel.SUBMIT_APPEAL_FORMACTION
             };
         }
 
@@ -98,6 +99,32 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators.Appeals
             Assert.AreEqual(1, result.Errors.Count);
             Assert.AreEqual(nameof(_viewModel.HowFailedOnEvidenceSubmitted), result.Errors[0].PropertyName);
             Assert.AreEqual(GroundsOfAppealViewModelValidator.MaxLengthError, result.Errors[0].ErrorMessage);
+        }
+
+        [Test]
+        public void Validate_Returns_Valid_When_DELETE_APPEALFILE_FORMACTION_and_AppealFileToUpload_is_Valid_PDF()
+        {
+            var file = "file.pdf";
+            _viewModel.FormAction = $"{GroundsOfAppealViewModel.DELETE_APPEALFILE_FORMACTION}{GroundsOfAppealViewModel.FORMACTION_SEPERATOR}{file}";
+
+            var result = _validator.Validate(_viewModel);
+
+            Assert.AreEqual(file, _viewModel.RequestedFileToDelete);
+            Assert.IsTrue(result.IsValid);
+        }
+
+        [Test]
+        public void Validate_Returns_Appropriate_Error_When_DELETE_APPEALFILE_FORMACTION_and_RequestedFileToDelete_is_Missing()
+        {
+            var file = default(string);
+            _viewModel.FormAction = $"{GroundsOfAppealViewModel.DELETE_APPEALFILE_FORMACTION}{GroundsOfAppealViewModel.FORMACTION_SEPERATOR}{file}";
+
+            var result = _validator.Validate(_viewModel);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.AreEqual(nameof(_viewModel.RequestedFileToDelete), result.Errors[0].PropertyName);
+            Assert.AreEqual(GroundsOfAppealViewModelValidator.RequestedFileToDeleteRequired, result.Errors[0].ErrorMessage);
         }
 
         [Test]

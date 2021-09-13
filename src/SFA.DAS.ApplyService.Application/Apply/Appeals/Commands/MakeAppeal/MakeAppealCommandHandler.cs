@@ -47,11 +47,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
                     UserName = request.UserName,
                 };
 
-                _appealRepository.Add(currentAppeal);
                 _auditService.AuditInsert(currentAppeal);
+                _appealRepository.Add(currentAppeal);
             }
             else
             {
+                _auditService.AuditUpdate(currentAppeal);
+
                 currentAppeal.Status = AppealStatus.Submitted;
                 currentAppeal.AppealSubmittedDate = DateTime.UtcNow;
                 currentAppeal.HowFailedOnPolicyOrProcesses = request.HowFailedOnPolicyOrProcesses;
@@ -61,7 +63,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
                 currentAppeal.UpdatedOn = DateTime.UtcNow;
 
                 _appealRepository.Update(currentAppeal);
-                _auditService.AuditUpdate(currentAppeal);
             }
 
             _auditService.Save();

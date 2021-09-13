@@ -63,7 +63,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
         public static async Task<bool> DeleteFile(this CloudBlobDirectory directory, string fileName, CancellationToken cancellationToken)
         {
             var blob = directory.GetBlobReference(fileName);
-                
+
             return await blob.DeleteIfExistsAsync(cancellationToken);
         }
 
@@ -72,6 +72,22 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
             var blob = directory.GetBlobReference(fileName);
 
             return await DownloadFileFromBlob(blob, cancellationToken);
+        }
+
+        public static async Task<bool> DeleteDirectory(this CloudBlobDirectory directory, CancellationToken cancellationToken)
+        {
+            var fileBlobs = directory.ListBlobs(useFlatBlobListing: true).ToList();
+
+            var deleteResults = new List<bool>(fileBlobs.Count);
+
+            foreach (var blob in fileBlobs.OfType<CloudBlob>())
+            {
+                var result = await blob.DeleteIfExistsAsync(cancellationToken);
+                deleteResults.Add(result);
+            }
+
+            return deleteResults.All(r => r is true);
+
         }
 
         public static async Task<IEnumerable<DownloadFile>> DownloadDirectoryFiles(this CloudBlobDirectory directory, CancellationToken cancellationToken)

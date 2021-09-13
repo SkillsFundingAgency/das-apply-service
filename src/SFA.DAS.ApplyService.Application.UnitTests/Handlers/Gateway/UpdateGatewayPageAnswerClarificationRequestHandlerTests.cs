@@ -7,6 +7,7 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
@@ -54,7 +55,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway
             _gatewayRepository.Setup(x => x.InsertGatewayPageAnswer(It.IsAny<GatewayPageAnswer>(), _userId, _userName)).ReturnsAsync(true);
             _gatewayRepository.Setup(x => x.UpdateGatewayPageAnswer(It.IsAny<GatewayPageAnswer>(), _userId, _userName)).ReturnsAsync(true);
 
-            _handler = new UpdateGatewayPageAnswerClarificationRequestHandler(_repository.Object, _gatewayRepository.Object, _auditService.Object);
+            _handler = new UpdateGatewayPageAnswerClarificationRequestHandler(_repository.Object, _gatewayRepository.Object, _auditService.Object, Mock.Of<IUnitOfWork>());
         }
 
         [TestCase("clarification comments")]

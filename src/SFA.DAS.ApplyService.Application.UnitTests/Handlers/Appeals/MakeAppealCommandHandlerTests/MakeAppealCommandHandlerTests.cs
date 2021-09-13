@@ -101,7 +101,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals.MakeAppeal
         }
 
         [TestCase(AppealStatus.Submitted)]
-        [TestCase(AppealStatus.InProgressOutcome)]
+        [TestCase(AppealStatus.InProgress)]
         [TestCase(AppealStatus.Successful)]
         [TestCase(AppealStatus.SuccessfulAlreadyActive)]
         [TestCase(AppealStatus.SuccessfulFitnessForFunding)]

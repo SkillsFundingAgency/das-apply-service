@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             if (!await CanMakeAppeal(applicationId))
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
             }
 
             var model = new MakeAppealViewModel
@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             if (!await CanMakeAppeal(model.ApplicationId))
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { model.ApplicationId });
             }
 
             if (!ModelState.IsValid)
@@ -59,7 +59,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             if (!await CanMakeAppeal(applicationId))
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
             }
 
             var appealFileList = await _appealsApiClient.GetAppealFileList(applicationId);
@@ -79,11 +79,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         [HttpPost("application/{applicationId}/grounds-of-appeal")]
         [ModelStatePersist(ModelStatePersist.Store)]
+        [Authorize(Policy = "AccessAppealNotYetSubmitted")]
         public async Task<IActionResult> GroundsOfAppeal(GroundsOfAppealViewModel model)
         {
             if (!await CanMakeAppeal(model.ApplicationId))
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { model.ApplicationId });
             }
 
             if (!ModelState.IsValid)
@@ -94,34 +95,65 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var signInId = User.GetSignInId().ToString();
             var userName = User.Identity.Name;
 
-            if(model.AppealFileToUpload != null)
+            switch (model.RequestedFormAction)
             {
-                await _appealsApiClient.UploadFile(model.ApplicationId, model.AppealFileToUpload, signInId, userName);
-            }
+                case GroundsOfAppealViewModel.DELETE_APPEALFILE_FORMACTION:
+                    await _appealsApiClient.DeleteFile(model.ApplicationId, model.RequestedFileToDelete, signInId, userName);
+                    StoreUserInputInTempData(model);
+                    return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
 
-            if (model.FormAction != GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION)
-            {
-                await _appealsApiClient.MakeAppeal(model.ApplicationId, model.HowFailedOnPolicyOrProcesses, model.HowFailedOnEvidenceSubmitted, signInId, userName);
-                return RedirectToAction("AppealSubmitted", new { model.ApplicationId });
+                case GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION:
+                    await _appealsApiClient.UploadFile(model.ApplicationId, model.AppealFileToUpload, signInId, userName);
+                    StoreUserInputInTempData(model);
+                    return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
+
+                case GroundsOfAppealViewModel.SUBMIT_APPEAL_FORMACTION:
+                    if (model.AppealFileToUpload != null)
+                    {
+                        await _appealsApiClient.UploadFile(model.ApplicationId, model.AppealFileToUpload, signInId, userName);
+                    }
+                    await _appealsApiClient.MakeAppeal(model.ApplicationId, model.HowFailedOnPolicyOrProcesses, model.HowFailedOnEvidenceSubmitted, signInId, userName);
+                    return RedirectToAction("AppealSubmitted", new { model.ApplicationId });
+
+                default:
+                    return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { model.ApplicationId });
             }
-            else
-            {
-                StoreUserInputInTempData(model);
-                return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
-            }  
         }
 
         [HttpGet("application/{applicationId}/appeal-submitted")]
-        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public IActionResult AppealSubmitted(Guid applicationId)
+        public async Task<IActionResult> AppealSubmitted(Guid applicationId)
         {
+            var appeal = await _appealsApiClient.GetAppeal(applicationId);
+
+            if (appeal?.AppealSubmittedDate is null)
+            {
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
+            }
+
             var model = new AppealSubmittedViewModel
             {
-                ApplicationId = applicationId
+                ApplicationId = appeal.ApplicationId,
+                AppealSubmittedDate = appeal.AppealSubmittedDate.Value,
+                HowFailedOnEvidenceSubmitted = appeal.HowFailedOnEvidenceSubmitted,
+                HowFailedOnPolicyOrProcesses = appeal.HowFailedOnPolicyOrProcesses,
+                AppealFiles = appeal.AppealFiles
             };
 
             return View("~/Views/Appeals/AppealSubmitted.cshtml", model);
         }
+
+        [HttpGet("application/{applicationId}/cancel-appeal")]
+        [Authorize(Policy = "AccessAppealNotYetSubmitted")]
+        public async Task<IActionResult> CancelAppeal(Guid applicationId)
+        {
+            var signInId = User.GetSignInId().ToString();
+            var userName = User.Identity.Name;
+
+            await _appealsApiClient.CancelAppeal(applicationId, signInId, userName);
+
+            return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
+        }
+
 
         [HttpGet("application/{applicationId}/appeal/file/{fileName}")]
         [Authorize(Policy = "AccessAppeal")]
@@ -139,23 +171,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return NotFound();
         }
 
-        [HttpGet("application/{applicationId}/appeal/file/delete/{fileName}")]
-        [Authorize(Policy = "AccessAppealNotYetSubmitted")]
-        public async Task<IActionResult> DeleteAppealFile(Guid applicationId, string fileName, bool appealOnPolicyOrProcesses, bool appealOnEvidenceSubmitted)
-        {
-            if (!await CanMakeAppeal(applicationId))
-            {
-                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
-            }
-
-            var signInId = User.GetSignInId().ToString();
-            var userName = User.Identity.Name;
-
-            await _appealsApiClient.DeleteFile(applicationId, fileName, signInId, userName);
-
-            return RedirectToAction("GroundsOfAppeal", new { applicationId, appealOnPolicyOrProcesses, appealOnEvidenceSubmitted });
-        }
-
         private void StoreUserInputInTempData(GroundsOfAppealViewModel model)
         {
             TempData["HowFailedOnEvidenceSubmitted"] = model.HowFailedOnEvidenceSubmitted;
@@ -164,7 +179,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         private void RestoreUserInputFromTempData(GroundsOfAppealViewModel model)
         {
-            if(TempData["HowFailedOnEvidenceSubmitted"] != null)
+            if (TempData["HowFailedOnEvidenceSubmitted"] != null)
             {
                 model.HowFailedOnEvidenceSubmitted = TempData["HowFailedOnEvidenceSubmitted"] as string;
             }

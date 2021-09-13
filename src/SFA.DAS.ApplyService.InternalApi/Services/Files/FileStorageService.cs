@@ -234,5 +234,37 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
                 return new DownloadFile { FileName = zipFileName, ContentType = "application/zip", Stream = newStream };
             }
         }
+
+        public async Task<bool> DeleteApplicationDirectory(Guid applicationId, ContainerType containerType, CancellationToken cancellationToken)
+        {
+            var success = false;
+
+            var container = await BlobContainerHelpers.GetContainer(_fileStorageConfig, containerType);
+
+            if (container != null)
+            {
+                var applicationDirectory = container.GetDirectory(applicationId);
+                success = await applicationDirectory.DeleteDirectory(cancellationToken);
+            }
+
+            return success;
+        }
+
+        public async Task<bool> DeleteDirectory(Guid applicationId, int? sequenceNumber, int? sectionNumber, string pageId, ContainerType containerType, CancellationToken cancellationToken)
+        {
+            var success = false;
+
+            if (!string.IsNullOrWhiteSpace(pageId))
+            {
+                var container = await BlobContainerHelpers.GetContainer(_fileStorageConfig, containerType);
+
+                if (container != null)
+                {
+                    var applicationDirectory = container.GetDirectory(applicationId, sequenceNumber, sectionNumber, pageId);
+                    success = await applicationDirectory.DeleteDirectory(cancellationToken);
+                }
+            }
+            return success;
+        }
     }
 }

@@ -15,18 +15,27 @@ namespace SFA.DAS.ApplyService.Web.Validators.Appeals
         public const string MaxLengthError = "Your answer must be 10,000 characters or less";
 
         public const string AppealFileRequired = "Upload a file";
+        public const string RequestedFileToDeleteRequired = "Select a file to remove";
+
         public const int MaxFileSizeInBytes = 5 * 1024 * 1024;
         public const string MaxFileSizeExceeded = "The selected file must be smaller than 5MB";
         public const string FileMustBePdf = "The selected file must be a PDF";
 
         public GroundsOfAppealViewModelValidator()
         {
-            When(x => x.FormAction == GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION, () =>
+            When(x => x.RequestedFormAction == GroundsOfAppealViewModel.DELETE_APPEALFILE_FORMACTION, () =>
+            {
+                RuleFor(x => x.RequestedFileToDelete)
+                        .NotEmpty().WithMessage(RequestedFileToDeleteRequired);
+            });
+
+            When(x => x.RequestedFormAction == GroundsOfAppealViewModel.UPLOAD_APPEALFILE_FORMACTION, () =>
             {
                 RuleFor(x => x.AppealFileToUpload)
                         .NotEmpty().WithMessage(AppealFileRequired);
-            })
-            .Otherwise(() =>
+            });
+
+            When(x => x.RequestedFormAction == GroundsOfAppealViewModel.SUBMIT_APPEAL_FORMACTION, () =>
             {
                 When(x => x.AppealOnPolicyOrProcesses, () =>
                 {
