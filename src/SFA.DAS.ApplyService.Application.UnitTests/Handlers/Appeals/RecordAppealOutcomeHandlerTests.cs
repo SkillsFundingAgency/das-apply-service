@@ -12,6 +12,7 @@ using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Types;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals
 {
@@ -43,7 +44,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals
             repository.Setup(x => x.Update(It.IsAny<Domain.Entities.Apply>()));
 
             var logger = new Mock<ILogger<RecordAppealOutcomeHandler>>();
-            var handler = new RecordAppealOutcomeHandler(logger.Object, appealRepository.Object, repository.Object, Mock.Of<IAuditService>(),  Mock.Of<IUnitOfWork>());
+            var handler = new RecordAppealOutcomeHandler(logger.Object, appealRepository.Object, repository.Object, Mock.Of<IAuditService>(),  Mock.Of<IUnitOfWork>(), Mock.Of<IApplicationUpdatedEmailService>());
 
             var result = await handler.Handle(command, new CancellationToken());
 
@@ -87,8 +88,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals
             repository.Setup(x => x.Update(It.IsAny<Domain.Entities.Apply>()));
         
             var logger = new Mock<ILogger<RecordAppealOutcomeHandler>>();
-            var handler = new RecordAppealOutcomeHandler(logger.Object, appealRepository.Object, repository.Object, Mock.Of<IAuditService>(),  Mock.Of<IUnitOfWork>());
-        
+            var handler = new RecordAppealOutcomeHandler(logger.Object, appealRepository.Object, repository.Object, Mock.Of<IAuditService>(), Mock.Of<IUnitOfWork>(), Mock.Of<IApplicationUpdatedEmailService>());
+
             var result = await handler.Handle(command, new CancellationToken());
         
             result.Should().BeTrue();
@@ -138,7 +139,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals
             repository.Setup(x => x.Update(It.IsAny<Domain.Entities.Apply>()));
 
             var logger = new Mock<ILogger<RecordAppealOutcomeHandler>>();
-            var handler = new RecordAppealOutcomeHandler(logger.Object, appealRepository.Object, repository.Object, Mock.Of<IAuditService>(), Mock.Of<IUnitOfWork>());
+            var handler = new RecordAppealOutcomeHandler(logger.Object, appealRepository.Object, repository.Object, Mock.Of<IAuditService>(), Mock.Of<IUnitOfWork>(), Mock.Of<IApplicationUpdatedEmailService>());
 
             var result = await handler.Handle(command, new CancellationToken());
 
@@ -184,7 +185,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals
             repository.Setup(x => x.Update(It.IsAny<Domain.Entities.Apply>()));
 
             var logger = new Mock<ILogger<RecordAppealOutcomeHandler>>();
-            var handler = new RecordAppealOutcomeHandler(logger.Object, appealRepository.Object, repository.Object, Mock.Of<IAuditService>(), Mock.Of<IUnitOfWork>());
+            var handler = new RecordAppealOutcomeHandler(logger.Object, appealRepository.Object, repository.Object, Mock.Of<IAuditService>(), Mock.Of<IUnitOfWork>(), Mock.Of<IApplicationUpdatedEmailService>());
 
             var result = await handler.Handle(command, new CancellationToken());
 
@@ -240,8 +241,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals
                 { ApplicationId = command.ApplicationId, Status = ApplicationStatus.Submitted });
         
             var logger = new Mock<ILogger<RecordAppealOutcomeHandler>>();
-            var handler = new RecordAppealOutcomeHandler(logger.Object, appealRepository.Object, repository.Object, Mock.Of<IAuditService>(),  Mock.Of<IUnitOfWork>());
-        
+            var handler = new RecordAppealOutcomeHandler(logger.Object, appealRepository.Object, repository.Object, Mock.Of<IAuditService>(),  Mock.Of<IUnitOfWork>(), Mock.Of<IApplicationUpdatedEmailService>());
+
             if (expectThrows)
             {
                 Assert.ThrowsAsync<InvalidOperationException>(async () => await handler.Handle(command, new CancellationToken()));

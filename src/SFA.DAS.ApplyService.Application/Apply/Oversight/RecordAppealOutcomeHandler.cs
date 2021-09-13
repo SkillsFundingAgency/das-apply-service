@@ -9,6 +9,7 @@ using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
 using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight
@@ -20,17 +21,20 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
         private readonly ILogger<RecordAppealOutcomeHandler> _logger;
         private readonly IAuditService _auditService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IApplicationUpdatedEmailService _applicationUpdatedEmailService;
         public RecordAppealOutcomeHandler(ILogger<RecordAppealOutcomeHandler> logger,
             IAppealRepository appealRepository,
             IApplicationRepository applyRepository,
             IAuditService auditService, 
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IApplicationUpdatedEmailService applicationUpdatedEmailService)
         {
             _logger = logger;
             _appealRepository = appealRepository;
             _applyRepository = applyRepository;
             _auditService = auditService;
             _unitOfWork = unitOfWork;
+            _applicationUpdatedEmailService = applicationUpdatedEmailService;
         }
 
         public async Task<bool> Handle(RecordAppealOutcomeCommand request, CancellationToken cancellationToken)
@@ -158,6 +162,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             }
 
             _applyRepository.Update(application);
+            _applicationUpdatedEmailService.SendEmail(appeal.ApplicationId);
         }
     }
 }
