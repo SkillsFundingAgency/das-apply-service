@@ -117,7 +117,7 @@ namespace SFA.DAS.ApplyService.Data
 
                 var invalidApplicationStatuses = new List<string> { ApplicationStatus.Successful, ApplicationStatus.Rejected, ApplicationStatus.Unsuccessful, ApplicationStatus.Removed, ApplicationStatus.Withdrawn, ApplicationStatus.Cancelled };
 
-                // Application must exist and has not already been Approved, Rejected, Removed, Widthdrawn or Cancelled
+                // Application must exist and has not already been Approved, Rejected, Removed, Widthdrawn or Cancelled, in progress appeal or AppealSuccessful
                 if (application != null && !invalidApplicationStatuses.Contains(application.ApplicationStatus))
                 {
                     var otherAppsInProgress = await connection.QueryAsync<Domain.Entities.Apply>(@"
@@ -127,7 +127,7 @@ namespace SFA.DAS.ApplyService.Data
 														INNER JOIN Contacts con ON a.OrganisationId = con.ApplyOrganisationID
                                                         WHERE a.OrganisationId = (SELECT OrganisationId FROM Apply WHERE ApplicationId = @applicationId)
 														AND a.CreatedBy <> (SELECT CreatedBy FROM Apply WHERE ApplicationId = @applicationId)
-                                                        AND a.ApplicationStatus NOT IN (@applicationStatusSuccessful, @applicationStatusUnsuccessful, @applicationStatusRejected, @applicationStatusRemoved, @applicationStatusWithdrawn, @applicationStatusCancelled)",
+                                                        AND a.ApplicationStatus NOT IN (@applicationStatusSuccessful, @applicationStatusUnsuccessful, @applicationStatusRejected, @applicationStatusRemoved, @applicationStatusWithdrawn, @applicationStatusCancelled, @applicationStatusInProgressAppeal, @applicationStatusAppealSuccessful)",
                                                             new
                                                             {
                                                                 applicationId,
@@ -136,7 +136,9 @@ namespace SFA.DAS.ApplyService.Data
                                                                 applicationStatusRejected = ApplicationStatus.Rejected,   
                                                                 applicationStatusRemoved = ApplicationStatus.Removed,
                                                                 applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
-                                                                applicationStatusCancelled = ApplicationStatus.Cancelled
+                                                                applicationStatusCancelled = ApplicationStatus.Cancelled,
+                                                                applicationStatusInProgressAppeal = ApplicationStatus.InProgressAppeal,
+                                                                applicationStatusAppealSuccessful = ApplicationStatus.AppealSuccessful
                                                             });
 
                     canSubmit = !otherAppsInProgress.Any();
@@ -441,6 +443,8 @@ namespace SFA.DAS.ApplyService.Data
                        $@"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
+                            WHEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN @applicationStatusRemoved
+                                ELSE apply.ApplicationStatus END AS ApplicationStatus,
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
@@ -453,11 +457,17 @@ namespace SFA.DAS.ApplyService.Data
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
                                 WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
+                                WHEN apply.ApplicationStatus = @applicationStatusInProgressAppeal AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
+                                WHEN apply.ApplicationStatus = @applicationStatusAppealSuccessful AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
+                       
                                 ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime')
                             END AS OutcomeMadeDate,
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
                                 WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
+                                WHEN apply.ApplicationStatus = @applicationStatusInProgressAppeal AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
+                    			WHEN apply.ApplicationStatus = @applicationStatusAppealSuccessful AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
+			
                                 ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedBy')
                             END AS OutcomeMadeBy,
                             JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') AS SelectedGrade,
@@ -746,12 +756,18 @@ namespace SFA.DAS.ApplyService.Data
                     return  $@" CASE 
                                 WHEN apply.ApplicationStatus = '{ApplicationStatus.Withdrawn}'THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
                                 WHEN apply.ApplicationStatus = '{ApplicationStatus.Removed}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
+                                WHEN apply.ApplicationStatus = '{ApplicationStatus.InProgressAppeal}' AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
+                    			WHEN apply.ApplicationStatus = '{ApplicationStatus.AppealSuccessful}' AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
+				
                                 ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedBy')
                             END ";
                 case "OutcomeMadeDate":
                     return $@" CASE 
                                 WHEN apply.ApplicationStatus = '{ApplicationStatus.Withdrawn}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
                                 WHEN apply.ApplicationStatus = '{ApplicationStatus.Removed}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
+                                WHEN apply.ApplicationStatus = '{ApplicationStatus.InProgressAppeal}' AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
+                                WHEN apply.ApplicationStatus = '{ApplicationStatus.AppealSuccessful}' AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
+                 
                                 ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime')
                             END";
                 default:

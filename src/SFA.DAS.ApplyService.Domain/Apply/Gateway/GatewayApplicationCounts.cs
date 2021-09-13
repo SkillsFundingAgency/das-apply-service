@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SFA.DAS.ApplyService.Domain.Apply.Gateway
+﻿namespace SFA.DAS.ApplyService.Domain.Apply.Gateway
 {
     public class GatewayApplicationStatusCount
     {
