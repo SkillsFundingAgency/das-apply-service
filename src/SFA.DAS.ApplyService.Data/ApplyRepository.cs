@@ -443,8 +443,7 @@ namespace SFA.DAS.ApplyService.Data
                        $@"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
-                            WHEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN @applicationStatusRemoved
-                                ELSE apply.ApplicationStatus END AS ApplicationStatus,
+                            apply.ApplicationStatus  AS ApplicationStatus,
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
@@ -457,17 +456,11 @@ namespace SFA.DAS.ApplyService.Data
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
                                 WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
-                                WHEN apply.ApplicationStatus = @applicationStatusInProgressAppeal AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
-                                WHEN apply.ApplicationStatus = @applicationStatusAppealSuccessful AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
-                       
                                 ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime')
                             END AS OutcomeMadeDate,
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
                                 WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-                                WHEN apply.ApplicationStatus = @applicationStatusInProgressAppeal AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-                    			WHEN apply.ApplicationStatus = @applicationStatusAppealSuccessful AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-			
                                 ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedBy')
                             END AS OutcomeMadeBy,
                             JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') AS SelectedGrade,
@@ -755,19 +748,13 @@ namespace SFA.DAS.ApplyService.Data
                 case "OutcomeMadeByClosed":
                     return  $@" CASE 
                                 WHEN apply.ApplicationStatus = '{ApplicationStatus.Withdrawn}'THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
-                                WHEN apply.ApplicationStatus = '{ApplicationStatus.Removed}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-                                WHEN apply.ApplicationStatus = '{ApplicationStatus.InProgressAppeal}' AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-                    			WHEN apply.ApplicationStatus = '{ApplicationStatus.AppealSuccessful}' AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-				
+                                WHEN apply.ApplicationStatus = '{ApplicationStatus.Removed}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')			
                                 ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedBy')
                             END ";
                 case "OutcomeMadeDate":
                     return $@" CASE 
                                 WHEN apply.ApplicationStatus = '{ApplicationStatus.Withdrawn}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
                                 WHEN apply.ApplicationStatus = '{ApplicationStatus.Removed}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
-                                WHEN apply.ApplicationStatus = '{ApplicationStatus.InProgressAppeal}' AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
-                                WHEN apply.ApplicationStatus = '{ApplicationStatus.AppealSuccessful}' AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
-                 
                                 ELSE JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime')
                             END";
                 default:

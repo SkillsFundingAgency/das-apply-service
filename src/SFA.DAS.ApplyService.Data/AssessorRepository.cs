@@ -363,17 +363,11 @@ namespace SFA.DAS.ApplyService.Data
                             , CASE
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnOn')
                                 WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
-                                WHEN apply.ApplicationStatus = @applicationStatusInProgressAppeal AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
-                                WHEN apply.ApplicationStatus = @applicationStatusAppealSuccessful AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn')
-                       
                                 ELSE JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime')
                               END AS OutcomeMadeDate
                             , CASE
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
                                 WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-                                WHEN apply.ApplicationStatus = @applicationStatusInProgressAppeal AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-                    			WHEN apply.ApplicationStatus = @applicationStatusAppealSuccessful AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-	
                                 ELSE JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName')
                               END AS OutcomeMadeBy                            
 	                        FROM Apply apply
@@ -384,8 +378,6 @@ namespace SFA.DAS.ApplyService.Data
                         {
                             applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
                             applicationStatusRemoved = ApplicationStatus.Removed,
-                            applicationStatusInProgressAppeal = ApplicationStatus.InProgressAppeal,
-                            applicationStatusAppealSuccessful = ApplicationStatus.AppealSuccessful,
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             passModerationStatus = ModerationStatus.Pass,
                             failModerationStatus = ModerationStatus.Fail,
@@ -705,8 +697,6 @@ namespace SFA.DAS.ApplyService.Data
                     var orderDetails = $@" CASE
                         WHEN apply.ApplicationStatus = '{ApplicationStatus.Withdrawn}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
                         WHEN apply.ApplicationStatus = '{ApplicationStatus.Removed}' THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-                        WHEN apply.ApplicationStatus = @applicationStatusInProgressAppeal AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
-                        WHEN apply.ApplicationStatus = @applicationStatusAppealSuccessful AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedOn') IS NOT NULL THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
                         ELSE JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName')
                     END ";
 
