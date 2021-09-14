@@ -7,7 +7,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        @if (!Model.IsAppealSubmitted && FeatureToggles.EnableAppeals)
+        @if (!Model.IsAppealSubmitted)
         {
             @if (Model.ApplicationDeterminedDate != null && Model.AppealRequiredByDate < DateTime.Today)
             {
@@ -16,7 +16,7 @@
                     This is because you did not respond by @Model.AppealRequiredByDate.ToSfaShortDateString()
                 </p>
             }
-            else if (Model.ApplicationStatus == ApplicationStatus.Removed)
+            else if (!FeatureToggles.EnableAppeals || Model.ApplicationStatus == ApplicationStatus.Removed)
             {
                 <h2 class="govuk-heading-l">How to make an appeal</h2>
                 <p class="govuk-body">
@@ -32,9 +32,9 @@
                 <p class="govuk-body">
                     You must submit your appeal within 10 working days of the date of receipt of your application result and feedback on your application.
                 </p>
-                <p class="govuk-body"> The ESFA will not consider any additional information you provide that was not included in your original application. </p>
+                <p class="govuk-body">The ESFA will not consider any additional information you provide that was not included in your original application. </p>
                 <p class="govuk-body">The ESFA will aim to review and respond within 15 working days.</p>
-                <p class="govuk-body"> If your appeal is successful, your organisation will be published on the register.</p>
+                <p class="govuk-body">If your appeal is successful, your organisation will be published on the register.</p>
 
 
                 <p class="govuk-body">
