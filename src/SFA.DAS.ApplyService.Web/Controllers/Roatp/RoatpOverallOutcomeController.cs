@@ -78,6 +78,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                             return View("~/Views/Roatp/ApplicationApproved.cshtml", model);
                     }
 
+                case ApplicationStatus.AppealSuccessful:  // placeholder statuses to stop tasklist breaking with new statuses - coverage not added as new stories following
+                case ApplicationStatus.InProgressAppeal:  // see above
                 case ApplicationStatus.Unsuccessful:
                     var oversight = await _apiClient.GetOversightReview(applicationId);
                     model.ApplicationDeterminedDate = oversight?.ApplicationDeterminedDate;
