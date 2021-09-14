@@ -294,7 +294,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Appeals
         }
 
         [Test]
-        public async Task Handle_User_Is_Notified_Of_Update_To_sbk()
+        public async Task Handle_User_Is_Notified_Of_Update_To__Applicant()
         {
             var request = new RecordAppealOutcomeCommand
             {
