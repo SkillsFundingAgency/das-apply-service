@@ -35,7 +35,7 @@
                 <p class="govuk-body">The ESFA will not consider any additional information you provide that was not included in your original application. </p>
                 <p class="govuk-body">The ESFA will aim to review and respond within 15 working days.</p>
 
-                @if (Model.GatewayReviewStatus == GatewayReviewStatus.Fail)
+                @if (Model.GatewayReviewStatus == GatewayReviewStatus.Fail || Model.ApplicationStatus == ApplicationStatus.Removed)
                 {
                     <p class="govuk-body">If your appeal is successful, your organisation will need to submit a new application.</p>
                 }
