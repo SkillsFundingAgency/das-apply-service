@@ -6,6 +6,7 @@
     [GatewayFilesExtracted] BIT NOT NULL,
     [AssessorFilesExtracted] BIT NOT NULL,
     [FinanceFilesExtracted] BIT NOT NULL,
+    [ApplyFilesExtracted] BIT NOT NULL DEFAULT 0,
 	
     CONSTRAINT PK_ExtractedApplications PRIMARY KEY (Id),
     INDEX IX_ExtractedApplications_ApplicationId (ApplicationId)
