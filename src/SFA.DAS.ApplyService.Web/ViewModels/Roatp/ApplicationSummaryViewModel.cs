@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SFA.DAS.ApplyService.Types;
+using System;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
@@ -25,7 +26,10 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public string SubcontractingLimitFormatted => SubcontractingLimit?.ToString("N0");
 
+        public OversightReviewStatus? OversightReviewStatus { get; set; }
+
         public bool IsAppealSubmitted { get; set; }
+        public string AppealStatus { get; set; }
 
         public DateTime? ApplicationDeterminedDate { get; set; }
         public DateTime? AppealRequiredByDate { get; set; }
