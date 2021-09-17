@@ -4,10 +4,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
+using SFA.DAS.ApplyService.Types;
+using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
+using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     [Authorize(Policy = "AccessAppeal")]
+    [FeatureToggle(nameof(FeatureToggles.EnableAppeals), "RoatpApplication", "Applications")]
     public class RoatpAppealsController : Controller
     {
         private readonly IOutcomeApiClient _outcomeApiClient;
@@ -154,6 +158,27 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
         }
 
+        [HttpGet("application/{applicationId}/appeal/unsuccessful")]
+        public async Task<IActionResult> AppealUnsuccessful(Guid applicationId)
+        {
+            var appeal = await _appealsApiClient.GetAppeal(applicationId);
+            if (appeal?.Status != AppealStatus.Unsuccessful)
+            {
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
+            }
+
+            var model = new AppealUnsuccessfulViewModel
+            {
+                ApplicationId = applicationId,
+                AppealSubmittedDate = appeal.AppealSubmittedDate.Value,
+                AppealDeterminedDate = appeal.AppealDeterminedDate.Value,
+                AppealedOnEvidenceSubmitted = !string.IsNullOrEmpty(appeal.HowFailedOnEvidenceSubmitted),
+                AppealedOnPolicyOrProcesses = !string.IsNullOrEmpty(appeal.HowFailedOnPolicyOrProcesses),
+                ExternalComments = appeal.ExternalComments
+            };
+
+            return View("~/Views/Appeals/AppealUnsuccessful.cshtml", model);
+        }
 
         [HttpGet("application/{applicationId}/appeal/file/{fileName}")]
         [Authorize(Policy = "AccessAppeal")]

@@ -7,7 +7,8 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
-using SFA.DAS.ApplyService.Types;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
@@ -15,22 +16,25 @@ namespace SFA.DAS.ApplyService.Web.Services
 {
     public class OverallOutcomeService : IOverallOutcomeService
     {
+        public const int NumberOfWorkingDaysToAppeal = 10;
+
         private readonly IOutcomeApiClient _apiClient;
+        private readonly IApplicationApiClient _applicationApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IAssessorLookupService _assessorLookupService;
         private readonly IAppealsApiClient _appealsApiClient;
 
-        public OverallOutcomeService(IOutcomeApiClient apiClient, IQnaApiClient qnaApiClient,
+        public OverallOutcomeService(IOutcomeApiClient apiClient, IApplicationApiClient applicationApiClient, IQnaApiClient qnaApiClient,
             IAssessorLookupService assessorLookupService, IAppealsApiClient appealsApiClient)
         {
             _apiClient = apiClient;
+            _applicationApiClient = applicationApiClient;
             _qnaApiClient = qnaApiClient;
             _assessorLookupService = assessorLookupService;
             _appealsApiClient = appealsApiClient;
         }
 
-        public async Task AugmentModelWithModerationFailDetails(ApplicationSummaryWithModeratorDetailsViewModel model,
-            string userId)
+        public async Task AugmentModelWithModerationFailDetails(ApplicationSummaryWithModeratorDetailsViewModel model, string userId)
         {
             var sequences = await _apiClient.GetClarificationSequences(model.ApplicationId);
             var passFailDetails = await _apiClient.GetAllClarificationPageReviewOutcomes(model.ApplicationId, userId);
@@ -74,10 +78,20 @@ namespace SFA.DAS.ApplyService.Web.Services
                 .ToList();
         }
 
-        public async Task<ApplicationSummaryViewModel> BuildApplicationSummaryViewModel(Apply application, string emailAddress)
+        public async Task<ApplicationSummaryViewModel> BuildApplicationSummaryViewModel(Guid applicationId, string emailAddress)
         {
+            var application = await _applicationApiClient.GetApplication(applicationId);
+            GetOversightReviewResponse oversightReview = null;
+            GetAppealResponse appeal = null;
+
+            var applyingJourneyStatuses = new List<string> { ApplicationStatus.New, ApplicationStatus.InProgress };
+            if(!applyingJourneyStatuses.Contains(application.Status))
+            {
+                oversightReview = await _apiClient.GetOversightReview(applicationId);
+                appeal = await _appealsApiClient.GetAppeal(applicationId);
+            }
+
             var applicationData = application.ApplyData.ApplyDetails;
-            var appealSubmitted = await GetAppealSubmitted(application);
 
             var model = new ApplicationSummaryViewModel
             {
@@ -97,17 +111,26 @@ namespace SFA.DAS.ApplyService.Web.Services
                 ModerationStatus = application?.ModerationStatus,
                 SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit,
                 ApplicationStatus = application?.ApplicationStatus,
-                IsAppealSubmitted = appealSubmitted
+                ApplicationDeterminedDate = oversightReview?.ApplicationDeterminedDate,
+                OversightReviewStatus = oversightReview?.Status,
+                OversightInProgressExternalComments = oversightReview?.InProgressExternalComments,
+                AppealRequiredByDate = oversightReview is null ? null : await _apiClient.GetWorkingDaysAheadDate(oversightReview?.ApplicationDeterminedDate, NumberOfWorkingDaysToAppeal),
+                IsAppealSubmitted = appeal?.AppealSubmittedDate != null,
+                AppealStatus = appeal?.Status
             };
             return model;
         }
 
-        public async Task<ApplicationSummaryWithModeratorDetailsViewModel> BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(Apply application, string emailAddress)
+        public async Task<ApplicationSummaryWithModeratorDetailsViewModel> BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(Guid applicationId, string emailAddress)
         {
-            var applicationData = application.ApplyData.ApplyDetails;
+            var getApplicationTask = _applicationApiClient.GetApplication(applicationId);
+            var getOversightReviewTask = _apiClient.GetOversightReview(applicationId);
+            var getAppealTask = _appealsApiClient.GetAppeal(applicationId);
+            await Task.WhenAll(getApplicationTask, getOversightReviewTask, getAppealTask);
 
-            var oversightReview = await _apiClient.GetOversightReview(application.ApplicationId);
-            var appealSubmitted = await GetAppealSubmitted(application);
+            var application = getApplicationTask.Result;
+            var oversightReview = getOversightReviewTask.Result;
+            var appeal = getAppealTask.Result;
 
             var moderationFailedAndApproved = false;
             var moderationPassOverturnedToFail = false;
@@ -150,6 +173,8 @@ namespace SFA.DAS.ApplyService.Web.Services
                     gatewayPassOverturnedToFail = true;
             }
 
+            var applicationData = application.ApplyData.ApplyDetails;
+
             var model = new ApplicationSummaryWithModeratorDetailsViewModel
             {
                 ApplicationId = application.ApplicationId,
@@ -173,7 +198,12 @@ namespace SFA.DAS.ApplyService.Web.Services
                 GatewayPassOverturnedToFail = gatewayPassOverturnedToFail,
                 OversightExternalComments = oversightReview?.ExternalComments,
                 ApplicationStatus = application?.ApplicationStatus,
-                IsAppealSubmitted = appealSubmitted
+                OversightReviewStatus = oversightReview?.Status,
+                OversightInProgressExternalComments = oversightReview?.InProgressExternalComments,
+                AppealRequiredByDate = oversightReview is null ? null : await _apiClient.GetWorkingDaysAheadDate(oversightReview?.ApplicationDeterminedDate, NumberOfWorkingDaysToAppeal),
+                ApplicationDeterminedDate = oversightReview?.ApplicationDeterminedDate,
+                IsAppealSubmitted = appeal?.AppealSubmittedDate != null,
+                AppealStatus = appeal?.Status
             };
 
             if (moderationFailedAndApproved)
@@ -194,12 +224,6 @@ namespace SFA.DAS.ApplyService.Web.Services
                 SectorDetails = sectorDetails
             };
             return model;
-        }
-
-        private async Task<bool> GetAppealSubmitted(Apply application)
-        {
-            var appeal = await _appealsApiClient.GetAppeal(application.ApplicationId);
-            return appeal != null && appeal.AppealSubmittedDate!=null;
         }
 
         private void AddSequenceTitlesToSequences(List<AssessorSequence> sequencesWithModerationFails)
