@@ -25,5 +25,7 @@ namespace SFA.DAS.ApplyService.Configuration
         public QnaApiAuthentication QnaApiAuthentication { get; set; }
 
         public AzureActiveDirectoryConfiguration AzureActiveDirectoryConfiguration { get; set; }
+
+        public FeatureToggles FeatureToggles { get; set; }
     }
 }

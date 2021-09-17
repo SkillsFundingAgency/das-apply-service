@@ -40,6 +40,7 @@ namespace SFA.DAS.ApplyService.Web
     using SFA.DAS.Http.TokenGenerators;
     using SFA.DAS.Notifications.Api.Client;
     using SFA.DAS.ApplyService.Web.StartupExtensions;
+    using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
 
     public class Startup
     {
@@ -102,9 +103,12 @@ namespace SFA.DAS.ApplyService.Web
                 options.RequestCultureProviders.Clear();
             });
             
-            services.AddMvc()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateAccountValidator>())
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options =>
+            {
+                options.Filters.Add<FeatureToggleFilter>();
+            })
+            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateAccountValidator>())
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddOptions();
 
@@ -229,6 +233,13 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<ISessionService>(s => new SessionService(
                 s.GetService<IHttpContextAccessor>(),
                 _configuration["EnvironmentName"]));
+
+            services.AddTransient<IFeatureToggles>(s =>
+            {
+                var configService = s.GetService<IConfigurationService>();
+                var config = configService.GetConfig().GetAwaiter().GetResult();
+                return config.FeatureToggles ?? new FeatureToggles();
+            });
 
             services.AddTransient<IDfeSignInService, DfeSignInService>();
             services.AddTransient<CreateAccountValidator, CreateAccountValidator>();
