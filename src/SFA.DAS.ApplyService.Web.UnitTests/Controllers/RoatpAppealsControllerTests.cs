@@ -360,6 +360,49 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+        public async Task AppealUnsuccessful_shows_ProcessApplicationStatus_page_if_appeal_is_not_deemed_unsuccessful()
+        {
+            var result = await _controller.AppealUnsuccessful(_applicationId);
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("ProcessApplicationStatus");
+        }
+
+        [Test]
+        public async Task AppealSubmitted_shows_Unsuccessful_page_if_appeal_deemed_unsuccessful()
+        {
+            var model = new AppealUnsuccessfulViewModel
+            {
+                ApplicationId = _applicationId,
+                AppealSubmittedDate = DateTime.UtcNow.AddDays(-1),
+                AppealDeterminedDate = DateTime.UtcNow,
+                AppealedOnEvidenceSubmitted = true,
+                AppealedOnPolicyOrProcesses = true,
+                ExternalComments = "You were unsuccessful"
+            };
+
+            var appeal = new GetAppealResponse
+            {
+                Status = AppealStatus.Unsuccessful,
+                ApplicationId = model.ApplicationId,
+                AppealSubmittedDate = model.AppealSubmittedDate,
+                AppealDeterminedDate = model.AppealDeterminedDate,
+                HowFailedOnEvidenceSubmitted = "valid input",
+                HowFailedOnPolicyOrProcesses = "valid input",
+                ExternalComments = model.ExternalComments
+            };
+            _appealsApiClient.Setup(x => x.GetAppeal(_applicationId)).ReturnsAsync(appeal);
+
+            var result = await _controller.AppealUnsuccessful(_applicationId);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("AppealUnsuccessful.cshtml");
+            viewResult.Model.Should().BeEquivalentTo(model);
+        }
+
+        [Test]
         public async Task DownloadAppealFile_when_file_exists_downloads_the_requested_file()
         {
             string fileName = "test.pdf";
