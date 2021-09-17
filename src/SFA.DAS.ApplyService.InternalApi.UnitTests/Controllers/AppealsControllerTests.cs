@@ -17,6 +17,7 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Appeals.Commands.DeleteAppealFile;
 using SFA.DAS.ApplyService.Application.Appeals.Commands.UploadAppealFile;
 using SFA.DAS.ApplyService.Application.Appeals.Queries.GetAppealFile;
+using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.CancelAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppeal;
@@ -26,6 +27,7 @@ using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
 using SFA.DAS.ApplyService.InternalApi.Types.Requests.Appeals;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
+using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 {
@@ -196,6 +198,25 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 
             Assert.AreEqual(storageFile.FileName, fileResult.FileDownloadName);
             Assert.AreEqual(storageFile.ContentType, fileResult.ContentType);
+        }
+
+        [TestCase(AppealStatus.Successful)]
+        [TestCase(AppealStatus.Unsuccessful)]
+        public async Task Record_appeal_outcome_updates_appeal_status(string appealStatus)
+        {
+            var command = new RecordAppealOutcomeCommand
+            {
+                AppealStatus = appealStatus,
+                ApplicationId = Guid.NewGuid(),
+                UserId = "User Id",
+                UserName = "Test user"
+            };
+
+            _mediator.Setup(x => x.Send(command, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+            var result = await _controller.RecordAppealOutcome(command);
+            result.Should().NotBeNull();
+            result.Value.Should().BeTrue();
         }
 
         [Test]

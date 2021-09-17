@@ -14,5 +14,6 @@
         CancelAppeal,
         UploadAppealFile,
         RemoveAppealFile,
+        RecordAppealOutcome
     }
 }

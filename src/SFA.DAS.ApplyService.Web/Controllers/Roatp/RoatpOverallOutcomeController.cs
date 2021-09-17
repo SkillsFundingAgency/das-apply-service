@@ -84,6 +84,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         }
                     }
 
+                case ApplicationStatus.AppealSuccessful:  // placeholder statuses to stop tasklist breaking with new statuses - coverage not added as new stories following
+                case ApplicationStatus.InProgressAppeal:  // see above
                 case ApplicationStatus.Unsuccessful:
                     if (model.GatewayReviewStatus == GatewayReviewStatus.Fail)
                     {
