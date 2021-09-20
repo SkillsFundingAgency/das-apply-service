@@ -14,6 +14,9 @@
                     case AppealStatus.Unsuccessful:
                         <a class="govuk-link govuk-link--no-visited-state" asp-action="AppealUnsuccessful" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Appeal overview</a>
                         break;
+                    case AppealStatus.InProgress:
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="AppealInProgress" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Appeal overview</a>
+                        break;
                     case AppealStatus.Submitted:
                     default:
                         <a class="govuk-link govuk-link--no-visited-state" asp-action="AppealSubmitted" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Appeal overview</a>

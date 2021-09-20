@@ -473,7 +473,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task Application_shows_appeal_submitted_page_if_when_appeal_submitted_and_pending_outcome()
+        public async Task Application_shows_appeal_submitted_page_when_appeal_submitted_and_pending_outcome()
         {
             var model = new ApplicationSummaryViewModel
             {
@@ -496,7 +496,78 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task Application_shows_appeal_unsuccessful_page_if_when_appeal_submitted_and_unsuccessful_outcome()
+        public async Task Application_shows_unsuccessful_page_when_appeal_submitted_and_pending_outcome_and_application_overview_clicked()
+        {
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationStatus = ApplicationStatus.Unsuccessful,
+                OversightReviewStatus = OversightReviewStatus.Unsuccessful,
+                ApplicationDeterminedDate = DateTime.Today,
+                AppealRequiredByDate = DateTime.Today.AddDays(10),
+                AppealStatus = AppealStatus.Submitted,
+                IsAppealSubmitted = true
+            };
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
+
+            _controller.HttpContext.Request.Headers.Add("Referer", $"http://localhost/application/{_applicationId}/status");
+
+            var result = await _controller.ProcessApplicationStatus(_applicationId);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationUnsuccessfulPostGateway.cshtml");
+        }
+
+        [Test]
+        public async Task Application_shows_appeal_inprogress_page_when_appeal_submitted_and_inprogress_outcome()
+        {
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationStatus = ApplicationStatus.InProgressAppeal,
+                OversightReviewStatus = OversightReviewStatus.Unsuccessful,
+                ApplicationDeterminedDate = DateTime.Today,
+                AppealRequiredByDate = DateTime.Today.AddDays(10),
+                AppealStatus = AppealStatus.InProgress,
+                IsAppealSubmitted = true
+            };
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
+
+            var result = await _controller.ProcessApplicationStatus(_applicationId);
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("AppealInProgress");
+            redirectResult.ControllerName.Should().Be("RoatpAppeals");
+        }
+
+        [Test]
+        public async Task Application_shows_unsuccessful_page_when_appeal_submitted_and_inprogress_outcome_and_application_overview_clicked()
+        {
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationStatus = ApplicationStatus.InProgressAppeal,
+                OversightReviewStatus = OversightReviewStatus.Unsuccessful,
+                ApplicationDeterminedDate = DateTime.Today,
+                AppealRequiredByDate = DateTime.Today.AddDays(10),
+                AppealStatus = AppealStatus.InProgress,
+                IsAppealSubmitted = true
+            };
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
+
+            _controller.HttpContext.Request.Headers.Add("Referer", $"http://localhost/application/{_applicationId}/status");
+
+            var result = await _controller.ProcessApplicationStatus(_applicationId);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationUnsuccessfulPostGateway.cshtml");
+        }
+
+        [Test]
+        public async Task Application_shows_appeal_unsuccessful_page_when_appeal_submitted_and_unsuccessful_outcome()
         {
             var model = new ApplicationSummaryViewModel
             {
@@ -516,6 +587,30 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.Should().NotBeNull();
             redirectResult.ActionName.Should().Be("AppealUnsuccessful");
             redirectResult.ControllerName.Should().Be("RoatpAppeals");
+        }
+
+        [Test]
+        public async Task Application_shows_unsuccessful_page_when_appeal_submitted_and_unsuccessful_outcome_and_application_overview_clicked()
+        {
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationStatus = ApplicationStatus.Unsuccessful,
+                OversightReviewStatus = OversightReviewStatus.Unsuccessful,
+                ApplicationDeterminedDate = DateTime.Today,
+                AppealRequiredByDate = DateTime.Today.AddDays(10),
+                AppealStatus = AppealStatus.Unsuccessful,
+                IsAppealSubmitted = true
+            };
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
+
+            _controller.HttpContext.Request.Headers.Add("Referer", $"http://localhost/application/{_applicationId}/status");
+
+            var result = await _controller.ProcessApplicationStatus(_applicationId);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationUnsuccessfulPostGateway.cshtml");
         }
 
         [Test]
