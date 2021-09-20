@@ -300,10 +300,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
             Assert.AreEqual(ManagementHierarchyValidator.EmailErrorTooLong, result.Errors[0].ErrorMessage);
         }
 
-        [Test]
-        public void Validate_Returns_Appropriate_Error_When_Email_is_Wrong_Format()
+        [TestCase("wrong-format")]
+        [TestCase("test")]
+        [TestCase("test@test")]
+        [TestCase("test@test      .com")]
+        public void Validate_Returns_Appropriate_Error_When_Email_is_Wrong_Format(string incorrectEmail)
         {
-            _viewModel.Email = "wrong-format";
+            _viewModel.Email = incorrectEmail;
 
             var result = _validator.Validate(_viewModel);
 
@@ -311,6 +314,24 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
             Assert.AreEqual(1, result.Errors.Count);
             Assert.AreEqual(nameof(_viewModel.Email), result.Errors[0].PropertyName);
             Assert.AreEqual(ManagementHierarchyValidator.EmailErrorWrongFormat, result.Errors[0].ErrorMessage);
+        }
+
+        [TestCase("test@test.uk")]
+        [TestCase("test@test.com")]
+        [TestCase("test@test.co.uk")]
+        [TestCase("test.test@test.uk")]
+        [TestCase("test-test@test.uk")]
+        [TestCase("test.test@test.com")]
+        [TestCase("test-test@test.com")]
+        [TestCase("test.test@test.co.uk")]
+        [TestCase("test-test@test.co.uk")]
+        public void Validate_Returns_Valid_When_Email_is_Correct_Format(string correctEmail)
+        {
+            _viewModel.Email = correctEmail;
+
+            var result = _validator.Validate(_viewModel);
+
+            Assert.IsTrue(result.IsValid);
         }
 
         [Test]

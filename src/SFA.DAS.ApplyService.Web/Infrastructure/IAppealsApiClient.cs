@@ -10,6 +10,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     {
         Task<GetAppealResponse> GetAppeal(Guid applicationId);
         Task<bool> MakeAppeal(Guid applicationId, string howFailedOnPolicyOrProcesses, string howFailedOnEvidenceSubmitted, string signinId, string userName);
+        Task<bool> CancelAppeal(Guid applicationId, string signinId, string userName);
 
         Task<GetAppealFileListResponse> GetAppealFileList(Guid applicationId);
         Task<HttpResponseMessage> DownloadFile(Guid applicationId, string fileName);

@@ -17,6 +17,8 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Appeals.Commands.DeleteAppealFile;
 using SFA.DAS.ApplyService.Application.Appeals.Commands.UploadAppealFile;
 using SFA.DAS.ApplyService.Application.Appeals.Queries.GetAppealFile;
+using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands;
+using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.CancelAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppealFileList;
@@ -25,6 +27,7 @@ using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
 using SFA.DAS.ApplyService.InternalApi.Types.Requests.Appeals;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
+using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 {
@@ -84,6 +87,38 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
                 c.ApplicationId == applicationId &&
                 c.HowFailedOnPolicyOrProcesses == request.HowFailedOnPolicyOrProcesses &&
                 c.HowFailedOnEvidenceSubmitted == request.HowFailedOnEvidenceSubmitted &&
+                c.UserId == request.UserId &&
+                c.UserName == request.UserName), It.IsAny<CancellationToken>()));
+        }
+
+        [Test]
+        public async Task CancelAppeal_removes_all_AppealFiles_from_Application_Appeal()
+        {
+            var applicationId = AutoFixture.Create<Guid>();
+
+            _fileStorageService.Setup(x => x.DeleteApplicationDirectory(applicationId, It.IsAny<ContainerType>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+            var request = AutoFixture.Create<CancelAppealRequest>();
+
+            var result = await _controller.CancelAppeal(applicationId, request);
+            result.Should().BeOfType<OkResult>();
+
+            _fileStorageService.Verify(x => x.DeleteApplicationDirectory(applicationId, It.IsAny<ContainerType>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Test]
+        public async Task CancelAppeal_sends_Command_to_cancel_Appeal()
+        {
+            var applicationId = AutoFixture.Create<Guid>();
+            var request = AutoFixture.Create<CancelAppealRequest>();
+
+            _mediator.Setup(x => x.Send(It.IsAny<CancelAppealCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
+
+            var result = await _controller.CancelAppeal(applicationId, request);
+            Assert.IsInstanceOf<OkResult>(result);
+
+            _mediator.Verify(x => x.Send(It.Is<CancelAppealCommand>(c =>
+                c.ApplicationId == applicationId &&
                 c.UserId == request.UserId &&
                 c.UserName == request.UserName), It.IsAny<CancellationToken>()));
         }
@@ -163,6 +198,25 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 
             Assert.AreEqual(storageFile.FileName, fileResult.FileDownloadName);
             Assert.AreEqual(storageFile.ContentType, fileResult.ContentType);
+        }
+
+        [TestCase(AppealStatus.Successful)]
+        [TestCase(AppealStatus.Unsuccessful)]
+        public async Task Record_appeal_outcome_updates_appeal_status(string appealStatus)
+        {
+            var command = new RecordAppealOutcomeCommand
+            {
+                AppealStatus = appealStatus,
+                ApplicationId = Guid.NewGuid(),
+                UserId = "User Id",
+                UserName = "Test user"
+            };
+
+            _mediator.Setup(x => x.Send(command, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+            var result = await _controller.RecordAppealOutcome(command);
+            result.Should().NotBeNull();
+            result.Value.Should().BeTrue();
         }
 
         [Test]

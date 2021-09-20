@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
@@ -14,12 +15,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
         private readonly IApplyRepository _applyRepository;
         private readonly IGatewayRepository _gatewayRepository;
         private readonly IAuditService _auditService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateGatewayPageAnswerPostClarificationRequestHandler(IApplyRepository applyRepository, IGatewayRepository gatewayRepository, IAuditService auditService)
+        public UpdateGatewayPageAnswerPostClarificationRequestHandler(IApplyRepository applyRepository, IGatewayRepository gatewayRepository, IAuditService auditService, IUnitOfWork unitOfWork)
         {
             _applyRepository = applyRepository;
             _gatewayRepository = gatewayRepository;
             _auditService = auditService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<bool> Handle(UpdateGatewayPageAnswerPostClarificationRequest request, CancellationToken cancellationToken)
@@ -70,6 +73,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             }
 
             _auditService.Save();
+            await _unitOfWork.Commit();
 
             return updatedSuccessfully;
         }

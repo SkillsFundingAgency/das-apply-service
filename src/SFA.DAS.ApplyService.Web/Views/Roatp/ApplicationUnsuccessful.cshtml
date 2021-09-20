@@ -7,7 +7,14 @@
 
 @section Navigation
 {
-    <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+    @if (Model.IsAppealSubmitted)
+    {
+        <partial name="~/Views/Application/Navigation/_AppealSubmittedHeader.cshtml" />
+    }
+    else
+    {
+        <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+    }
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -27,12 +34,20 @@
                 Your application to join the RoATP has been unsuccessful.
             </p>
 
-            <h2 class="govuk-heading-m">Why your application was unsuccessful</h2>
+            <p class="govuk-body">
+                Your application was only assessed on due diligence. Your organisation's financial health, readiness and quality were not reviewed.
+            </p>
+
+            <p class="govuk-body">
+                You can appeal this decision. If your appeal is successful, you will be able to submit another application.
+            </p>
+
+            <h2 class="govuk-heading-m">Feedback on your due diligence assessment</h2>
             <p class="govuk-body das-multiline-text">
                 @Model.GatewayExternalComments
             </p>
 
         </div>
     </div>
-    <partial name="~/Views/Roatp/_AppealComplaintContact.cshtml"  model="@Model" />
+    <partial name="~/Views/Roatp/_AppealComplaintContact.cshtml" model="@Model" />
 </main>

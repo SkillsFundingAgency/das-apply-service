@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace SFA.DAS.ApplyService.Configuration
 {
     public interface IApplyConfig
@@ -28,5 +26,7 @@ namespace SFA.DAS.ApplyService.Configuration
         QnaApiAuthentication QnaApiAuthentication { get; set; }
 
         AzureActiveDirectoryConfiguration AzureActiveDirectoryConfiguration { get; set; }
+
+        FeatureToggles FeatureToggles { get; set; }
     }
 }

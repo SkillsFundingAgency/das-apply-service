@@ -40,6 +40,19 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return result == HttpStatusCode.OK;
         }
 
+        public async Task<bool> CancelAppeal(Guid applicationId, string signinId, string userName)
+        {
+            var request = new CancelAppealRequest
+            {
+                UserId = signinId,
+                UserName = userName
+            };
+
+            var result = await Post($"/Appeals/{applicationId}/cancel", request);
+
+            return result == HttpStatusCode.OK;
+        }
+
         public async Task<GetAppealFileListResponse> GetAppealFileList(Guid applicationId)
         {
             return await Get<GetAppealFileListResponse>($"/Appeals/{applicationId}/files");

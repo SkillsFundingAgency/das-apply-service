@@ -25,3 +25,5 @@ ALTER TABLE [dbo].[Appeal] ADD CONSTRAINT [FK_Appeal_Apply] FOREIGN KEY(Applicat
 REFERENCES [dbo].[Apply] ([ApplicationId])
 GO
 
+CREATE UNIQUE INDEX [IX_Appeal_ApplicationId] ON [Appeal] ([ApplicationId])
+GO
