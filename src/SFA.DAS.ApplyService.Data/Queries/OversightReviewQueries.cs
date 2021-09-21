@@ -158,8 +158,8 @@ namespace SFA.DAS.ApplyService.Data.Queries
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,                          
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
-                            appeal.AppealSubmittedDate AS AppealSubmittedDate,
-                            appeal.AppealDeterminedDate AS AppealDeterminedDate,
+                            appeal.AppealSubmittedDate AS AppealSubmittedDate,                            
+                            case appeal.Status when @appealInProgress then appeal.InProgressDate else appeal.AppealDeterminedDate end AppealDeterminedDate,
                             appeal.Status AS AppealStatus,
                             oversight.Status as OversightStatus
                                 FROM Apply apply
@@ -172,7 +172,8 @@ namespace SFA.DAS.ApplyService.Data.Queries
                             ORDER BY {orderByClause}, org.Name ASC", new
                 {
                     searchString = $"%{searchTerm}%",
-                    appealStatusSubmitted = Types.AppealStatus.Submitted
+                    appealStatusSubmitted = Types.AppealStatus.Submitted,
+                    appealInProgress = Types.AppealStatus.InProgress
                 })).ToList();
 
                 return new CompletedAppealOutcomes
