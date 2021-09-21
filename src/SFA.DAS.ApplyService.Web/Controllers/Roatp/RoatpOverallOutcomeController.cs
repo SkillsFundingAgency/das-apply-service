@@ -43,6 +43,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 {
                     case AppealStatus.Submitted:
                         return RedirectToAction("AppealSubmitted", "RoatpAppeals", new { applicationId });
+                    case AppealStatus.InProgress:
+                        return RedirectToAction("AppealInProgress", "RoatpAppeals", new { applicationId });
                     case AppealStatus.Unsuccessful:
                         return RedirectToAction("AppealUnsuccessful", "RoatpAppeals", new { applicationId });
                     default:
@@ -84,8 +86,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         }
                     }
 
-                case ApplicationStatus.AppealSuccessful:  // placeholder statuses to stop tasklist breaking with new statuses - coverage not added as new stories following
-                case ApplicationStatus.InProgressAppeal:  // see above
+                case ApplicationStatus.InProgressAppeal:
                 case ApplicationStatus.Unsuccessful:
                     if (model.GatewayReviewStatus == GatewayReviewStatus.Fail)
                     {
@@ -98,7 +99,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                         return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", unsuccessfulModel);
                     }
-
+                case ApplicationStatus.AppealSuccessful: // placeholder status to stop tasklist breaking with new statuses - coverage not added as new stories following
+                    return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
                 case ApplicationStatus.FeedbackAdded:
                     return View("~/Views/Roatp/FeedbackAdded.cshtml", model);
                 case ApplicationStatus.Withdrawn:
