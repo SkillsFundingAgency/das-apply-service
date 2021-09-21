@@ -13,6 +13,11 @@
                 {
                     case AppealStatus.Unsuccessful:
                         <a class="govuk-link govuk-link--no-visited-state" asp-action="AppealUnsuccessful" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Appeal overview</a>
+                            break;
+                        case AppealStatus.Successful:
+                        case AppealStatus.SuccessfulFitnessForFunding:
+                        case AppealStatus.SuccessfulAlreadyActive:
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="AppealSuccessful" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Appeal overview</a>
                         break;
                     case AppealStatus.InProgress:
                         <a class="govuk-link govuk-link--no-visited-state" asp-action="AppealInProgress" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Appeal overview</a>

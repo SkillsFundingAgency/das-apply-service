@@ -35,6 +35,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             var model = await _overallOutcomeService.BuildApplicationSummaryViewModel(applicationId, User.GetEmail());
 
+            var isSupporting = model.ApplicationRouteId ==
+                               Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute.ToString();
+
             // Force appeal status page to show if the user did not click on the 'application overview' link
             var overviewLinkClicked = HttpContext.Request.Headers.ContainsKey("Referer");
             if(!overviewLinkClicked && model.IsAppealSubmitted)
@@ -47,6 +50,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         return RedirectToAction("AppealInProgress", "RoatpAppeals", new { applicationId });
                     case AppealStatus.Unsuccessful:
                         return RedirectToAction("AppealUnsuccessful", "RoatpAppeals", new { applicationId });
+                    case AppealStatus.Successful:
+                        return RedirectToAction("AppealSuccessful", "RoatpAppeals", new { applicationId });
                     default:
                         break;
                 }
@@ -59,31 +64,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
                 case ApplicationStatus.Successful:
 
-                    if (model.ApplicationRouteId == Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute.ToString())
+                    if (isSupporting)
                     {
-                        switch (model.OversightReviewStatus)
-                        {
-                            case OversightReviewStatus.SuccessfulFitnessForFunding:
-                                return View("~/Views/Roatp/ApplicationApprovedSupportingFitnessForFunding.cshtml",
-                                    model);
-                            case OversightReviewStatus.SuccessfulAlreadyActive:
-                                return View("~/Views/Roatp/ApplicationApprovedSupportingAlreadyActive.cshtml",
-                                    model);
-                            default:
-                                return View("~/Views/Roatp/ApplicationApprovedSupporting.cshtml", model);
-                        }
+                        if (model.OversightReviewStatus == OversightReviewStatus.SuccessfulFitnessForFunding || model.AppealStatus == AppealStatus.SuccessfulFitnessForFunding)
+                            return View("~/Views/Roatp/ApplicationApprovedSupportingFitnessForFunding.cshtml",
+                                model);
+                        if (model.OversightReviewStatus == OversightReviewStatus.SuccessfulAlreadyActive || model.AppealStatus==AppealStatus.SuccessfulAlreadyActive)
+                            return View("~/Views/Roatp/ApplicationApprovedSupportingAlreadyActive.cshtml",
+                                model);
+                        return View("~/Views/Roatp/ApplicationApprovedSupporting.cshtml", model);
                     }
                     else
                     {
-                        switch (model.OversightReviewStatus)
-                        {
-                            case OversightReviewStatus.SuccessfulAlreadyActive:
-                                return View("~/Views/Roatp/ApplicationApprovedAlreadyActive.cshtml", model);
-                            case OversightReviewStatus.SuccessfulFitnessForFunding:
-                                return View("~/Views/Roatp/ApplicationApprovedFitnessForFunding.cshtml", model);
-                            default:
-                                return View("~/Views/Roatp/ApplicationApproved.cshtml", model);
-                        }
+                        if (model.OversightReviewStatus == OversightReviewStatus.SuccessfulAlreadyActive || model.AppealStatus==AppealStatus.SuccessfulAlreadyActive)
+                            return View("~/Views/Roatp/ApplicationApprovedAlreadyActive.cshtml", model);
+                        if (model.OversightReviewStatus == OversightReviewStatus.SuccessfulFitnessForFunding || model.AppealStatus==AppealStatus.SuccessfulFitnessForFunding)
+                            return View("~/Views/Roatp/ApplicationApprovedFitnessForFunding.cshtml", model);
+                        
+                        return View("~/Views/Roatp/ApplicationApproved.cshtml", model);
                     }
 
                 case ApplicationStatus.InProgressAppeal:

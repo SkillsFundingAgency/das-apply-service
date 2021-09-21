@@ -30,6 +30,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private RoatpAppealsController _controller;
         private Mock<IOutcomeApiClient> _outcomeApiClient;
         private Mock<IAppealsApiClient> _appealsApiClient;
+        private Mock<IApplicationApiClient> _applicationApiClient;
 
         [SetUp]
         public void Before_each_test()
@@ -39,6 +40,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _outcomeApiClient = new Mock<IOutcomeApiClient>();
             _appealsApiClient = new Mock<IAppealsApiClient>();
+            _applicationApiClient = new Mock<IApplicationApiClient>();  
 
             var signInId = Guid.NewGuid();
             var givenNames = "Test";
@@ -62,7 +64,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _appealsApiClient.Setup(x => x.GetAppealFileList(_applicationId)).ReturnsAsync(default(GetAppealFileListResponse));
 
-            _controller = new RoatpAppealsController(_outcomeApiClient.Object, _appealsApiClient.Object)
+            _controller = new RoatpAppealsController(_outcomeApiClient.Object, _appealsApiClient.Object,_applicationApiClient.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
