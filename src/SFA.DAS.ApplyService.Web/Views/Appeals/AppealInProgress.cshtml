@@ -1,0 +1,51 @@
+﻿@using SFA.DAS.AdminService.Common.Extensions;
+
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals.AppealInProgressViewModel
+
+@{
+    ViewBag.Title = "Appeal unsuccessful";
+    Layout = "_Layout";
+}
+
+@section Navigation
+{
+    <partial name="~/Views/Appeals/Navigation/_AppealSubmittedHeader.cshtml" />
+}
+
+<main class="govuk-main-wrapper" id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-panel app-panel--inprogress">
+                <h1 class="govuk-panel__title">
+                    Appeal in progress
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Appeal submitted date</dt>
+                    <dd class="govuk-summary-list__value">@Model.AppealSubmittedDate.ToSfaShortDateString()</dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ExternalComments))
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-m">Why your appeal is in progress</h1>
+                <div class="govuk-inset-text app-inset-text--question-answer">
+                    <p class="govuk-body das-multiline-text">
+                        @Model.ExternalComments
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+</main>
