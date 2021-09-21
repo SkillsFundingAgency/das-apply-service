@@ -9,6 +9,8 @@
 	[QuestionType] NVARCHAR(25) NOT NULL,
 	[Answer] NVARCHAR(MAX) NULL,
 	[ColumnHeading] NVARCHAR(100) NULL,
+	[RowNumber] INT NULL,
+	[ColumnNumber] INT NULL,	
 
 	CONSTRAINT PK_SubmittedApplicationAnswers PRIMARY KEY (Id),
 	INDEX IX_SubmittedApplicationAnswers_ApplicationId (ApplicationId)
