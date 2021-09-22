@@ -209,7 +209,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             if (appeal==null)
                 return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
 
-            if (appeal?.Status != AppealStatus.Successful && appeal?.Status != AppealStatus.SuccessfulFitnessForFunding && appeal?.Status != AppealStatus.SuccessfulAlreadyActive)
+            if (appeal.Status != AppealStatus.Successful && appeal.Status != AppealStatus.SuccessfulFitnessForFunding && appeal.Status != AppealStatus.SuccessfulAlreadyActive)
             {
                 return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
             }
@@ -222,13 +222,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ApplicationId = applicationId,
                 AppealSubmittedDate = appeal.AppealSubmittedDate ?? null,
                 AppealDeterminedDate = appeal.AppealDeterminedDate ?? null,
-                AppealedOnEvidenceSubmitted = !string.IsNullOrEmpty(appeal?.HowFailedOnEvidenceSubmitted),
-                AppealedOnPolicyOrProcesses = !string.IsNullOrEmpty(appeal?.HowFailedOnPolicyOrProcesses),
-                ExternalComments = appeal?.ExternalComments,
+                AppealedOnEvidenceSubmitted = !string.IsNullOrEmpty(appeal.HowFailedOnEvidenceSubmitted),
+                AppealedOnPolicyOrProcesses = !string.IsNullOrEmpty(appeal.HowFailedOnPolicyOrProcesses),
+                ExternalComments = appeal.ExternalComments,
                 SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit
             };
 
-            var isSupporting = application?.ApplyData?.ApplyDetails?.ProviderRouteName ==
+            var isSupporting = application?.ApplyData?.ApplyDetails?.ProviderRoute.ToString() ==
                                  Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute.ToString();
 
             switch (appeal?.Status)
