@@ -206,6 +206,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> AppealSuccessful(Guid applicationId)
         {
             var appeal = await _appealsApiClient.GetAppeal(applicationId);
+            if (appeal==null)
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
+
             if (appeal?.Status != AppealStatus.Successful && appeal?.Status != AppealStatus.SuccessfulFitnessForFunding && appeal?.Status != AppealStatus.SuccessfulAlreadyActive)
             {
                 return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
@@ -217,15 +220,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var model = new AppealSuccessfulViewModel
             {
                 ApplicationId = applicationId,
-                AppealSubmittedDate = appeal.AppealSubmittedDate.Value,
-                AppealDeterminedDate = appeal.AppealDeterminedDate.Value,
-                AppealedOnEvidenceSubmitted = !string.IsNullOrEmpty(appeal.HowFailedOnEvidenceSubmitted),
-                AppealedOnPolicyOrProcesses = !string.IsNullOrEmpty(appeal.HowFailedOnPolicyOrProcesses),
-                ExternalComments = appeal.ExternalComments,
+                AppealSubmittedDate = appeal.AppealSubmittedDate ?? null,
+                AppealDeterminedDate = appeal.AppealDeterminedDate ?? null,
+                AppealedOnEvidenceSubmitted = !string.IsNullOrEmpty(appeal?.HowFailedOnEvidenceSubmitted),
+                AppealedOnPolicyOrProcesses = !string.IsNullOrEmpty(appeal?.HowFailedOnPolicyOrProcesses),
+                ExternalComments = appeal?.ExternalComments,
                 SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit
             };
 
-            var isSupporting = application?.ApplyData?.ApplyDetails?.ProviderRoute.ToString() ==
+            var isSupporting = application?.ApplyData?.ApplyDetails?.ProviderRouteName ==
                                  Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute.ToString();
 
             switch (appeal?.Status)
@@ -239,7 +242,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
 
             return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
-
         }
 
         [HttpGet("application/{applicationId}/appeal/file/{fileName}")]

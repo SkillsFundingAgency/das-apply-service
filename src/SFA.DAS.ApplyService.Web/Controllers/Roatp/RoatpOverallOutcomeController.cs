@@ -35,9 +35,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             var model = await _overallOutcomeService.BuildApplicationSummaryViewModel(applicationId, User.GetEmail());
 
-            var isSupporting = model.ApplicationRouteId ==
-                               Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute.ToString();
-
             // Force appeal status page to show if the user did not click on the 'application overview' link
             var overviewLinkClicked = HttpContext.Request.Headers.ContainsKey("Referer");
             if(!overviewLinkClicked && model.IsAppealSubmitted)
@@ -51,6 +48,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     case AppealStatus.Unsuccessful:
                         return RedirectToAction("AppealUnsuccessful", "RoatpAppeals", new { applicationId });
                     case AppealStatus.Successful:
+                    case AppealStatus.SuccessfulAlreadyActive:
+                    case AppealStatus.SuccessfulFitnessForFunding:
                         return RedirectToAction("AppealSuccessful", "RoatpAppeals", new { applicationId });
                     default:
                         break;
@@ -64,7 +63,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
                 case ApplicationStatus.Successful:
 
-                    if (isSupporting)
+                    if (model.ApplicationRouteId ==
+                        Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute.ToString())
                     {
                         if (model.OversightReviewStatus == OversightReviewStatus.SuccessfulFitnessForFunding || model.AppealStatus == AppealStatus.SuccessfulFitnessForFunding)
                             return View("~/Views/Roatp/ApplicationApprovedSupportingFitnessForFunding.cshtml",

@@ -458,6 +458,18 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+        public async Task AppealSubmitted_shows_tasklist_if_appeal_does_not_exist()
+        {
+            _appealsApiClient.Setup(x => x.GetAppeal(_applicationId)).ReturnsAsync((GetAppealResponse)null);
+
+            var result = await _controller.AppealSuccessful(_applicationId);
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("ProcessApplicationStatus");
+        }   
+
+        [Test]
         public async Task DownloadAppealFile_when_file_exists_downloads_the_requested_file()
         {
             string fileName = "test.pdf";
