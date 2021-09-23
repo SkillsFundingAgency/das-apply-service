@@ -76,27 +76,18 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
                 case RoatpWorkflowPageIds.ReadinessToEngage.SubcontractorsDueDiligence:
                     return "Due diligence on subcontractors";
 
-                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main:
-                    return "Type of apprenticeship training";
-                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer:
-                    return "Type of apprenticeship training";
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_MainEmployer:
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer_OLD_PAGE_ID:
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting:
-                    return "Type of apprenticeship training";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_NewSupporting:
                     return "Type of apprenticeship training";
-                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApprenticeshipStandards_NewMain:
-                    return "Delivering training in apprenticeship standards";
-                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApprenticeshipStandards_NewEmployer:
-                    return "Delivering training in apprenticeship standards";
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApprenticeshipStandards_NewMainEmployer:
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApprenticeshipStandards_NewEmployer_OLD_PAGE_ID:
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApprenticeshipStandards:
                     return "Delivering training in apprenticeship standards";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_MainEmployer:
                     return "Offering apprenticeship frameworks";
-                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_Supporting:
-                    return "Offering apprenticeship frameworks";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Main:
-                    return "Transitioning from apprenticeship frameworks to apprenticeship standards";
-                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Employer:
                     return "Transitioning from apprenticeship frameworks to apprenticeship standards";
 
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Supporting:
