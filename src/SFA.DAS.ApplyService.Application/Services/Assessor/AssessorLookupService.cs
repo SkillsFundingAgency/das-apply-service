@@ -86,16 +86,13 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApprenticeshipStandards:
                     return "Delivering training in apprenticeship standards";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_MainEmployer:
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_Supporting:
                     return "Offering apprenticeship frameworks";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Main:
-                    return "Transitioning from apprenticeship frameworks to apprenticeship standards";
-
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Supporting:
                     return "Transitioning from apprenticeship frameworks to apprenticeship standards";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_MainEmployer:
-                    return "Delivering apprenticeship frameworks only";
-                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining
-                    .OnlyDeliveringApprenticeshipFrameworks_Supporting:
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_Supporting:
                     return "Delivering apprenticeship frameworks only";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.EngagingWithAwardingBodies:
                     return "Engaging and work with awarding bodies";
@@ -104,7 +101,6 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TrainingApprentices:
                     return "How apprentices will be trained";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.EnsureApprenticesAreSupportedEmployer:
-                    return "Supporting apprentices during apprenticeship training";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.EnsureApprenticesAreSupportedMain:
                     return "Supporting apprentices during apprenticeship training";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.EnsureApprenticesAreSupportedHow:
