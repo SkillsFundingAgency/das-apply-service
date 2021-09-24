@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             // Force appeal status page to show if the user did not click on the 'application overview' link
             var overviewLinkClicked = HttpContext.Request.Headers.ContainsKey("Referer");
-            if(!overviewLinkClicked && model.IsAppealSubmitted && model.ApplicationStatus!=ApplicationStatus.Rejected)
+            if(!overviewLinkClicked && model.IsAppealSubmitted)
             {
                 switch(model.AppealStatus)
                 {
