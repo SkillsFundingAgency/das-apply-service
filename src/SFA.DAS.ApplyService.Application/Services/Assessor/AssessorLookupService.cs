@@ -89,6 +89,7 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_Supporting:
                     return "Offering apprenticeship frameworks";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Main:
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Employer:
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Supporting:
                     return "Transitioning from apprenticeship frameworks to apprenticeship standards";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_MainEmployer:
