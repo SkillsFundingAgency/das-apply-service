@@ -34,8 +34,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [Route("application/{applicationId}/request-new-invitation")]
         public async Task<IActionResult> RequestNewInvitation(Guid applicationId)
         {
-            var model = new ApplicationSummaryViewModel { ApplicationId = applicationId };
-            return View("~/Views/Roatp/RequestNewInvitation.cshtml", model);
+            return View("~/Views/Roatp/RequestNewInvitation.cshtml", new ApplicationSummaryViewModel { ApplicationId=applicationId});
         }
 
         [HttpGet]
