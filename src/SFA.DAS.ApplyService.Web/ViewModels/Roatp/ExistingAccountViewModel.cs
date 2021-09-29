@@ -8,7 +8,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     {
         [Required(ErrorMessage ="Tell us if you have an apprenticeship service (AS) sign in account")]
         public string FirstTimeSignin { get; set; }
-
-        public List<ValidationErrorDetail> ErrorMessages { get; set; }
+      
     }
 }
