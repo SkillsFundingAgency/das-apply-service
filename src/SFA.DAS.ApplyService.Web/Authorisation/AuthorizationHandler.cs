@@ -111,11 +111,21 @@ namespace SFA.DAS.ApplyService.Web.Authorization
 
         private string GetRequestedApplicationId()
         {
-            var result = _httpContextAccessor.HttpContext.Request.Method == HttpMethod.Get.Method
-                ? _httpContextAccessor.HttpContext.Request.Query["ApplicationId"].ToString()
-                : _httpContextAccessor.HttpContext.Request.Form["ApplicationId"].ToString();
+            string requestedApplicationId;
 
-            if(string.IsNullOrWhiteSpace(result))
+            try
+            {
+                requestedApplicationId = _httpContextAccessor.HttpContext.Request.Method == HttpMethod.Get.Method
+                    ? _httpContextAccessor.HttpContext.Request.Query["ApplicationId"].ToString()
+                    : _httpContextAccessor.HttpContext.Request.Form["ApplicationId"].ToString();
+            }
+            catch(Exception ex) when (ex is NullReferenceException || ex is InvalidOperationException)
+            {
+                _logger.LogError(ex, $"Unable to determine requested ApplicationId from HttpContext");
+                requestedApplicationId = null;
+            }
+
+            if(string.IsNullOrWhiteSpace(requestedApplicationId))
             {
                 var path = _httpContextAccessor.HttpContext.Request.Path.Value;
 
@@ -125,14 +135,14 @@ namespace SFA.DAS.ApplyService.Web.Authorization
                     {
                         if(Guid.TryParse(substring, out var applicationId))
                         {
-                            result = applicationId.ToString();
+                            requestedApplicationId = applicationId.ToString();
                             break;
                         }
                     }
                 }
             }
 
-            return result;
+            return requestedApplicationId;
         }
     }
 }
