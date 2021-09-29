@@ -21,14 +21,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     {
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
-        private readonly CreateAccountValidator _createAccountValidator;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService,
-            CreateAccountValidator createAccountValidator)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
-            _createAccountValidator = createAccountValidator;
         }
         
         [HttpGet]
@@ -104,15 +101,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (user is null)
             {
-                // User exists so we can create them an account automatically
-                if (await _usersApiClient.CreateUserFromAsLogin(signInId, User.GetEmail(), User.GetGivenName(), User.GetFirstName()))
-                {
-                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble"); 
-                }
-                else
-                {
-                    return RedirectToAction("NotSetUp");
-                }
+                return RedirectToAction("NotSetUp");
             }
             else if (user.ApplyOrganisationId is null)
             {
