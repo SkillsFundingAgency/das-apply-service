@@ -11,46 +11,15 @@ Post-Deployment Script Template
 */
 
 
----APR-2642.sql
-BEGIN
-if not exists(select * from BankHoliday where BankHolidayDate='2021-08-30')
-	INSERT INTO [dbo].[BankHoliday] ([BankHolidayDate]) VALUES('2021-08-30')
+--IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPRequestInvitationToReapply')
+--BEGIN
+--	INSERT INTO EmailTemplates ([Id], [Status], [TemplateName], [TemplateId], [Recipients], [CreatedAt], [CreatedBy]) 
+--	VALUES (NEWID(), 'Live', N'RoATPRequestInvitationToReapply', N'872e3ace-4625-4f9b-a909-c44cec7f71ca', N'helpdesk@manage-apprenticeships.service.gov.uk', GETDATE(), 'System')
+--END
 
-if not exists(select * from BankHoliday where BankHolidayDate='2021-12-27')
-	INSERT INTO [dbo].[BankHoliday] ([BankHolidayDate]) VALUES('2021-12-27')
 
-if not exists(select * from BankHoliday where BankHolidayDate='2021-12-28')
-	INSERT INTO [dbo].[BankHoliday] ([BankHolidayDate]) VALUES('2021-12-28')
 
-if not exists(select * from BankHoliday where BankHolidayDate='2022-01-3')
-	INSERT INTO [dbo].[BankHoliday] ([BankHolidayDate]) VALUES('2022-01-3')
+DELETE FROM EmailTemplates WHERE TemplateName = N'RoATPRequestInvitationToReapply'
 
-if not exists(select * from BankHoliday where BankHolidayDate='2022-04-15')
-	INSERT INTO [dbo].[BankHoliday] ([BankHolidayDate]) VALUES('2022-04-15')
-
-if not exists(select * from BankHoliday where BankHolidayDate='2022-04-18')
-	INSERT INTO [dbo].[BankHoliday] ([BankHolidayDate]) VALUES('2022-04-18')
-
-if not exists(select * from BankHoliday where BankHolidayDate='2022-05-02')
-	INSERT INTO [dbo].[BankHoliday] ([BankHolidayDate]) VALUES('2022-05-02')
-
-if not exists(select * from BankHoliday where BankHolidayDate='2022-06-02')
-	INSERT INTO [dbo].[BankHoliday] ([BankHolidayDate]) VALUES('2022-06-02')
-
-if not exists(select * from BankHoliday where BankHolidayDate='2022-06-03')
-	INSERT INTO [dbo].[BankHoliday] ([BankHolidayDate]) VALUES('2022-06-03')
-
-if not exists(select * from BankHoliday where BankHolidayDate= '2022-08-29')
-	INSERT INTO [dbo].[BankHoliday] ([BankHolidayDate]) VALUES( '2022-08-29')
-
-if not exists(select * from BankHoliday where BankHolidayDate='2022-12-26')
-	INSERT INTO [dbo].[BankHoliday] ([BankHolidayDate]) VALUES('2022-12-26')
-
-if not exists(select * from BankHoliday where BankHolidayDate='2022-12-27')
-	INSERT INTO [dbo].[BankHoliday] ([BankHolidayDate]) VALUES('2022-12-27')
-END
-
----APR-2640.sql
-IF EXISTS(SELECT * FROM sys.tables WHERE SCHEMA_NAME(schema_id) LIKE 'dbo' AND name LIKE 'AppealUpload')  
-   DROP TABLE [dbo].[AppealUpload];
-GO
+	INSERT INTO EmailTemplates ([Id], [Status], [TemplateName], [TemplateId], [Recipients], [CreatedAt], [CreatedBy]) 
+	VALUES (NEWID(), 'Live', N'RoATPRequestInvitationToReapply', N'872e3ace-4625-4f9b-a909-c44cec7f71ca', N'mark.cain@digital.education.gov.uk', GETDATE(), 'System')
