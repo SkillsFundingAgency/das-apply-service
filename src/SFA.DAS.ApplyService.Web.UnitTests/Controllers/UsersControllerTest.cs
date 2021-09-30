@@ -81,5 +81,19 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.ActionName.Should().Be("SignIn");
         }
 
+        [Test]
+        public void ExistingAccountViewModel_When_Model_Is_Not_Valid_Will_Return_Error_State()
+        {
+
+            ExistingAccountViewModel model = new ExistingAccountViewModel() { FirstTimeSignin = null };
+            _userController.ModelState.AddModelError("FirstTimeSignin", "First Name is Required");
+
+            var result = _userController.ConfirmExistingAccount(model);
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("ExistingAccount");
+        }
+
     }
 }
