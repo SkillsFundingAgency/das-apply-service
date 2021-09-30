@@ -6,6 +6,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -27,6 +28,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             var model = await _overallOutcomeService.GetSectorDetailsViewModel(applicationId, pageId);
             return View("~/Views/Roatp/ApplicationUnsuccessfulSectorAnswers.cshtml", model);
+        }
+
+        [HttpGet]
+        [Route("application/{applicationId}/request-new-invitation")]
+        public async Task<IActionResult> RequestNewInvitation(Guid applicationId)
+        {
+            return View("~/Views/Roatp/RequestNewInvitation.cshtml", new ApplicationSummaryViewModel { ApplicationId=applicationId});
         }
 
         [HttpGet]
