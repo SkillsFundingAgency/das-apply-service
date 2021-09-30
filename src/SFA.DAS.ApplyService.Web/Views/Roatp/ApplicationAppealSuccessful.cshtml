@@ -1,5 +1,4 @@
-﻿@using SFA.DAS.ApplyService.Domain.Apply
-@using SFA.DAS.ApplyService.Web.ViewModels.Roatp
+﻿@using SFA.DAS.ApplyService.Web.ViewModels.Roatp
 @model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
 
 @{
@@ -16,34 +15,33 @@
 {
     <partial name="~/Views/Application/Navigation/_ApplicationDetermined.cshtml" />
 }
-
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-two-thirds">
 
-            <div class="govuk-panel app-panel--success">
-                <h1 class="govuk-panel__title">
-                    Application successful
-                </h1>
-            </div>
-
-            <partial name="~/Views/Roatp/_ApplicationDetailsTable.cshtml" model="@Model" />
-
-            <p class="govuk-body">
-                Your application to join the RoATP has been successful.
-            </p>
+        <div class="govuk-panel app-panel--success">
+            <h1 class="govuk-panel__title">
+                Application successful
+            </h1>
         </div>
+
+        <partial name="~/Views/Roatp/_ApplicationDetailsTable.cshtml" model="@Model" />
+
+        <p class="govuk-body">
+            Your application to join the RoATP has been successful.
+        </p>
+    </div>
     </div>
     <partial name="~/Views/Roatp/_FinancialHealthFeedback.cshtml" model="@financialHealthViewModel" />
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
             <h2 class="govuk-heading-m">What happens next</h2>
             <p class="govuk-body">
-                Your organisation will be published on the register and can deliver training up to a maximum value of £@Model.SubcontractingLimitFormatted per year.
+                Before we publish your organisation on to the register, you'll need to complete some post-application (on-boarding) tasks. You’ll receive an email within 5 working days from the 'Delivery Support team - Market Entry and Operation', explaining how to do this.
             </p>
+            <partial name="~/Views/Roatp/_FailureWarning.cshtml" />
             <partial name="~/Views/Roatp/_ApplicationApprovedGuidelinesContactDetails.cshtml" />
         </div>
     </div>
