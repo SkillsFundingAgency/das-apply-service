@@ -7,14 +7,7 @@
 
 @section Navigation
 {
-    @if (Model.IsAppealSubmitted)
-    {
-        <partial name="~/Views/Application/Navigation/_AppealSubmittedHeader.cshtml" />
-    }
-    else
-    {
-        <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
-    }
+    <partial name="~/Views/Application/Navigation/_ApplicationDetermined.cshtml" />
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">

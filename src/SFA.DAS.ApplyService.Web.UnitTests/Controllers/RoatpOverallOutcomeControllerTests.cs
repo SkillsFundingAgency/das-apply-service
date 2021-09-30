@@ -106,7 +106,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
 
             var result = await _controller.ProcessApplicationStatus(_applicationId);
-
+        
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationApprovedAlreadyActive.cshtml");
@@ -114,7 +114,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
 
 
-        [TestCase(100000, "100,000")]
+        [TestCase(100000,"100,000")]
         [TestCase(500000, "500,000")]
         public async Task Application_shows_approved_supporting_page_with_formatted_amount_if_application_approved_and_successful_and_route_is_supporting(int subcontractorLimit, string subcontractLimitFormatted)
         {
@@ -124,7 +124,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 ApplicationStatus = ApplicationStatus.Successful,
                 ApplicationRouteId = supportingRouteId.ToString(),
-                SubcontractingLimit = subcontractorLimit
+                SubcontractingLimit = subcontractorLimit  
             };
 
             _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
@@ -139,10 +139,20 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             modelReturned.SubcontractingLimit.Should().Be(subcontractorLimit);
             modelReturned.SubcontractingLimitFormatted.Should().Be(subcontractLimitFormatted);
         }
-
-        [TestCase(100000, "100,000")]
-        [TestCase(500000, "500,000")]
-        public async Task Application_shows_approved_fitness_for_funding_supporting_page_with_formatted_amount_if_application_approved_and_successful_fitness_for_funding_and_route_is_supporting(int subcontractorLimit, string subcontractLimitFormatted)
+        
+    [TestCase( OversightReviewStatus.Successful, null, "ApplicationApprovedSupporting.cshtml",100000, "100,000")]
+    [TestCase(OversightReviewStatus.Successful, null, "ApplicationApprovedSupporting.cshtml", 500000, "500,000")]
+    [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.Successful, "ApplicationApprovedSupporting.cshtml", 100000, "100,000")]
+    [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.Successful, "ApplicationApprovedSupporting.cshtml", 500000, "500,000")]
+    [TestCase(OversightReviewStatus.SuccessfulFitnessForFunding, null, "ApplicationApprovedSupportingFitnessForFunding.cshtml", 100000, "100,000")]
+    [TestCase(OversightReviewStatus.SuccessfulFitnessForFunding, null, "ApplicationApprovedSupportingFitnessForFunding.cshtml", 500000, "500,000")]
+    [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.SuccessfulFitnessForFunding, "ApplicationApprovedSupportingFitnessForFunding.cshtml", 100000, "100,000")]
+    [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.SuccessfulFitnessForFunding, "ApplicationApprovedSupportingFitnessForFunding.cshtml", 500000, "500,000")]
+    [TestCase(OversightReviewStatus.SuccessfulAlreadyActive, null, "ApplicationApprovedSupportingAlreadyActive.cshtml", 100000, "100,000")]
+    [TestCase(OversightReviewStatus.SuccessfulAlreadyActive, null, "ApplicationApprovedSupportingAlreadyActive.cshtml", 500000, "500,000")]
+    [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.SuccessfulAlreadyActive, "ApplicationApprovedSupportingAlreadyActive.cshtml", 100000, "100,000")]
+    [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.SuccessfulAlreadyActive, "ApplicationApprovedSupportingAlreadyActive.cshtml", 500000, "500,000")]
+    public async Task Application_shows_approved_supporting_page_with_formatted_amount_that_matches_oversight_and_appeal_statuses(OversightReviewStatus oversightReviewStatus, string appealStatus, string expectedView, int subcontractorLimit, string subcontractLimitFormatted)
         {
             var supportingRouteId = Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute;
 
@@ -150,8 +160,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 ApplicationStatus = ApplicationStatus.Successful,
                 ApplicationRouteId = supportingRouteId.ToString(),
-                SubcontractingLimit = subcontractorLimit,
-                OversightReviewStatus = OversightReviewStatus.SuccessfulFitnessForFunding
+                SubcontractingLimit = subcontractorLimit ,
+                OversightReviewStatus = oversightReviewStatus,
+                AppealStatus = appealStatus
             };
 
             _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
@@ -160,24 +171,26 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ApplicationApprovedSupportingFitnessForFunding.cshtml");
+            viewResult.ViewName.Should().Contain(expectedView);
 
             var modelReturned = viewResult.Model as ApplicationSummaryViewModel;
             modelReturned.SubcontractingLimit.Should().Be(subcontractorLimit);
             modelReturned.SubcontractingLimitFormatted.Should().Be(subcontractLimitFormatted);
         }
 
-        [TestCase(100000, "100,000")]
-        [TestCase(500000, "500,000")]
-        public async Task Application_shows_approved_already_active_supporting_page_with_formatted_amount_if_application_approved_and_successful_already_active_and_route_is_supporting(int subcontractorLimit, string subcontractLimitFormatted)
+        [TestCase(OversightReviewStatus.SuccessfulFitnessForFunding, null, "ApplicationApprovedFitnessForFunding.cshtml")]
+        [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.SuccessfulFitnessForFunding, "ApplicationApprovedFitnessForFunding.cshtml")]
+        [TestCase(OversightReviewStatus.Successful, null, "ApplicationApproved.cshtml")]
+        [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.Successful, "ApplicationApproved.cshtml")]
+        [TestCase(OversightReviewStatus.SuccessfulAlreadyActive, null, "ApplicationApprovedAlreadyActive.cshtml")]
+        [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.SuccessfulAlreadyActive, "ApplicationApprovedAlreadyActive.cshtml")]
+        public async Task Application_shows_active_with_view_appropriate_to_oversight_or_appeal_status(OversightReviewStatus oversightReviewStatus, string appealStatus, string expectedView)
         {
-            var supportingRouteId = Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute;
             var model = new ApplicationSummaryViewModel
             {
                 ApplicationStatus = ApplicationStatus.Successful,
-                ApplicationRouteId = supportingRouteId.ToString(),
-                SubcontractingLimit = subcontractorLimit,
-                OversightReviewStatus = OversightReviewStatus.SuccessfulAlreadyActive
+                OversightReviewStatus = oversightReviewStatus,
+                AppealStatus = appealStatus
             };
 
             _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
@@ -186,47 +199,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ApplicationApprovedSupportingAlreadyActive.cshtml");
-
-            var modelReturned = viewResult.Model as ApplicationSummaryViewModel;
-            modelReturned.SubcontractingLimit.Should().Be(subcontractorLimit);
-            modelReturned.SubcontractingLimitFormatted.Should().Be(subcontractLimitFormatted);
-        }
-
-        [Test]
-        public async Task Application_shows_active_with_success_fitness_for_funding_page_if_application_approved_and_oversight_review_status_already_active()
-        {
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationStatus = ApplicationStatus.Successful,
-                OversightReviewStatus = OversightReviewStatus.SuccessfulFitnessForFunding
-            };
-
-            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
-
-            var result = await _controller.ProcessApplicationStatus(_applicationId);
-
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ApplicationApprovedFitnessForFunding.cshtml");
-        }
-
-        [Test]
-        public async Task Application_shows_application_approved_page_if_application_approved_and_oversight_review_status_unset()
-        {
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationStatus = ApplicationStatus.Successful,
-                OversightReviewStatus = null
-            };
-
-            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
-
-            var result = await _controller.ProcessApplicationStatus(_applicationId);
-
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ApplicationApproved.cshtml");
+            viewResult.ViewName.Should().Contain(expectedView);
         }
 
         [Test]
@@ -586,6 +559,29 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
             redirectResult.ActionName.Should().Be("AppealUnsuccessful");
+            redirectResult.ControllerName.Should().Be("RoatpAppeals");
+        }
+
+        [Test]
+        public async Task Application_shows_appeal_successful_page_when_appeal_submitted_and_successful_outcome()
+        {
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationStatus = ApplicationStatus.Unsuccessful,
+                OversightReviewStatus = OversightReviewStatus.Unsuccessful,
+                ApplicationDeterminedDate = DateTime.Today,
+                AppealRequiredByDate = DateTime.Today.AddDays(10),
+                AppealStatus = AppealStatus.Successful,
+                IsAppealSubmitted = true
+            };
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
+
+            var result = await _controller.ProcessApplicationStatus(_applicationId);
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("AppealSuccessful");
             redirectResult.ControllerName.Should().Be("RoatpAppeals");
         }
 
