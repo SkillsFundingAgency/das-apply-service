@@ -8,12 +8,11 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
+using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Controllers.Roatp;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -29,6 +28,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
         private Mock<IOutcomeApiClient> _outcomeApiClient;
         private Mock<IOverallOutcomeService> _outcomeService;
+        private Mock<IApplicationApiClient> _applicationApiClient;
+        private Mock<IRequestInvitationToReapplyEmailService> _emailService;
 
         private RoatpOverallOutcomeController _controller;
 
@@ -37,6 +38,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             _outcomeService = new Mock<IOverallOutcomeService>();
             _outcomeApiClient = new Mock<IOutcomeApiClient>();
+            _applicationApiClient = new Mock<IApplicationApiClient>();
+            _emailService = new Mock<IRequestInvitationToReapplyEmailService>();
 
             var signInId = Guid.NewGuid();
             var givenNames = "Test";
@@ -51,7 +54,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 new Claim("custom-claim", "example claim value"),
             }, "mock"));
 
-            _controller = new RoatpOverallOutcomeController(_outcomeService.Object, _outcomeApiClient.Object)
+            _controller = new RoatpOverallOutcomeController(_outcomeService.Object, _outcomeApiClient.Object, _emailService.Object,_applicationApiClient.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -677,6 +680,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             viewResult.Model.Should().BeEquivalentTo(viewModel);
             viewResult.ViewName.Should().Contain("RequestNewInvitation.cshtml");
+            _applicationApiClient.Verify(x => x.GetApplication(applicationId), Times.Once);
+            _emailService.Verify(x => x.SendRequestToReapplyEmail(It.IsAny<RequestInvitationToReapply>()), Times.Once);
+
         }
     }
 }
