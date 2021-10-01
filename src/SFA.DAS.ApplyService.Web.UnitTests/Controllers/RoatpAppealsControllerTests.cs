@@ -12,12 +12,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Controllers.Roatp;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
+using AppealFile = SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals.AppealFile;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -30,6 +32,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private RoatpAppealsController _controller;
         private Mock<IOutcomeApiClient> _outcomeApiClient;
         private Mock<IAppealsApiClient> _appealsApiClient;
+        private Mock<IApplicationApiClient> _applicationApiClient;
 
         [SetUp]
         public void Before_each_test()
@@ -39,6 +42,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _outcomeApiClient = new Mock<IOutcomeApiClient>();
             _appealsApiClient = new Mock<IAppealsApiClient>();
+            _applicationApiClient = new Mock<IApplicationApiClient>();  
 
             var signInId = Guid.NewGuid();
             var givenNames = "Test";
@@ -62,7 +66,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _appealsApiClient.Setup(x => x.GetAppealFileList(_applicationId)).ReturnsAsync(default(GetAppealFileListResponse));
 
-            _controller = new RoatpAppealsController(_outcomeApiClient.Object, _appealsApiClient.Object)
+            _controller = new RoatpAppealsController(_outcomeApiClient.Object, _appealsApiClient.Object,_applicationApiClient.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -401,6 +405,69 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.ViewName.Should().Contain("AppealUnsuccessful.cshtml");
             viewResult.Model.Should().BeEquivalentTo(model);
         }
+
+        [TestCase(AppealStatus.Successful, false, "AppealSuccessful.cshtml")]
+        [TestCase(AppealStatus.SuccessfulAlreadyActive, false,"AppealSuccessfulAlreadyActive.cshtml")]
+        [TestCase(AppealStatus.SuccessfulFitnessForFunding, false,"AppealSuccessfulFitnessForFunding.cshtml")]
+        [TestCase(AppealStatus.Successful, true, "AppealSuccessfulSupporting.cshtml")]
+        [TestCase(AppealStatus.SuccessfulAlreadyActive, true, "AppealSuccessfulSupportingAlreadyActive.cshtml")]
+        [TestCase(AppealStatus.SuccessfulFitnessForFunding, true, "AppealSuccessfulSupportingFitnessForFunding.cshtml")]
+
+        public async Task AppealSubmitted_shows_Successful_page_if_appeal_deemed_Successful(string appealStatus, bool isSupporting,string expectedPage)
+        {
+            var model = new AppealSuccessfulViewModel
+            {
+                ApplicationId = _applicationId,
+                AppealSubmittedDate = DateTime.UtcNow.AddDays(-1),
+                AppealDeterminedDate = DateTime.UtcNow,
+                AppealedOnEvidenceSubmitted = true,
+                AppealedOnPolicyOrProcesses = true,
+                ExternalComments = "You were successful"
+            };
+
+            var appeal = new GetAppealResponse
+            {
+                Status = appealStatus,
+                ApplicationId = model.ApplicationId,
+                AppealSubmittedDate = model.AppealSubmittedDate,
+                AppealDeterminedDate = model.AppealDeterminedDate,
+                HowFailedOnEvidenceSubmitted = "valid input",
+                HowFailedOnPolicyOrProcesses = "valid input",
+                ExternalComments = model.ExternalComments
+            };
+
+            _appealsApiClient.Setup(x => x.GetAppeal(_applicationId)).ReturnsAsync(appeal);
+
+            var route = Domain.Roatp.ApplicationRoute.MainProviderApplicationRoute;
+
+            if (isSupporting)
+                route = Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute;
+
+            var application = new Apply
+            {
+                ApplyData = new ApplyData {ApplyDetails = new ApplyDetails {ProviderRoute = route}}
+            };
+
+            _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(application);
+            var result = await _controller.AppealSuccessful(_applicationId);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain(expectedPage);
+            viewResult.Model.Should().BeEquivalentTo(model);
+        }
+
+        [Test]
+        public async Task AppealSubmitted_shows_tasklist_if_appeal_does_not_exist()
+        {
+            _appealsApiClient.Setup(x => x.GetAppeal(_applicationId)).ReturnsAsync((GetAppealResponse)null);
+
+            var result = await _controller.AppealSuccessful(_applicationId);
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("ProcessApplicationStatus");
+        }   
 
         [Test]
         public async Task DownloadAppealFile_when_file_exists_downloads_the_requested_file()
