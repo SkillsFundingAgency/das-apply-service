@@ -18,7 +18,7 @@
         public const string ROATP_APPLICATION_UPDATED = "RoATPApplicationUpdated";
 
         /// <summary>
-        /// Requires tokens: { AppklicantEmail, UKPRN, OrganisationName  }
+        /// Requires tokens: { ApplicantEmail, UKPRN, OrganisationName  }
         /// </summary>
         public const string ROATP_REQUEST_INVITATION_TO_REAPPLY = "RoATPRequestInvitationToReapply";
     }
