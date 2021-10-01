@@ -330,7 +330,7 @@
                         "value": "[variables('storageAccountName')]"
                     },
                     "allowSharedKeyAccess": {
-                        "value": "true"
+                        "value": true
                     }
                 }
             }
