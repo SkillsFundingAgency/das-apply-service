@@ -26,9 +26,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void ConfirmExistingAccount_When_FirstTimeSignin_Y_Should_Return_To_CreateAccount()
+        public void ConfirmExistingAccount_When_FirstTimeSignin_Should_Return_To_CreateAccount()
         {
-            ExistingAccountViewModel model = new ExistingAccountViewModel { FirstTimeSignin = "Y" };
+            ExistingAccountViewModel model = new ExistingAccountViewModel { FirstTimeSignin = true };
             var result = _userController.ConfirmExistingAccount(model);
 
             var viewResult = result as RedirectToActionResult;
@@ -37,9 +37,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void ConfirmExistingAccount_When_FirstTimeSignin_N_Should_Return_To_SignInAccount()
+        public void ConfirmExistingAccount_When_Not_FirstTimeSignin_Should_Return_To_SignInAccount()
         {
-            ExistingAccountViewModel model = new ExistingAccountViewModel { FirstTimeSignin = "N" };
+            ExistingAccountViewModel model = new ExistingAccountViewModel { FirstTimeSignin = false };
             var result = _userController.ConfirmExistingAccount(model);
 
             var viewResult = result as RedirectToActionResult;
@@ -48,7 +48,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void ExistingAccountViewModel_When_Model_Is_Not_Valid_RedirectsTo_ExistingAccount()
+        public void ExistingAccountViewModel_When_Invalid_FirstTimeSignin_RedirectsTo_ExistingAccount()
         {
             ExistingAccountViewModel model = new ExistingAccountViewModel { FirstTimeSignin = null };
             _userController.ModelState.AddModelError("FirstTimeSignin", "First Name is Required");

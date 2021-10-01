@@ -1,5 +1,4 @@
-﻿@using MoreLinq;
-@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ExistingAccountViewModel
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ExistingAccountViewModel
 
 @{
     ViewBag.Title = "Do you have an apprenticeship service (AS) sign in account?"; 
@@ -31,7 +30,7 @@
                                        id="FirstTimeSignin"
                                        name="FirstTimeSignin"
                                        type="radio"
-                                       value="N"
+                                       value="@bool.FalseString"
                                        sfa-validation-for="FirstTimeSignin"
                                        sfa-validationerror-class="form-control-error">
                                 <label class="govuk-label govuk-radios__label" for="FirstTimeSignin">
@@ -44,7 +43,7 @@
                                        id="FirstTimeSignin-Yes"
                                        name="FirstTimeSignin"
                                        type="radio"
-                                       value="Y"
+                                       value="@bool.TrueString"
                                        sfa-validation-for="FirstTimeSignin"
                                        sfa-validationerror-class="form-control-error">
                                 <label class="govuk-label govuk-radios__label" for="FirstTimeSignin-Yes">

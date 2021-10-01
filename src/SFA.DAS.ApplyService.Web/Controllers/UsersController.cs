@@ -145,7 +145,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("ExistingAccount");
             }
 
-            if (model.FirstTimeSignin == "Y")
+            if (model.FirstTimeSignin == true)
             {
                 return RedirectToAction("CreateAccount");
             }
