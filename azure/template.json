@@ -328,6 +328,9 @@
                 "parameters": {
                     "storageAccountName": {
                         "value": "[variables('storageAccountName')]"
+                    },
+                    "allowSharedKeyAccess": {
+                        "value": true
                     }
                 }
             }

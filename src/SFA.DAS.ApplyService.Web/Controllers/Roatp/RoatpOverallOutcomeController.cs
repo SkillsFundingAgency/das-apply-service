@@ -3,6 +3,8 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
@@ -14,12 +16,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     public class RoatpOverallOutcomeController : Controller
     {
         private readonly IOverallOutcomeService _overallOutcomeService;
-        private readonly IOutcomeApiClient _outcomeApiClient;    
+        private readonly IOutcomeApiClient _outcomeApiClient;
+        private readonly IApplicationApiClient _applicationApiClient;
+        private readonly IRequestInvitationToReapplyEmailService _emailService;
 
-        public RoatpOverallOutcomeController(IOverallOutcomeService overallOutcomeService, IOutcomeApiClient outcomeApiClient)
+        public RoatpOverallOutcomeController(IOverallOutcomeService overallOutcomeService, IOutcomeApiClient outcomeApiClient, IRequestInvitationToReapplyEmailService emailService, IApplicationApiClient applicationApiClient)
         {
             _overallOutcomeService = overallOutcomeService;
             _outcomeApiClient = outcomeApiClient;
+            _emailService = emailService;
+            _applicationApiClient = applicationApiClient;
         }
 
         [HttpGet]
@@ -34,6 +40,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [Route("application/{applicationId}/request-new-invitation")]
         public async Task<IActionResult> RequestNewInvitation(Guid applicationId)
         {
+            var application = await _applicationApiClient.GetApplication(applicationId);
+
+            var emailRequest = new RequestInvitationToReapply
+            {
+                EmailAddress = User.GetEmail(),
+                UKPRN = application?.ApplyData?.ApplyDetails?.UKPRN,
+                OrganisationName = application?.ApplyData?.ApplyDetails?.OrganisationName
+            };
+
+            await _emailService.SendRequestToReapplyEmail(emailRequest);
             return View("~/Views/Roatp/RequestNewInvitation.cshtml", new ApplicationSummaryViewModel { ApplicationId=applicationId});
         }
 

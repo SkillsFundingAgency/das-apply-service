@@ -83,7 +83,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (viewModel?.Email is null)
             {
-                RedirectToAction("CreateAccount");
+                return RedirectToAction("CreateAccount");
             }
 
             return View(viewModel);
