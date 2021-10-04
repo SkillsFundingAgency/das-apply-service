@@ -102,13 +102,14 @@ namespace SFA.DAS.ApplyService.Web
                 options.SupportedUICultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
-            
+
             services.AddMvc(options =>
             {
                 options.Filters.Add<FeatureToggleFilter>();
             })
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateAccountValidator>())
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            .AddSessionStateTempDataProvider();
 
             services.AddOptions();
 
@@ -254,6 +255,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IEmailTokenService, EmailTokenService>();
             services.AddTransient<IAssessorLookupService, AssessorLookupService>();
             services.AddTransient<IGetHelpWithQuestionEmailService, GetHelpWithQuestionEmailService>();
+            services.AddTransient<IRequestInvitationToReapplyEmailService, RequestInvitationToReapplyEmailService>();
             services.AddTransient<INotificationsApi>(x => {
                 var apiConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
                 {

@@ -8,12 +8,11 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
+using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Controllers.Roatp;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -29,6 +28,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
         private Mock<IOutcomeApiClient> _outcomeApiClient;
         private Mock<IOverallOutcomeService> _outcomeService;
+        private Mock<IApplicationApiClient> _applicationApiClient;
+        private Mock<IRequestInvitationToReapplyEmailService> _emailService;
 
         private RoatpOverallOutcomeController _controller;
 
@@ -37,7 +38,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             _outcomeService = new Mock<IOverallOutcomeService>();
             _outcomeApiClient = new Mock<IOutcomeApiClient>();
-            
+            _applicationApiClient = new Mock<IApplicationApiClient>();
+            _emailService = new Mock<IRequestInvitationToReapplyEmailService>();
+
             var signInId = Guid.NewGuid();
             var givenNames = "Test";
             var familyName = "User";
@@ -50,12 +53,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 new Claim("sub", signInId.ToString()),
                 new Claim("custom-claim", "example claim value"),
             }, "mock"));
-            
-            _controller = new RoatpOverallOutcomeController(_outcomeService.Object, _outcomeApiClient.Object)
+
+            _controller = new RoatpOverallOutcomeController(_outcomeService.Object, _outcomeApiClient.Object, _emailService.Object,_applicationApiClient.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
-                    HttpContext = new DefaultHttpContext() {User = user}
+                    HttpContext = new DefaultHttpContext() { User = user }
                 }
             };
         }
@@ -139,96 +142,69 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             modelReturned.SubcontractingLimit.Should().Be(subcontractorLimit);
             modelReturned.SubcontractingLimitFormatted.Should().Be(subcontractLimitFormatted);
         }
-
-        [TestCase(100000, "100,000")]
-        [TestCase(500000, "500,000")]
-        public async Task Application_shows_approved_fitness_for_funding_supporting_page_with_formatted_amount_if_application_approved_and_successful_fitness_for_funding_and_route_is_supporting(int subcontractorLimit, string subcontractLimitFormatted)
-        {
-            var supportingRouteId = Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute;
-
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationStatus = ApplicationStatus.Successful,
-                ApplicationRouteId = supportingRouteId.ToString(),
-                SubcontractingLimit = subcontractorLimit,
-                OversightReviewStatus = OversightReviewStatus.SuccessfulFitnessForFunding
-            };
-
-            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
-
-            var result = await _controller.ProcessApplicationStatus(_applicationId);
-
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ApplicationApprovedSupportingFitnessForFunding.cshtml");
-
-            var modelReturned = viewResult.Model as ApplicationSummaryViewModel;
-            modelReturned.SubcontractingLimit.Should().Be(subcontractorLimit);
-            modelReturned.SubcontractingLimitFormatted.Should().Be(subcontractLimitFormatted);
-        }
-
-        [TestCase(100000, "100,000")]
-        [TestCase(500000, "500,000")]
-        public async Task Application_shows_approved_already_active_supporting_page_with_formatted_amount_if_application_approved_and_successful_already_active_and_route_is_supporting(int subcontractorLimit, string subcontractLimitFormatted)
-        {
-            var supportingRouteId = Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute;
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationStatus = ApplicationStatus.Successful,
-                ApplicationRouteId = supportingRouteId.ToString(),
-                SubcontractingLimit = subcontractorLimit,
-                OversightReviewStatus = OversightReviewStatus.SuccessfulAlreadyActive
-            };
-
-            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
-
-            var result = await _controller.ProcessApplicationStatus(_applicationId);
-
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ApplicationApprovedSupportingAlreadyActive.cshtml");
-
-            var modelReturned = viewResult.Model as ApplicationSummaryViewModel;
-            modelReturned.SubcontractingLimit.Should().Be(subcontractorLimit);
-            modelReturned.SubcontractingLimitFormatted.Should().Be(subcontractLimitFormatted);
-        }
-
-        [Test]
-        public async Task Application_shows_active_with_success_fitness_for_funding_page_if_application_approved_and_oversight_review_status_already_active()
-        {
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationStatus = ApplicationStatus.Successful,
-                OversightReviewStatus = OversightReviewStatus.SuccessfulFitnessForFunding
-            };
-
-            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
-
-            var result = await _controller.ProcessApplicationStatus(_applicationId);
-
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ApplicationApprovedFitnessForFunding.cshtml");
-        }
-
-        [Test]
-        public async Task Application_shows_application_approved_page_if_application_approved_and_oversight_review_status_unset()
-        {
-            var model = new ApplicationSummaryViewModel
-            {
-                ApplicationStatus = ApplicationStatus.Successful,
-                OversightReviewStatus = null
-            };
-
-            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
-
-            var result = await _controller.ProcessApplicationStatus(_applicationId);
-
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ApplicationApproved.cshtml");
-        }
         
+    [TestCase( OversightReviewStatus.Successful, null, "ApplicationApprovedSupporting.cshtml",100000, "100,000")]
+    [TestCase(OversightReviewStatus.Successful, null, "ApplicationApprovedSupporting.cshtml", 500000, "500,000")]
+    [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.Successful, "ApplicationApprovedSupporting.cshtml", 100000, "100,000")]
+    [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.Successful, "ApplicationApprovedSupporting.cshtml", 500000, "500,000")]
+    [TestCase(OversightReviewStatus.SuccessfulFitnessForFunding, null, "ApplicationApprovedSupportingFitnessForFunding.cshtml", 100000, "100,000")]
+    [TestCase(OversightReviewStatus.SuccessfulFitnessForFunding, null, "ApplicationApprovedSupportingFitnessForFunding.cshtml", 500000, "500,000")]
+    [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.SuccessfulFitnessForFunding, "ApplicationApprovedSupportingFitnessForFunding.cshtml", 100000, "100,000")]
+    [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.SuccessfulFitnessForFunding, "ApplicationApprovedSupportingFitnessForFunding.cshtml", 500000, "500,000")]
+    [TestCase(OversightReviewStatus.SuccessfulAlreadyActive, null, "ApplicationApprovedSupportingAlreadyActive.cshtml", 100000, "100,000")]
+    [TestCase(OversightReviewStatus.SuccessfulAlreadyActive, null, "ApplicationApprovedSupportingAlreadyActive.cshtml", 500000, "500,000")]
+    [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.SuccessfulAlreadyActive, "ApplicationApprovedSupportingAlreadyActive.cshtml", 100000, "100,000")]
+    [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.SuccessfulAlreadyActive, "ApplicationApprovedSupportingAlreadyActive.cshtml", 500000, "500,000")]
+    public async Task Application_shows_approved_supporting_page_with_formatted_amount_that_matches_oversight_and_appeal_statuses(OversightReviewStatus oversightReviewStatus, string appealStatus, string expectedView, int subcontractorLimit, string subcontractLimitFormatted)
+        {
+            var supportingRouteId = Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute;
+
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationStatus = ApplicationStatus.Successful,
+                ApplicationRouteId = supportingRouteId.ToString(),
+                SubcontractingLimit = subcontractorLimit ,
+                OversightReviewStatus = oversightReviewStatus,
+                AppealStatus = appealStatus
+            };
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
+
+            var result = await _controller.ProcessApplicationStatus(_applicationId);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain(expectedView);
+
+            var modelReturned = viewResult.Model as ApplicationSummaryViewModel;
+            modelReturned.SubcontractingLimit.Should().Be(subcontractorLimit);
+            modelReturned.SubcontractingLimitFormatted.Should().Be(subcontractLimitFormatted);
+        }
+
+        [TestCase(OversightReviewStatus.SuccessfulFitnessForFunding, null, "ApplicationApprovedFitnessForFunding.cshtml")]
+        [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.SuccessfulFitnessForFunding, "ApplicationApprovedFitnessForFunding.cshtml")]
+        [TestCase(OversightReviewStatus.Successful, null, "ApplicationApproved.cshtml")]
+        [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.Successful, "ApplicationApproved.cshtml")]
+        [TestCase(OversightReviewStatus.SuccessfulAlreadyActive, null, "ApplicationApprovedAlreadyActive.cshtml")]
+        [TestCase(OversightReviewStatus.Unsuccessful, AppealStatus.SuccessfulAlreadyActive, "ApplicationApprovedAlreadyActive.cshtml")]
+        public async Task Application_shows_active_with_view_appropriate_to_oversight_or_appeal_status(OversightReviewStatus oversightReviewStatus, string appealStatus, string expectedView)
+        {
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationStatus = ApplicationStatus.Successful,
+                OversightReviewStatus = oversightReviewStatus,
+                AppealStatus = appealStatus
+            };
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
+
+            var result = await _controller.ProcessApplicationStatus(_applicationId);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain(expectedView);
+        }
+
         [Test]
         public async Task Application_shows_tasklist_page_if_application_new()
         {
@@ -240,13 +216,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
 
             var result = await _controller.ProcessApplicationStatus(_applicationId);
-        
+
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
             redirectResult.ActionName.Should().Be("TaskList");
             redirectResult.ControllerName.Should().Be("RoatpApplication");
         }
-        
+
         [Test]
         public async Task Application_shows_application_submitted_page_if_application_resubmitted()
         {
@@ -256,14 +232,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
-       
+
             var result = await _controller.ProcessApplicationStatus(_applicationId);
-        
+
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationSubmitted.cshtml");
         }
-        
+
         [Test]
         public async Task Application_shows_rejected_page_if_application_rejected_at_gateway()
         {
@@ -276,12 +252,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
 
             var result = await _controller.ProcessApplicationStatus(_applicationId);
-        
+
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationRejected.cshtml");
         }
-        
+
         [Test]
         public async Task Application_shows_feedback_added_page_if_application_status_matches()
         {
@@ -293,12 +269,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
 
             var result = await _controller.ProcessApplicationStatus(_applicationId);
-        
+
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("FeedbackAdded.cshtml");
         }
-        
+
         [Test]
         public async Task Application_shows_task_list_if_an_application_in_progress()
         {
@@ -316,7 +292,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("TaskList");
             redirectResult.ControllerName.Should().Be("RoatpApplication");
         }
-        
+
         [Test]
         public async Task Application_shows_task_list_if_an_application_not_set()
         {
@@ -334,7 +310,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("TaskList");
             redirectResult.ControllerName.Should().Be("RoatpApplication");
         }
-        
+
         [Test]
         public async Task Applications_shows_unsuccessful_page_if_application_unsuccessful_and_gateway_fail()
         {
@@ -349,12 +325,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
 
             var result = await _controller.ProcessApplicationStatus(_applicationId);
-        
+
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationUnsuccessful.cshtml");
         }
-        
+
         [Test]
         public async Task Applications_shows_unsuccessful_page_if_application_unsuccessful_and_gateway_not_a_fail()
         {
@@ -370,7 +346,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _outcomeService.Setup(x => x.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
 
             var result = await _controller.ProcessApplicationStatus(_applicationId);
-        
+
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationUnsuccessfulPostGateway.cshtml");
@@ -387,12 +363,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
 
             var result = await _controller.ProcessApplicationStatus(_applicationId);
-        
+
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationWithdrawn.cshtml");
         }
-        
+
         [Test]
         public async Task Application_shows_removed_page_if_application_removed_and_oversight_status_is_removed()
         {
@@ -405,7 +381,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
 
             var result = await _controller.ProcessApplicationStatus(_applicationId);
-        
+
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationWithdrawnESFA.cshtml");
@@ -454,7 +430,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationSubmitted.cshtml");
         }
-        
+
         [Test]
         public async Task Application_shows_submitted_page_if_application_resubmitted()
         {
@@ -466,7 +442,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
 
             var result = await _controller.ProcessApplicationStatus(_applicationId);
-        
+
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ApplicationSubmitted.cshtml");
@@ -590,6 +566,29 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+        public async Task Application_shows_appeal_successful_page_when_appeal_submitted_and_successful_outcome()
+        {
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationStatus = ApplicationStatus.Unsuccessful,
+                OversightReviewStatus = OversightReviewStatus.Unsuccessful,
+                ApplicationDeterminedDate = DateTime.Today,
+                AppealRequiredByDate = DateTime.Today.AddDays(10),
+                AppealStatus = AppealStatus.Successful,
+                IsAppealSubmitted = true
+            };
+
+            _outcomeService.Setup(x => x.BuildApplicationSummaryViewModel(_applicationId, It.IsAny<string>())).ReturnsAsync(model);
+
+            var result = await _controller.ProcessApplicationStatus(_applicationId);
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("AppealSuccessful");
+            redirectResult.ControllerName.Should().Be("RoatpAppeals");
+        }
+
+        [Test]
         public async Task Application_shows_unsuccessful_page_when_appeal_submitted_and_unsuccessful_outcome_and_application_overview_clicked()
         {
             var model = new ApplicationSummaryViewModel
@@ -623,7 +622,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var viewModel = new OutcomeSectorDetailsViewModel
             {
                 ApplicationId = applicationId,
-                SectorDetails = new SectorDetails {SectorName = sectorName}
+                SectorDetails = new SectorDetails { SectorName = sectorName }
             };
 
             _outcomeService.Setup(x => x.GetSectorDetailsViewModel(applicationId, pageId)).ReturnsAsync(viewModel);
@@ -646,7 +645,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var pageId = "pageId";
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StreamContent(new MemoryStream())
-                { Headers = { ContentLength = 0, ContentType = new MediaTypeHeaderValue(contentType) } };
+            { Headers = { ContentLength = 0, ContentType = new MediaTypeHeaderValue(contentType) } };
 
             _outcomeApiClient.Setup(x => x.DownloadClarificationfile(applicationId, sequenceNumber, sectionNumber, pageId, filename)).ReturnsAsync(response);
             var result = await _controller.DownloadClarificationFile(applicationId, sequenceNumber, sectionNumber, pageId, filename) as FileStreamResult;
@@ -664,5 +663,28 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = await _controller.DownloadClarificationFile(Guid.NewGuid(), 1, 2, "_pageId", filename) as NotFoundResult;
             Assert.IsNotNull(result);
         }
+
+        [Test]
+        public async Task Application_new_invitation_requested()
+        {
+            var applicationId = Guid.NewGuid();
+
+            var viewModel = new ApplicationSummaryViewModel
+            {
+                ApplicationId = applicationId
+            };
+
+            var result = await _controller.RequestNewInvitation(applicationId);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.Model.Should().BeEquivalentTo(viewModel);
+            viewResult.ViewName.Should().Contain("RequestNewInvitation.cshtml");
+            _applicationApiClient.Verify(x => x.GetApplication(applicationId), Times.Once);
+            _emailService.Verify(x => x.SendRequestToReapplyEmail(It.IsAny<RequestInvitationToReapply>()), Times.Once);
+
+        }
     }
 }
+
+

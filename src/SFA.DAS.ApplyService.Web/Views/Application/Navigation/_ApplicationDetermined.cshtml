@@ -1,0 +1,10 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
+
+@if (Model.IsAppealSubmitted)
+{
+    <partial name="~/Views/Application/Navigation/_AppealSubmittedHeader.cshtml" />
+}
+else
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+}

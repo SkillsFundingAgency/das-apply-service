@@ -1,0 +1,61 @@
+﻿@using SFA.DAS.AdminService.Common.Extensions;
+
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals.AppealSuccessfulViewModel
+
+@{
+    ViewBag.Title = "Appeal successful";
+    Layout = "_Layout";
+}
+
+@section Navigation
+{
+    <partial name="~/Views/Appeals/Navigation/_AppealSubmittedHeader.cshtml" />
+}
+
+<main class="govuk-main-wrapper" id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-panel app-panel--success">
+                <h1 class="govuk-panel__title">
+                    Appeal successful
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Appeal submitted date</dt>
+                    <dd class="govuk-summary-list__value">@Model.AppealSubmittedDate.ToSfaShortDateString()</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Appeal determined  date</dt>
+                    <dd class="govuk-summary-list__value">@Model.AppealDeterminedDate.ToSfaShortDateString()</dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">
+                Your appeal against the outcome of your application to be on the RoATP has been successful.
+            </p>
+        </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+            <h2 class="govuk-heading-m">What happens next</h2>
+            <p class="govuk-body">
+                Before we publish your organisation on to the register, you'll need to complete some post-application (on-boarding) tasks. You'll receive an email within 5 working days from the 'Delivery Support team - Market Entry and Operation', explaining how to do this.
+            </p>
+            <partial name="~/Views/Roatp/_FailureWarning.cshtml" />
+
+            <partial name="~/Views/Roatp/_ApplicationApprovedGuidelinesContactDetails.cshtml" />
+        </div>
+    </div>
+</main>

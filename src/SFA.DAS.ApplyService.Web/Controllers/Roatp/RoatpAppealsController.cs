@@ -16,11 +16,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     {
         private readonly IOutcomeApiClient _outcomeApiClient;
         private readonly IAppealsApiClient _appealsApiClient;
+        private readonly IApplicationApiClient _applicationApiClient;
 
-        public RoatpAppealsController(IOutcomeApiClient apiClient, IAppealsApiClient appealsApiClient)
+
+        public RoatpAppealsController(IOutcomeApiClient apiClient, IAppealsApiClient appealsApiClient, IApplicationApiClient applicationApiClient)
         {
             _outcomeApiClient = apiClient;
             _appealsApiClient = appealsApiClient;
+            _applicationApiClient = applicationApiClient;
         }
 
         [HttpGet("application/{applicationId}/appeal")]
@@ -197,6 +200,48 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             };
 
             return View("~/Views/Appeals/AppealUnsuccessful.cshtml", model);
+        }
+
+        [HttpGet("application/{applicationId}/appeal/successful")]
+        public async Task<IActionResult> AppealSuccessful(Guid applicationId)
+        {
+            var appeal = await _appealsApiClient.GetAppeal(applicationId);
+            if (appeal==null)
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
+
+            if (appeal.Status != AppealStatus.Successful && appeal.Status != AppealStatus.SuccessfulFitnessForFunding && appeal.Status != AppealStatus.SuccessfulAlreadyActive)
+            {
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
+            }
+
+            var application = await _applicationApiClient.GetApplication(applicationId);
+
+
+            var model = new AppealSuccessfulViewModel
+            {
+                ApplicationId = applicationId,
+                AppealSubmittedDate = appeal.AppealSubmittedDate ?? null,
+                AppealDeterminedDate = appeal.AppealDeterminedDate ?? null,
+                AppealedOnEvidenceSubmitted = !string.IsNullOrEmpty(appeal.HowFailedOnEvidenceSubmitted),
+                AppealedOnPolicyOrProcesses = !string.IsNullOrEmpty(appeal.HowFailedOnPolicyOrProcesses),
+                ExternalComments = appeal.ExternalComments,
+                SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit
+            };
+
+            var isSupporting = application?.ApplyData?.ApplyDetails?.ProviderRoute.ToString() ==
+                                 Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute.ToString();
+
+            switch (appeal?.Status)
+            {
+                case AppealStatus.Successful:
+                    return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupporting.cshtml" : "~/Views/Appeals/AppealSuccessful.cshtml", model);
+                case AppealStatus.SuccessfulAlreadyActive:
+                    return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupportingAlreadyActive.cshtml" : "~/Views/Appeals/AppealSuccessfulAlreadyActive.cshtml", model);
+                case AppealStatus.SuccessfulFitnessForFunding:
+                    return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupportingFitnessForFunding.cshtml" : "~/Views/Appeals/AppealSuccessfulFitnessForFunding.cshtml", model);
+            }
+
+            return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
         }
 
         [HttpGet("application/{applicationId}/appeal/file/{fileName}")]
