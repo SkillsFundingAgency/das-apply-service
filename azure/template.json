@@ -38,11 +38,6 @@
         "sharedManagementResourceGroup": {
             "type": "string"
         },
-        "appServiceAllowedIPs": {
-            "type": "array",
-            "defaultValue": [
-            ]
-        },
         "backEndAccessRestrictions": {
             "type": "array"
         },
