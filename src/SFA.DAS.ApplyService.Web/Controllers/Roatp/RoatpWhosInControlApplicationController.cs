@@ -847,7 +847,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 Name = name,
                 ActionName = actionName,
                 BackAction = backActionName,
-                GetHelpAction = actionName,
+                GetHelpAction = backActionName, // TODO: Change to actionName when PRG is done. Currently actionName points to a POST only action.
                 PageId = actionName
             };
 
