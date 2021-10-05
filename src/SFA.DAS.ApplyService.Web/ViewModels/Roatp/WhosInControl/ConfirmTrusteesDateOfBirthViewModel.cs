@@ -13,7 +13,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string Title { get { return "Enter the date of birth for trustees"; } set { } }
         public int SequenceId { get { return RoatpWorkflowSequenceIds.YourOrganisation; } set { } }
         public int SectionId { get { return RoatpWorkflowSectionIds.YourOrganisation.WhosInControl; } set { } }
-        public string PageId { get; set; }
+        public string PageId { get { return "ConfirmTrusteesDob";  } set { } }
         public string GetHelpQuestion { get; set; }
         public bool GetHelpQuerySubmitted { get; set; }
         public string GetHelpErrorMessage { get; set; }
