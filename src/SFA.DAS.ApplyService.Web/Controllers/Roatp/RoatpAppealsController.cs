@@ -7,6 +7,7 @@ using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -227,6 +228,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ExternalComments = appeal.ExternalComments,
                 SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit
             };
+
+            var isGatewayFail = application?.GatewayReviewStatus == GatewayReviewStatus.Fail;
+            if (isGatewayFail)
+            {
+                switch (appeal?.Status)
+                {
+                    case AppealStatus.Successful:
+                    case AppealStatus.SuccessfulAlreadyActive:
+                    case AppealStatus.SuccessfulFitnessForFunding:
+                        return View("~/Views/Appeals/AppealSuccessfulGatewayFail.cshtml", model);
+                }
+
+            }
 
             var isSupporting = application?.ApplyData?.ApplyDetails?.ProviderRoute.ToString() ==
                                  Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute.ToString();
