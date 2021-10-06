@@ -47,7 +47,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
                          LEFT JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
                          LEFT JOIN Appeal Appeal on apply.ApplicationId = Appeal.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
-                          AND Appeal.ApplicationId IS NULL
+                          AND Appeal.Status IS NULL
                           AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
                           and r.Status is null
                           and ((GatewayReviewStatus in (@gatewayReviewStatusPass)
@@ -98,7 +98,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
                           INNER JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
                           LEFT JOIN Appeal Appeal on apply.ApplicationId = Appeal.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
-                          AND Appeal.ApplicationId IS NULL
+                          AND Appeal.Status IS NULL
                           AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
                         ORDER BY {orderByClause}, org.Name ASC", new
                 {
