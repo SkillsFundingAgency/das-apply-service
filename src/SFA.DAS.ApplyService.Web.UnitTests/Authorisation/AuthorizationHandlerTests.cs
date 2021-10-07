@@ -111,6 +111,29 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Authorisation
         }
 
         [Test]
+        public async Task Handler_Falls_Back_To_ApplicationId_From_Route_When_HttpContext_Query_Error_For_ApplicationController()
+        {
+            _httpContextAccessor.Setup(x => x.HttpContext.Request.Query).Returns(() => null);
+            _httpContextAccessor.Setup(x => x.HttpContext.Request.Path).Returns(() => new PathString($"/Application/{_applicationId}"));
+
+            var handlerContext = CreateHandlerContext(new AccessApplicationRequirement());
+            await _handler.HandleAsync(handlerContext);
+            Assert.IsTrue(handlerContext.HasSucceeded);
+        }
+
+        [Test]
+        public async Task Handler_Falls_Back_To_ApplicationId_From_Route_When_HttpContext_Form_Error_For_ApplicationController()
+        {
+            _httpContextAccessor.Setup(x => x.HttpContext.Request.Method).Returns(() => HttpMethod.Post.Method);
+            _httpContextAccessor.Setup(x => x.HttpContext.Request.Form).Returns(() => throw new InvalidOperationException());
+            _httpContextAccessor.Setup(x => x.HttpContext.Request.Path).Returns(() => new PathString($"/Application/{_applicationId}"));
+
+            var handlerContext = CreateHandlerContext(new AccessApplicationRequirement());
+            await _handler.HandleAsync(handlerContext);
+            Assert.IsTrue(handlerContext.HasSucceeded);
+        }
+
+        [Test]
         public async Task AppealNotYetSubmittedRequirement_Succeeds_If_User_Has_Not_Yet_Submitted_Appeal()
         {
             var handlerContext = CreateHandlerContext(new AppealNotYetSubmittedRequirement());

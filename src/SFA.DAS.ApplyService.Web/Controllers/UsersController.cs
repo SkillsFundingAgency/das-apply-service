@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -8,15 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
-using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
-    using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class UsersController : Controller
     {
         private readonly IUsersApiClient _usersApiClient;
@@ -27,14 +22,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
         }
-        
+
         [HttpGet]
         public IActionResult CreateAccount()
         {
             var vm = new CreateAccountViewModel();
             return View(vm);
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel vm)
         {
@@ -42,7 +37,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return View(vm);
             }
-            
+
             var inviteSuccess = await _usersApiClient.InviteUser(vm);
 
             _sessionService.Set("NewAccount", vm);
@@ -53,10 +48,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public IActionResult SignIn()
         {
-            return Challenge(new AuthenticationProperties() {RedirectUri = Url.Action("PostSignIn", "Users")},
+            return Challenge(new AuthenticationProperties() { RedirectUri = Url.Action("PostSignIn", "Users") },
                 OpenIdConnectDefaults.AuthenticationScheme);
         }
-        
+
         [HttpGet]
         public IActionResult SignOut()
         {
@@ -126,37 +121,30 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpGet]
         [Route("first-time-apprenticeship-service")]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public IActionResult ExistingAccount()
         {
             return View(new ExistingAccountViewModel());
         }
 
         [HttpPost]
+        [Route("first-time-apprenticeship-service")]
+        [ModelStatePersist(ModelStatePersist.Store)]
         public IActionResult ConfirmExistingAccount(ExistingAccountViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                model.ErrorMessages = new List<ValidationErrorDetail>();
-
-                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var modelError in modelErrors)
-                {
-                    model.ErrorMessages.Add(new ValidationErrorDetail
-                    {
-                        Field = "ExistingAccount",
-                        ErrorMessage = modelError.ErrorMessage
-                    });
-                }
-
-                return View("~/Views/Users/ExistingAccount.cshtml", model);
+                return RedirectToAction("ExistingAccount");
             }
 
-            if (model.FirstTimeSignin == "Y")
+            if (model.FirstTimeSignin == true)
             {
                 return RedirectToAction("CreateAccount");
             }
-
-            return RedirectToAction("SignIn");
+            else
+            {
+                return RedirectToAction("SignIn");
+            }
         }
     }
 }
