@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -5,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
@@ -18,12 +22,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly IReapplicationCheckService _reapplicationCheckService;
+        private readonly IApplicationApiClient _apiClient;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService, IApplicationApiClient apiClient)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _reapplicationCheckService = reapplicationCheckService;
+            _apiClient = apiClient;
         }
 
         [HttpGet]
@@ -110,7 +116,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 await _reapplicationCheckService.ReapplicationAllowed(signInId, user.ApplyOrganisationId);
 
             if (reapplicationAllowed)
+            {
+                //MFCMFC see if application already happening
+                var applications = await GetInProgressApplicationsForUser(User.GetSignInId());
+
+                if (applications.Any())
+                {
+                    var application = applications[0];
+                    return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { application.ApplicationId });
+                }
+                
+                
                 return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
+            }
 
             return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
             
@@ -153,6 +171,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("SignIn");
             }
+        }
+
+
+        private async Task<List<Apply>> GetInProgressApplicationsForUser(Guid signinId)
+        {
+            var applications = await _apiClient.GetApplications(signinId, true);
+
+            return applications.Where(app => app.ApplicationStatus==ApplicationStatus.InProgress).OrderByDescending(app => app.CreatedAt).ToList();
         }
     }
 }

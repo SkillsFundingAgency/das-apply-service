@@ -16,6 +16,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IUsersApiClient> _usersApiClient;
         private Mock<ISessionService> _sessionService;
         private UsersController _userController;
+        private Mock<IApplicationApiClient> _applicationApiClient;
         private Mock<IReapplicationCheckService> _reapplicationCheckService;
 
         [SetUp]
@@ -24,8 +25,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _usersApiClient = new Mock<IUsersApiClient>();
             _sessionService = new Mock<ISessionService>();
             _reapplicationCheckService = new Mock<IReapplicationCheckService>();
+            _applicationApiClient = new Mock<IApplicationApiClient>();
 
-            _userController = new UsersController(_usersApiClient.Object, _sessionService.Object, _reapplicationCheckService.Object);
+            _userController = new UsersController(_usersApiClient.Object, _sessionService.Object, _reapplicationCheckService.Object, _applicationApiClient.Object);
         }
 
         [Test]

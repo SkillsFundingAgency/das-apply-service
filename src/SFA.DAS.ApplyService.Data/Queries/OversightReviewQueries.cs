@@ -233,7 +233,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                           LEFT JOIN OversightReview outcome ON outcome.ApplicationId = apply.ApplicationId
-						  LEFT OUTER JOIN contacts on contacts.ApplyOrganisationId = org.Id
+						  LEFT OUTER JOIN contacts on contacts.ApplyOrganisationId = org.Id and apply.CreatedBy = contacts.id
                         WHERE apply.ApplicationId = @applicationId",
                     new { applicationId });
 
