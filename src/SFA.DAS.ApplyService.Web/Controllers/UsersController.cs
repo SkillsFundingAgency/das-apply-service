@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
@@ -16,11 +17,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     {
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
+        private readonly IReapplicationCheckService _reapplicationCheckService;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
+            _reapplicationCheckService = reapplicationCheckService;
         }
 
         [HttpGet]
@@ -102,10 +105,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
             }
-            else
-            {
-                return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
-            }
+
+            var reapplicationAllowed =
+                await _reapplicationCheckService.ReapplicationAllowed(signInId, user.ApplyOrganisationId);
+
+            if (reapplicationAllowed)
+                return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
+
+            return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
+            
         }
 
         [HttpGet("/Users/SignedOut")]

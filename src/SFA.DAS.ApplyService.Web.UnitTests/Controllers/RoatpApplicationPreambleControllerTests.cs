@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
+using SFA.DAS.ApplyService.Web.Services;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -47,6 +48,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IAllowedUkprnValidator> _allowedUkprnValidator;
         private Mock<IResetRouteQuestionsService> _resetRoutQuestionsService;
+        private Mock<IReapplicationCheckService> _reapplicationCheckService;
+
         private RoatpApplicationPreambleController _controller;
 
         private CompaniesHouseSummary _activeCompany;
@@ -72,8 +75,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _qnaApiClient = new Mock<IQnaApiClient>();
             _allowedUkprnValidator = new Mock<IAllowedUkprnValidator>();
             _resetRoutQuestionsService = new Mock<IResetRouteQuestionsService>();
+            _reapplicationCheckService = new Mock<IReapplicationCheckService>();
+       
 
-            _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
+        _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
                 _ukrlpApiClient.Object,
                 _sessionService.Object, _companiesHouseApiClient.Object,
                 _charityCommissionApiClient.Object,
@@ -81,7 +86,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 _usersApiClient.Object,
                 _applicationApiClient.Object,
                 _qnaApiClient.Object,
-                _allowedUkprnValidator.Object, _resetRoutQuestionsService.Object);
+                _allowedUkprnValidator.Object, _resetRoutQuestionsService.Object, _reapplicationCheckService.Object);
 
             _activeCompany = new CompaniesHouseSummary
             {

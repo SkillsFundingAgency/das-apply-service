@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using SFA.DAS.ApplyService.Web.Services;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -40,6 +41,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IAllowedUkprnValidator _allowedUkprnValidator;
         private readonly IResetRouteQuestionsService _resetRouteQuestionsService;
+        private readonly IReapplicationCheckService _reapplicationCheckService;
 
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient,
                                                   IUkrlpApiClient ukrlpApiClient, ISessionService sessionService,
@@ -50,7 +52,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                                                   IApplicationApiClient applicationApiClient,
                                                   IQnaApiClient qnaApiClient,
                                                   IAllowedUkprnValidator ukprnWhitelistValidator, 
-                                                  IResetRouteQuestionsService resetRouteQuestionsService)
+                                                  IResetRouteQuestionsService resetRouteQuestionsService, IReapplicationCheckService reapplicationCheckService)
             : base(sessionService)
         {
             _logger = logger;
@@ -65,6 +67,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _qnaApiClient = qnaApiClient;
             _allowedUkprnValidator = ukprnWhitelistValidator;
             _resetRouteQuestionsService = resetRouteQuestionsService;
+            _reapplicationCheckService = reapplicationCheckService;
         }
 
         [Route("conditions-of-acceptance")]
@@ -177,6 +180,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 };
 
                 return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
+            }
+
+            var ukprnInReapplication = await _reapplicationCheckService.ReapplicationUkprnForUser(User.GetSignInId());
+            if (ukprnInReapplication != null && ukprnInReapplication != ukprn.ToString())
+            {
+                return RedirectToAction("ReapplicationDifferentUkprn", "RoatpShutterPages");
             }
 
             var ukrlpLookupResults = await _ukrlpApiClient.GetTrainingProviderByUkprn(ukprn);

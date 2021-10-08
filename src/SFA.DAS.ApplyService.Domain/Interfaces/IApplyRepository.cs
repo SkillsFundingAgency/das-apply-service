@@ -50,7 +50,6 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         Task<Contact> GetContactForApplication(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
         Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload(DateTime dateFrom, DateTime dateTo);
-        
-        
+        Task<bool> SubmitReapplicationRequest(Guid requestApplicationId, string requestedBy);
     }
 }

@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply.Clarification;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
@@ -50,6 +51,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             var startDateFormatted = startDate.Value.ToString("yyyy-MM-dd");
             return await Get<DateTime>($"working-days/{startDateFormatted}/{numberOfDays}");
+        }
+
+        public async Task<bool> ReapplicationRequested(Guid applicationId, string userId)
+        {
+            return await Post<ReapplicationRequest, bool>($"/Application/{applicationId}/ReapplicationRequested", new ReapplicationRequest { ApplicationId = applicationId, UserId = userId });
         }
 
         public async Task<List<ClarificationPageReviewOutcome>> GetAllClarificationPageReviewOutcomes(Guid applicationId, string userId)

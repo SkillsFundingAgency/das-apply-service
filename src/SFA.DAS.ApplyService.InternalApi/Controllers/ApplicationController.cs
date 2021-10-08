@@ -111,6 +111,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(request);
         }
+
+        [HttpPost("/Application/{applicationId}/ReapplicationRequested")]
+        public async Task<bool> ReeapplicationRequested(Guid applicationId,
+            [FromBody] ReapplicationRequest request)
+        {
+            return await _mediator.Send(request);
+        }
     }
 
     public class StartAssessorReviewApplicationRequest

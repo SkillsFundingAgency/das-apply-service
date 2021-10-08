@@ -662,6 +662,26 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<bool> SubmitReapplicationRequest(Guid applicationId, string userId)
+        {
+            var applyData = await GetApplyData(applicationId);
+
+            if (applyData?.ApplyDetails == null) return false;
+            applyData.ApplyDetails.RequestToReapplyMade = true;
+            applyData.ApplyDetails.RequestToReapplyBy = userId;
+            applyData.ApplyDetails.RequestToReapplyOn = DateTime.UtcNow;
+
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET  ApplyData = @applyData
+                                                WHERE  ApplicationId = @ApplicationId",
+                    new { applicationId, applyData });
+            }
+
+            return true;
+        }
+
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

@@ -62,6 +62,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IRoatpOrganisationVerificationService> _roatpOrganisationVerificationService;
         private Mock<ITaskListOrchestrator> _taskListOrchestrator;
         private Mock<IUkrlpApiClient> _ukrlpApiClient;
+        private Mock<IReapplicationCheckService> _reapplicationCheckService;
 
         [SetUp]
         public void Before_each_test()
@@ -98,6 +99,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _roatpOrganisationVerificationService = new Mock<IRoatpOrganisationVerificationService>();
             _taskListOrchestrator = new Mock<ITaskListOrchestrator>();
             _ukrlpApiClient = new Mock<IUkrlpApiClient>();
+            _reapplicationCheckService = new Mock<IReapplicationCheckService>();
 
             _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object,
                                                          _usersApiClient.Object, _qnaApiClient.Object, 
@@ -107,7 +109,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                          _roatpApiClient.Object,
                                                          _submitApplicationEmailService.Object, _tabularDataRepository.Object,
                                                          _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object, _taskListOrchestrator.Object,
-                                                         _ukrlpApiClient.Object)
+                                                         _ukrlpApiClient.Object, _reapplicationCheckService.Object)
             {
                 ControllerContext = new ControllerContext()
                 {

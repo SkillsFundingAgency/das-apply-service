@@ -5,6 +5,7 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Controllers;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
@@ -15,14 +16,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IUsersApiClient> _usersApiClient;
         private Mock<ISessionService> _sessionService;
         private UsersController _userController;
+        private Mock<IReapplicationCheckService> _reapplicationCheckService;
 
         [SetUp]
         public void Before_each_test()
         {
             _usersApiClient = new Mock<IUsersApiClient>();
             _sessionService = new Mock<ISessionService>();
+            _reapplicationCheckService = new Mock<IReapplicationCheckService>();
 
-            _userController = new UsersController(_usersApiClient.Object, _sessionService.Object);
+            _userController = new UsersController(_usersApiClient.Object, _sessionService.Object, _reapplicationCheckService.Object);
         }
 
         [Test]
