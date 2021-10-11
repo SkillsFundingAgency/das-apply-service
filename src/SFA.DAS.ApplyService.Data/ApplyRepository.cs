@@ -80,6 +80,17 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<List<Apply>> GetApplicationsByUkprn(string ukprn)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<Apply>(@"select a.*
+                      from dbo.Apply a
+                      where UKPRN = @ukprn",
+                    new { ukprn })).ToList();
+            }
+        }
+
         public async Task UpdateApplication(Apply application)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

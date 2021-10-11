@@ -188,6 +188,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction("ReapplicationDifferentUkprn", "RoatpShutterPages");
             }
 
+            var isApplicationInFlightWithDifferentUser = await _reapplicationCheckService.ApplicationInFlightWithDifferentUser(User.GetSignInId(),
+                model.UKPRN);
+
+
+            if (isApplicationInFlightWithDifferentUser)
+            {
+                return View("~/Views/Roatp/ShutterPages/ApplicationInProgress.cshtml", new ExistingApplicationViewModel { UKPRN = model.UKPRN});
+            }
+
             var ukrlpLookupResults = await _ukrlpApiClient.GetTrainingProviderByUkprn(ukprn);
 
             if (ukrlpLookupResults?.Results is null || !ukrlpLookupResults.Success)

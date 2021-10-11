@@ -10,6 +10,7 @@ namespace SFA.DAS.ApplyService.Web.Services
     {
         private readonly IApplicationApiClient _applicationApiClient;
 
+
         public ReapplicationCheckService(IApplicationApiClient applicationApiClient)
         {
             _applicationApiClient = applicationApiClient;
@@ -41,15 +42,19 @@ namespace SFA.DAS.ApplyService.Web.Services
             return applicationsRejectedAndRequestToReapplyMade?.ApplyData?.ApplyDetails?.UKPRN;
         }
 
-        public async Task<bool> ReapplicationInProgressWithDifferentUser(Guid signInId, Guid organisationId)
+        public async Task<bool> ApplicationInFlightWithDifferentUser(Guid signInId, string ukprn)
         {
-            var applications = await _applicationApiClient.GetApplications(signInId, false);
+            var applications = await _applicationApiClient.GetApplicationsByUkprn(ukprn);
 
-            var applicationsReapplicationAgainstDifferentUser = applications.OrderByDescending(x => x.UpdatedAt)
-                .Where(x => x.OrganisationId == organisationId && x.CreatedBy!=signInId.ToString() && x.ApplicationStatus == ApplicationStatus.Rejected &&
-                                     x?.ApplyData?.ApplyDetails?.RequestToReapplyMade == true);
+            var contact = await _applicationApiClient.GetContactBySignInId(signInId);
+            var contactId = contact?.Id.ToString()?.ToUpper();
 
-            return applicationsReapplicationAgainstDifferentUser.Any();
+
+            var applicationsPresentAgainstDifferentUser = applications.OrderByDescending(x => x.UpdatedAt)
+                .Where(x => x?.ApplyData?.ApplyDetails?.UKPRN == ukprn && x.CreatedBy!=contactId && x.ApplicationStatus!=ApplicationStatus.Cancelled);
+      
+
+            return applicationsPresentAgainstDifferentUser.Any();
 
 
         }

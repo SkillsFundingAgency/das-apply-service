@@ -8,6 +8,6 @@ namespace SFA.DAS.ApplyService.Web.Services
         Task<bool> ReapplicationAllowed(Guid signInId, Guid? organisationId);
         Task<string> ReapplicationUkprnForUser(Guid signInId);
 
-        Task<bool> ReapplicationInProgressWithDifferentUser(Guid signInId, Guid organisationId);
+        Task<bool> ApplicationInFlightWithDifferentUser(Guid signInId, string ukprn);
     }
 }

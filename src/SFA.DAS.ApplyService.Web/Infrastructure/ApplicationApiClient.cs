@@ -50,6 +50,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await Get<Domain.Entities.Apply>($"Application/{applicationId}/Contact/{ signinId}");
         }
 
+        public async Task<List<Apply>> GetApplicationsByUkprn(string ukprn)
+        {
+            return await Get<List<Domain.Entities.Apply>>($"Applications/ukprn/{ukprn}");
+
+        }
+
         public async Task<List<Domain.Entities.Apply>> GetApplications(Guid signinId, bool createdBy)
         {
             if (!createdBy)
@@ -166,6 +172,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<AllowedProvider> GetAllowedProvider(string ukprn)
         {
             return await Get<AllowedProvider>($"/AllowedProviders/{ukprn}");
+        }
+
+        public async Task<Contact> GetContactBySignInId(Guid signInId)
+        {
+            return await Get<Contact>($"/Account/{signInId}");
         }
     }
 }

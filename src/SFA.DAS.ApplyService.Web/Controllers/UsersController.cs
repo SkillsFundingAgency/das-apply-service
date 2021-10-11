@@ -115,7 +115,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             if (reapplicationAllowed)
             {
-                //MFCMFC see if application already happening
                 var ukprn = await _reapplicationCheckService.ReapplicationUkprnForUser(User.GetSignInId());
 
                 if (string.IsNullOrEmpty(ukprn))
