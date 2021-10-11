@@ -12,10 +12,10 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp.ManagementHierarchy
         public string Title { get { return "Confirm your organisation's management hierarchy for apprenticeships"; } set { } }
         public int SequenceId { get { return RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining; } set { } }
         public int SectionId { get { return RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy; } set { } }
-        public string PageId { get; set; }
+        public string PageId { get { return "ConfirmManagementHierarchy"; } set { } }
         public string GetHelpQuestion { get; set; }
         public bool GetHelpQuerySubmitted { get; set; }
         public string GetHelpErrorMessage { get; set; }
-        public string GetHelpAction { get; set; }
+        public string GetHelpAction { get { return "ConfirmManagementHierarchy"; } set { } }
     }
 }
