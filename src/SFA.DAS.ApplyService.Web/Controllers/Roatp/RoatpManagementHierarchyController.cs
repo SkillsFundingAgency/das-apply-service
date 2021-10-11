@@ -49,8 +49,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction("AddManagementHierarchy", new { applicationId });
             }
 
-            var model = new ConfirmManagementHierarchyViewModel { ApplicationId = applicationId, ManagementHierarchyData = managementHierarchyData, GetHelpAction = "ConfirmManagementHierarchy" };
-            PopulateGetHelpWithQuestion(model, "ConfirmManagementHierarchy");
+            var model = new ConfirmManagementHierarchyViewModel 
+            { 
+                ApplicationId = applicationId, 
+                ManagementHierarchyData = managementHierarchyData
+            };
+
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/ManagementHierarchy/ConfirmManagementHierarchy.cshtml", model);
         }
@@ -59,9 +64,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public IActionResult AddManagementHierarchy(Guid applicationId)
         {
-            var model = new AddEditManagementHierarchyViewModel { ApplicationId = applicationId, Title = "Who is in your organisation's management hierarchy for apprenticeships?", GetHelpAction = "AddManagementHierarchy" };
+            var model = new AddEditManagementHierarchyViewModel 
+            { 
+                ApplicationId = applicationId, 
+                Title = "Who is in your organisation's management hierarchy for apprenticeships?",
+                PageId = RoatpWorkflowPageIds.ManagementHierarchy.AddManagementHierarchy,
+                GetHelpAction = "AddManagementHierarchy"
+            };
 
-            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.ManagementHierarchy.AddManagementHierarchy);
+            PopulateGetHelpWithQuestion(model);
             return View("~/Views/Roatp/ManagementHierarchy/AddManagementHierarchy.cshtml", model);
         }
 
@@ -173,10 +184,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     Email = email,
                     ContactNumber = contactNumber,
                     Title = "Enter the person's details",
+                    PageId = RoatpWorkflowPageIds.ManagementHierarchy.EditManagementHierarchy,
                     GetHelpAction = "EditManagementHierarchy"
                 };
 
-                PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.ManagementHierarchy.EditManagementHierarchy);
+                PopulateGetHelpWithQuestion(model);
 
                 return View($"~/Views/Roatp/ManagementHierarchy/EditManagementHierarchy.cshtml", model);
             }
@@ -244,11 +256,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ApplicationId = applicationId,
                 Name = $"{personTableData.DataRows[index].Columns[0]} {personTableData.DataRows[index].Columns[1]}",
                 ActionName = "RemoveManagementHierarchy",
-                BackAction = "ConfirmManagementHierarchy",
-                GetHelpAction = "RemoveManagementHierarchy"
+                BackAction = "ConfirmManagementHierarchy"
             };
 
-            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.ManagementHierarchy.RemoveManagementHierarchy);
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/ManagementHierarchy/ConfirmManagementHierarchyRemoval.cshtml", model);
         }

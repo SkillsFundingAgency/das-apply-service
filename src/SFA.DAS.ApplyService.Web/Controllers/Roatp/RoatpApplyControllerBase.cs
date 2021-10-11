@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.ViewModels;
-using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
-using System;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -11,9 +9,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     public class RoatpApplyControllerBase : Controller
     {
         protected const string ApplicationDetailsKey = "Roatp_Application_Details";
-        protected const string GetHelpSubmittedForPageKey = "Roatp_GetHelpSubmitted_{0}";
-        protected const string GetHelpQuestionKey = "Roatp_GetHelpQuestion_{0}";
-        protected const string GetHelpErrorMessageKey = "Roatp_GetHelp_ErrorMessage_{0}";
+
+        private const string GetHelpSubmittedForPageKey = "Roatp_GetHelpSubmitted_{0}";
+        private const string GetHelpQuestionKey = "Roatp_GetHelpQuestion_{0}";
+        private const string GetHelpErrorMessageKey = "Roatp_GetHelp_ErrorMessage_{0}";
 
         protected ISessionService _sessionService;
 
@@ -22,19 +21,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _sessionService = sessionService;
         }
 
-        protected void PopulateGetHelpWithQuestion(IPageViewModel viewModel, string pageId)
+        protected void PopulateGetHelpWithQuestion(IPageViewModel viewModel)
         {
-            viewModel.PageId = pageId;
-            var getHelpSessionKey = string.Format(GetHelpSubmittedForPageKey, pageId);
+            var getHelpSessionKey = string.Format(GetHelpSubmittedForPageKey, viewModel.PageId);
             var getHelpSubmitted = _sessionService.Get<bool>(getHelpSessionKey);
             viewModel.GetHelpQuerySubmitted = getHelpSubmitted;
             
-            var getHelpQuestionKey = string.Format(GetHelpQuestionKey, pageId);
+            var getHelpQuestionKey = string.Format(GetHelpQuestionKey, viewModel.PageId);
             var getHelpQuestion = _sessionService.Get(getHelpQuestionKey);
-            var getHelpErrorMessageKey = string.Format(GetHelpErrorMessageKey, pageId);
+            var getHelpErrorMessageKey = string.Format(GetHelpErrorMessageKey, viewModel.PageId);
             var getHelpErrorMessage = _sessionService.Get(getHelpErrorMessageKey);
 
-            if (!String.IsNullOrWhiteSpace(getHelpErrorMessage))
+            if (!string.IsNullOrWhiteSpace(getHelpErrorMessage))
             {
                 viewModel.GetHelpErrorMessage = getHelpErrorMessage;
                 viewModel.GetHelpQuerySubmitted = false;
