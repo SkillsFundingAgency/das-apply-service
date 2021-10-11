@@ -29,7 +29,8 @@ stages:
   jobs:
   - job: 'CodeBuild'
     pool:
-      name: 'DAS - Continuous Integration'
+      name: 'DAS - Continuous Integration Agents'
+      demands: LATEST_DOTNET_VERSION -equals 2.2
     workspace:
       clean: all
     steps:
