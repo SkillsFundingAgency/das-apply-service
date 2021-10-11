@@ -230,7 +230,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             };
 
             var isGatewayFail = application?.GatewayReviewStatus == GatewayReviewStatus.Fail;
-            if (isGatewayFail)
+            if (isGatewayFail && application?.ApplicationStatus == ApplicationStatus.AppealSuccessful)
             {
                 switch (appeal.Status)
                 {

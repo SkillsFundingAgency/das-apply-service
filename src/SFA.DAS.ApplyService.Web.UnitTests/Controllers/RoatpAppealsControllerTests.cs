@@ -479,7 +479,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var application = new Apply
             {
-                GatewayReviewStatus = GatewayReviewStatus.Fail
+                GatewayReviewStatus = GatewayReviewStatus.Fail,
+                ApplicationStatus = ApplicationStatus.AppealSuccessful
             };
 
             _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(application);
