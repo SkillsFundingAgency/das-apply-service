@@ -182,7 +182,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
             }
 
-            var ukprnInReapplication = await _reapplicationCheckService.ReapplicationUkprnPresent(User.GetSignInId());
+            var ukprnInReapplication = await _reapplicationCheckService.ReapplicationUkprnForUser(User.GetSignInId());
             if (ukprnInReapplication != null && ukprnInReapplication != ukprn.ToString())
             {
                 return RedirectToAction("ReapplicationDifferentUkprn", "RoatpShutterPages");

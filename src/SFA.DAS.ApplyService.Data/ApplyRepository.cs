@@ -56,7 +56,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection.QuerySingleOrDefaultAsync<Apply>(@"SELECT top 1 a.* FROM Contacts c
                                                     INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
-                                                    WHERE c.SigninId = @signinId and a.ApplicationId = @ApplicationId", new { signinId, applicationId }));
+                                                    WHERE c.SigninId = @signinId and a.ApplicationId = @ApplicationId  AND a.CreatedBy = c.Id", new { signinId, applicationId }));
             }
         }
 

@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             if (organisationId == null)
                 return true;
 
-            var applications = await _applicationApiClient.GetApplications(signInId, false);
+            var applications = await _applicationApiClient.GetApplications(signInId, true);
             var application = applications.OrderByDescending(x => x.UpdatedAt)
                 .FirstOrDefault(x => x.OrganisationId == organisationId);
             var applyDetails = application?.ApplyData?.ApplyDetails;
@@ -41,15 +41,17 @@ namespace SFA.DAS.ApplyService.Web.Services
             return applicationsRejectedAndRequestToReapplyMade?.ApplyData?.ApplyDetails?.UKPRN;
         }
 
-
-        public async Task<string> ReapplicationUkprnPresent(Guid signInId)
+        public async Task<bool> ReapplicationInProgressWithDifferentUser(Guid signInId, Guid organisationId)
         {
             var applications = await _applicationApiClient.GetApplications(signInId, false);
-            var applicationsRejectedAndRequestToReapplyMade = applications.FirstOrDefault(x =>
-                x.ApplicationStatus == ApplicationStatus.Rejected &&
-                x?.ApplyData?.ApplyDetails?.RequestToReapplyMade == true);
 
-            return applicationsRejectedAndRequestToReapplyMade?.ApplyData?.ApplyDetails?.UKPRN;
+            var applicationsReapplicationAgainstDifferentUser = applications.OrderByDescending(x => x.UpdatedAt)
+                .Where(x => x.OrganisationId == organisationId && x.CreatedBy!=signInId.ToString() && x.ApplicationStatus == ApplicationStatus.Rejected &&
+                                     x?.ApplyData?.ApplyDetails?.RequestToReapplyMade == true);
+
+            return applicationsReapplicationAgainstDifferentUser.Any();
+
+
         }
     }
 }
