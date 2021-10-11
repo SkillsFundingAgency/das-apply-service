@@ -457,6 +457,40 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Model.Should().BeEquivalentTo(model);
         }
 
+        [TestCase(AppealStatus.Successful)]
+        [TestCase(AppealStatus.SuccessfulAlreadyActive)]
+        [TestCase(AppealStatus.SuccessfulFitnessForFunding)]
+
+
+        public async Task AppealSubmitted_shows_Successful_Gateway_Fail_page_if_appeal_deemed_Successful_and_Gateway_Fail(string appealStatus)
+        {
+            var model = new AppealSuccessfulViewModel
+            {
+                ApplicationId = _applicationId,
+            };
+
+            var appeal = new GetAppealResponse
+            {
+                Status = appealStatus,
+                ApplicationId = model.ApplicationId,
+            };
+
+            _appealsApiClient.Setup(x => x.GetAppeal(_applicationId)).ReturnsAsync(appeal);
+
+            var application = new Apply
+            {
+                GatewayReviewStatus = GatewayReviewStatus.Fail
+            };
+
+            _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(application);
+            var result = await _controller.AppealSuccessful(_applicationId);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("~/Views/Appeals/AppealSuccessfulGatewayFail.cshtml");
+            viewResult.Model.Should().BeEquivalentTo(model);
+        }
+
         [Test]
         public async Task AppealSubmitted_shows_tasklist_if_appeal_does_not_exist()
         {
