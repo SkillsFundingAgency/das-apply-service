@@ -22,14 +22,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly IReapplicationCheckService _reapplicationCheckService;
-        private readonly IApplicationApiClient _apiClient;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService, IApplicationApiClient apiClient)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _reapplicationCheckService = reapplicationCheckService;
-            _apiClient = apiClient;
         }
 
         [HttpGet]
@@ -114,21 +112,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var reapplicationAllowed =
                 await _reapplicationCheckService.ReapplicationAllowed(signInId, user.ApplyOrganisationId);
-
+            
             if (reapplicationAllowed)
             {
                 //MFCMFC see if application already happening
-                var applications = await GetInProgressApplicationsForUser(User.GetSignInId());
+                var ukprn = await _reapplicationCheckService.ReapplicationUkprnForUser(User.GetSignInId());
 
-                if (applications.Any())
+                if (string.IsNullOrEmpty(ukprn))
                 {
-                    var application = applications[0];
-                    return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { application.ApplicationId });
+                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
                 }
-                
-                
-                return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
-            }
+             }
 
             return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
             
@@ -171,14 +165,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("SignIn");
             }
-        }
-
-
-        private async Task<List<Apply>> GetInProgressApplicationsForUser(Guid signinId)
-        {
-            var applications = await _apiClient.GetApplications(signinId, true);
-
-            return applications.Where(app => app.ApplicationStatus==ApplicationStatus.InProgress).OrderByDescending(app => app.CreatedAt).ToList();
         }
     }
 }

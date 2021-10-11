@@ -74,7 +74,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return (await connection.QueryAsync<Apply>(@"SELECT a.* FROM Contacts c
+                return (await connection.QueryAsync<Apply>(@"SELECT DISTINCT a.* FROM Contacts c
                                                     INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
                                                     WHERE c.SigninId = @signinId", new { signinId })).ToList();
             }

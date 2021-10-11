@@ -33,6 +33,17 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public async Task<string> ReapplicationUkprnForUser(Guid signInId)
         {
+            var applications = await _applicationApiClient.GetApplications(signInId, true);
+            var applicationsRejectedAndRequestToReapplyMade = applications.FirstOrDefault(x =>
+                x.ApplicationStatus == ApplicationStatus.Rejected &&
+                x?.ApplyData?.ApplyDetails?.RequestToReapplyMade == true);
+
+            return applicationsRejectedAndRequestToReapplyMade?.ApplyData?.ApplyDetails?.UKPRN;
+        }
+
+
+        public async Task<string> ReapplicationUkprnPresent(Guid signInId)
+        {
             var applications = await _applicationApiClient.GetApplications(signInId, false);
             var applicationsRejectedAndRequestToReapplyMade = applications.FirstOrDefault(x =>
                 x.ApplicationStatus == ApplicationStatus.Rejected &&

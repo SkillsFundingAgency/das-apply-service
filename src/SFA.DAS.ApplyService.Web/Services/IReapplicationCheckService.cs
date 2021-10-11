@@ -7,5 +7,7 @@ namespace SFA.DAS.ApplyService.Web.Services
     {
         Task<bool> ReapplicationAllowed(Guid signInId, Guid? organisationId);
         Task<string> ReapplicationUkprnForUser(Guid signInId);
+
+        Task<string> ReapplicationUkprnPresent(Guid signInId);
     }
 }
