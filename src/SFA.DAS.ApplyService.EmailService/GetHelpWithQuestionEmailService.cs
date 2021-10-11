@@ -34,6 +34,8 @@ namespace SFA.DAS.ApplyService.EmailService
                 { "ApplicantFullName", getHelpWithQuestion.ApplicantFullName },
                 { "UKPRN", getHelpWithQuestion.UKPRN },
                 { "OrganisationName", getHelpWithQuestion.OrganisationName },
+                { "CompanyNumber", getHelpWithQuestion.CompanyNumber },
+                { "CharityNumber", getHelpWithQuestion.CharityNumber },
                 { "ApplicationSequence", getHelpWithQuestion.ApplicationSequence },
                 { "ApplicationSection", getHelpWithQuestion.ApplicationSection },
                 { "PageTitle", getHelpWithQuestion.PageTitle },

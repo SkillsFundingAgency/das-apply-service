@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public int SequenceId { get; set; }
         public int SectionId { get; set; }
-        public string PageId { get; set; }
+        public string PageId { get { return "ConfirmLevyStatus"; } set { } }
         public string GetHelpQuestion { get; set; }
         public bool GetHelpQuerySubmitted { get; set; }
         public string GetHelpErrorMessage { get; set; }

@@ -8,6 +8,8 @@ namespace SFA.DAS.ApplyService.Domain.Roatp
         public string ApplicationSection { get; set; }
         public string OrganisationName { get; set; }
         public string UKPRN { get; set; }
+        public string CompanyNumber { get; set; }
+        public string CharityNumber { get; set; }
         public string EmailAddress { get; set; }
         public string ApplicantFullName { get; set; }
         public string GetHelpQuery { get; set; }
