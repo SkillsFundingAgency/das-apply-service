@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return true;
 
             var applications = await _applicationApiClient.GetApplications(signInId, true);
-            var application = applications.OrderByDescending(x => x.UpdatedAt)
+            var application = applications?.OrderByDescending(x => x.UpdatedAt)
                 .FirstOrDefault(x => x.OrganisationId == organisationId);
             var applyDetails = application?.ApplyData?.ApplyDetails;
             if (applyDetails?.UKPRN == null) return false;
@@ -37,7 +37,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             var applications = await _applicationApiClient.GetApplications(signInId, true);
             var applicationsRejectedAndRequestToReapplyMade = applications.FirstOrDefault(x =>
                 x.ApplicationStatus == ApplicationStatus.Rejected &&
-                x?.ApplyData?.ApplyDetails?.RequestToReapplyMade == true);
+                x.ApplyData?.ApplyDetails?.RequestToReapplyMade == true);
 
             return applicationsRejectedAndRequestToReapplyMade?.ApplyData?.ApplyDetails?.UKPRN;
         }
@@ -49,7 +49,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             var contact = await _applicationApiClient.GetContactBySignInId(signInId);
             var contactId = contact?.Id.ToString()?.ToUpper();
 
-            var applicationsPresentAgainstDifferentUser = applications.OrderByDescending(x => x.UpdatedAt)
+            var applicationsPresentAgainstDifferentUser = applications?.OrderByDescending(x => x.UpdatedAt)
                 .Where(x => x?.ApplyData?.ApplyDetails?.UKPRN == ukprn && x.CreatedBy!=contactId && x.ApplicationStatus!=ApplicationStatus.Cancelled);
       
 
