@@ -2,7 +2,7 @@
 
 @{
     var controllerName = ViewContext.RouteData.Values["controller"].ToString();
-    var actionName = Model.GetHelpAction;
+    var actionName = Model.GetHelpAction ?? ViewContext.RouteData.Values["action"].ToString();
     var hasError = !string.IsNullOrWhiteSpace(Model.GetHelpErrorMessage);
 }
 
