@@ -49,7 +49,6 @@ namespace SFA.DAS.ApplyService.Web.Services
             var contact = await _applicationApiClient.GetContactBySignInId(signInId);
             var contactId = contact?.Id.ToString()?.ToUpper();
 
-
             var applicationsPresentAgainstDifferentUser = applications.OrderByDescending(x => x.UpdatedAt)
                 .Where(x => x?.ApplyData?.ApplyDetails?.UKPRN == ukprn && x.CreatedBy!=contactId && x.ApplicationStatus!=ApplicationStatus.Cancelled);
       

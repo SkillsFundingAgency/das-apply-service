@@ -252,7 +252,161 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _qnaApiClient.VerifyAll();
             _apiClient.VerifyAll();
         }
- 
+
+        [Test]
+        public async Task Applications_shows_process_application_status_if_only_reapplication_requested_applications_and_reapplication_allowed_for_that_user()
+        {
+            var applications = new List<Domain.Entities.Apply>
+            {
+                new Apply
+                {
+                    ApplicationStatus = ApplicationStatus.Rejected, GatewayReviewStatus = GatewayAnswerStatus.Fail,
+                    ApplyData = new ApplyData
+                    {
+                        ApplyDetails = new ApplyDetails
+                        {
+                            RequestToReapplyMade = true
+                        }
+                    }
+                }
+            };
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10002000,
+                UkrlpLookupDetails = new ProviderDetails
+                {
+                    ProviderName = "Provider name",
+                    ContactDetails = new List<ProviderContact>
+                    {
+                        new ProviderContact
+                        {
+                            ContactType = "L",
+                            ContactAddress = new ContactAddress
+                            {
+                                Address1 = "Address line 1",
+                                PostCode = "PS1 1ST"
+                            }
+                        }
+                    },
+                    VerificationDetails = new List<VerificationDetails>
+                    {
+                        new VerificationDetails
+                        {
+                            VerificationAuthority = VerificationAuthorities.SoleTraderPartnershipAuthority,
+                            PrimaryVerificationSource = true
+                        }
+                    }
+                },
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = 1
+                },
+                RoatpRegisterStatus = new OrganisationRegisterStatus
+                {
+                    ProviderTypeId = 1
+                }
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var applicationId = Guid.NewGuid();
+            var qnaResponse = new StartQnaApplicationResponse
+            {
+                ApplicationId = applicationId
+            };
+
+            _qnaApiClient.Setup(x => x.StartApplication(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(qnaResponse).Verifiable();
+
+            _apiClient.Setup(x => x.StartApplication(It.IsAny<StartApplicationRequest>())).ReturnsAsync(applicationId).Verifiable();
+            _reapplicationCheckService.Setup(x => x.ReapplicationAllowed(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .ReturnsAsync(true);
+            var result = await _controller.Applications();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ProcessApplicationStatus");
+            redirectResult.ControllerName.Should().Be("RoatpOverallOutcome");
+        }
+
+        [Test]
+        public async Task Applications_shows_process_application_status_if_new_application_in_progress()
+        {
+            var applications = new List<Domain.Entities.Apply>
+            {
+                new Apply
+                {
+                    ApplicationStatus = ApplicationStatus.Rejected, GatewayReviewStatus = GatewayAnswerStatus.Fail,
+                    ApplyData = new ApplyData
+                    {
+                        ApplyDetails = new ApplyDetails
+                        {
+                            RequestToReapplyMade = true
+                        }
+                    }
+                }
+            };
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10002000,
+                UkrlpLookupDetails = new ProviderDetails
+                {
+                    ProviderName = "Provider name",
+                    ContactDetails = new List<ProviderContact>
+                    {
+                        new ProviderContact
+                        {
+                            ContactType = "L",
+                            ContactAddress = new ContactAddress
+                            {
+                                Address1 = "Address line 1",
+                                PostCode = "PS1 1ST"
+                            }
+                        }
+                    },
+                    VerificationDetails = new List<VerificationDetails>
+                    {
+                        new VerificationDetails
+                        {
+                            VerificationAuthority = VerificationAuthorities.SoleTraderPartnershipAuthority,
+                            PrimaryVerificationSource = true
+                        }
+                    }
+                },
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = 1
+                },
+                RoatpRegisterStatus = new OrganisationRegisterStatus
+                {
+                    ProviderTypeId = 1
+                }
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var applicationId = Guid.NewGuid();
+            var qnaResponse = new StartQnaApplicationResponse
+            {
+                ApplicationId = applicationId
+            };
+
+            _qnaApiClient.Setup(x => x.StartApplication(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(qnaResponse).Verifiable();
+
+            _apiClient.Setup(x => x.StartApplication(It.IsAny<StartApplicationRequest>())).ReturnsAsync(applicationId).Verifiable();
+            _reapplicationCheckService.Setup(x => x.ReapplicationAllowed(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .ReturnsAsync(false);
+            var result = await _controller.Applications();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ProcessApplicationStatus");
+            redirectResult.ControllerName.Should().Be("RoatpOverallOutcome");
+        }
+
         [Test]
         public async Task
             Applications_shows_process_application_status_if_applications_called()
