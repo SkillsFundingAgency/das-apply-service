@@ -804,6 +804,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
+        private static IEnumerable<Question> GetFutherQuestionsFromPage(Page page)
+        {
+            return page.Questions.Where(q => q.Input.Options?.Any(o => o.FurtherQuestions?.Any() == true) == true);
+        }
+
         private static IEnumerable<Question> GetCheckBoxListQuestionsFromPage(Page page)
         {
             return page.Questions.Where(q => QuestionType.CheckboxList.Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase)
@@ -854,7 +859,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             #region FurtherQuestion_Processing
             // Get all questions that have FurtherQuestions in a ComplexRadio
-            var questionsWithFutherQuestions = GetCheckBoxListQuestionsFromPage(page).Where(x => x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions != null && o.FurtherQuestions.Any()));
+            var questionsWithFutherQuestions = GetFutherQuestionsFromPage(page);
 
             foreach (var question in questionsWithFutherQuestions)
             {
@@ -862,16 +867,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
-
                     // Remove FurtherQuestion answers to all other Options as they were not selected and thus should not be stored
                     foreach (var furtherQuestion in question.Input.Options
                         .Where(opt => opt.Value != answerForQuestion?.Value && opt.FurtherQuestions != null)
                         .SelectMany(opt => opt.FurtherQuestions))
                     {
-                        foreach (var answer in answers.Where(a => a.QuestionId == furtherQuestion.QuestionId))
-                        {
-                            answer.Value = string.Empty;
-                        }
+                        answers.RemoveAll(a => a.QuestionId == furtherQuestion.QuestionId);
                     }
                 }
                 else if (QuestionType.ComplexCheckboxList.Equals(question.Input.Type, StringComparison.InvariantCultureIgnoreCase))
@@ -889,10 +890,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         foreach (var furtherQuestion in option.FurtherQuestions)
                             if (!splitAnswers.Contains(option.Value))
                             {
-                                foreach (var answer in answers.Where(a => a.QuestionId == furtherQuestion.QuestionId))
-                                {
-                                    answer.Value = string.Empty;
-                                }
+                                answers.RemoveAll(a => a.QuestionId == furtherQuestion.QuestionId);
                             }
                     }
                 }
