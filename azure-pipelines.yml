@@ -29,16 +29,11 @@ stages:
   jobs:
   - job: 'CodeBuild'
     pool:
-      name: 'DAS - Continuous Integration Agents'
-      demands: LATEST_DOTNET_VERSION -equals 2.2
+      name: 'DAS - Continuous Integration Beta'      
     workspace:
       clean: all
     steps:
-    - task: gittools.gitversion-preview.gitversion-task.GitVersion@5
-      displayName: GitVersion
-      inputs:
-        configFilePath: GitVersion.yml
-        updateAssemblyInfo: true
+    - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
 
     - task: SonarCloudPrepare@1
       displayName: 'Prepare Sonarcloud analysis configuration'
