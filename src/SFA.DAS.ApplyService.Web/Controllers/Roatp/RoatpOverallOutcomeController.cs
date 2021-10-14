@@ -121,8 +121,27 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                         return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", unsuccessfulModel);
                     }
-                case ApplicationStatus.AppealSuccessful: // placeholder status to stop tasklist breaking with new statuses - coverage not added as new stories following
-                    return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
+                case ApplicationStatus.AppealSuccessful:
+                    if(model.GatewayReviewStatus == GatewayReviewStatus.Fail)
+                    {
+                        return View("~/Views/Appeals/AppealSuccessfulGatewayFail.cshtml", model);
+                    }
+                    else
+                    {
+                        var isSupporting = model.ApplicationRouteId == ApplicationRoute.SupportingProviderApplicationRoute.ToString();
+
+                        switch (model.AppealStatus)
+                        {
+                            case AppealStatus.Successful:
+                                return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupporting.cshtml" : "~/Views/Appeals/AppealSuccessful.cshtml", model);
+                            case AppealStatus.SuccessfulAlreadyActive:
+                                return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupportingAlreadyActive.cshtml" : "~/Views/Appeals/AppealSuccessfulAlreadyActive.cshtml", model);
+                            case AppealStatus.SuccessfulFitnessForFunding:
+                                return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupportingFitnessForFunding.cshtml" : "~/Views/Appeals/AppealSuccessfulFitnessForFunding.cshtml", model);                                
+                        }
+
+                        return View("~/Views/Roatp/AppealSuccessful.cshtml", model);
+                    }
                 case ApplicationStatus.FeedbackAdded:
                     return View("~/Views/Roatp/FeedbackAdded.cshtml", model);
                 case ApplicationStatus.Withdrawn:
