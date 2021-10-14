@@ -29,15 +29,23 @@
             </p>
 
             <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    We recommend you save this application feedback before you request a new invitation, as it will no longer be available.
+                </strong>
+            </div>
+
             <h2 class="govuk-heading-m">What happens next</h2>
             <p class="govuk-body">
-                Your rejected application does not count towards the 1 application within a 12-month period.
+                A rejected application is not the same as a failed application and does not count towards your 1 application within a 12-month period.
             </p>
             <p class="govuk-body">
                 You can submit a new application to join the RoATP. You will need to request a new invitation to apply.
             </p>
             <p class="govuk-body">
-                We recommend you save this application feedback before you request a new invitation, as it will no longer be available.
+                The new application must be made using the same account you are signed into now.
             </p>
             <form method="get" asp-action="RequestNewInvitation"  asp-controller="RoatpOverallOutcome" asp-route-applicationId="@Model.ApplicationId" >
                 <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
