@@ -349,7 +349,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             viewModel = await TokeniseViewModelProperties(viewModel);
 
-            PopulateGetHelpWithQuestion(viewModel, pageId);
+            PopulateGetHelpWithQuestion(viewModel);
 
             if (viewModel.DisplayType == PageDisplayType.MultipleFileUpload)
             {
@@ -512,7 +512,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var applicationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
             var model = new EnterNewUkprnViewModel{CurrentUkprn = applicationDetails.OrganisationDetails.UKRLPDetails.UKPRN};
-            PopulateGetHelpWithQuestion(model, "UKPRN");
+            PopulateGetHelpWithQuestion(model);
             return View("~/Views/Roatp/EnterNewUkprn.cshtml", model);
         }
 

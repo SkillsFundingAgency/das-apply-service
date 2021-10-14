@@ -8,7 +8,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public Guid ApplicationId { get; set; }
         public int SequenceId { get; set; }
         public int SectionId { get; set; }
-        public string PageId { get; set; }
+        public string PageId { get { return "UKPRN"; } set { } }
         public string GetHelpQuestion { get; set; }
         public bool GetHelpQuerySubmitted { get; set; }
         public string GetHelpErrorMessage { get; set; }

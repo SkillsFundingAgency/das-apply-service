@@ -140,7 +140,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 model.UKPRN = ukprn;
             }
 
-            PopulateGetHelpWithQuestion(model, "UKPRN");
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
         }
@@ -265,7 +265,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ApplicationRouteId = applicationRouteId
             };
 
-            PopulateGetHelpWithQuestion(viewModel, "ConfirmLevyStatus");
+            PopulateGetHelpWithQuestion(viewModel);
 
             return View("~/Views/Roatp/ConfirmLevyStatus.cshtml", viewModel);
         }
@@ -321,7 +321,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public IActionResult IneligibleNonLevy(Guid applicationId)
         {
             var model = new EmployerProviderContinueApplicationViewModel { ApplicationId = applicationId };
-            PopulateGetHelpWithQuestion(model, "IneligibleNonLevy");
+            PopulateGetHelpWithQuestion(model);
             return View("~/Views/Roatp/IneligibleNonLevy.cshtml", model);
         }
 
@@ -376,7 +376,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 model.ApplicationRouteId = applicationDetails.ApplicationRoute.Id;
             }
 
-            PopulateGetHelpWithQuestion(model, "ApplicationRoute");
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
         }
@@ -530,7 +530,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public IActionResult ConfirmChangeRoute(Guid applicationId)
         {
             var model = new ConfirmChangeRouteViewModel { ApplicationId = applicationId };
-            PopulateGetHelpWithQuestion(model, "ConfirmChangeRoute");
+            PopulateGetHelpWithQuestion(model);
             return View("~/Views/Roatp/ConfirmChangeRoute.cshtml", model);
         }
 
@@ -570,10 +570,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> ChangeApplicationProviderRoute(Guid applicationId)
         {
             var model = new SelectApplicationRouteViewModel { ApplicationId = applicationId };
-            PopulateGetHelpWithQuestion(model, "ApplicationRoute");
+            
             model.ApplicationRoutes = await GetApplicationRoutes();
             var applicationRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
             model.ApplicationRouteId = Convert.ToInt32(applicationRoute.Value);
+
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
         }
@@ -680,7 +682,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 CurrentProviderType = existingProviderRoute
             };
 
-            PopulateGetHelpWithQuestion(model, "AlreadyOnRegister");
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/ProviderAlreadyOnRegister.cshtml", model);
         }

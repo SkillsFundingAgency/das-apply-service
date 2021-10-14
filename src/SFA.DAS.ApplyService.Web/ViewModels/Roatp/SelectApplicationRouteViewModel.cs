@@ -20,7 +20,7 @@
 
         public int SequenceId { get; set; }
         public int SectionId { get; set; }
-        public string PageId { get; set; }
+        public string PageId { get { return "ApplicationRoute"; } set { } }
 
         public string GetHelpQuestion { get; set; }
 
