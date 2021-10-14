@@ -124,23 +124,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 case ApplicationStatus.AppealSuccessful:
                     if(model.GatewayReviewStatus == GatewayReviewStatus.Fail)
                     {
-                        return View("~/Views/Appeals/AppealSuccessfulGatewayFail.cshtml", model);
+                        return RedirectToAction("AppealSuccessful", "RoatpAppeals", new { applicationId });
                     }
                     else
                     {
-                        var isSupporting = model.ApplicationRouteId == ApplicationRoute.SupportingProviderApplicationRoute.ToString();
-
-                        switch (model.AppealStatus)
-                        {
-                            case AppealStatus.Successful:
-                                return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupporting.cshtml" : "~/Views/Appeals/AppealSuccessful.cshtml", model);
-                            case AppealStatus.SuccessfulAlreadyActive:
-                                return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupportingAlreadyActive.cshtml" : "~/Views/Appeals/AppealSuccessfulAlreadyActive.cshtml", model);
-                            case AppealStatus.SuccessfulFitnessForFunding:
-                                return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupportingFitnessForFunding.cshtml" : "~/Views/Appeals/AppealSuccessfulFitnessForFunding.cshtml", model);                                
-                        }
-
-                        return View("~/Views/Roatp/AppealSuccessful.cshtml", model);
+                        return View("~/Views/Roatp/ApplicationAppealSuccessful.cshtml", model);
                     }
                 case ApplicationStatus.FeedbackAdded:
                     return View("~/Views/Roatp/FeedbackAdded.cshtml", model);
