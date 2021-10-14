@@ -105,8 +105,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             Apply application = null;
 
-            var applicationCountExcludingReapplications = applications.Count(x => x.ApplicationStatus != ApplicationStatus.Rejected || x?.ApplyData?.ApplyDetails?.RequestToReapplyMade != true);
-            var applicationsReapplicationsOnly = applications.Where(x => x.ApplicationStatus == ApplicationStatus.Rejected && x?.ApplyData.ApplyDetails?.RequestToReapplyMade == true);
+            var applicationCountExcludingReapplications = applications.Count(x => x?.ApplyData?.ApplyDetails?.RequestToReapplyMade != true 
+                ||  (x.ApplicationStatus != ApplicationStatus.Rejected && 
+                     !(x.ApplicationStatus==ApplicationStatus.AppealSuccessful 
+                        && x.GatewayReviewStatus==GatewayReviewStatus.Fail)));
+            var applicationsReapplicationsOnly = applications.Where(x => (x.ApplicationStatus == ApplicationStatus.Rejected 
+                                                                          || (x.ApplicationStatus==ApplicationStatus.AppealSuccessful 
+                                                                              && x.GatewayReviewStatus==GatewayReviewStatus.Fail)) 
+                                                                         && x.ApplyData.ApplyDetails?.RequestToReapplyMade == true);
 
             if (applicationCountExcludingReapplications > 1)
             {
