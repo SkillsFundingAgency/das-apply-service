@@ -46,14 +46,12 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (0, 1, '1', 'PRE-95', 'Levy Paying Employer'),
 (0, 1, '2', 'YO-1', 'Apply Provider Route'),
 (0, 1, '3', 'COA-1', 'Conditions of Acceptance accepted'),
-
 (1, 2, '20', 'YO-20', 'Does your organisation have an ultimate parent company in the UK?'),
-(1, 2, '21', 'YO-21', 'Enter parent company number'),
-(1, 2, '21', 'YO-22', 'Enter parent company name'),
+(1, 2, '21', 'YO-21', 'Enter parent company or charity number'),
+(1, 2, '21', 'YO-22', 'Enter parent company or charity name'),
 (1, 2, '30', 'YO-30', 'What is your organisation''s Information Commissioner''s Office (ICO) registration number?'),
 (1, 2, '40', 'YO-40', 'Does your organisation have a website?'),
 (1, 2, '40', 'YO-41', 'Enter your website address'),
-
 (1, 3, '70', 'YO-70', 'Companies House Directors'),
 (1, 3, '70', 'YO-71', 'Companies House PSCs'),
 (1, 3, '70', 'YO-75', 'Confirm your organisation''s Directors and PSCs'),

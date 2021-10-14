@@ -92,7 +92,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             };
 
-            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage);
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/WhosInControl/ConfirmDirectorsPscs.cshtml", model);
         }
@@ -157,7 +157,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 model.VerifiedCompaniesHouse = true;
             }
-            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage);
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesNoDob.cshtml", model);
         }
@@ -199,7 +199,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ApplicationId = applicationId,
                 TrusteeDatesOfBirth = MapTrusteesDataToViewModel(trusteesData)
             };
-            PopulateGetHelpWithQuestion(model, "ConfirmTrusteesDob");
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesDob.cshtml", model);
         }
@@ -258,7 +258,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 model.OrganisationType = soleTraderPartnershipAnswer.Value;
             }
 
-            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership);
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/WhosInControl/SoleTraderOrPartnership.cshtml", model);
         }
@@ -325,7 +325,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 model.PartnershipType = partnerTypeAnswer.Value;
             }
 
-            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.PartnershipType);
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/WhosInControl/PartnershipType.cshtml", model);
         }
@@ -384,7 +384,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 ApplicationId = applicationId,
                 DateOfBirthOptional = !partnerIndividual,
-                GetHelpAction = "AddPartner"
+                GetHelpAction = "AddPartner",
+                PageId = RoatpWorkflowPageIds.WhosInControl.AddPartners
             };
 
             if (partnerIndividual)
@@ -396,7 +397,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 model.Identifier = "organisation";
             }
 
-            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.AddPartners);
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/WhosInControl/AddPartner.cshtml", model);
         }
@@ -467,7 +468,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction("PartnershipType", new { applicationId });
             }
 
-            PopulateGetHelpWithQuestion(model, "ConfirmPartners");
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/WhosInControl/ConfirmPartners.cshtml", model);
         }
@@ -492,9 +493,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     Index = index,
                     Identifier = "organisation",
                     DateOfBirthOptional = true,
-                    GetHelpAction = "EditPartner"
+                    GetHelpAction = "EditPartner",
+                    PageId = "EditPartner"
                 };
-                if (partner.Columns.Count > 1 && !String.IsNullOrEmpty(partner.Columns[1]))
+
+                if (partner.Columns.Count > 1 && !string.IsNullOrEmpty(partner.Columns[1]))
                 {
                     var dateOfBirth = partner.Columns[1];
                     model.PersonInControlDobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(dateOfBirth);
@@ -502,7 +505,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     model.DateOfBirthOptional = false;
                     model.Identifier = "individual";
                 }
-                PopulateGetHelpWithQuestion(model, "EditPartner");
+
+                PopulateGetHelpWithQuestion(model);
 
                 return View($"~/Views/Roatp/WhosInControl/EditPartner.cshtml", model);
             }
@@ -573,7 +577,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     model.SoleTraderDobYear = answerValue.Substring(delimiterIndex+1);
                 }
             }
-            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob);
+
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/WhosInControl/AddSoleTradeDob.cshtml", model);
         }
@@ -607,8 +612,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> AddPeopleInControl(Guid applicationId)
         {
             var organisationType = await _applicationApiClient.GetOrganisationTypeFromApplication(applicationId);
-            var model = new AddEditPeopleInControlViewModel { ApplicationId = applicationId, OrganisationType = organisationType, GetHelpAction = "AddPeopleInControl" };
-            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl);
+            var model = new AddEditPeopleInControlViewModel
+            {
+                ApplicationId = applicationId,
+                OrganisationType = organisationType,
+                GetHelpAction = "AddPeopleInControl",
+                PageId = RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl
+            };
+
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/WhosInControl/AddPeopleInControl.cshtml", model);
         }
@@ -682,8 +694,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction("AddPeopleInControl", new { applicationId });
             }
 
-            var model = new ConfirmPeopleInControlViewModel { ApplicationId = applicationId, PeopleInControlData = peopleInControlData };
-            PopulateGetHelpWithQuestion(model, "ConfirmPeopleInControl");
+            var model = new ConfirmPeopleInControlViewModel
+            { 
+                ApplicationId = applicationId,
+                PeopleInControlData = peopleInControlData
+            };
+
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/WhosInControl/ConfirmPeopleInControl.cshtml", model);
         }
@@ -711,9 +728,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     PersonInControlDobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(dateOfBirth),
                     PersonInControlDobYear = DateOfBirthFormatter.GetYearFromShortDateOfBirth(dateOfBirth),
                     DateOfBirthOptional = false,
-                    GetHelpAction = "EditPeopleInControl"
+                    GetHelpAction = "EditPeopleInControl",
+                    PageId = "EditPeopleInControl"
                 };
-                PopulateGetHelpWithQuestion(model, "EditPeopleInControl");
+
+                PopulateGetHelpWithQuestion(model);
                 return View($"~/Views/Roatp/WhosInControl/EditPeopleInControl.cshtml", model);
             }
             return RedirectToAction("ConfirmPeopleInControl", new { applicationId });
@@ -828,9 +847,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 Name = name,
                 ActionName = actionName,
                 BackAction = backActionName,
-                GetHelpAction = actionName
+                GetHelpAction = backActionName, // TODO: Change to actionName when PRG is done. Currently actionName points to a POST only action.
+                PageId = actionName
             };
-            PopulateGetHelpWithQuestion(model, actionName);
+
+            PopulateGetHelpWithQuestion(model);
 
             return View("~/Views/Roatp/WhosInControl/ConfirmPscRemoval.cshtml", model);
         }
