@@ -415,7 +415,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         public async Task
             Applications_shows_process_application_status_if_applications_called()
         {
-            var submittedApp = new Domain.Entities.Apply();
+            var submittedApp = new Domain.Entities.Apply {ApplyData = new ApplyData()};
             var applications = new List<Apply>
             {
                 submittedApp

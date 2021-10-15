@@ -96,7 +96,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var signinId = User.GetSignInId();
             var applications = await GetInFlightApplicationsForSignInId(signinId);
 
-            var applicationsReapplicationsOnly = applications.Where(x => x.ApplyData.ApplyDetails?.RequestToReapplyMade == true
+            var applicationsReapplicationsOnly = applications.Where(x => x.ApplyData?.ApplyDetails?.RequestToReapplyMade == true
                                                                          && (x.ApplicationStatus == ApplicationStatus.Rejected
                                                                              || (x.ApplicationStatus == ApplicationStatus.AppealSuccessful
                                                                                  && x.GatewayReviewStatus == GatewayReviewStatus.Fail))).ToList();
