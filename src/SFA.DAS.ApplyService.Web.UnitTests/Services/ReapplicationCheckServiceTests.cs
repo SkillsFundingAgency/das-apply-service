@@ -240,7 +240,38 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var result = await _service.ReapplicationUkprnForUser(_signInId);
             var ukprnReturned = _ukprn == result;
             Assert.AreEqual(expectedResult, ukprnReturned);
+        }
 
+
+        [Test]
+        public async Task check_application_inflight_with_different_user()
+        {
+            var contactId = Guid.NewGuid();
+            var differentContactId = Guid.NewGuid();
+
+            var applications = new List<Apply>
+            {
+                new Apply
+                {
+                    OrganisationId = _organisationId,
+                    ApplyData = new ApplyData
+                    {
+                        ApplyDetails = new ApplyDetails
+                        {
+                            UKPRN = _ukprn
+                        }
+                    },
+                    CreatedBy = differentContactId.ToString()
+                }
+            };
+
+            _applicationApiClient.Setup(x => x.GetApplicationsByUkprn(_ukprn)).ReturnsAsync(applications);
+            _applicationApiClient.Setup(x => x.GetContactBySignInId(contactId))
+                .ReturnsAsync(new Contact { Id = contactId });
+
+            var result = await _service.ApplicationInFlightWithDifferentUser(_signInId, _ukprn);
+
+            Assert.IsTrue(result);
         }
     }
 
