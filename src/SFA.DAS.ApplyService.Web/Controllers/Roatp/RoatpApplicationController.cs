@@ -101,12 +101,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                                                                              || (x.ApplicationStatus == ApplicationStatus.AppealSuccessful
                                                                                  && x.GatewayReviewStatus == GatewayReviewStatus.Fail))).ToList();
 
-            var applicationCountExcludingReapplications = applications.Count(x => x?.ApplyData?.ApplyDetails?.RequestToReapplyMade != true 
-                                                                    ||  (x.ApplicationStatus != ApplicationStatus.Rejected && 
-                                                                         !(x.ApplicationStatus==ApplicationStatus.AppealSuccessful 
-                                                                            && x.GatewayReviewStatus==GatewayReviewStatus.Fail)));
-
-            var applicationCountExcludingReapplications2 = applications.Except(applicationsReapplicationsOnly).ToList().Count;
+            var applicationCountExcludingReapplications = applications.Except(applicationsReapplicationsOnly).ToList().Count;
 
             if (applicationCountExcludingReapplications > 1)
             {
@@ -119,13 +114,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 _logger.LogDebug($"Application found for userId: {signinId}");
                 application = applications[0];
-                _logger.LogDebug("Applications controller action completed with reapplication");
-
                 return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { application.ApplicationId });
             }
 
             if (applicationsReapplicationsOnly.Any())
             {
+                _logger.LogDebug("Applications that allow reapplication exist");
                 application = applicationsReapplicationsOnly.OrderByDescending(x => x.UpdatedAt).FirstOrDefault();
 
                 var reapplicationAllowed =
@@ -142,8 +136,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
             }
-
-            _logger.LogDebug("Applications controller action completed");
 
             return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new {application.ApplicationId });
         }
