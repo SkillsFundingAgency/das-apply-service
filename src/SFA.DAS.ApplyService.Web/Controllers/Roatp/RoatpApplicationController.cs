@@ -93,26 +93,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Applications()
         {
-            var username = User.Identity.Name;
-
-            if (string.IsNullOrWhiteSpace(username))
-                return RedirectToAction("PostSignIn", "Users");
-
-            _logger.LogDebug($"Got LoggedInUser from Session: {username}");
-
             var signinId = User.GetSignInId();
             var applications = await GetInFlightApplicationsForSignInId(signinId);
 
-            Apply application = null;
+            var applicationsReapplicationsOnly = applications.Where(x => x.ApplyData.ApplyDetails?.RequestToReapplyMade == true
+                                                                         && (x.ApplicationStatus == ApplicationStatus.Rejected
+                                                                             || (x.ApplicationStatus == ApplicationStatus.AppealSuccessful
+                                                                                 && x.GatewayReviewStatus == GatewayReviewStatus.Fail))).ToList();
 
             var applicationCountExcludingReapplications = applications.Count(x => x?.ApplyData?.ApplyDetails?.RequestToReapplyMade != true 
-                ||  (x.ApplicationStatus != ApplicationStatus.Rejected && 
-                     !(x.ApplicationStatus==ApplicationStatus.AppealSuccessful 
-                        && x.GatewayReviewStatus==GatewayReviewStatus.Fail)));
-            var applicationsReapplicationsOnly = applications.Where(x => (x.ApplicationStatus == ApplicationStatus.Rejected 
-                                                                          || (x.ApplicationStatus==ApplicationStatus.AppealSuccessful 
-                                                                              && x.GatewayReviewStatus==GatewayReviewStatus.Fail)) 
-                                                                         && x.ApplyData.ApplyDetails?.RequestToReapplyMade == true);
+                                                                    ||  (x.ApplicationStatus != ApplicationStatus.Rejected && 
+                                                                         !(x.ApplicationStatus==ApplicationStatus.AppealSuccessful 
+                                                                            && x.GatewayReviewStatus==GatewayReviewStatus.Fail)));
+
+            var applicationCountExcludingReapplications2 = applications.Except(applicationsReapplicationsOnly).ToList().Count;
 
             if (applicationCountExcludingReapplications > 1)
             {
@@ -120,6 +114,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View("~/Views/Roatp/Applications.cshtml", applications);
             }
 
+            Apply application = null;
             if (applicationCountExcludingReapplications == 1)
             {
                 _logger.LogDebug($"Application found for userId: {signinId}");
