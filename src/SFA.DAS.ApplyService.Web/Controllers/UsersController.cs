@@ -123,6 +123,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
              }
 
+            var reapplicationRequestedAndPending =
+                await _reapplicationCheckService.ReapplicationRequestedAndPending(signInId, user.ApplyOrganisationId);
+
+            if (reapplicationRequestedAndPending)
+            {
+                var applicationId = await _reapplicationCheckService.ReapplicationApplicationIdForUser(signInId);
+                if (applicationId!=null && applicationId!=Guid.Empty)
+                    return RedirectToAction("RequestNewInvitationRefresh", "RoatpAppeals", new { applicationId });
+            }
+
             return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
             
         }

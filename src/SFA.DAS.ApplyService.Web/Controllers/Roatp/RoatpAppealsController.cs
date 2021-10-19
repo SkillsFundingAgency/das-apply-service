@@ -79,7 +79,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         }
 
-        [HttpGet]
+        [HttpGet] 
+        [Authorize(Policy = null)]
         [Route("application/{applicationId}/request-new-invitation")]
         public async Task<IActionResult> RequestNewInvitationRefresh(Guid applicationId)
         {
@@ -297,7 +298,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupportingFitnessForFunding.cshtml" : "~/Views/Appeals/AppealSuccessfulFitnessForFunding.cshtml", model);
             }
 
-            return View("~/Views/Roatp/AppealSuccessful.cshtml", model);
+            return View("~/Views/Appeals/AppealSuccessful.cshtml", model);
         }
 
         [HttpGet("application/{applicationId}/appeal/file/{fileName}")]
