@@ -882,7 +882,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 ValidationPassed = true
             };
-            _qnaClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<List<Answer>>())).ReturnsAsync(updateResult);
+            _qnaClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<Answer>>())).ReturnsAsync(updateResult);
 
             var viewModel = new ConfirmTrusteesDateOfBirthViewModel
             {
