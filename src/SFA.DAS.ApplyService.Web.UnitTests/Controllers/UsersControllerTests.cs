@@ -149,6 +149,47 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.ActionName.Should().Be("Applications");
         }
 
+
+        [Test]
+        public void PostSignIn_reapplication_requested_and_pending_go_to_request_new_invitation()
+        {
+            var ukprn = "12345678";
+            var applicationId = Guid.NewGuid();
+            var contact = new Contact { ApplyOrganisationId = Guid.NewGuid() };
+            _usersApiClient.Setup(x => x.GetUserBySignInId(_userSignInId)).ReturnsAsync(contact);
+
+            _reapplicationCheckService.Setup(x => x.ReapplicationAllowed(_userSignInId, It.IsAny<Guid>())).ReturnsAsync(false);
+            _reapplicationCheckService.Setup(x => x.ReapplicationRequestedAndPending(_userSignInId, It.IsAny<Guid?>())).ReturnsAsync(true);
+            _reapplicationCheckService.Setup(x => x.ReapplicationApplicationIdForUser(_userSignInId)).ReturnsAsync(applicationId);
+
+            var result = _userController.PostSignIn().Result;
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("RequestNewInvitationRefresh");
+        }
+
+
+        [Test]
+        public void PostSignIn_reapplication_requested_and_pending_no_application_go_to_applications()
+        {
+            var ukprn = "12345678";
+            var applicationId = Guid.NewGuid();
+            var contact = new Contact { ApplyOrganisationId = Guid.NewGuid() };
+            _usersApiClient.Setup(x => x.GetUserBySignInId(_userSignInId)).ReturnsAsync(contact);
+
+            _reapplicationCheckService.Setup(x => x.ReapplicationAllowed(_userSignInId, It.IsAny<Guid>())).ReturnsAsync(false);
+            _reapplicationCheckService.Setup(x => x.ReapplicationRequestedAndPending(_userSignInId, It.IsAny<Guid?>())).ReturnsAsync(true);
+            _reapplicationCheckService.Setup(x => x.ReapplicationApplicationIdForUser(_userSignInId)).ReturnsAsync((Guid?)null);
+
+            var result = _userController.PostSignIn().Result;
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("Applications");
+        }
+
+
         [Test]
         public void PostSignIn_reapplication_not_allowed_go_to_applications()
         {
