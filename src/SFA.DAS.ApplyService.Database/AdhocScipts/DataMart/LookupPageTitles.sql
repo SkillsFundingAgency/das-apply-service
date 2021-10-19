@@ -26,6 +26,7 @@ INSERT INTO LookupPageTitles ([SequenceNumber],[SectionNumber],[PageId],[Title])
 
 (1, 3, '70', 'Confirm who''s in control - Companies House'),
 (1, 3, '80', 'Confirm who''s in control - Trustees'),
+(1, 3, '86', 'Confirm who''s in control - Trustees date of birth'),
 (1, 3, '90', 'Confirm who''s in control - Add Trustees'),
 (1, 3, '100', 'Sole trader or Partnership'),
 (1, 3, '101', 'Partnership type'),

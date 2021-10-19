@@ -57,6 +57,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (1, 3, '70', 'YO-75', 'Confirm your organisation''s Directors and PSCs'),
 (1, 3, '80', 'YO-80', 'Charity Trustees'),
 (1, 3, '80', 'YO-85', 'Confirm your organisation''s Trustees'),
+(1, 3, '86', 'YO-86', 'Enter your organisation''s Trustees date of birth'),
 (1, 3, '90', 'YO-90', 'Add Trustees'),
 (1, 3, '100', 'YO-100', 'Are you a Soletrader or a Partnership?'),
 (1, 3, '101', 'YO-101', 'What is your organisation''s partnership type?'),
