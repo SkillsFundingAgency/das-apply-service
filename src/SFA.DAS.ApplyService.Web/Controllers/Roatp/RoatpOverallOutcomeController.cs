@@ -121,8 +121,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                         return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", unsuccessfulModel);
                     }
-                case ApplicationStatus.AppealSuccessful: // placeholder status to stop tasklist breaking with new statuses - coverage not added as new stories following
-                    return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
+                case ApplicationStatus.AppealSuccessful:
+                    if(model.GatewayReviewStatus == GatewayReviewStatus.Fail)
+                    {
+                        return RedirectToAction("AppealSuccessful", "RoatpAppeals", new { applicationId });
+                    }
+                    else
+                    {
+                        return View("~/Views/Roatp/ApplicationAppealSuccessful.cshtml", model);
+                    }
                 case ApplicationStatus.FeedbackAdded:
                     return View("~/Views/Roatp/FeedbackAdded.cshtml", model);
                 case ApplicationStatus.Withdrawn:

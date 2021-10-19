@@ -7,6 +7,7 @@ using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -206,7 +207,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> AppealSuccessful(Guid applicationId)
         {
             var appeal = await _appealsApiClient.GetAppeal(applicationId);
-            if (appeal==null)
+            if (appeal is null)
                 return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
 
             if (appeal.Status != AppealStatus.Successful && appeal.Status != AppealStatus.SuccessfulFitnessForFunding && appeal.Status != AppealStatus.SuccessfulAlreadyActive)
@@ -228,10 +229,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit
             };
 
+            var isGatewayFail = application?.GatewayReviewStatus == GatewayReviewStatus.Fail;
+            if (isGatewayFail && application?.ApplicationStatus == ApplicationStatus.AppealSuccessful)
+            {
+                switch (appeal.Status)
+                {
+                    case AppealStatus.Successful:
+                    case AppealStatus.SuccessfulAlreadyActive:
+                    case AppealStatus.SuccessfulFitnessForFunding:
+                        return View("~/Views/Appeals/AppealSuccessfulGatewayFail.cshtml", model);
+                }
+
+            }
+
             var isSupporting = application?.ApplyData?.ApplyDetails?.ProviderRoute.ToString() ==
                                  Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute.ToString();
 
-            switch (appeal?.Status)
+            switch (appeal.Status)
             {
                 case AppealStatus.Successful:
                     return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupporting.cshtml" : "~/Views/Appeals/AppealSuccessful.cshtml", model);
@@ -241,7 +255,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupportingFitnessForFunding.cshtml" : "~/Views/Appeals/AppealSuccessfulFitnessForFunding.cshtml", model);
             }
 
-            return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
+            return View("~/Views/Roatp/AppealSuccessful.cshtml", model);
         }
 
         [HttpGet("application/{applicationId}/appeal/file/{fileName}")]
