@@ -273,7 +273,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ConfirmTrusteesNoDob");
+            viewResult.ViewName.Should().Contain("ConfirmTrustees");
         }
 
         [Test]
@@ -560,7 +560,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany, It.IsAny<string>())).ReturnsAsync(verifiedCompanyAnswer);
 
-            var result = _controller.ConfirmTrusteesNoDob(Guid.NewGuid()).GetAwaiter().GetResult();
+            var result = _controller.ConfirmTrustees(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
@@ -604,7 +604,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany, It.IsAny<string>())).ReturnsAsync(verifiedCompanyAnswer);
 
-            var result = _controller.ConfirmTrusteesNoDob(Guid.NewGuid()).GetAwaiter().GetResult();
+            var result = _controller.ConfirmTrustees(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
