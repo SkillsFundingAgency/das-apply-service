@@ -192,6 +192,108 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         }
 
         [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Fail, true)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Rejected, false)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.ClarificationSent, false)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.InProgress, false)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Draft, false)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.New, false)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Fail, true)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Rejected, true)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.ClarificationSent, true)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.InProgress, true)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Draft, true)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.New, true)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.Fail, false)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.Rejected, false)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.ClarificationSent, false)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.InProgress, false)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.Draft, false)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.New, false)]
+        [TestCase(ApplicationStatus.GatewayAssessed, GatewayReviewStatus.Fail, false)]
+        [TestCase(ApplicationStatus.InProgress, GatewayReviewStatus.Rejected, false)]
+        [TestCase(ApplicationStatus.InProgressAppeal, GatewayReviewStatus.ClarificationSent, false)]
+        [TestCase(ApplicationStatus.InProgressOutcome, GatewayReviewStatus.InProgress, false)]
+        [TestCase(ApplicationStatus.New, GatewayReviewStatus.Draft, false)]
+        [TestCase(ApplicationStatus.Removed, GatewayReviewStatus.New, false)]
+        public async Task Reapplication_Requested_And_Pending_status_when_applicationStatus_and_gateway_status_inserted(string applicationStatus, string gatewayStatus, bool expectedResult)
+        {
+            var applications = new List<Apply>
+            {
+                new Apply
+                {
+                    ApplicationStatus = applicationStatus,
+                    GatewayReviewStatus = gatewayStatus,
+                    OrganisationId = _organisationId,
+                    ApplyData = new ApplyData
+                    {
+                        ApplyDetails = new ApplyDetails
+                        {
+                            UKPRN = _ukprn,
+                            RequestToReapplyMade = true
+                        }
+                    }
+                }
+            };
+
+            _applicationApiClient.Setup(x => x.GetApplications(_signInId, true)).ReturnsAsync(applications);
+            _applicationApiClient.Setup(x => x.GetAllowedProvider(_ukprn)).ReturnsAsync(new AllowedProvider
+            { EndDateTime = DateTime.Today.AddDays(-1) });
+            var result = await _service.ReapplicationRequestedAndPending(_signInId, _organisationId);
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Fail)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Rejected)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.ClarificationSent)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.InProgress)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Draft)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.New)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Fail)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Rejected)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.ClarificationSent)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.InProgress)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Draft)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.New)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.Fail)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.Rejected)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.ClarificationSent)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.InProgress)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.Draft)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.New)]
+        [TestCase(ApplicationStatus.GatewayAssessed, GatewayReviewStatus.Fail)]
+        [TestCase(ApplicationStatus.InProgress, GatewayReviewStatus.Rejected)]
+        [TestCase(ApplicationStatus.InProgressAppeal, GatewayReviewStatus.ClarificationSent)]
+        [TestCase(ApplicationStatus.InProgressOutcome, GatewayReviewStatus.InProgress)]
+        [TestCase(ApplicationStatus.New, GatewayReviewStatus.Draft)]
+        [TestCase(ApplicationStatus.Removed, GatewayReviewStatus.New)]
+        public async Task Reapplication_Requested_And_Pending_status_when_applicationStatus_and_gateway_status_inserted_and_in_allowedProviders_and_current(string applicationStatus, string gatewayStatus)
+        {
+            var applications = new List<Apply>
+            {
+                new Apply
+                {
+                    ApplicationStatus = applicationStatus,
+                    GatewayReviewStatus = gatewayStatus,
+                    OrganisationId = _organisationId,
+                    ApplyData = new ApplyData
+                    {
+                        ApplyDetails = new ApplyDetails
+                        {
+                            UKPRN = _ukprn,
+                            RequestToReapplyMade = true
+                        }
+                    }
+                }
+            };
+
+            _applicationApiClient.Setup(x => x.GetApplications(_signInId, true)).ReturnsAsync(applications);
+            _applicationApiClient.Setup(x => x.GetAllowedProvider(_ukprn)).ReturnsAsync(new AllowedProvider
+            { EndDateTime = DateTime.Today });
+            var result = await _service.ReapplicationRequestedAndPending(_signInId, _organisationId);
+            Assert.IsFalse(result);
+        }
+
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Fail, true)]
         [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Rejected, true)]
         [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Rejected, false)]
         [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.ClarificationSent, false)]
@@ -242,7 +344,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             Assert.AreEqual(expectedResult, ukprnReturned);
         }
 
-
         [Test]
         public async Task check_application_inflight_with_different_user()
         {
@@ -272,6 +373,89 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var result = await _service.ApplicationInFlightWithDifferentUser(_signInId, _ukprn);
 
             Assert.IsTrue(result);
+        }
+
+
+        [Test]
+        public async Task get_null_application_id_for_user_not_requested_reapplication()
+        {
+            var contactId = Guid.NewGuid();
+            var applicationId = Guid.NewGuid();
+            var applications = new List<Apply>
+            {
+                new Apply
+                {
+                    ApplicationId = applicationId,
+                    OrganisationId = _organisationId,
+                    ApplyData = new ApplyData
+                    {
+                        ApplyDetails = new ApplyDetails
+                        {
+                            UKPRN = _ukprn
+                        }
+                    },
+                    CreatedBy = contactId.ToString()
+                }
+            };
+
+            _applicationApiClient.Setup(x => x.GetApplications(_signInId, true)).ReturnsAsync(applications);
+
+            var result = await _service.ReapplicationApplicationIdForUser(_signInId);
+
+            Assert.IsNull(result);
+        }
+
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Fail, true)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Rejected, true)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Rejected, false)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.ClarificationSent, false)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.InProgress, false)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Draft, false)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.New, false)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Fail, true)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Rejected, true)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.ClarificationSent, true)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.InProgress, true)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Draft, true)]
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.New, true)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.Fail, false)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.Rejected, false)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.ClarificationSent, false)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.InProgress, false)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.Draft, false)]
+        [TestCase(ApplicationStatus.Cancelled, GatewayReviewStatus.New, false)]
+        [TestCase(ApplicationStatus.GatewayAssessed, GatewayReviewStatus.Fail, false)]
+        [TestCase(ApplicationStatus.InProgress, GatewayReviewStatus.Rejected, false)]
+        [TestCase(ApplicationStatus.InProgressAppeal, GatewayReviewStatus.ClarificationSent, false)]
+        [TestCase(ApplicationStatus.InProgressOutcome, GatewayReviewStatus.InProgress, false)]
+        [TestCase(ApplicationStatus.New, GatewayReviewStatus.Draft, false)]
+        [TestCase(ApplicationStatus.Removed, GatewayReviewStatus.New, false)]
+        public async Task check_for_applicationId_for_reapplication_returned(string applicationStatus, string gatewayStatus, bool expectedResult)
+        {
+            var applicationId = Guid.NewGuid();
+            var applications = new List<Apply>
+            {
+                new Apply
+                {
+                    ApplicationId = applicationId,
+                    ApplicationStatus = applicationStatus,
+                    GatewayReviewStatus = gatewayStatus,
+                    OrganisationId = _organisationId,
+                    ApplyData = new ApplyData
+                    {
+                        ApplyDetails = new ApplyDetails
+                        {
+                            UKPRN = _ukprn,
+                            RequestToReapplyMade = true
+                        }
+                    }
+                }
+            };
+
+            _applicationApiClient.Setup(x => x.GetApplications(_signInId, true)).ReturnsAsync(applications);
+            var result = await _service.ReapplicationApplicationIdForUser(_signInId);
+            var actualResult = result == applicationId;
+            Assert.AreEqual(expectedResult, actualResult);
         }
     }
 

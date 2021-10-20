@@ -52,7 +52,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Appeals/MakeAppeal.cshtml", model);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("application/{applicationId}/request-new-invitation")]
         public async Task<IActionResult> RequestNewInvitation(Guid applicationId)
         {
@@ -75,6 +75,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             };
 
             await _emailService.SendRequestToReapplyEmail(emailRequest);
+            return RedirectToAction("RequestNewInvitationRefresh", "RoatpAppeals", new {applicationId });
+
+        }
+
+        [HttpGet] 
+        [Authorize(Policy = null)]
+        [Route("application/{applicationId}/request-new-invitation")]
+        public async Task<IActionResult> RequestNewInvitationRefresh(Guid applicationId)
+        {
             return View("~/Views/Roatp/RequestNewInvitation.cshtml", new ApplicationSummaryViewModel { ApplicationId = applicationId, });
         }
 
@@ -289,7 +298,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupportingFitnessForFunding.cshtml" : "~/Views/Appeals/AppealSuccessfulFitnessForFunding.cshtml", model);
             }
 
-            return View("~/Views/Roatp/AppealSuccessful.cshtml", model);
+            return View("~/Views/Appeals/AppealSuccessful.cshtml", model);
         }
 
         [HttpGet("application/{applicationId}/appeal/file/{fileName}")]

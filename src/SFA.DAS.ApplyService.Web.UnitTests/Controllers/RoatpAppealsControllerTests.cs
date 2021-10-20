@@ -565,12 +565,29 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var result = await _controller.RequestNewInvitation(applicationId);
 
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("RequestNewInvitationRefresh");
+            _applicationApiClient.Verify(x => x.GetApplication(applicationId), Times.Once);
+            _emailService.Verify(x => x.SendRequestToReapplyEmail(It.IsAny<RequestInvitationToReapply>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Application_new_invitation_refresh_requested()
+        {
+            var applicationId = Guid.NewGuid();
+
+            var viewModel = new ApplicationSummaryViewModel
+            {
+                ApplicationId = applicationId
+            };
+
+            var result = await _controller.RequestNewInvitationRefresh(applicationId);
+
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.Model.Should().BeEquivalentTo(viewModel);
             viewResult.ViewName.Should().Contain("RequestNewInvitation.cshtml");
-            _applicationApiClient.Verify(x => x.GetApplication(applicationId), Times.Once);
-            _emailService.Verify(x => x.SendRequestToReapplyEmail(It.IsAny<RequestInvitationToReapply>()), Times.Once);
-        }
+         }
     }
 }
