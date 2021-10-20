@@ -93,20 +93,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Applications()
         {
-            var username = User.Identity.Name;
-
-            if (string.IsNullOrWhiteSpace(username))
-                return RedirectToAction("PostSignIn", "Users");
-
-            _logger.LogDebug($"Got LoggedInUser from Session: {username}");
-
             var signinId = User.GetSignInId();
             var applications = await GetInFlightApplicationsForSignInId(signinId);
 
-            Apply application = null;
+            var applicationsReapplicationsOnly = applications.Where(x => x.ApplyData?.ApplyDetails?.RequestToReapplyMade == true
+                                                                         && (x.ApplicationStatus == ApplicationStatus.Rejected
+                                                                             || (x.ApplicationStatus == ApplicationStatus.AppealSuccessful
+                                                                                 && x.GatewayReviewStatus == GatewayReviewStatus.Fail))).ToList();
 
-            var applicationCountExcludingReapplications = applications.Count(x => x.ApplicationStatus != ApplicationStatus.Rejected || x?.ApplyData?.ApplyDetails?.RequestToReapplyMade != true);
-            var applicationsReapplicationsOnly = applications.Where(x => x.ApplicationStatus == ApplicationStatus.Rejected && x?.ApplyData.ApplyDetails?.RequestToReapplyMade == true);
+            var applicationCountExcludingReapplications = applications.Except(applicationsReapplicationsOnly).ToList().Count;
 
             if (applicationCountExcludingReapplications > 1)
             {
@@ -114,17 +109,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View("~/Views/Roatp/Applications.cshtml", applications);
             }
 
+            Apply application = null;
             if (applicationCountExcludingReapplications == 1)
             {
                 _logger.LogDebug($"Application found for userId: {signinId}");
                 application = applications[0];
-                _logger.LogDebug("Applications controller action completed with reapplication");
-
                 return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { application.ApplicationId });
             }
 
             if (applicationsReapplicationsOnly.Any())
             {
+                _logger.LogDebug("Applications that allow reapplication exist");
                 application = applicationsReapplicationsOnly.OrderByDescending(x => x.UpdatedAt).FirstOrDefault();
 
                 var reapplicationAllowed =
@@ -141,8 +136,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
             }
-
-            _logger.LogDebug("Applications controller action completed");
 
             return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new {application.ApplicationId });
         }
