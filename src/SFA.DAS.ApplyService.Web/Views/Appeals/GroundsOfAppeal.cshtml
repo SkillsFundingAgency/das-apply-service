@@ -13,7 +13,6 @@
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <partial name="_ValidationSummaryPartial" />
@@ -28,11 +27,9 @@
                     Your answer will not be saved if you leave this page before you submit your appeal
                 </strong>
             </div>
-        </div>
-        <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-form-group">
+            <p class="govuk-body">
                 <a id="overview" class="govuk-link govuk-link--no-visited-state govuk-!-margin-bottom-3" target="_blank" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">View your Application overview page (opens in new tab)</a>
-            </div>
+            </p>
             <form method="post" enctype="multipart/form-data" asp-action="GroundsOfAppeal" asp-controller="RoatpAppeals" novalidate>
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="AppealOnPolicyOrProcesses" />
@@ -42,7 +39,7 @@
                 {
                     <div class="govuk-character-count govuk-!-margin-bottom-6" data-module="govuk-character-count" data-maxlength="10000">
                         <div class="govuk-form-group" sfa-validation-for="HowFailedOnPolicyOrProcesses" sfa-validationerror-class="govuk-form-group--error">
-                            <label class="govuk-label govuk-!-font-weight-bold" asp-for="HowFailedOnPolicyOrProcesses">
+                            <label class="govuk-label govuk-label--s" asp-for="HowFailedOnPolicyOrProcesses">
                                 How did the ESFA fail to follow its own policy or processes?
                             </label>
                             <span class="govuk-error-message" asp-validation-for="HowFailedOnPolicyOrProcesses"></span>
@@ -60,7 +57,7 @@
                 {
                     <div class="govuk-character-count govuk-!-margin-bottom-6" data-module="govuk-character-count" data-maxlength="10000">
                         <div class="govuk-form-group" sfa-validation-for="HowFailedOnEvidenceSubmitted" sfa-validationerror-class="govuk-form-group--error">
-                            <label class="govuk-label govuk-!-font-weight-bold" asp-for="HowFailedOnEvidenceSubmitted" for="gethelp">
+                            <label class="govuk-label govuk-label--s" asp-for="HowFailedOnEvidenceSubmitted" for="gethelp">
                                 How did the ESFA fail to understand or recognise the evidence submitted?
                             </label>
                             <span class="govuk-error-message" asp-validation-for="HowFailedOnEvidenceSubmitted"></span>
@@ -78,12 +75,14 @@
                     If you need to upload any files to support your appeal, you can do so here.
                     Each file must be a pdf and smaller than 5MB. You can upload a maximum of 4 files.
                 </p>
+
                 <partial name="_FileUploadsTable.cshtml" for="@Model" />
-                   
-                <button class="govuk-button govuk-!-margin-right-3" data-module="govuk-button" data-disable-on-submit="true" name="FormAction" value="@GroundsOfAppealViewModel.SUBMIT_APPEAL_FORMACTION">
-                    Submit your appeal
-                </button>
-                <a id="cancel" class="govuk-link govuk-link--no-visited-state das-inline-button-link" asp-action="CancelAppeal" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Cancel this appeal</a>
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true" name="FormAction" value="@GroundsOfAppealViewModel.SUBMIT_APPEAL_FORMACTION">
+                        Submit your appeal
+                    </button>
+                    <a id="cancel" class="govuk-link" asp-action="CancelAppeal" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Cancel this appeal</a>
+                </div>
             </form>
         </div>
     </div>
