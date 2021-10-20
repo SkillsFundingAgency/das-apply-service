@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Application.Services;
+using Newtonsoft.Json.Linq;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -40,30 +41,32 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [Route("confirm-who-control")]
         public async Task<IActionResult> StartPage(Guid applicationId)
         {
-            var verificationCompanyAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCompany);
-            var companiesHouseManualEntryAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ManualEntryRequiredCompaniesHouse);
-            if ((verificationCompanyAnswer.Value == "TRUE") 
-                && (companiesHouseManualEntryAnswer.Value != "TRUE"))
+            var qnaApplicationData = await _qnaApiClient.GetApplicationData(applicationId);
+
+            var verificationCompanyAnswer = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UkrlpVerificationCompany)?.Value<string>();
+            var companiesHouseManualEntryAnswer = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.ManualEntryRequiredCompaniesHouse)?.Value<string>();
+            if (verificationCompanyAnswer == "TRUE"
+                && companiesHouseManualEntryAnswer != "TRUE")
             {
                 return await ConfirmDirectorsPscs(applicationId);
             }
-            var verificationCharityAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCharity);
-            var charityCommissionManualEntryAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ManualEntryRequiredCharityCommission);
-            if ((verificationCharityAnswer.Value == "TRUE")
-                && (charityCommissionManualEntryAnswer.Value != "TRUE"))
+
+            var verificationCharityAnswer = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UkrlpVerificationCharity)?.Value<string>();
+            var charityCommissionManualEntryAnswer = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.ManualEntryRequiredCharityCommission)?.Value<string>();
+            if (verificationCharityAnswer == "TRUE"
+                && charityCommissionManualEntryAnswer != "TRUE")
             {
                 return await ConfirmTrustees(applicationId);
             }
 
-            var verificationPartnership = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationSoleTraderPartnership);
-            if (verificationPartnership.Value == "TRUE")
+            var verificationPartnership = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UkrlpVerificationSoleTraderPartnership)?.Value<string>();
+            if (verificationPartnership == "TRUE")
             {
                 return await SoleTraderOrPartnership(applicationId);
             }
 
-            var peopleData = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl);
-
-            if (peopleData != null && peopleData.Value != null)
+            var peopleData = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.AddPeopleInControl)?.Value<string>();
+            if (peopleData != null)
             {
                 return await ConfirmPeopleInControl(applicationId);
             }
