@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IOutcomeApiClient> _outcomeApiClient;
         private Mock<IOverallOutcomeService> _outcomeService;
         private Mock<IApplicationApiClient> _applicationApiClient;
-        private Mock<IRequestInvitationToReapplyEmailService> _emailService;
+
 
         private RoatpOverallOutcomeController _controller;
 
@@ -39,8 +39,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _outcomeService = new Mock<IOverallOutcomeService>();
             _outcomeApiClient = new Mock<IOutcomeApiClient>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
-            _emailService = new Mock<IRequestInvitationToReapplyEmailService>();
-
+         
             var signInId = Guid.NewGuid();
             var givenNames = "Test";
             var familyName = "User";
@@ -54,7 +53,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 new Claim("custom-claim", "example claim value"),
             }, "mock"));
 
-            _controller = new RoatpOverallOutcomeController(_outcomeService.Object, _outcomeApiClient.Object, _emailService.Object,_applicationApiClient.Object)
+            _controller = new RoatpOverallOutcomeController(_outcomeService.Object, _outcomeApiClient.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -662,27 +661,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _outcomeApiClient.Setup(x => x.DownloadClarificationfile(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), filename)).ReturnsAsync(response);
             var result = await _controller.DownloadClarificationFile(Guid.NewGuid(), 1, 2, "_pageId", filename) as NotFoundResult;
             Assert.IsNotNull(result);
-        }
-
-        [Test]
-        public async Task Application_new_invitation_requested()
-        {
-            var applicationId = Guid.NewGuid();
-
-            var viewModel = new ApplicationSummaryViewModel
-            {
-                ApplicationId = applicationId
-            };
-
-            var result = await _controller.RequestNewInvitation(applicationId);
-
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.Model.Should().BeEquivalentTo(viewModel);
-            viewResult.ViewName.Should().Contain("RequestNewInvitation.cshtml");
-            _applicationApiClient.Verify(x => x.GetApplication(applicationId), Times.Once);
-            _emailService.Verify(x => x.SendRequestToReapplyEmail(It.IsAny<RequestInvitationToReapply>()), Times.Once);
-
         }
     }
 }

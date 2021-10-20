@@ -56,7 +56,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection.QuerySingleOrDefaultAsync<Apply>(@"SELECT top 1 a.* FROM Contacts c
                                                     INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
-                                                    WHERE c.SigninId = @signinId and a.ApplicationId = @ApplicationId", new { signinId, applicationId }));
+                                                    WHERE c.SigninId = @signinId and a.ApplicationId = @ApplicationId  AND a.CreatedBy = c.Id", new { signinId, applicationId }));
             }
         }
 
@@ -74,9 +74,20 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return (await connection.QueryAsync<Apply>(@"SELECT a.* FROM Contacts c
+                return (await connection.QueryAsync<Apply>(@"SELECT DISTINCT a.* FROM Contacts c
                                                     INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
                                                     WHERE c.SigninId = @signinId", new { signinId })).ToList();
+            }
+        }
+
+        public async Task<List<Apply>> GetApplicationsByUkprn(string ukprn)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<Apply>(@"select a.*
+                      from dbo.Apply a
+                      where UKPRN = @ukprn",
+                    new { ukprn })).ToList();
             }
         }
 
@@ -660,6 +671,26 @@ namespace SFA.DAS.ApplyService.Data
                     dateFrom = dateFrom.ToString("yyyy-MM-dd"), dateTo = dateTo.AddDays(1).Date.ToString("yyyy-MM-dd")
                 })).ToList();
             }
+        }
+
+        public async Task<bool> SubmitReapplicationRequest(Guid applicationId, string userId)
+        {
+            var applyData = await GetApplyData(applicationId);
+
+            if (applyData?.ApplyDetails == null) return false;
+            applyData.ApplyDetails.RequestToReapplyMade = true;
+            applyData.ApplyDetails.RequestToReapplyBy = userId;
+            applyData.ApplyDetails.RequestToReapplyOn = DateTime.UtcNow;
+
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET  ApplyData = @applyData
+                                                WHERE  ApplicationId = @ApplicationId",
+                    new { applicationId, applyData });
+            }
+
+            return true;
         }
 
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn)

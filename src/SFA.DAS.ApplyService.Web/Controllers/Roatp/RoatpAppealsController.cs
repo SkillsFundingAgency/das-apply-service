@@ -2,12 +2,16 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -18,13 +22,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IOutcomeApiClient _outcomeApiClient;
         private readonly IAppealsApiClient _appealsApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
+        private readonly ILogger<RoatpAppealsController> _logger;
+        private readonly IRequestInvitationToReapplyEmailService _emailService;
 
 
-        public RoatpAppealsController(IOutcomeApiClient apiClient, IAppealsApiClient appealsApiClient, IApplicationApiClient applicationApiClient)
+        public RoatpAppealsController(IOutcomeApiClient apiClient, IAppealsApiClient appealsApiClient, IApplicationApiClient applicationApiClient, ILogger<RoatpAppealsController> logger, IRequestInvitationToReapplyEmailService emailService)
         {
             _outcomeApiClient = apiClient;
             _appealsApiClient = appealsApiClient;
             _applicationApiClient = applicationApiClient;
+            _logger = logger;
+            _emailService = emailService;
         }
 
         [HttpGet("application/{applicationId}/appeal")]
@@ -42,6 +50,32 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             };
 
             return View("~/Views/Appeals/MakeAppeal.cshtml", model);
+        }
+
+        [HttpGet]
+        [Route("application/{applicationId}/request-new-invitation")]
+        public async Task<IActionResult> RequestNewInvitation(Guid applicationId)
+        {
+
+            var success = await _outcomeApiClient.ReapplicationRequested(applicationId, User.GetUserId().ToString());
+
+            if (!success)
+            {
+                _logger.LogError($"Unable to request reapplication: {applicationId}");
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
+            }
+
+            var application = await _applicationApiClient.GetApplication(applicationId);
+
+            var emailRequest = new RequestInvitationToReapply
+            {
+                EmailAddress = User.GetEmail(),
+                UKPRN = application?.ApplyData?.ApplyDetails?.UKPRN,
+                OrganisationName = application?.ApplyData?.ApplyDetails?.OrganisationName
+            };
+
+            await _emailService.SendRequestToReapplyEmail(emailRequest);
+            return View("~/Views/Roatp/RequestNewInvitation.cshtml", new ApplicationSummaryViewModel { ApplicationId = applicationId, });
         }
 
         [HttpPost("application/{applicationId}/appeal")]

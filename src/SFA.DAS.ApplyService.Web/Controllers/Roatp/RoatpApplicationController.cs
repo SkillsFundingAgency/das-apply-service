@@ -51,6 +51,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IRoatpOrganisationVerificationService _organisationVerificationService;
         private readonly ITaskListOrchestrator _taskListOrchestrator;
         private readonly IUkrlpApiClient _ukrlpApiClient;
+        private readonly IReapplicationCheckService _reapplicationCheckService;
 
         private const string InputClassUpperCase = "app-uppercase";
         private const string NotApplicableAnswerText = "None of the above";
@@ -65,7 +66,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ICustomValidatorFactory customValidatorFactory,  
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
-            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator, IUkrlpApiClient ukrlpApiClient)
+            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator, IUkrlpApiClient ukrlpApiClient, IReapplicationCheckService reapplicationCheckService)
             :base(sessionService)
         {
             _apiClient = apiClient;
@@ -86,6 +87,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _organisationVerificationService = organisationVerificationService;
             _taskListOrchestrator = taskListOrchestrator;
             _ukrlpApiClient = ukrlpApiClient;
+            _reapplicationCheckService = reapplicationCheckService;
         }
 
         [HttpGet]
@@ -101,30 +103,45 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var signinId = User.GetSignInId();
             var applications = await GetInFlightApplicationsForSignInId(signinId);
 
-            Apply application;
+            Apply application = null;
 
-            if (applications.Count > 1)
+            var applicationCountExcludingReapplications = applications.Count(x => x.ApplicationStatus != ApplicationStatus.Rejected || x?.ApplyData?.ApplyDetails?.RequestToReapplyMade != true);
+            var applicationsReapplicationsOnly = applications.Where(x => x.ApplicationStatus == ApplicationStatus.Rejected && x?.ApplyData.ApplyDetails?.RequestToReapplyMade == true);
+
+            if (applicationCountExcludingReapplications > 1)
             {
                 _logger.LogError($"Multiple in flight applications found for userId: {signinId}");
                 return View("~/Views/Roatp/Applications.cshtml", applications);
             }
-            if (applications.Count == 1)
+
+            if (applicationCountExcludingReapplications == 1)
             {
                 _logger.LogDebug($"Application found for userId: {signinId}");
-                application = applications[0];                
+                application = applications[0];
+                _logger.LogDebug("Applications controller action completed with reapplication");
+
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { application.ApplicationId });
             }
-            else
+
+            if (applicationsReapplicationsOnly.Any())
             {
-                _logger.LogDebug($"No applications found for userId: {signinId}");
+                application = applicationsReapplicationsOnly.OrderByDescending(x => x.UpdatedAt).FirstOrDefault();
 
-                application = await StartApplication(signinId);
-
-                if (application.ApplicationId == Guid.Empty)
-                {
-                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
-                }       
+                var reapplicationAllowed =
+                    await _reapplicationCheckService.ReapplicationAllowed(signinId, application?.OrganisationId);
+                if (!reapplicationAllowed)
+                    return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { application.ApplicationId });
             }
-            
+
+            _logger.LogDebug($"No applications found for userId: {signinId}");
+
+            application = await StartApplication(signinId);
+
+            if (application.ApplicationId == Guid.Empty)
+            {
+                return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
+            }
+
             _logger.LogDebug("Applications controller action completed");
 
             return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new {application.ApplicationId });
