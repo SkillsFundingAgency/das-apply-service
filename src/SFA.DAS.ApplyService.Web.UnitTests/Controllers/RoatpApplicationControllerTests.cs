@@ -253,14 +253,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _apiClient.VerifyAll();
         }
 
-        [Test]
-        public async Task Applications_shows_process_application_status_if_only_reapplication_requested_applications_and_reapplication_allowed_for_that_user()
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Rejected)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Fail)]
+
+        public async Task Applications_shows_process_application_status_if_only_reapplication_requested_applications_and_reapplication_allowed_for_that_user(string applicationStatus, string gatewayReviewStatus)
         {
             var applications = new List<Domain.Entities.Apply>
             {
                 new Apply
                 {
-                    ApplicationStatus = ApplicationStatus.Rejected, GatewayReviewStatus = GatewayAnswerStatus.Fail,
+                    ApplicationStatus = applicationStatus, GatewayReviewStatus = gatewayReviewStatus,
                     ApplyData = new ApplyData
                     {
                         ApplyDetails = new ApplyDetails
@@ -330,14 +332,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ControllerName.Should().Be("RoatpOverallOutcome");
         }
 
-        [Test]
-        public async Task Applications_shows_process_application_status_if_new_application_in_progress()
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Rejected)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Fail)]
+
+        public async Task Applications_shows_process_application_status_if_new_application_in_progress(string applicationStatus, string gatewayReviewStatus)
         {
             var applications = new List<Domain.Entities.Apply>
             {
                 new Apply
                 {
-                    ApplicationStatus = ApplicationStatus.Rejected, GatewayReviewStatus = GatewayAnswerStatus.Fail,
+                    ApplicationStatus = applicationStatus, GatewayReviewStatus = gatewayReviewStatus,
                     ApplyData = new ApplyData
                     {
                         ApplyDetails = new ApplyDetails
@@ -411,7 +415,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         public async Task
             Applications_shows_process_application_status_if_applications_called()
         {
-            var submittedApp = new Domain.Entities.Apply();
+            var submittedApp = new Domain.Entities.Apply {ApplyData = new ApplyData()};
             var applications = new List<Apply>
             {
                 submittedApp

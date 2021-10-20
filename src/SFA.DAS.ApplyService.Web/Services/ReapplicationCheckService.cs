@@ -26,18 +26,30 @@ namespace SFA.DAS.ApplyService.Web.Services
                 .FirstOrDefault(x => x.OrganisationId == organisationId);
             var applyDetails = application?.ApplyData?.ApplyDetails;
             if (applyDetails?.UKPRN == null) return false;
-            var allowedProviderDetails = await _applicationApiClient.GetAllowedProvider(applyDetails?.UKPRN);
+            var allowedProviderDetails = await _applicationApiClient.GetAllowedProvider(applyDetails.UKPRN);
             if (allowedProviderDetails == null || allowedProviderDetails.EndDateTime < DateTime.Today) return false;
-            return application.ApplicationStatus == ApplicationStatus.Rejected &&
-                   applyDetails?.RequestToReapplyMade == true;
+
+            var reapplicationAllowed = false;
+
+            if (applyDetails.RequestToReapplyMade==true)
+            {
+                reapplicationAllowed = application.ApplicationStatus == ApplicationStatus.Rejected 
+                                       || (application.ApplicationStatus == ApplicationStatus.AppealSuccessful &&
+                                           application.GatewayReviewStatus == GatewayReviewStatus.Fail);
+            }
+
+            return reapplicationAllowed;
+
         }
 
         public async Task<string> ReapplicationUkprnForUser(Guid signInId)
         {
             var applications = await _applicationApiClient.GetApplications(signInId, true);
             var applicationsRejectedAndRequestToReapplyMade = applications.FirstOrDefault(x =>
-                x.ApplicationStatus == ApplicationStatus.Rejected &&
-                x.ApplyData?.ApplyDetails?.RequestToReapplyMade == true);
+                x.ApplyData?.ApplyDetails?.RequestToReapplyMade == true &&
+                    (x.ApplicationStatus == ApplicationStatus.Rejected || 
+                     (x.ApplicationStatus==ApplicationStatus.AppealSuccessful && x.GatewayReviewStatus==GatewayReviewStatus.Fail))
+               );
 
             return applicationsRejectedAndRequestToReapplyMade?.ApplyData?.ApplyDetails?.UKPRN;
         }
@@ -51,11 +63,8 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             var applicationsPresentAgainstDifferentUser = applications?.OrderByDescending(x => x.UpdatedAt)
                 .Where(x => x?.ApplyData?.ApplyDetails?.UKPRN == ukprn && x.CreatedBy!=contactId && x.ApplicationStatus!=ApplicationStatus.Cancelled);
-      
-
-            return applicationsPresentAgainstDifferentUser.Any();
-
-
+            
+            return applicationsPresentAgainstDifferentUser != null && applicationsPresentAgainstDifferentUser.Any();
         }
     }
 }
