@@ -153,6 +153,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 {
                     Id = 20,
                     Type = "None of the above"
+                },
+                new OrganisationType
+                {
+                    Id = 21,
+                    Type = "Rail franchise"
                 }
             };
             _roatpApiClient.Setup(x => x.GetOrganisationTypes(It.IsAny<int>())).ReturnsAsync(_organisationTypes);
@@ -531,6 +536,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [TestCase("Higher Education Institute", 6, ProviderTypeSupporting)]
         [TestCase("Academy", 7, ProviderTypeSupporting)]
         [TestCase("Multi-Academy Trust", 8, ProviderTypeSupporting)]
+        [TestCase("Rail franchise", 21, ProviderTypeMain)]
         public void Registration_details_maps_organisation_type_for_educational_institute_main_supporting_provider(string organisationType, int organisationTypeId, int providerTypeId)
         {
             var applicationId = Guid.NewGuid();
@@ -602,6 +608,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [TestCase("Higher Education Institute", 6)]
         [TestCase("Academy", 7)]
         [TestCase("Multi-Academy Trust", 8)]
+        [TestCase("Rail franchise", 21)]
         public void Registration_details_maps_organisation_type_for_educational_institute_employer_provider(string organisationType, int organisationTypeId)
         {
             var applicationId = Guid.NewGuid();
@@ -679,6 +686,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [TestCase("Government department", 13, ProviderTypeSupporting)]
         [TestCase("Non departmental public body (NDPB)", 14, ProviderTypeSupporting)]
         [TestCase("Executive agency", 15, ProviderTypeSupporting)]
+        [TestCase("Rail franchise", 21, ProviderTypeMain)]
+        [TestCase("Rail franchise", 21, ProviderTypeSupporting)]
         public void Registration_details_maps_organisation_type_for_public_body_main_supporting_provider(string organisationType, int organisationTypeId, int providerTypeId)
         {
             var applicationId = Guid.NewGuid();
