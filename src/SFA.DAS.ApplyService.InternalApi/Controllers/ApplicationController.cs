@@ -69,6 +69,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(signinId), true));
         }
 
+        [HttpGet("Applications/ukprn/{ukprn}")]
+        public async Task<ActionResult<List<Domain.Entities.Apply>>> GetApplicationsByUkprn(string ukprn)
+        {
+            return await _mediator.Send(new GetApplicationsByUkprnRequest(ukprn));
+        }
+
         [HttpGet("Applications/{signinId}/Organisation")]
         public async Task<ActionResult<List<Domain.Entities.Apply>>> GetOrganisationApplications(string signinId)
         {
@@ -116,6 +122,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("/Application/{applicationId}/AssessorEvaluateSection")]
         public async Task<bool> AssessorEvaluateSection(Guid applicationId,
             [FromBody] AssessorEvaluateSectionRequest request)
+        {
+            return await _mediator.Send(request);
+        }
+
+        [HttpPost("/Application/{applicationId}/ReapplicationRequested")]
+        public async Task<bool> ReeapplicationRequested(Guid applicationId,
+            [FromBody] ReapplicationRequest request)
         {
             return await _mediator.Send(request);
         }

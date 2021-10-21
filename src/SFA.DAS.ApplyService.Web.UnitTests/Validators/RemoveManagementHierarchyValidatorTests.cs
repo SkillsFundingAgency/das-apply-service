@@ -25,7 +25,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
                 Name = "FirstName LastName",
                 ActionName = "RemoveManagementHierarchy",
                 BackAction = "ConfirmManagementHierarchy",
-                GetHelpAction = "RemoveManagementHierarchy",
                 Confirmation = "Yes"
             };
         }

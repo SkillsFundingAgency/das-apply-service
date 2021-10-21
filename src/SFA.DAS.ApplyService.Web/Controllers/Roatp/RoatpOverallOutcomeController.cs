@@ -3,9 +3,12 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -13,12 +16,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     public class RoatpOverallOutcomeController : Controller
     {
         private readonly IOverallOutcomeService _overallOutcomeService;
-        private readonly IOutcomeApiClient _outcomeApiClient;    
+        private readonly IOutcomeApiClient _outcomeApiClient;
+
 
         public RoatpOverallOutcomeController(IOverallOutcomeService overallOutcomeService, IOutcomeApiClient outcomeApiClient)
         {
             _overallOutcomeService = overallOutcomeService;
             _outcomeApiClient = outcomeApiClient;
+
         }
 
         [HttpGet]
@@ -47,6 +52,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         return RedirectToAction("AppealInProgress", "RoatpAppeals", new { applicationId });
                     case AppealStatus.Unsuccessful:
                         return RedirectToAction("AppealUnsuccessful", "RoatpAppeals", new { applicationId });
+                    case AppealStatus.Successful:
+                    case AppealStatus.SuccessfulAlreadyActive:
+                    case AppealStatus.SuccessfulFitnessForFunding:
+                        return RedirectToAction("AppealSuccessful", "RoatpAppeals", new { applicationId });
                     default:
                         break;
                 }
@@ -59,31 +68,25 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
                 case ApplicationStatus.Successful:
 
-                    if (model.ApplicationRouteId == Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute.ToString())
+                    if (model.ApplicationRouteId ==
+                        Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute.ToString())
                     {
-                        switch (model.OversightReviewStatus)
-                        {
-                            case OversightReviewStatus.SuccessfulFitnessForFunding:
-                                return View("~/Views/Roatp/ApplicationApprovedSupportingFitnessForFunding.cshtml",
-                                    model);
-                            case OversightReviewStatus.SuccessfulAlreadyActive:
-                                return View("~/Views/Roatp/ApplicationApprovedSupportingAlreadyActive.cshtml",
-                                    model);
-                            default:
-                                return View("~/Views/Roatp/ApplicationApprovedSupporting.cshtml", model);
-                        }
+                        if (model.OversightReviewStatus == OversightReviewStatus.SuccessfulFitnessForFunding || model.AppealStatus == AppealStatus.SuccessfulFitnessForFunding)
+                            return View("~/Views/Roatp/ApplicationApprovedSupportingFitnessForFunding.cshtml",
+                                model);
+                        if (model.OversightReviewStatus == OversightReviewStatus.SuccessfulAlreadyActive || model.AppealStatus==AppealStatus.SuccessfulAlreadyActive)
+                            return View("~/Views/Roatp/ApplicationApprovedSupportingAlreadyActive.cshtml",
+                                model);
+                        return View("~/Views/Roatp/ApplicationApprovedSupporting.cshtml", model);
                     }
                     else
                     {
-                        switch (model.OversightReviewStatus)
-                        {
-                            case OversightReviewStatus.SuccessfulAlreadyActive:
-                                return View("~/Views/Roatp/ApplicationApprovedAlreadyActive.cshtml", model);
-                            case OversightReviewStatus.SuccessfulFitnessForFunding:
-                                return View("~/Views/Roatp/ApplicationApprovedFitnessForFunding.cshtml", model);
-                            default:
-                                return View("~/Views/Roatp/ApplicationApproved.cshtml", model);
-                        }
+                        if (model.OversightReviewStatus == OversightReviewStatus.SuccessfulAlreadyActive || model.AppealStatus==AppealStatus.SuccessfulAlreadyActive)
+                            return View("~/Views/Roatp/ApplicationApprovedAlreadyActive.cshtml", model);
+                        if (model.OversightReviewStatus == OversightReviewStatus.SuccessfulFitnessForFunding || model.AppealStatus==AppealStatus.SuccessfulFitnessForFunding)
+                            return View("~/Views/Roatp/ApplicationApprovedFitnessForFunding.cshtml", model);
+                        
+                        return View("~/Views/Roatp/ApplicationApproved.cshtml", model);
                     }
 
                 case ApplicationStatus.InProgressAppeal:
@@ -99,8 +102,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                         return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", unsuccessfulModel);
                     }
-                case ApplicationStatus.AppealSuccessful: // placeholder status to stop tasklist breaking with new statuses - coverage not added as new stories following
-                    return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
+                case ApplicationStatus.AppealSuccessful:
+                    if(model.GatewayReviewStatus == GatewayReviewStatus.Fail)
+                    {
+                        return RedirectToAction("AppealSuccessful", "RoatpAppeals", new { applicationId });
+                    }
+                    else
+                    {
+                        return View("~/Views/Roatp/ApplicationAppealSuccessful.cshtml", model);
+                    }
                 case ApplicationStatus.FeedbackAdded:
                     return View("~/Views/Roatp/FeedbackAdded.cshtml", model);
                 case ApplicationStatus.Withdrawn:

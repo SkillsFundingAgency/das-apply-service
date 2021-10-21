@@ -15,9 +15,9 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         Task<Domain.Entities.Apply> GetApplicationByUserId(Guid applicationId, Guid signinId);
         Task<List<Domain.Entities.Apply>> GetUserApplications(Guid signinId);
         Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid signinId);
+        Task<List<Domain.Entities.Apply>> GetApplicationsByUkprn(string ukprn);
+
         Task<FinancialReviewDetails> GetFinancialReviewDetails(Guid applicationId);
-
-
         Task<List<ClarificationFile>> GetFinancialReviewClarificationFiles(Guid applicationId);
 
         Task UpdateApplication(Domain.Entities.Apply application);
@@ -53,7 +53,6 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
         Task<Contact> GetContactForApplication(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
         Task<List<ApplicationOversightDownloadDetails>> GetOversightsForDownload(DateTime dateFrom, DateTime dateTo);
-        
-        
+        Task<bool> SubmitReapplicationRequest(Guid requestApplicationId, string requestedBy);
     }
 }

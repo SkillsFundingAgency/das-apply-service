@@ -45,8 +45,10 @@ namespace SFA.DAS.ApplyService.Data.Queries
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                          LEFT JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
-                          LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
+                         LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
+                         LEFT JOIN Appeal Appeal on apply.ApplicationId = Appeal.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
+                          AND Appeal.Status IS NULL
                           AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
                           and r.Status is null
                           and ((GatewayReviewStatus in (@gatewayReviewStatusPass)
@@ -95,7 +97,9 @@ namespace SFA.DAS.ApplyService.Data.Queries
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                           INNER JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
+                          LEFT JOIN Appeal Appeal on apply.ApplicationId = Appeal.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
+                          AND Appeal.Status IS NULL
                           AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
                         ORDER BY {orderByClause}, org.Name ASC", new
                 {
@@ -159,8 +163,8 @@ namespace SFA.DAS.ApplyService.Data.Queries
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,                          
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
-                            appeal.AppealSubmittedDate AS AppealSubmittedDate,
-                            appeal.AppealDeterminedDate AS AppealDeterminedDate,
+                            appeal.AppealSubmittedDate AS AppealSubmittedDate,                            
+                            ISNULL(appeal.AppealDeterminedDate, appeal.InProgressDate) AS AppealDeterminedDate,
                             appeal.Status AS AppealStatus,
                             oversight.Status as OversightStatus
                                 FROM Apply apply
@@ -173,7 +177,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
                             ORDER BY {orderByClause}, org.Name ASC", new
                 {
                     searchString = $"%{searchTerm}%",
-                    appealStatusSubmitted = Types.AppealStatus.Submitted
+                    appealStatusSubmitted = Types.AppealStatus.Submitted                    
                 })).ToList();
 
                 return new CompletedAppealOutcomes

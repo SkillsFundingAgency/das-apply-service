@@ -102,13 +102,14 @@ namespace SFA.DAS.ApplyService.Web
                 options.SupportedUICultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
-            
+
             services.AddMvc(options =>
             {
                 options.Filters.Add<FeatureToggleFilter>();
             })
-            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateAccountValidator>())
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ManagementHierarchyValidator>())
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            .AddSessionStateTempDataProvider();
 
             services.AddOptions();
 
@@ -242,7 +243,6 @@ namespace SFA.DAS.ApplyService.Web
             });
 
             services.AddTransient<IDfeSignInService, DfeSignInService>();
-            services.AddTransient<CreateAccountValidator, CreateAccountValidator>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
             services.AddTransient<IResetRouteQuestionsService, ResetRouteQuestionsService>();
@@ -254,6 +254,8 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IEmailTokenService, EmailTokenService>();
             services.AddTransient<IAssessorLookupService, AssessorLookupService>();
             services.AddTransient<IGetHelpWithQuestionEmailService, GetHelpWithQuestionEmailService>();
+            services.AddTransient<IReapplicationCheckService, ReapplicationCheckService>();
+            services.AddTransient<IRequestInvitationToReapplyEmailService, RequestInvitationToReapplyEmailService>();
             services.AddTransient<INotificationsApi>(x => {
                 var apiConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
                 {

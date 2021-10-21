@@ -77,6 +77,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/ShutterPages/UkrlpNotAvailable.cshtml");
         }
 
+        [Route("user-reapplying-different-ukprn")]
+        public IActionResult ReapplicationDifferentUkprn()
+        {
+            return View("~/Views/Roatp/ShutterPages/ReapplicationDifferentUkprn.cshtml");
+        }
+
         [Route("companies-house-unavailable")]
         public IActionResult CompaniesHouseNotAvailable()
         {
