@@ -62,6 +62,9 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ProviderRouteNameOnRegister { get; set; }
         public string OrganisationType { get; set; }
         public string Address { get; set; }
+        public bool? RequestToReapplyMade { get; set; }
+        public string RequestToReapplyBy { get; set; }
+        public DateTime? RequestToReapplyOn { get; set; }
     }
 
 

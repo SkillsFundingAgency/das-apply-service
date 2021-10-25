@@ -9,8 +9,6 @@ pr:
 
 variables:
   - group: "ESFA - SonarCloud"
-  - name: sonarCloudProjectKey
-    value: "SkillsFundingAgency_das-apply-service"
   - name: buildConfiguration
     value: 'release'
   - name: buildPlatform
@@ -21,62 +19,25 @@ resources:
   - repository: das-platform-building-blocks
     type: github
     name: SkillsFundingAgency/das-platform-building-blocks
-    ref: refs/heads/master
-    endpoint: "GitHub (SFA)"
+    ref: refs/tags/0.4.10
+    endpoint: SkillsFundingAgency
 
 stages:
 - stage: Build
   jobs:
   - job: 'CodeBuild'
     pool:
-      name: 'DAS - Continuous Integration'
+      name: DAS - Continuous Integration Agents
+      demands: LATEST_DOTNET_VERSION -equals 3.1
     workspace:
       clean: all
     steps:
-    - task: gittools.gitversion-preview.gitversion-task.GitVersion@5
-      displayName: GitVersion
-      inputs:
-        configFilePath: GitVersion.yml
-        updateAssemblyInfo: true
+    - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
 
-    - task: SonarCloudPrepare@1
-      displayName: 'Prepare Sonarcloud analysis configuration'
-      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),eq(variables['Build.Reason'], 'PullRequest')))
-      inputs:
-        SonarCloud: "$(SonarCloudConnectionId)"
-        organization: "$(SonarCloudOrganisationKey)"
-        scannerMode: 'MSBuild'
-        projectName: "$(Build.DefinitionName)"
-        projectKey: "$(sonarCloudProjectKey)"
-
-    - task: DotNetCoreCLI@2
-      displayName: Restore
-      inputs:
-        command: restore
-        projects: 'src/**/*.csproj'
-
-    - task: DotNetCoreCLI@2
-      displayName: Build
-      inputs:
-        projects: 'src/**/*.csproj'
-        arguments: '--configuration $(buildConfiguration) --no-restore'
-
-    - task: DotNetCoreCLI@2
-      displayName: Test
-      inputs:
-        command: test
-        projects: '**/*.UnitTests.csproj'
-        arguments: '--configuration $(buildConfiguration) --no-build'
-
-    - task: SonarCloudAnalyze@1
-      displayName: 'Run SonarCloud analysis'
-      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),eq(variables['Build.Reason'], 'PullRequest')))
-
-    - task: SonarCloudPublish@1
-      displayName: 'Publish results on build summary'
-      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),eq(variables['Build.Reason'], 'PullRequest')))
-      inputs:
-        pollingTimeoutSec: '300'
+    - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
+      parameters:
+        SonarCloud: true
+        SonarCloudProjectKey: SkillsFundingAgency_das-apply-service
 
     - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
 

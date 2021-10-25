@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
+using SFA.DAS.ApplyService.Web.Services;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -8,7 +9,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     using Microsoft.Extensions.Logging;
     using Moq;
     using NUnit.Framework;
-    using SFA.DAS.ApplyService.Session;
+    using Session;
     using SFA.DAS.ApplyService.Web.Controllers.Roatp;
     using SFA.DAS.ApplyService.Web.Infrastructure;
     using System.Collections.Generic;
@@ -19,17 +20,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     using Microsoft.AspNetCore.Mvc;
     using ViewModels.Roatp;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
-    using SFA.DAS.ApplyService.Domain.Ukrlp;
+    using Domain.Ukrlp;
     using System.Threading.Tasks;
     using Domain.CharityCommission;
     using Domain.Entities;
     using InternalApi.Types;
     using InternalApi.Types.CharityCommission;
-    using SFA.DAS.ApplyService.Domain.CompaniesHouse;
-    using SFA.DAS.ApplyService.Web.AutoMapper;
+    using Domain.CompaniesHouse;
+    using AutoMapper;
     using Trustee = InternalApi.Types.CharityCommission.Trustee;
-    using SFA.DAS.ApplyService.Application.Apply.Roatp;
-    using SFA.DAS.ApplyService.Domain.Apply;
+    using Application.Apply.Roatp;
+    using Domain.Apply;
     using SFA.DAS.ApplyService.Web.Validators;
 
     [TestFixture]
@@ -47,6 +48,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IAllowedUkprnValidator> _allowedUkprnValidator;
         private Mock<IResetRouteQuestionsService> _resetRoutQuestionsService;
+        private Mock<IReapplicationCheckService> _reapplicationCheckService;
+
         private RoatpApplicationPreambleController _controller;
 
         private CompaniesHouseSummary _activeCompany;
@@ -72,8 +75,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _qnaApiClient = new Mock<IQnaApiClient>();
             _allowedUkprnValidator = new Mock<IAllowedUkprnValidator>();
             _resetRoutQuestionsService = new Mock<IResetRouteQuestionsService>();
+            _reapplicationCheckService = new Mock<IReapplicationCheckService>();
+       
 
-            _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
+        _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
                 _ukrlpApiClient.Object,
                 _sessionService.Object, _companiesHouseApiClient.Object,
                 _charityCommissionApiClient.Object,
@@ -81,7 +86,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 _usersApiClient.Object,
                 _applicationApiClient.Object,
                 _qnaApiClient.Object,
-                _allowedUkprnValidator.Object, _resetRoutQuestionsService.Object);
+                _allowedUkprnValidator.Object, _resetRoutQuestionsService.Object, _reapplicationCheckService.Object);
 
             _activeCompany = new CompaniesHouseSummary
             {
@@ -394,6 +399,81 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be("ConfirmOrganisation");
+        }
+
+        [Test] public void User_already_has_reapplication_with_different_ukprn_in_progress()
+        {
+            var ukprn = 10001000;
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(10001000)).ReturnsAsync(true);
+
+            var matchingResult = new UkrlpLookupResults
+            {
+                Success = true,
+                Results = new List<ProviderDetails>
+                {
+                    new ProviderDetails
+                    {
+                        UKPRN = ukprn.ToString(),
+                        ProviderName = "Test Provider"
+                    }
+                }
+            };
+            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<int>())).ReturnsAsync(matchingResult);
+
+            _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
+            _reapplicationCheckService.Setup(x => x.ReapplicationUkprnForUser(It.IsAny<Guid>()))
+                .ReturnsAsync("33333333");
+
+            var model = new SearchByUkprnViewModel
+            {
+                UKPRN = ukprn.ToString()
+            };
+
+            var result = _controller.SearchByUkprn(model).GetAwaiter().GetResult();
+
+            result.Should().BeOfType<RedirectToActionResult>();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ReapplicationDifferentUkprn");
+        }
+
+        [Test]
+        public void Reapplication_already_in_flight_with_different_user()
+        {
+            var ukprn = 10001000;
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(10001000)).ReturnsAsync(true);
+
+            var matchingResult = new UkrlpLookupResults
+            {
+                Success = true,
+                Results = new List<ProviderDetails>
+                {
+                    new ProviderDetails
+                    {
+                        UKPRN = ukprn.ToString(),
+                        ProviderName = "Test Provider"
+                    }
+                }
+            };
+            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<int>())).ReturnsAsync(matchingResult);
+
+            _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
+            _reapplicationCheckService.Setup(x => x.ReapplicationUkprnForUser(It.IsAny<Guid>()))
+                .ReturnsAsync(ukprn.ToString());
+
+            _reapplicationCheckService
+                .Setup(x => x.ApplicationInFlightWithDifferentUser(It.IsAny<Guid>(), ukprn.ToString()))
+                .ReturnsAsync(true);
+            var model = new SearchByUkprnViewModel
+            {
+                UKPRN = ukprn.ToString()
+            };
+
+            var result = _controller.SearchByUkprn(model).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.ViewName.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationInProgress");
         }
 
         [Test]

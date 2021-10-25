@@ -23,6 +23,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             string pageId, string filename);
 
         Task<DateTime?> GetWorkingDaysAheadDate(DateTime? startDate, int numberOfDays);
+        Task<bool> ReapplicationRequested(Guid applicationId, string userId);
     }
 
 }

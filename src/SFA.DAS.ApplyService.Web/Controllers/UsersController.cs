@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -5,8 +8,10 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
@@ -16,11 +21,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     {
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
+        private readonly IReapplicationCheckService _reapplicationCheckService;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
+            _reapplicationCheckService = reapplicationCheckService;
         }
 
         [HttpGet]
@@ -102,10 +109,32 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
             }
-            else
+
+            var reapplicationAllowed =
+                await _reapplicationCheckService.ReapplicationAllowed(signInId, user.ApplyOrganisationId);
+            
+            if (reapplicationAllowed)
             {
-                return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
+                var ukprn = await _reapplicationCheckService.ReapplicationUkprnForUser(User.GetSignInId());
+
+                if (string.IsNullOrEmpty(ukprn))
+                {
+                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
+                }
+             }
+
+            var reapplicationRequestedAndPending =
+                await _reapplicationCheckService.ReapplicationRequestedAndPending(signInId, user.ApplyOrganisationId);
+
+            if (reapplicationRequestedAndPending)
+            {
+                var applicationId = await _reapplicationCheckService.ReapplicationApplicationIdForUser(signInId);
+                if (applicationId!=null && applicationId!=Guid.Empty)
+                    return RedirectToAction("RequestNewInvitationRefresh", "RoatpAppeals", new { applicationId });
             }
+
+            return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
+            
         }
 
         [HttpGet("/Users/SignedOut")]
