@@ -30,10 +30,10 @@ namespace SFA.DAS.ApplyService.Data
 
                 var organisationId = await connection.QuerySingleAsync<Guid>(
                     "INSERT INTO [Organisations] ([Id],[Name],[OrganisationType],[OrganisationUKPRN], " +
-                    "[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoEPAOApproved],[RoATPApproved]) " +
+                    "[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoATPApproved]) " +
                     "OUTPUT INSERTED.[Id] " +
-                    "VALUES (NEWID(), @Name, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @OrganisationDetails, 'New', GETUTCDATE(), @CreatedBy, @RoEPAOApproved, @RoATPApproved)",
-                    new { organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.CreatedBy, organisation.RoEPAOApproved, organisation.RoATPApproved });
+                    "VALUES (NEWID(), @Name, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @OrganisationDetails, 'New', GETUTCDATE(), @CreatedBy, @RoATPApproved)",
+                    new { organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.CreatedBy, organisation.RoATPApproved });
 
                     connection.Execute(
                                 "UPDATE [Contacts] " +
@@ -53,10 +53,10 @@ namespace SFA.DAS.ApplyService.Data
 
                 var organisationId = await connection.QuerySingleAsync<Guid>(
                     "INSERT INTO [Organisations] ([Id],[Name],[OrganisationType],[OrganisationUKPRN], " +
-                    "[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoEPAOApproved],[RoATPApproved]) " +
+                    "[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoATPApproved]) " +
                     "OUTPUT INSERTED.[Id] " +
-                    "VALUES (NEWID(), @Name, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @OrganisationDetails, 'New', GETUTCDATE(), @CreatedBy, @RoEPAOApproved, @RoATPApproved)",
-                    new { organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.CreatedBy, organisation.RoEPAOApproved, organisation.RoATPApproved });
+                    "VALUES (NEWID(), @Name, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @OrganisationDetails, 'New', GETUTCDATE(), @CreatedBy, @RoATPApproved)",
+                    new { organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.CreatedBy, organisation.RoATPApproved });
                 
                 return organisationId;
             }
@@ -100,9 +100,9 @@ namespace SFA.DAS.ApplyService.Data
                 "UPDATE [Organisations] " +
                 "SET [UpdatedAt] = GETUTCDATE(), [UpdatedBy] = @UpdatedBy, [Name] = @Name, " +
                 "[OrganisationType] = @OrganisationType, [OrganisationUKPRN] = @OrganisationUkprn, " +
-                "[OrganisationDetails] = @OrganisationDetails, [RoEPAOApproved] = @RoEPAOApproved, [RoATPApproved] = @RoATPApproved " +
+                "[OrganisationDetails] = @OrganisationDetails, [RoATPApproved] = @RoATPApproved " +
                 "WHERE [Id] = @Id",
-                new {organisation.Id, organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.UpdatedBy, organisation.RoEPAOApproved, organisation.RoATPApproved});
+                new {organisation.Id, organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.UpdatedBy, organisation.RoATPApproved});
         }
 
         public async Task UpdateOrganisation(Organisation organisation, Guid userId)

@@ -44,7 +44,6 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
                 OrganisationDetails = request.OrganisationDetails,
                 OrganisationType = request.OrganisationType,
                 OrganisationUkprn = request.OrganisationUkprn,
-                RoEPAOApproved = request.RoEPAOApproved,
                 RoATPApproved = request.RoATPApproved
             };
 
@@ -63,7 +62,6 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
                 existingOrganisation.OrganisationUkprn = request.OrganisationUkprn;
                 existingOrganisation.UpdatedBy = request.CreatedBy.ToString();
 
-                if (!existingOrganisation.RoEPAOApproved) existingOrganisation.RoEPAOApproved = request.RoEPAOApproved;
                 if (!existingOrganisation.RoATPApproved) existingOrganisation.RoATPApproved = request.RoATPApproved;
 
                 await _organisationRepository.UpdateOrganisation(existingOrganisation, request.CreatedBy);

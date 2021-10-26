@@ -11,10 +11,6 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             Mapper.Initialize(cfg =>
             {
-                cfg.AddProfile<AssessorServiceOrganisationProfile>();
-                cfg.AddProfile<AssessorServiceOrganisationAddressProfile>();
-                cfg.AddProfile<AssessorServiceOrganisationTypeProfile>();
-
                 cfg.AddProfile<CompaniesHouseCompanyProfile>();
                 cfg.AddProfile<CompaniesHouseAccountsProfile>();
                 cfg.AddProfile<CompaniesHouseRegisteredOfficeAddressProfile>();
