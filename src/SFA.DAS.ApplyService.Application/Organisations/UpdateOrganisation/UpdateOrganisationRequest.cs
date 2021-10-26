@@ -12,7 +12,6 @@
 
         public OrganisationDetails OrganisationDetails { get; set; }
 
-        public bool RoEPAOApproved { get; set; }
         public bool RoATPApproved { get; set; }
 
         public Guid UpdatedBy { get; set; }

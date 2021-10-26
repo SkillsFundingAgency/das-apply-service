@@ -12,7 +12,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
         public string OrganisationType { get; set; }
         public int? OrganisationUkprn { get; set; }
 
-        public bool RoEPAOApproved { get; set; }
         public bool RoATPApproved { get; set; }
 
         public OrganisationDetails OrganisationDetails { get; set; }
@@ -23,7 +22,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
 
     public class OrganisationDetails
     {
-        public string OrganisationReferenceType { get; set; } // "RoEPAO", "RoATP" or "EASAPI"
+        public string OrganisationReferenceType { get; set; } // "RoATP"
         public string OrganisationReferenceId { get; set; } // CSV list of known id's
 
         public string LegalName { get; set; }
