@@ -1,9 +1,9 @@
-﻿using SFA.DAS.ApplyService.Application.Apply.Roatp;
+﻿using Newtonsoft.Json.Linq;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Services
@@ -19,55 +19,97 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public async Task<OrganisationVerificationStatus> GetOrganisationVerificationStatus(Guid applicationId)
         {
-            var verifiedCompaniesHouse = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany);
-            var companiesHouseManualEntry = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired);
-            var verifiedCharityCommission = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
-            var charityCommissionManualEntry = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
-            var companiesHouseDataConfirmed = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDetailsConfirmed);
-            var charityCommissionDataConfirmed = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, RoatpYourOrganisationQuestionIdConstants.CharityCommissionDetailsConfirmed);
-            
-            var organisationType = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership, RoatpYourOrganisationQuestionIdConstants.SoleTradeOrPartnership);
-            var whosInControlStarted = organisationType != null && (organisationType.Value == RoatpOrganisationTypes.SoleTrader || organisationType.Value == RoatpOrganisationTypes.Partnership);
-
-            var whosInControlConfirmed = false;
-
-            if (organisationType != null && organisationType.Value == RoatpOrganisationTypes.SoleTrader)
+            try
             {
-                var soleTraderDateOfBirthAnswer = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob);
-                if (soleTraderDateOfBirthAnswer != null && !String.IsNullOrEmpty(soleTraderDateOfBirthAnswer.Value))
+                var qnaApplicationData = await _qnaApiClient.GetApplicationData(applicationId);
+
+                return new OrganisationVerificationStatus
                 {
-                    whosInControlConfirmed = true;
-                }
+                    VerifiedCompaniesHouse = VerifiedCompaniesHouse(qnaApplicationData),
+                    VerifiedCharityCommission = VerifiedCharityCommission(qnaApplicationData),
+                    CompaniesHouseManualEntry = CompaniesHouseManualEntry(qnaApplicationData),
+                    CharityCommissionManualEntry = CharityCommissionManualEntry(qnaApplicationData),
+                    CompaniesHouseDataConfirmed = CompaniesHouseDataConfirmed(qnaApplicationData),
+                    CharityCommissionDataConfirmed = CharityCommissionDataConfirmed(qnaApplicationData),
+                    WhosInControlConfirmed = WhosInControlConfirmed(qnaApplicationData),
+                    WhosInControlStarted = WhosInControlStarted(qnaApplicationData)
+                };
             }
-            else if (organisationType != null && organisationType.Value == RoatpOrganisationTypes.Partnership)
+            catch (NullReferenceException)
             {
-                var partnersDetailsAnswer = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.AddPartners, RoatpYourOrganisationQuestionIdConstants.AddPartners);
-                if (partnersDetailsAnswer != null && !String.IsNullOrEmpty(partnersDetailsAnswer.Value))
-                {
-                    whosInControlConfirmed = true;
-                }
+                return new OrganisationVerificationStatus();
             }
+        }
 
-            var pscsDetailsAnswer = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl, RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl);
-            if (pscsDetailsAnswer != null && !String.IsNullOrEmpty(pscsDetailsAnswer.Value))
+        private static bool VerifiedCompaniesHouse(JObject qnaApplicationData)
+        {
+            var verifiedCompaniesHouse = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UkrlpVerificationCompany)?.Value<string>();
+
+            return verifiedCompaniesHouse == "TRUE";
+        }
+
+        private static bool VerifiedCharityCommission(JObject qnaApplicationData)
+        {
+            var verifiedCharityCommission = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UkrlpVerificationCharity)?.Value<string>();
+
+            return verifiedCharityCommission == "TRUE";
+        }
+
+        private static bool CompaniesHouseManualEntry(JObject qnaApplicationData)
+        {
+            var companiesHouseManualEntry = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.ManualEntryRequiredCompaniesHouse)?.Value<string>();
+
+            return companiesHouseManualEntry == "TRUE";
+        }
+
+        private static bool CharityCommissionManualEntry(JObject qnaApplicationData)
+        {
+            var charityCommissionManualEntry = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.ManualEntryRequiredCharityCommission)?.Value<string>();
+
+            return charityCommissionManualEntry == "TRUE";
+        }
+
+        private static bool CompaniesHouseDataConfirmed(JObject qnaApplicationData)
+        {
+            var directorsAndPSCsConfirmed = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.DirectorsPSCsConfirmed)?.Value<string>();
+
+            return directorsAndPSCsConfirmed == "Y";
+        }
+
+        private static bool CharityCommissionDataConfirmed(JObject qnaApplicationData)
+        {
+            var trusteesConfirmed = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.TrusteesConfirmed)?.Value<string>();
+            var trusteesDobConfirmed = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.TrusteesDobConfirmed)?.Value<string>();
+
+            return trusteesConfirmed == "Y" && trusteesDobConfirmed == "Y";
+        }
+
+        private static bool WhosInControlStarted(JObject qnaApplicationData)
+        {
+            var soleTraderOrPartnership = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.SoleTraderOrPartnership)?.Value<string>();
+
+            return soleTraderOrPartnership == RoatpOrganisationTypes.SoleTrader || soleTraderOrPartnership == RoatpOrganisationTypes.Partnership;
+        }
+
+        private static bool WhosInControlConfirmed(JObject qnaApplicationData)
+        {
+            var soleTraderOrPartnership = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.SoleTraderOrPartnership)?.Value<string>();
+
+            if (soleTraderOrPartnership == RoatpOrganisationTypes.SoleTrader)
             {
-                whosInControlConfirmed = true;
+                var soleTraderDateOfBirthAnswer = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.SoleTradeDob)?.Value<string>();
+                return !string.IsNullOrEmpty(soleTraderDateOfBirthAnswer);
             }
-
-            var status = new OrganisationVerificationStatus
+            else if (soleTraderOrPartnership == RoatpOrganisationTypes.Partnership)
             {
-                VerifiedCompaniesHouse = (verifiedCompaniesHouse != null && verifiedCompaniesHouse.Value == "TRUE"),
-                VerifiedCharityCommission = (verifiedCharityCommission != null && verifiedCharityCommission.Value == "TRUE"),
-                CompaniesHouseManualEntry = (companiesHouseManualEntry != null && companiesHouseManualEntry.Value == "TRUE"),
-                CharityCommissionManualEntry = (charityCommissionManualEntry != null && charityCommissionManualEntry.Value == "TRUE"),
-                CompaniesHouseDataConfirmed = (companiesHouseDataConfirmed != null && companiesHouseDataConfirmed.Value == "Y"),
-                CharityCommissionDataConfirmed = (charityCommissionDataConfirmed != null && charityCommissionDataConfirmed.Value == "Y"),
-                WhosInControlConfirmed = whosInControlConfirmed,
-                WhosInControlStarted = whosInControlStarted
-            };
-
-            return status;
-        }      
-       
+                var partnersDetailsAnswer = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.AddPartners)?.Value<string>();
+                return !string.IsNullOrEmpty(partnersDetailsAnswer);
+            }
+            else
+            {
+                var pscsDetailsAnswer = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.AddPeopleInControl)?.Value<string>();
+                return !string.IsNullOrEmpty(pscsDetailsAnswer);
+            }
+        }
     }
 }

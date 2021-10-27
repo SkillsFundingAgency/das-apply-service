@@ -1157,7 +1157,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var roatpSequences = await roatpSequencesTask;
             var organisationVerificationStatus = await organisationVerificationStatusTask;
             var applicationRoutes = await applicationRoutesTask;
-            var applicationData = (await applicationDataTask) as JObject;
+            var applicationData = await applicationDataTask;
             var address = await addressTask;
 
             await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);

@@ -83,7 +83,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 try 
                 {
-                    var qnaApplicationData = await _qnaApiClient.GetApplicationData(applicationId.Value) as JObject;
+                    var qnaApplicationData = await _qnaApiClient.GetApplicationData(applicationId.Value);
 
                     var organisationName = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UkrlpLegalName)?.Value<string>();
                     if (!string.IsNullOrWhiteSpace(organisationName))
