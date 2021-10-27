@@ -6,10 +6,9 @@ CREATE TABLE [dbo].[Organisations](
    [OrganisationUKPRN] [int] NULL, -- This is an 8 digit number starting with 1
    [OrganisationDetails]	[nvarchar](max)	NULL,	 -- JSON, includes Contact and Address Details (as result of Search),  
    -- Financial health check state, good-until-date
-   -- "OrganisationReferenceType":How the Organisation reference was found - "RoEPAO", "RoATP", "EASAPI"
-   -- "OrganisationReferenceId":The Organisation reference, saved after Search - e.g. EPAOrgID, UKPRN, Companies House Number
+   -- "OrganisationReferenceType":How the Organisation reference was found - "RoATP"
+   -- "OrganisationReferenceId":The Organisation reference, saved after Search - e.g. UKPRN, Companies House Number, Charity Number
    Status	[nvarchar](	20)	NOT NULL,	-- 'initial', 'new' ,'inprogress','done', 'live', 'deleted'
-   RoEPAOApproved [bit] NOT NULL DEFAULT 0, -- set when this organisation is fully approved,  as RoEPAO  
    RoATPApproved [bit] NOT NULL DEFAULT 0, -- set when this organisation is fully approved, as RoATP 
    CreatedAt	Datetime2(7)	NOT NULL,	--Date / Time that the record was created
    CreatedBy	[nvarchar](256)	NOT NULL,	--Username (staff or ApplyContact)

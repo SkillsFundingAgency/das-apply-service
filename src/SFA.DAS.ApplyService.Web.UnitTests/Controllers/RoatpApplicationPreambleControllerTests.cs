@@ -212,7 +212,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 OrganisationType = "TrainingProvider",
                 OrganisationUkprn = Convert.ToInt32(_applicationDetails.UkrlpLookupDetails.UKPRN),
                 RoATPApproved = false,
-                RoEPAOApproved = false,
                 PrimaryContactEmail = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactEmail,
                 OrganisationDetails = new InternalApi.Types.OrganisationDetails
                 {

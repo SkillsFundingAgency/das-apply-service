@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
 using Moq;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests
 {
@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
     public class RoatpOrganisationVerificationServiceTests
     {
         private Mock<IQnaApiClient> _qnaApiClient;
-        private RoatpOrganisationVerificationService _service;
+        private IRoatpOrganisationVerificationService _service;
         private Guid _applicationId;
 
         [SetUp]
@@ -32,16 +32,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [TestCase("", false)]
         [TestCase(null, false)]
 
-        public void Verified_companies_house_matches_answer_in_preamble(string answerValue, bool expectedVerificationResult)
+        public async Task Verified_companies_house_matches_answer_in_preamble(string answerValue, bool expectedVerificationResult)
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId,
-                                                 RoatpWorkflowSequenceIds.Preamble,
-                                                 RoatpWorkflowSectionIds.Preamble,
-                                                 RoatpWorkflowPageIds.Preamble,
-                                                 RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany))
-                         .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCompany] = answerValue
+            };
 
-            var verificationResult = _service.GetOrganisationVerificationStatus(_applicationId).GetAwaiter().GetResult();
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(_qnaApplicationData);
+
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
 
             verificationResult.VerifiedCompaniesHouse.Should().Be(expectedVerificationResult);
         }
@@ -50,16 +50,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [TestCase("", false)]
         [TestCase(null, false)]
 
-        public void Verified_charity_commission_matches_answer_in_preamble(string answerValue, bool expectedVerificationResult)
+        public async Task Verified_charity_commission_matches_answer_in_preamble(string answerValue, bool expectedVerificationResult)
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, 
-                                                 RoatpWorkflowSequenceIds.Preamble,
-                                                 RoatpWorkflowSectionIds.Preamble, 
-                                                 RoatpWorkflowPageIds.Preamble,
-                                                 RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity))
-                         .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCharity] = answerValue
+            };
 
-            var verificationResult = _service.GetOrganisationVerificationStatus(_applicationId).GetAwaiter().GetResult();
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(_qnaApplicationData);
+
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
 
             verificationResult.VerifiedCharityCommission.Should().Be(expectedVerificationResult);
         }
@@ -68,16 +68,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [TestCase("", false)]
         [TestCase(null, false)]
 
-        public void Companies_house_information_manual_entry_required_matches_answer_in_preamble(string answerValue, bool expectedVerificationResult)
+        public async Task Companies_house_information_manual_entry_required_matches_answer_in_preamble(string answerValue, bool expectedVerificationResult)
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, 
-                                                 RoatpWorkflowSequenceIds.Preamble,
-                                                 RoatpWorkflowSectionIds.Preamble, 
-                                                 RoatpWorkflowPageIds.Preamble,
-                                                 RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired))
-                         .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.ManualEntryRequiredCompaniesHouse] = answerValue
+            };
 
-            var verificationResult = _service.GetOrganisationVerificationStatus(_applicationId).GetAwaiter().GetResult();
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(_qnaApplicationData);
+
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
 
             verificationResult.CompaniesHouseManualEntry.Should().Be(expectedVerificationResult);
         }
@@ -86,16 +86,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [TestCase("", false)]
         [TestCase(null, false)]
 
-        public void Charity_commission_information_manual_entry_required_matches_answer_in_preamble(string answerValue, bool expectedVerificationResult)
+        public async Task Charity_commission_information_manual_entry_required_matches_answer_in_preamble(string answerValue, bool expectedVerificationResult)
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, 
-                                                 RoatpWorkflowSequenceIds.Preamble,
-                                                 RoatpWorkflowSectionIds.Preamble, 
-                                                 RoatpWorkflowPageIds.Preamble,
-                                                 RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry))
-                         .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.ManualEntryRequiredCharityCommission] = answerValue
+            };
 
-            var verificationResult = _service.GetOrganisationVerificationStatus(_applicationId).GetAwaiter().GetResult();
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(_qnaApplicationData);
+
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
 
             verificationResult.CharityCommissionManualEntry.Should().Be(expectedVerificationResult);
         }
@@ -104,124 +104,139 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [TestCase("", false)]
         [TestCase(null, false)]
 
-        public void Companies_house_data_confirmed_matches_answer_in_whos_in_control_pages(string answerValue, bool expectedVerificationResult)
+        public async Task Companies_house_data_confirmed_matches_answer_in_whos_in_control_pages(string answerValue, bool expectedVerificationResult)
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, 
-                                                 RoatpWorkflowSequenceIds.YourOrganisation,
-                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, 
-                                                 RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage,
-                                                 RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDetailsConfirmed))
-                         .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.DirectorsPSCsConfirmed] = answerValue
+            };
 
-            var verificationResult = _service.GetOrganisationVerificationStatus(_applicationId).GetAwaiter().GetResult();
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(_qnaApplicationData);
+
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
 
             verificationResult.CompaniesHouseDataConfirmed.Should().Be(expectedVerificationResult);
         }
 
-        [TestCase("Y", true)]
-        [TestCase("", false)]
-        [TestCase(null, false)]
+        [TestCase("Y", "Y", true)]
+        [TestCase("Y", "N", false)]
+        [TestCase("", "", false)]
+        [TestCase(null, null, false)]
 
-        public void Charity_commission_data_confirmed_matches_answer_in_whos_in_control_pages(string answerValue, bool expectedVerificationResult)
+        public async Task Charity_commission_data_confirmed_matches_answer_in_whos_in_control_pages(string trusteesConfirmed, string trusteesDobConfirmed, bool expectedVerificationResult)
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId,
-                                                 RoatpWorkflowSequenceIds.YourOrganisation,
-                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
-                                                 RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage,
-                                                 RoatpYourOrganisationQuestionIdConstants.CharityCommissionDetailsConfirmed))
-                         .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.TrusteesConfirmed] = trusteesConfirmed,
+                [RoatpWorkflowQuestionTags.TrusteesDobConfirmed] = trusteesDobConfirmed,
+            };
 
-            var verificationResult = _service.GetOrganisationVerificationStatus(_applicationId).GetAwaiter().GetResult();
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(_qnaApplicationData);
+
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
 
             verificationResult.CharityCommissionDataConfirmed.Should().Be(expectedVerificationResult);
         }
 
         [Test]
-        public void Whos_in_control_confirmed_is_true_if_manually_entered_sole_trader_details()
+        public async Task Whos_in_control_confirmed_is_true_if_manually_entered_sole_trader_details()
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId,
-                                                 RoatpWorkflowSequenceIds.YourOrganisation,
-                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
-                                                 RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob,
-                                                 RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob))
-                         .ReturnsAsync(new Domain.Apply.Answer { Value = "details" });
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.SoleTraderOrPartnership] = RoatpOrganisationTypes.SoleTrader,
+                [RoatpWorkflowQuestionTags.SoleTradeDob] = "details",
+            };
 
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId,
-                                                 RoatpWorkflowSequenceIds.YourOrganisation,
-                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
-                                                 RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership,
-                                                 RoatpYourOrganisationQuestionIdConstants.SoleTradeOrPartnership))
-                                                 .ReturnsAsync(new Domain.Apply.Answer { Value = RoatpOrganisationTypes.SoleTrader });
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(_qnaApplicationData);
 
-            var verificationResult = _service.GetOrganisationVerificationStatus(_applicationId).GetAwaiter().GetResult();
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
 
+            verificationResult.WhosInControlStarted.Should().BeTrue();
             verificationResult.WhosInControlConfirmed.Should().BeTrue();
         }
 
         [Test]
-        public void Whos_in_control_confirmed_is_true_if_manually_entered_partner_details()
+        public async Task Whos_in_control_confirmed_is_false_if_no_manually_entered_sole_trader_details()
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId,
-                                                 RoatpWorkflowSequenceIds.YourOrganisation,
-                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
-                                                 RoatpWorkflowPageIds.WhosInControl.AddPartners,
-                                                 RoatpYourOrganisationQuestionIdConstants.AddPartners))
-                                                 .ReturnsAsync(new Domain.Apply.Answer { Value = "details" });
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.SoleTraderOrPartnership] = RoatpOrganisationTypes.SoleTrader,
+                [RoatpWorkflowQuestionTags.SoleTradeDob] = null,
+            };
 
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId,
-                                                 RoatpWorkflowSequenceIds.YourOrganisation,
-                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, 
-                                                 RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership,
-                                                 RoatpYourOrganisationQuestionIdConstants.SoleTradeOrPartnership))
-                                                 .ReturnsAsync(new Domain.Apply.Answer { Value = RoatpOrganisationTypes.Partnership });
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(_qnaApplicationData);
 
-            var verificationResult = _service.GetOrganisationVerificationStatus(_applicationId).GetAwaiter().GetResult();
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
 
+            verificationResult.WhosInControlStarted.Should().BeTrue();
+            verificationResult.WhosInControlConfirmed.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task Whos_in_control_confirmed_is_true_if_manually_entered_partner_details()
+        {
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.SoleTraderOrPartnership] = RoatpOrganisationTypes.Partnership,
+                [RoatpWorkflowQuestionTags.AddPartners] = "details",
+            };
+
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(_qnaApplicationData);
+
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
+
+            verificationResult.WhosInControlStarted.Should().BeTrue();
             verificationResult.WhosInControlConfirmed.Should().BeTrue();
         }
 
         [Test]
-        public void Whos_in_control_confirmed_is_true_if_manually_entered_psc_details()
+        public async Task Whos_in_control_confirmed_is_false_if_no_manually_entered_partner_details()
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, 
-                                                 RoatpWorkflowSequenceIds.YourOrganisation,
-                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, 
-                                                 RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl,
-                                                 RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl))
-                         .ReturnsAsync(new Domain.Apply.Answer { Value = "details" });
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.SoleTraderOrPartnership] = RoatpOrganisationTypes.Partnership,
+                [RoatpWorkflowQuestionTags.AddPartners] = null,
+            };
 
-            var verificationResult = _service.GetOrganisationVerificationStatus(_applicationId).GetAwaiter().GetResult();
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(_qnaApplicationData);
 
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
+
+            verificationResult.WhosInControlStarted.Should().BeTrue();
+            verificationResult.WhosInControlConfirmed.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task Whos_in_control_confirmed_is_true_if_manually_entered_psc_details()
+        {
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.SoleTraderOrPartnership] = null,
+                [RoatpWorkflowQuestionTags.AddPeopleInControl] = "details",
+            };
+            
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(_qnaApplicationData);
+
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
+
+            verificationResult.WhosInControlStarted.Should().BeFalse();
             verificationResult.WhosInControlConfirmed.Should().BeTrue();
         }
 
-        [TestCase("")]
-        [TestCase(null)]
-        public void Whos_in_control_confirmed_is_false_if_no_manually_entered_details(string answerValue)
+        [Test]
+        public async Task Whos_in_control_confirmed_is_false_if_no_manually_entered_psc_details()
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId,
-                                                 RoatpWorkflowSequenceIds.YourOrganisation,
-                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, 
-                                                 RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob,
-                                                 RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob))
-                                                 .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.SoleTraderOrPartnership] = null,
+                [RoatpWorkflowQuestionTags.AddPeopleInControl] = null,
+            };
 
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, 
-                                                 RoatpWorkflowSequenceIds.YourOrganisation,
-                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
-                                                 RoatpWorkflowPageIds.WhosInControl.AddPartners,
-                                                 RoatpYourOrganisationQuestionIdConstants.AddPartners))
-                                                 .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(_qnaApplicationData);
 
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, 
-                                                 RoatpWorkflowSequenceIds.YourOrganisation,
-                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, 
-                                                 RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl,
-                                                 RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl))
-                                                 .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
 
-            var verificationResult = _service.GetOrganisationVerificationStatus(_applicationId).GetAwaiter().GetResult();
-
+            verificationResult.WhosInControlStarted.Should().BeFalse();
             verificationResult.WhosInControlConfirmed.Should().BeFalse();
         }
     }

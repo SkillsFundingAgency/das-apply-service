@@ -166,12 +166,6 @@ namespace SFA.DAS.ApplyService.InternalApi
         {
             var handlerLifeTime = TimeSpan.FromMinutes(5);
 
-            services.AddHttpClient<ReferenceDataApiClient, ReferenceDataApiClient>(config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.ReferenceDataApiAuthentication.ApiBaseAddress);
-            })
-            .SetHandlerLifetime(handlerLifeTime);
-
             services.AddHttpClient<CompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.CompaniesHouseApiAuthentication.ApiBaseAddress);

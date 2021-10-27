@@ -1,26 +1,22 @@
-﻿
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using NPOI.HPSF.Wellknown;
+using Newtonsoft.Json.Linq;
+using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Domain.Apply;
-    using Domain.Entities;
-    using Newtonsoft.Json.Linq;
-    using SFA.DAS.ApplyService.Application.Apply;
 
     public interface IQnaApiClient
     {
         // TODO: Move over to use Nuget Package: SFA.DAS.QnA.Api.Types
         Task<StartQnaApplicationResponse> StartApplication(string userReference, string workflowType, string applicationData);
 
-        Task<object> GetApplicationData(Guid applicationId);
+        Task<JObject> GetApplicationData(Guid applicationId);
         Task<string> GetQuestionTag(Guid applicationId, string questionTag);
 
         Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId);
