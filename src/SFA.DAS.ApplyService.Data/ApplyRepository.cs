@@ -695,7 +695,7 @@ namespace SFA.DAS.ApplyService.Data
 							apply.ApplicationDeterminedDate,
                             apply.GatewayReviewStatus as GatewayOutcome,
                             apply.AssessorReviewStatus  as AssessorOutcome,
-                            fr.SelectedGrade WHEN @financialGradeInadequate THEN 'Fail' ELSE 'Pass' END as FHCOutcome,
+                            CASE fr.SelectedGrade WHEN @financialGradeInadequate THEN 'Fail' ELSE 'Pass' END as FHCOutcome,
                             CASE WHEN apply.GatewayReviewStatus = @gatewayReviewStatusPass AND apply.AssessorReviewStatus = @assessorReviewStatusApproved AND fr.SelectedGrade <> @financialGradeInadequate THEN 'Pass' ELSE 'Fail' END as OverallOutcome
                             FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
