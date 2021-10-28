@@ -695,16 +695,17 @@ namespace SFA.DAS.ApplyService.Data
 							apply.ApplicationDeterminedDate,
                             apply.GatewayReviewStatus as GatewayOutcome,
                             apply.AssessorReviewStatus  as AssessorOutcome,
-                            CASE JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') WHEN @financialGradeInadequate THEN 'Fail' ELSE 'Pass' END as FHCOutcome,
-                            CASE WHEN apply.GatewayReviewStatus = @gatewayReviewStatusPass AND apply.AssessorReviewStatus = @assessorReviewStatusApproved AND JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') <> @financialGradeInadequate THEN 'Pass' ELSE 'Fail' END as OverallOutcome
+                            fr.SelectedGrade WHEN @financialGradeInadequate THEN 'Fail' ELSE 'Pass' END as FHCOutcome,
+                            CASE WHEN apply.GatewayReviewStatus = @gatewayReviewStatusPass AND apply.AssessorReviewStatus = @assessorReviewStatusApproved AND fr.SelectedGrade <> @financialGradeInadequate THEN 'Pass' ELSE 'Fail' END as OverallOutcome
                             FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                             LEFT JOIN OversightReview r on r.ApplicationId = apply.ApplicationId
+                            LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
                           AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') BETWEEN @dateFrom AND @dateTo
                           and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
-						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt))
+						  and fr.Status in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt))
                             OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
 						  and r.[Status] is null
                              order by cast(apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
