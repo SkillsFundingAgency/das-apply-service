@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
+using Newtonsoft.Json.Linq;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -113,42 +114,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Start_page_routes_to_confirm_directors_pscs_if_provider_verified_with_companies_house()
         {
-            var verifiedCompaniesHouseAnswer = new Answer
+            var _qnaApplicationData = new JObject
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany,
-                Value = "TRUE"
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCompany] = "TRUE",
+                [RoatpWorkflowQuestionTags.ManualEntryRequiredCompaniesHouse] = "",
+                [RoatpWorkflowQuestionTags.CompaniesHouseDirectors] = "{}",
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCharity] = "",
             };
 
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany, It.IsAny<string>())).ReturnsAsync(verifiedCompaniesHouseAnswer);
-
-            var manualEntryCompaniesHouseAnswer = new Answer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired,
-                Value = ""
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ManualEntryRequiredCompaniesHouse, It.IsAny<string>())).ReturnsAsync(manualEntryCompaniesHouseAnswer);
-            
-            var directorsDataAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors,
-                Value = "{}"
-            };
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHouseDirectors, It.IsAny<string>())).ReturnsAsync(directorsDataAnswer);
-
-            var pscsDataAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
-                Value = "{}"
-            };
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHousePscs, It.IsAny<string>())).ReturnsAsync(pscsDataAnswer);
-
-            var verifiedCharityCommissionAnswer = new Answer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity,
-                Value = ""
-            };
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCharity, It.IsAny<string>())).ReturnsAsync(verifiedCharityCommissionAnswer);
+            _qnaClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>())).ReturnsAsync(_qnaApplicationData);
             
             var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
 
@@ -160,43 +134,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Start_page_routes_to_confirm_directors_pscs_if_provider_verified_with_companies_house_and_charity_commission()
         {
-            var verifiedCompaniesHouseAnswer = new Answer
+            var _qnaApplicationData = new JObject
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany,
-                Value = "TRUE"
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCompany] = "TRUE",
+                [RoatpWorkflowQuestionTags.ManualEntryRequiredCompaniesHouse] = "",
+                [RoatpWorkflowQuestionTags.CompaniesHouseDirectors] = "{}",
+                [RoatpWorkflowQuestionTags.CompaniesHousePscs] = "{}",
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCharity] = "TRUE",
             };
 
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany, It.IsAny<string>())).ReturnsAsync(verifiedCompaniesHouseAnswer);
-
-            var manualEntryCompaniesHouseAnswer = new Answer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired,
-                Value = ""
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ManualEntryRequiredCompaniesHouse, It.IsAny<string>())).ReturnsAsync(manualEntryCompaniesHouseAnswer);
-
-            var directorsDataAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors,
-                Value = "{}"
-            };
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHouseDirectors, It.IsAny<string>())).ReturnsAsync(directorsDataAnswer);
-
-            var pscsDataAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
-                Value = "{}"
-            };
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHousePscs, It.IsAny<string>())).ReturnsAsync(pscsDataAnswer);
-
-            var verifiedCharityCommissionAnswer = new Answer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity,
-                Value = "TRUE"
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCharity, It.IsAny<string>())).ReturnsAsync(verifiedCharityCommissionAnswer);
+            _qnaClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>())).ReturnsAsync(_qnaApplicationData);
 
             var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
 
@@ -208,6 +155,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Start_page_routes_to_confirm_trustees_if_provider_verified_with_charity_commission()
         {
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCompany] = "",
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCharity] = "TRUE",
+                [RoatpWorkflowQuestionTags.ManualEntryRequiredCharityCommission] = "",
+                [RoatpWorkflowQuestionTags.CharityCommissionTrustees] = "{}",
+            };
+
+            _qnaClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>())).ReturnsAsync(_qnaApplicationData);
+
             var verifiedCompaniesHouseAnswer = new Answer
             {
                 QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany,
@@ -246,69 +203,25 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trustees);
 
-            var verifiedCharityCommissionAnswer = new Answer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity,
-                Value = "TRUE"
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCharity, It.IsAny<string>())).ReturnsAsync(verifiedCharityCommissionAnswer);
-
-            var manualEntryCharityCommissionAnswer = new Answer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry,
-                Value = ""
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ManualEntryRequiredCharityCommission, It.IsAny<string>())).ReturnsAsync(manualEntryCharityCommissionAnswer);
-
-            var trusteesDataAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
-                Value = "{}"
-            };
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees, It.IsAny<string>())).ReturnsAsync(trusteesDataAnswer);
-
             var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ConfirmTrusteesNoDob");
+            viewResult.ViewName.Should().Contain("ConfirmTrustees");
         }
 
         [Test]
         public void Start_page_routes_to_confirm_trustees_if_provider_verified_with_charity_commissionxxx()
         {
-            var verifiedCompaniesHouseAnswer = new Answer
+            var _qnaApplicationData = new JObject
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany,
-                Value = ""
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCompany] = "",
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCharity] = "TRUE",
+                [RoatpWorkflowQuestionTags.ManualEntryRequiredCharityCommission] = "",
+                [RoatpWorkflowQuestionTags.CharityCommissionTrustees] = "{}",
             };
 
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany, It.IsAny<string>())).ReturnsAsync(verifiedCompaniesHouseAnswer);
-
-                       var verifiedCharityCommissionAnswer = new Answer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity,
-                Value = "TRUE"
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCharity, It.IsAny<string>())).ReturnsAsync(verifiedCharityCommissionAnswer);
-
-            var manualEntryCharityCommissionAnswer = new Answer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry,
-                Value = ""
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ManualEntryRequiredCharityCommission, It.IsAny<string>())).ReturnsAsync(manualEntryCharityCommissionAnswer);
-
-            var trusteesDataAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
-                Value = "{}"
-            };
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees, It.IsAny<string>())).ReturnsAsync(trusteesDataAnswer);
+            _qnaClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>())).ReturnsAsync(_qnaApplicationData);
 
             var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
 
@@ -321,29 +234,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Start_page_routes_to_organisation_type_if_ukrlp_verification_source_sole_trader_partnership()
         {
-            var verifiedCompaniesHouseAnswer = new Answer
+            var _qnaApplicationData = new JObject
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany,
-                Value = ""
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCompany] = "",
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCharity] = "",
+                [RoatpWorkflowQuestionTags.UkrlpVerificationSoleTraderPartnership] = "TRUE"
             };
 
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany, It.IsAny<string>())).ReturnsAsync(verifiedCompaniesHouseAnswer);
-
-            var verifiedCharityCommissionAnswer = new Answer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity,
-                Value = ""
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCharity, It.IsAny<string>())).ReturnsAsync(verifiedCharityCommissionAnswer);
-            
-            var verifiedSoleTraderPartnershipAnswer = new Answer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationSoleTraderPartnership,
-                Value = "TRUE"
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationSoleTraderPartnership, It.IsAny<string>())).ReturnsAsync(verifiedSoleTraderPartnershipAnswer);
+            _qnaClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>())).ReturnsAsync(_qnaApplicationData);
 
             var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
 
@@ -355,30 +253,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Start_page_routes_to_add_people_in_control_if_not_verified_with_companies_house_or_charity_commission_or_sole_trader_partnership()
         {
-            var verifiedCompaniesHouseAnswer = new Answer
+            var _qnaApplicationData = new JObject
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany,
-                Value = ""
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCompany] = "",
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCharity] = "",
+                [RoatpWorkflowQuestionTags.UkrlpVerificationSoleTraderPartnership] = "",
             };
 
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany, It.IsAny<string>())).ReturnsAsync(verifiedCompaniesHouseAnswer);
+            _qnaClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>())).ReturnsAsync(_qnaApplicationData);
 
-            var verifiedCharityCommissionAnswer = new Answer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity,
-                Value = ""
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCharity, It.IsAny<string>())).ReturnsAsync(verifiedCharityCommissionAnswer);
-
-            var verifiedSoleTraderPartnershipAnswer = new Answer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationSoleTraderPartnership,
-                Value = ""
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationSoleTraderPartnership, It.IsAny<string>())).ReturnsAsync(verifiedSoleTraderPartnershipAnswer);
-            
             var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
@@ -516,7 +399,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ConfirmTrusteesNoDob");
+            redirectResult.ActionName.Should().Be("ConfirmTrustees");
         }
 
         [Test]
@@ -560,7 +443,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany, It.IsAny<string>())).ReturnsAsync(verifiedCompanyAnswer);
 
-            var result = _controller.ConfirmTrusteesNoDob(Guid.NewGuid()).GetAwaiter().GetResult();
+            var result = _controller.ConfirmTrustees(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
@@ -604,7 +487,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany, It.IsAny<string>())).ReturnsAsync(verifiedCompanyAnswer);
 
-            var result = _controller.ConfirmTrusteesNoDob(Guid.NewGuid()).GetAwaiter().GetResult();
+            var result = _controller.ConfirmTrustees(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
@@ -882,7 +765,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 ValidationPassed = true
             };
-            _qnaClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<List<Answer>>())).ReturnsAsync(updateResult);
+            _qnaClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<Answer>>())).ReturnsAsync(updateResult);
 
             var viewModel = new ConfirmTrusteesDateOfBirthViewModel
             {

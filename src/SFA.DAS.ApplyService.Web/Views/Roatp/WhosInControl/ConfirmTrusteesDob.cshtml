@@ -37,7 +37,7 @@
                 <h1 class="govuk-heading-xl">Enter the date of birth for trustees</h1>
             }
 
-        <form method="post" asp-action="TrusteesDobsConfirmed" enctype="multipart/form-data" novalidate>
+        <form method="post" asp-action="TrusteesDobsConfirmed" asp-route-applicationId="@Model.ApplicationId" enctype="multipart/form-data" novalidate>
             <input type="hidden" asp-for="ApplicationId" />
             <input type="hidden" asp-for="GetHelpAction" />
 

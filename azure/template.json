@@ -38,10 +38,11 @@
         "sharedManagementResourceGroup": {
             "type": "string"
         },
-        "appServiceAllowedIPs": {
-            "type": "array",
-            "defaultValue": [
-            ]
+        "backEndAccessRestrictions": {
+            "type": "array"
+        },
+        "frontEndAccessRestrictions": {
+            "type": "array"
         },
         "uiCustomHostname": {
             "type": "string"
@@ -232,7 +233,7 @@
                         "value": "[reference('ui-app-service-certificate').outputs.certificateThumbprint.value]"
                     },
                     "ipSecurityRestrictions": {
-                        "value": "[parameters('appServiceAllowedIPs')]"
+                        "value": "[parameters('frontEndAccessRestrictions')]"
                     }
                 }
             },
@@ -305,7 +306,7 @@
                         "value": "[reference('api-app-service-certificate').outputs.certificateThumbprint.value]"
                     },
                     "ipSecurityRestrictions": {
-                        "value": "[parameters('appServiceAllowedIPs')]"
+                        "value": "[parameters('backEndAccessRestrictions')]"
                     }
                 }
             },
