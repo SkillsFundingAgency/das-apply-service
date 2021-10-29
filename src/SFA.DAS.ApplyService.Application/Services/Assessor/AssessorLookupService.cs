@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Serialization;
-using SFA.DAS.ApplyService.Application.Apply.Roatp;
+﻿using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Sectors;
 
 namespace SFA.DAS.ApplyService.Application.Services.Assessor
@@ -83,6 +82,12 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
                     return "Type of apprenticeship training";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting:
                     return "Type of apprenticeship training";
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_NewSupporting:
+                    return "Type of apprenticeship training";
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApprenticeshipStandards_NewMain:
+                    return "Delivering training in apprenticeship standards";
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApprenticeshipStandards_NewEmployer:
+                    return "Delivering training in apprenticeship standards";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApprenticeshipStandards:
                     return "Delivering training in apprenticeship standards";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_MainEmployer:
@@ -136,6 +141,8 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
                     return "Overall accountability for apprenticeships";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy:
                     return "Management hierarchy for apprenticeships";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial:
+                    return "Turnover and full time equivalent (FTE) employees";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.QualityAndHighStandards:
                     return
                         "Management hierarchy's expectations for quality and high standards in apprenticeship training";
@@ -253,8 +260,9 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
                 case RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.OverallManagerResponsible_Supporting:
                     return "Full name";
                 case RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.OverallManagerExperience_MainEmployer:
-                case RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.OverallManagerExperience_Supporting:
                     return "How much experience do they have in developing and delivering training?";
+                case RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.OverallManagerExperience_Supporting:
+                    return "Do they have at least 3 months experience in developing and delivering training?";
                 default:
                     return null;
             }

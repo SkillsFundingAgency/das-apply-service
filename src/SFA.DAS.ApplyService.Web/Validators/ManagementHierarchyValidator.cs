@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
         public const string OtherOrgNameError = "Enter the names of all these organisations";
         public const string OtherOrgNameLengthError = "Enter the names of all these organisations using 750 characters or less";
 
-        public const string ValidEmailPattern = @"^(?!\.)(""([^""\r\\]|\\[""\r\\])*""|" + @"([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)" + @"@[a-z0-9][\w\.-]*[a-z0-9]\.[a-z][a-z\.]*[a-z]$";
+        public const string ValidEmailPattern = @"^[-!#$%&'*+/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+/0-9=?A-Z^_a-z{|}~])*@[a-zA-Z](-?[a-zA-Z0-9])*(\.[a-zA-Z](-?[a-zA-Z0-9])*)+$";
         public const string EmailError = "Enter your email";
         public const string EmailErrorTooLong = "Enter your email using 320 characters or less";
         public const string EmailErrorWrongFormat = "Enter your email address using an acceptable format (eg name@location.com)";

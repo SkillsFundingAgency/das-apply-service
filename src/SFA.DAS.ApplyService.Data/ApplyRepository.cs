@@ -24,7 +24,6 @@ namespace SFA.DAS.ApplyService.Data
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
-            //SqlMapper.AddTypeHandler(typeof(FinancialReviewDetails), new FinancialReviewDetailsDataHandler());
             SqlMapper.AddTypeHandler(typeof(List<FinancialEvidence>), new FinancialEvidencesDataHandler());
         }
 
@@ -56,7 +55,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection.QuerySingleOrDefaultAsync<Apply>(@"SELECT top 1 a.* FROM Contacts c
                                                     INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
-                                                    WHERE c.SigninId = @signinId and a.ApplicationId = @ApplicationId", new { signinId, applicationId }));
+                                                    WHERE c.SigninId = @signinId and a.ApplicationId = @ApplicationId  AND a.CreatedBy = c.Id", new { signinId, applicationId }));
             }
         }
 
@@ -74,9 +73,20 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                return (await connection.QueryAsync<Apply>(@"SELECT a.* FROM Contacts c
+                return (await connection.QueryAsync<Apply>(@"SELECT DISTINCT a.* FROM Contacts c
                                                     INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
                                                     WHERE c.SigninId = @signinId", new { signinId })).ToList();
+            }
+        }
+        
+        public async Task<List<Apply>> GetApplicationsByUkprn(string ukprn)
+        {
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
+            {
+                return (await connection.QueryAsync<Apply>(@"select a.*
+                      from dbo.Apply a
+                      where UKPRN = @ukprn",
+                    new { ukprn })).ToList();
             }
         }
 
@@ -99,7 +109,6 @@ namespace SFA.DAS.ApplyService.Data
                     new { applicationId })).ToList();
             }
         }
-
 
         public async Task UpdateApplication(Apply application)
         {
@@ -136,7 +145,7 @@ namespace SFA.DAS.ApplyService.Data
 
                 var invalidApplicationStatuses = new List<string> { ApplicationStatus.Successful, ApplicationStatus.Rejected, ApplicationStatus.Unsuccessful, ApplicationStatus.Removed, ApplicationStatus.Withdrawn, ApplicationStatus.Cancelled };
 
-                // Application must exist and has not already been Approved, Rejected, Removed, Widthdrawn or Cancelled
+                // Application must exist and has not already been Approved, Rejected, Removed, Widthdrawn or Cancelled, in progress appeal or AppealSuccessful
                 if (application != null && !invalidApplicationStatuses.Contains(application.ApplicationStatus))
                 {
                     var otherAppsInProgress = await connection.QueryAsync<Domain.Entities.Apply>(@"
@@ -146,7 +155,7 @@ namespace SFA.DAS.ApplyService.Data
 														INNER JOIN Contacts con ON a.OrganisationId = con.ApplyOrganisationID
                                                         WHERE a.OrganisationId = (SELECT OrganisationId FROM Apply WHERE ApplicationId = @applicationId)
 														AND a.CreatedBy <> (SELECT CreatedBy FROM Apply WHERE ApplicationId = @applicationId)
-                                                        AND a.ApplicationStatus NOT IN (@applicationStatusSuccessful, @applicationStatusUnsuccessful, @applicationStatusRejected, @applicationStatusRemoved, @applicationStatusWithdrawn, @applicationStatusCancelled)",
+                                                        AND a.ApplicationStatus NOT IN (@applicationStatusSuccessful, @applicationStatusUnsuccessful, @applicationStatusRejected, @applicationStatusRemoved, @applicationStatusWithdrawn, @applicationStatusCancelled, @applicationStatusInProgressAppeal, @applicationStatusAppealSuccessful)",
                                                             new
                                                             {
                                                                 applicationId,
@@ -155,7 +164,9 @@ namespace SFA.DAS.ApplyService.Data
                                                                 applicationStatusRejected = ApplicationStatus.Rejected,   
                                                                 applicationStatusRemoved = ApplicationStatus.Removed,
                                                                 applicationStatusWithdrawn = ApplicationStatus.Withdrawn,
-                                                                applicationStatusCancelled = ApplicationStatus.Cancelled
+                                                                applicationStatusCancelled = ApplicationStatus.Cancelled,
+                                                                applicationStatusInProgressAppeal = ApplicationStatus.InProgressAppeal,
+                                                                applicationStatusAppealSuccessful = ApplicationStatus.AppealSuccessful
                                                             });
 
                     canSubmit = !otherAppsInProgress.Any();
@@ -458,6 +469,7 @@ namespace SFA.DAS.ApplyService.Data
                        $@"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
+                            apply.ApplicationStatus  AS ApplicationStatus,
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
@@ -680,16 +692,17 @@ namespace SFA.DAS.ApplyService.Data
 							apply.ApplicationDeterminedDate,
                             apply.GatewayReviewStatus as GatewayOutcome,
                             apply.AssessorReviewStatus  as AssessorOutcome,
-                            CASE JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') WHEN @financialGradeInadequate THEN 'Fail' ELSE 'Pass' END as FHCOutcome,
-                            CASE WHEN apply.GatewayReviewStatus = @gatewayReviewStatusPass AND apply.AssessorReviewStatus = @assessorReviewStatusApproved AND JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') <> @financialGradeInadequate THEN 'Pass' ELSE 'Fail' END as OverallOutcome
+                            CASE fr.SelectedGrade WHEN @financialGradeInadequate THEN 'Fail' ELSE 'Pass' END as FHCOutcome,
+                            CASE WHEN apply.GatewayReviewStatus = @gatewayReviewStatusPass AND apply.AssessorReviewStatus = @assessorReviewStatusApproved AND fr.SelectedGrade <> @financialGradeInadequate THEN 'Pass' ELSE 'Fail' END as OverallOutcome
                             FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                             LEFT JOIN OversightReview r on r.ApplicationId = apply.ApplicationId
+                            LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
                           AND JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') BETWEEN @dateFrom AND @dateTo
                           and ((GatewayReviewStatus  in (@gatewayReviewStatusPass)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
-						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt))
+						  and fr.Status in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt))
                             OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusReject))
 						  and r.[Status] is null
                              order by cast(apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
@@ -708,6 +721,26 @@ namespace SFA.DAS.ApplyService.Data
                     dateFrom = dateFrom.ToString("yyyy-MM-dd"), dateTo = dateTo.AddDays(1).Date.ToString("yyyy-MM-dd")
                 })).ToList();
             }
+        }
+
+        public async Task<bool> SubmitReapplicationRequest(Guid applicationId, string userId)
+        {
+            var applyData = await GetApplyData(applicationId);
+
+            if (applyData?.ApplyDetails == null) return false;
+            applyData.ApplyDetails.RequestToReapplyMade = true;
+            applyData.ApplyDetails.RequestToReapplyBy = userId;
+            applyData.ApplyDetails.RequestToReapplyOn = DateTime.UtcNow;
+
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET  ApplyData = @applyData
+                                                WHERE  ApplicationId = @ApplicationId",
+                    new { applicationId, applyData });
+            }
+
+            return true;
         }
 
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn)

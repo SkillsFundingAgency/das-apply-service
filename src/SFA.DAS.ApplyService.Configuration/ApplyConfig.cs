@@ -13,9 +13,6 @@ namespace SFA.DAS.ApplyService.Configuration
         public FileStorageConfig FileStorage { get; set; }
 
         public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
-        public AssessorServiceApiAuthentication AssessorServiceApiAuthentication { get; set; }
-
-        public ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
 
         public CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
         public CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
@@ -25,5 +22,7 @@ namespace SFA.DAS.ApplyService.Configuration
         public QnaApiAuthentication QnaApiAuthentication { get; set; }
 
         public AzureActiveDirectoryConfiguration AzureActiveDirectoryConfiguration { get; set; }
+
+        public FeatureToggles FeatureToggles { get; set; }
     }
 }

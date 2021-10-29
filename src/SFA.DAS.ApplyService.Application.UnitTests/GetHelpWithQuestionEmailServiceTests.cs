@@ -56,7 +56,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
                 GetHelpQuery = "Help! I need somebody",
                 OrganisationName = "Test Org",
                 PageTitle = "Provider route",
-                UKPRN = "10002000"
+                UKPRN = "10002000",
+                CompanyNumber = "12345678",
+                CharityNumber = "Not available"
             };
 
             await _service.SendGetHelpWithQuestionEmail(getHelpWithQuestion);

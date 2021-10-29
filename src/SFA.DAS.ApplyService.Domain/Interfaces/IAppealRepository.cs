@@ -7,6 +7,9 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
     public interface IAppealRepository
     {
         void Add(Appeal entity);
-        Task<Appeal> GetByOversightReviewId(Guid oversightReviewId);
+        void Update(Appeal entity);
+        void Remove(Guid entityId);
+
+        Task<Appeal> GetByApplicationId(Guid applicationId);
     }
 }

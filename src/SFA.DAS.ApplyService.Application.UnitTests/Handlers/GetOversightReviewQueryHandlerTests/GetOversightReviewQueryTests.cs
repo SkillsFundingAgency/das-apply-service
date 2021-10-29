@@ -14,7 +14,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetOversightReview
     public class GetOversightReviewQueryTests
     {
         private GetOversightReviewQueryHandler _handler;
-        private Mock<IOversightReviewQueries> _appealsQueries;
+        private Mock<IOversightReviewQueries> _oversightReviewQueries;
         private GetOversightReviewQuery _query;
         private OversightReview _queryResult;
 
@@ -27,13 +27,13 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetOversightReview
 
             _queryResult = autoFixture.Create<OversightReview>();
 
-            _appealsQueries = new Mock<IOversightReviewQueries>();
-            _appealsQueries.Setup(x => x.GetOversightReview(_query.ApplicationId)).ReturnsAsync(() => _queryResult);
-            _handler = new GetOversightReviewQueryHandler(_appealsQueries.Object);
+            _oversightReviewQueries = new Mock<IOversightReviewQueries>();
+            _oversightReviewQueries.Setup(x => x.GetOversightReview(_query.ApplicationId)).ReturnsAsync(() => _queryResult);
+            _handler = new GetOversightReviewQueryHandler(_oversightReviewQueries.Object);
         }
 
         [Test]
-        public async Task Handle_Returns_Appeal_For_Requested_Application_And_OversightReview()
+        public async Task Handle_Returns_expected_For_Requested_Application_And_OversightReview()
         {
             var result = await _handler.Handle(_query, CancellationToken.None);
 

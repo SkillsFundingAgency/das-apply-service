@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
@@ -15,17 +13,19 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Data.Repositories;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Authorization;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Infrastructure.Services;
 using SFA.DAS.ApplyService.Web.Orchestrators;
-using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
 {
@@ -40,6 +40,7 @@ namespace SFA.DAS.ApplyService.Web
     using SFA.DAS.Http.TokenGenerators;
     using SFA.DAS.Notifications.Api.Client;
     using SFA.DAS.ApplyService.Web.StartupExtensions;
+    using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
 
     public class Startup
     {
@@ -70,6 +71,15 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddAuthorization(options =>
             {
+                options.AddPolicy("AccessAppeal", policy =>
+                {
+                    policy.Requirements.Add(new AccessApplicationRequirement());
+                });
+                options.AddPolicy("AccessAppealNotYetSubmitted", policy =>
+                {
+                    policy.Requirements.Add(new AccessApplicationRequirement());
+                    policy.Requirements.Add(new AppealNotYetSubmittedRequirement());
+                });
                 options.AddPolicy("AccessInProgressApplication", policy =>
                 {
                     policy.Requirements.Add(new AccessApplicationRequirement());
@@ -92,10 +102,14 @@ namespace SFA.DAS.ApplyService.Web
                 options.SupportedUICultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
-            
-            services.AddMvc()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateAccountValidator>())
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddMvc(options =>
+            {
+                options.Filters.Add<FeatureToggleFilter>();
+            })
+            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ManagementHierarchyValidator>())
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            .AddSessionStateTempDataProvider();
 
             services.AddOptions();
 
@@ -136,12 +150,6 @@ namespace SFA.DAS.ApplyService.Web
                 config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
-
-            services.AddHttpClient<IOutcomeApiClient, OutcomeApiClient>(config =>
-                {
-                    config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
-                })
-                .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IQnaApiClient, QnaApiClient>(config =>
             {
@@ -196,6 +204,18 @@ namespace SFA.DAS.ApplyService.Web
                 config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IOutcomeApiClient, OutcomeApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IAppealsApiClient, AppealsApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
         }
 
         private void ConfigureDependencyInjection(IServiceCollection services)
@@ -215,8 +235,14 @@ namespace SFA.DAS.ApplyService.Web
                 s.GetService<IHttpContextAccessor>(),
                 _configuration["EnvironmentName"]));
 
+            services.AddTransient<IFeatureToggles>(s =>
+            {
+                var configService = s.GetService<IConfigurationService>();
+                var config = configService.GetConfig().GetAwaiter().GetResult();
+                return config.FeatureToggles ?? new FeatureToggles();
+            });
+
             services.AddTransient<IDfeSignInService, DfeSignInService>();
-            services.AddTransient<CreateAccountValidator, CreateAccountValidator>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
             services.AddTransient<IResetRouteQuestionsService, ResetRouteQuestionsService>();
@@ -228,6 +254,8 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IEmailTokenService, EmailTokenService>();
             services.AddTransient<IAssessorLookupService, AssessorLookupService>();
             services.AddTransient<IGetHelpWithQuestionEmailService, GetHelpWithQuestionEmailService>();
+            services.AddTransient<IReapplicationCheckService, ReapplicationCheckService>();
+            services.AddTransient<IRequestInvitationToReapplyEmailService, RequestInvitationToReapplyEmailService>();
             services.AddTransient<INotificationsApi>(x => {
                 var apiConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
                 {

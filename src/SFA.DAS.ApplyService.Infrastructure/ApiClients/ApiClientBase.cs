@@ -219,6 +219,29 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
             }
         }
 
+        /// <summary>
+        /// HTTP DELETE to the specified URI
+        /// </summary>
+        /// <param name="uri">The URI to the end point you wish to interact with.</param>
+        /// <returns>The HttpResponseMessage, which is the responsibility of the caller to handle.</returns>
+        /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
+        protected async Task<HttpResponseMessage> DeleteResponse(string uri)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync(new Uri(uri, UriKind.Relative));
+
+                await LogErrorIfUnsuccessfulResponse(response);
+                ThrowExceptionIfUnsuccessfulResponse(response);
+                return response;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Delete} - {uri}");
+                throw;
+            }
+        }
+
         private async Task LogErrorIfUnsuccessfulResponse(HttpResponseMessage response)
         {
             if (response?.RequestMessage != null && !response.IsSuccessStatusCode)

@@ -198,7 +198,7 @@ namespace SFA.DAS.ApplyService.Data
                         $@"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
-                            apply.ApplicationStatus AS ApplicationStatus,
+                            apply.ApplicationStatus  AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
                             apply.AssessorReviewStatus AS AssessorReviewStatus,
                             fr.Status AS FinancialReviewStatus,
@@ -215,7 +215,7 @@ namespace SFA.DAS.ApplyService.Data
                             END AS OutcomeMadeDate,
                             CASE 
                                 WHEN apply.ApplicationStatus = @applicationStatusWithdrawn THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationWithdrawnBy')
-                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')
+                                WHEN apply.ApplicationStatus = @applicationStatusRemoved THEN JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationRemovedBy')	
                                 ELSE apply.GatewayUserName
                             END AS OutcomeMadeBy
 	                      FROM Apply apply
@@ -345,8 +345,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 applicationStatus = ApplicationStatus.Submitted;
             }
-
-            if (gatewayReviewStatus == GatewayReviewStatus.Rejected)
+            else if (gatewayReviewStatus == GatewayReviewStatus.Rejected)
             {
                 applicationStatus = ApplicationStatus.Rejected;
             }

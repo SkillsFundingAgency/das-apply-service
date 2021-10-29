@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.AdminService.Common.Extensions;
+@using SFA.DAS.ApplyService.Domain.Entities
 @model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
 
 <dl class="govuk-summary-list">
@@ -42,4 +43,15 @@
             @Model.SubmittedDate.ToSfaShortDateString()
         </dd>
     </div>
+    @if (Model.ApplicationDeterminedDate != null &&  (Model.ApplicationStatus==ApplicationStatus.Unsuccessful || Model.ApplicationStatus==ApplicationStatus.Removed  ))
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Application determined date
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.ApplicationDeterminedDate.ToSfaShortDateString()
+            </dd>
+        </div> 
+    }
 </dl>

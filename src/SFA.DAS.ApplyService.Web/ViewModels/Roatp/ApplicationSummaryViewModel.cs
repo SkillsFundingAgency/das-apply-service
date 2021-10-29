@@ -1,10 +1,12 @@
-﻿using System;
+﻿using SFA.DAS.ApplyService.Types;
+using System;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
     public class ApplicationSummaryViewModel
     {
         public Guid ApplicationId { get; set; }
+        public string ApplicationStatus { get; set; }
         public string ApplicationReference { get; set; }
         public string UKPRN { get; set; }
         public string OrganisationName { get; set; }
@@ -24,6 +26,13 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public string SubcontractingLimitFormatted => SubcontractingLimit?.ToString("N0");
 
+        public OversightReviewStatus? OversightReviewStatus { get; set; }
+
+        public bool IsAppealSubmitted { get; set; }
+        public string AppealStatus { get; set; }
+
+        public DateTime? ApplicationDeterminedDate { get; set; }
+        public DateTime? AppealRequiredByDate { get; set; }
         public string ApplicationRouteShortText
         {
             get

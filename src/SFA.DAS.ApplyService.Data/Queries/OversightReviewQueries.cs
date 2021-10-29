@@ -39,8 +39,10 @@ namespace SFA.DAS.ApplyService.Data.Queries
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                          LEFT JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
-                          LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
+                         LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
+                         LEFT JOIN Appeal Appeal on apply.ApplicationId = Appeal.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
+                          AND Appeal.Status IS NULL
                           AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
                           and r.Status is null
                           and ((GatewayReviewStatus in (@gatewayReviewStatusPass)
@@ -89,7 +91,9 @@ namespace SFA.DAS.ApplyService.Data.Queries
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                           INNER JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
+                          LEFT JOIN Appeal Appeal on apply.ApplicationId = Appeal.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
+                          AND Appeal.Status IS NULL
                           AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
                         ORDER BY {orderByClause}, org.Name ASC", new
                 {
@@ -97,6 +101,80 @@ namespace SFA.DAS.ApplyService.Data.Queries
                 })).ToList();
 
                 return new CompletedOversightReviews
+                {
+                    Reviews = reviews
+                };
+            }
+        }
+
+
+        public async Task<PendingAppealOutcomes> GetPendingAppealOutcomes(string searchTerm, string sortColumn, string sortOrder)
+        {
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
+            {
+                var orderByClause = $"{GetSortColumnForAppeal(sortColumn)} { GetOrderByDirection(sortOrder)}";
+
+                var reviews = (await connection.QueryAsync<PendingAppealOutcome>($@"SELECT 
+                            apply.ApplicationId AS ApplicationId,
+                            org.Name AS OrganisationName,
+                            apply.UKPRN,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,                          
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+                            oversight.ApplicationDeterminedDate AS ApplicationDeterminedDate,
+                            appeal.AppealSubmittedDate AS AppealSubmittedDate,
+                            appeal.Status as AppealStatus
+                                FROM Apply apply
+                            INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+                            INNER JOIN OversightReview oversight ON oversight.ApplicationId = apply.ApplicationId
+                            INNER JOIN Appeal appeal ON appeal.ApplicationId = apply.ApplicationId
+                            WHERE apply.DeletedAt IS NULL
+                            AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
+                            AND appeal.Status IN (@appealStatusSubmitted)
+                            ORDER BY {orderByClause}, org.Name ASC", new
+                {
+                    searchString = $"%{searchTerm}%",
+                    appealStatusSubmitted = Types.AppealStatus.Submitted
+                })).ToList();
+
+                return new PendingAppealOutcomes
+                {
+                    Reviews = reviews
+                };
+            }
+        }
+
+        public async Task<CompletedAppealOutcomes> GetCompletedAppealOutcomes(string searchTerm, string sortColumn, string sortOrder)
+        {
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
+            {
+                var orderByClause = $"{GetSortColumnForAppealOutcome(sortColumn)} { GetOrderByDirection(sortOrder)}";
+
+                var reviews = (await connection.QueryAsync<CompletedAppealOutcome>($@"SELECT 
+                            apply.ApplicationId AS ApplicationId,
+                            org.Name AS OrganisationName,
+                            apply.UKPRN,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,                          
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+                            appeal.AppealSubmittedDate AS AppealSubmittedDate,                            
+                            ISNULL(appeal.AppealDeterminedDate, appeal.InProgressDate) AS AppealDeterminedDate,
+                            appeal.Status AS AppealStatus,
+                            oversight.Status as OversightStatus
+                                FROM Apply apply
+                            INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+                            INNER JOIN OversightReview oversight ON oversight.ApplicationId = apply.ApplicationId
+                            INNER JOIN Appeal appeal ON appeal.ApplicationId = apply.ApplicationId
+                            WHERE apply.DeletedAt IS NULL
+                            AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
+                            AND appeal.Status NOT IN (@appealStatusSubmitted)
+                            ORDER BY {orderByClause}, org.Name ASC", new
+                {
+                    searchString = $"%{searchTerm}%",
+                    appealStatusSubmitted = Types.AppealStatus.Submitted                    
+                })).ToList();
+
+                return new CompletedAppealOutcomes
                 {
                     Reviews = reviews
                 };
@@ -190,10 +268,38 @@ namespace SFA.DAS.ApplyService.Data.Queries
             }
         }
 
-
         private static string GetSortColumnForNew(string requestedColumn)
         {
-            return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
+            switch (requestedColumn)
+            {
+                default:
+                    return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
+            }
+        }
+
+        private static string GetSortColumnForAppeal(string requestedColumn)
+        {
+            switch (requestedColumn)
+            {
+                case "ApplicationSubmittedDate":
+                    return " CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ";
+                case "ApplicationDeterminedDate":
+                    return $" oversight.ApplicationDeterminedDate ";
+                case "AppealSubmittedDate":
+                default:
+                    return $" appeal.AppealSubmittedDate ";
+            }
+        }
+        private static string GetSortColumnForAppealOutcome(string requestedColumn)
+        {
+            switch (requestedColumn)
+            {
+                case "AppealSubmittedDate":
+                    return $" appeal.AppealSubmittedDate ";
+                case "AppealDeterminedDate":
+                default:
+                    return $" appeal.AppealDeterminedDate ";
+            }
         }
 
         private static string GetOrderByDirection(string sortOrder)

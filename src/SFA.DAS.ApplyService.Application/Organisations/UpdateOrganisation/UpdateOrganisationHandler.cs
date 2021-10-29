@@ -30,7 +30,6 @@ namespace SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation
                 existingOrganisation.OrganisationType = request.OrganisationType;
                 existingOrganisation.OrganisationUkprn = request.OrganisationUkprn;
                 existingOrganisation.UpdatedBy = request.UpdatedBy.ToString();
-                existingOrganisation.RoEPAOApproved = request.RoEPAOApproved;
                 existingOrganisation.RoATPApproved = request.RoATPApproved;
 
                 await _organisationRepository.UpdateOrganisation(existingOrganisation, request.UpdatedBy);

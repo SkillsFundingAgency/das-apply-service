@@ -6,13 +6,14 @@ using FluentAssertions;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Polly.Caching;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
+using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
@@ -22,9 +23,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
     [TestFixture]
     public class OverallOutcomeServiceTests
     {
-        private Mock<IOutcomeApiClient> _apiClient;
+        private Mock<IOutcomeApiClient> _outcomeApiClient;
+        private Mock<IApplicationApiClient> _applicationApiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IAssessorLookupService> _assessorLookupService;
+        private Mock<IAppealsApiClient> _appealsApiClient;
+
         private Guid _applicationId;
         private string _userId;
         private OverallOutcomeService _service;
@@ -43,7 +47,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _emailAddress = "test@test.com";
             _applicationId = Guid.NewGuid();
             _qnaApiClient = new Mock<IQnaApiClient>();
-            _apiClient = new Mock<IOutcomeApiClient>();
+            _outcomeApiClient = new Mock<IOutcomeApiClient>();
+            _applicationApiClient = new Mock<IApplicationApiClient>();
+            _appealsApiClient = new Mock<IAppealsApiClient>();
             _assessorLookupService = new Mock<IAssessorLookupService>();
             _userId = "test";
             _page121 = "page1.2.1";
@@ -58,12 +64,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             var clarificationOutcomes = new List<ClarificationPageReviewOutcome>();
             var sections = new List<ApplicationSection>();
-            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
-            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
+            _outcomeApiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+            _outcomeApiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationOutcomes);
+            _outcomeApiClient.Setup(x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), OverallOutcomeService.NumberOfWorkingDaysToAppeal))
+               .ReturnsAsync(DateTime.Today.AddDays(OverallOutcomeService.NumberOfWorkingDaysToAppeal));
+            _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
+                .ReturnsAsync((GetAppealResponse)null);
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
-            _service = new OverallOutcomeService(_apiClient.Object, _qnaApiClient.Object,
-                _assessorLookupService.Object);
+            _service = new OverallOutcomeService(_outcomeApiClient.Object, _applicationApiClient.Object, _qnaApiClient.Object,
+                _assessorLookupService.Object, _appealsApiClient.Object);
         }
 
         [Test]
@@ -87,12 +97,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var modelToBeUpdated = GetCopyOfModel();
 
             var sequences = SetUpAsessorSequences();
-            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+            _outcomeApiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
 
             var clarificationPages = SetUpClarificationOutcomes();
-            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
+            _outcomeApiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationPages);
-            var sections = SetUpApplicationSections(pageActive, sequence2PagesActive, "answer",null);
+            var sections = SetUpApplicationSections(pageActive, sequence2PagesActive, "answer", null);
 
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
 
@@ -124,12 +134,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _assessorLookupService.Setup(x => x.GetTitleForPage(_page121)).Returns(pageTitle);
 
             var sequences = SetUpAsessorSequences();
-            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+            _outcomeApiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
 
             var clarificationPages = SetUpClarificationOutcomes();
-            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
+            _outcomeApiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationPages);
-            var sections = SetUpApplicationSections(true, true, "answer",null);
+            var sections = SetUpApplicationSections(true, true, "answer", null);
 
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
 
@@ -139,7 +149,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var page121Title = modelToBeUpdated.Sequences.First(x => x.SequenceNumber == 1).Sections
                 .FirstOrDefault(x => x.SectionNumber == 2).Pages.First(x => x.PageId == _page121).Title;
 
-           pageTitle.Should().Be(page121Title);
+            pageTitle.Should().Be(page121Title);
         }
 
         [TestCase("page title 3")]
@@ -152,12 +162,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _assessorLookupService.Setup(x => x.GetSectorNameForPage(_page121)).Returns(pageTitle);
 
             var sequences = SetUpAsessorSequences();
-            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+            _outcomeApiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
 
             var clarificationPages = SetUpClarificationOutcomes();
-            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
+            _outcomeApiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationPages);
-            var sections = SetUpApplicationSections(true, true, "answer",null);
+            var sections = SetUpApplicationSections(true, true, "answer", null);
 
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
 
@@ -177,12 +187,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var modelToBeUpdated = GetCopyOfModel();
 
             var sequences = SetUpAsessorSequences();
-            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+            _outcomeApiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
 
             var clarificationPages = SetUpClarificationOutcomes();
-            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
+            _outcomeApiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationPages);
-            var sections = SetUpApplicationSections(true, true,answer,"question");
+            var sections = SetUpApplicationSections(true, true, answer, "question");
 
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
 
@@ -203,10 +213,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
 
             var sequences = SetUpAsessorSequences();
-            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+            _outcomeApiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
 
             var clarificationPages = SetUpClarificationOutcomes();
-            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
+            _outcomeApiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationPages);
             var sections = SetUpApplicationSections(true, true, "answer", questionText);
 
@@ -215,23 +225,23 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             await _service.AugmentModelWithModerationFailDetails(modelToBeUpdated, _userId);
 
             var page121Question = modelToBeUpdated.Sequences.First(x => x.SequenceNumber == 1).Sections
-                .FirstOrDefault(x => x.SectionNumber == 2).Pages.First(x => x.PageId == _page121).Questions.FirstOrDefault(x=>x.QuestionId==_question121Id).Value;
+                .FirstOrDefault(x => x.SectionNumber == 2).Pages.First(x => x.PageId == _page121).Questions.FirstOrDefault(x => x.QuestionId == _question121Id).Value;
 
             questionText.Should().Be(page121Question);
         }
 
         [TestCase("sequence 1 title", "sequence 2 title")]
         [TestCase("sequence 1 title alt", "sequence 2 title alt")]
-        public async Task sequence_title_returned_as_expected(string sequence1Title, string  sequence2Title)
+        public async Task sequence_title_returned_as_expected(string sequence1Title, string sequence2Title)
         {
             var modelToBeUpdated = GetCopyOfModel();
 
 
             var sequences = SetUpAsessorSequences();
-            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+            _outcomeApiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
 
             var clarificationPages = SetUpClarificationOutcomes();
-            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
+            _outcomeApiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationPages);
             var sections = SetUpApplicationSections(true, true, "answer", "question");
 
@@ -239,12 +249,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             var sequence1Number = 1;
             var sequence2Number = 2;
-            _assessorLookupService.Setup(x=>x.GetTitleForSequence(sequence1Number)).Returns(sequence1Title);
+            _assessorLookupService.Setup(x => x.GetTitleForSequence(sequence1Number)).Returns(sequence1Title);
             _assessorLookupService.Setup(x => x.GetTitleForSequence(sequence2Number)).Returns(sequence2Title);
             await _service.AugmentModelWithModerationFailDetails(modelToBeUpdated, _userId);
 
-            sequence1Title.Should().Be(modelToBeUpdated.Sequences.FirstOrDefault(x=>x.SequenceNumber==sequence1Number).SequenceTitle);
-            sequence2Title.Should().Be(modelToBeUpdated.Sequences.First(x=>x.SequenceNumber==sequence2Number).SequenceTitle);
+            sequence1Title.Should().Be(modelToBeUpdated.Sequences.FirstOrDefault(x => x.SequenceNumber == sequence1Number).SequenceTitle);
+            sequence2Title.Should().Be(modelToBeUpdated.Sequences.First(x => x.SequenceNumber == sequence2Number).SequenceTitle);
         }
 
         [Test]
@@ -253,10 +263,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var modelToBeUpdated = GetCopyOfModel();
 
             var sequences = SetUpAsessorSequences();
-            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+            _outcomeApiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
 
             var clarificationPages = SetUpClarificationOutcomes();
-            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
+            _outcomeApiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationPages);
             var sections = SetUpApplicationSections(true, true, null, null);
 
@@ -264,7 +274,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             await _service.AugmentModelWithModerationFailDetails(modelToBeUpdated, _userId);
 
-            _page121QuestionBodyText.Should().Be(modelToBeUpdated.PagesWithGuidance.First(x=>x.PageId==_page121).GuidanceInformation.FirstOrDefault());
+            _page121QuestionBodyText.Should().Be(modelToBeUpdated.PagesWithGuidance.First(x => x.PageId == _page121).GuidanceInformation.FirstOrDefault());
             _page122BodyText.Should().Be(modelToBeUpdated.PagesWithGuidance.First(x => x.PageId == _page122).GuidanceInformation.FirstOrDefault());
         }
 
@@ -275,10 +285,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var modelToBeUpdated = GetCopyOfModel();
 
             var sequences = SetUpAsessorSequences();
-            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+            _outcomeApiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
 
             var clarificationPages = SetUpClarificationOutcomes();
-            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
+            _outcomeApiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(_applicationId, _userId))
                 .ReturnsAsync(clarificationPages);
             var sections = SetUpApplicationSections(true, true, null, null);
 
@@ -297,8 +307,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 .Be(null);
         }
 
-        [Test]
-        public async Task BuildApplicationSummaryViewModel_builds_expected_viewModel()
+        [TestCase(null, false)]
+        [TestCase(AppealStatus.Successful, true)]
+        [TestCase(AppealStatus.Unsuccessful, true)]
+        [TestCase(AppealStatus.InProgress, true)]
+        [TestCase(AppealStatus.Submitted, true)]
+        [TestCase(AppealStatus.SuccessfulFitnessForFunding, true)]
+        [TestCase(AppealStatus.SuccessfulAlreadyActive, true)]
+        public async Task BuildApplicationSummaryViewModel_builds_expected_viewModel(string appealStatus, bool appealSubmitted)
         {
             var emailAddress = "test@test.com";
             var ukprn = "12345678";
@@ -308,21 +324,24 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var applicationReference = "ABC";
             var submittedDate = DateTime.Today.AddDays(-32);
             var externalComments = "external comments";
-            var financialReviewStatus = Domain.Entities.FinancialReviewStatus.Pass;
-          
-            var financialExternalComments = "financial external comments";
-            var financialReviewDetails = new FinancialReviewDetails
-            {
-                SelectedGrade = "Outstanding",
-                ExternalComments = financialExternalComments,
-                Status = financialReviewStatus
-            };
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var moderationStatus = Domain.Apply.ModerationStatus.Fail;
 
+            if (string.IsNullOrEmpty(appealStatus))
+            {
+                _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
+                    .ReturnsAsync((GetAppealResponse)null);
+
+            }
+            else
+            {
+                _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
+                    .ReturnsAsync(new GetAppealResponse { Status = appealStatus, AppealSubmittedDate = DateTime.Today });
+            }
+
             var application = new Apply
             {
-                ApplicationId = _applicationId, 
+                ApplicationId = _applicationId,
                 ExternalComments = externalComments,
                 GatewayReviewStatus = gatewayReviewStatus,
                 ModerationStatus = moderationStatus,
@@ -340,9 +359,20 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 }
             };
 
+            _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(application);
+
+            var financialReviewDetails = new FinancialReviewDetails
+            {
+                SelectedGrade = FinancialApplicationSelectedGrade.Outstanding,
+                ExternalComments = "financial external comments",
+                Status = FinancialReviewStatus.Pass
+            };
+
+            _applicationApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(financialReviewDetails);
+
             var expectedModel = new ApplicationSummaryViewModel
             {
-                ApplicationId = _applicationId, 
+                ApplicationId = _applicationId,
                 UKPRN = ukprn,
                 OrganisationName = organisationName,
                 EmailAddress = emailAddress,
@@ -355,15 +385,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 ModerationStatus = moderationStatus,
                 FinancialGrade = financialReviewDetails.SelectedGrade,
                 FinancialReviewStatus = financialReviewDetails.Status,
-                FinancialExternalComments = financialExternalComments
+                FinancialExternalComments = financialReviewDetails.ExternalComments,
+                IsAppealSubmitted = appealSubmitted,
+                AppealStatus = appealStatus
             };
 
-            var returnedModel = _service.BuildApplicationSummaryViewModel(application, financialReviewDetails,emailAddress);
+            var returnedModel = await _service.BuildApplicationSummaryViewModel(_applicationId, emailAddress);
             expectedModel.Should().BeEquivalentTo(returnedModel);
         }
 
         [Test]
-        public async Task moderator_pass_with_failed_moderator_questions_returns_model_with_no_sequences_and_external_comments ()
+        public async Task moderator_pass_with_failed_moderator_questions_returns_model_with_no_sequences_and_external_comments()
         {
             var submittedApp = new Apply
             {
@@ -380,22 +412,33 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 }
             };
 
+            _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(submittedApp);
+
+            var financialReviewDetails = new FinancialReviewDetails
+            {
+                SelectedGrade = FinancialApplicationSelectedGrade.Outstanding,
+                ExternalComments = "financial external comments",
+                Status = FinancialReviewStatus.Pass
+            };
+
+            _applicationApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(financialReviewDetails);
+
             var oversightExternalComments = "oversight external comments";
 
-            _apiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(new GetOversightReviewResponse {ModerationApproved = false, ExternalComments = oversightExternalComments});
-          
-            var result = await _service.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(submittedApp, null, _emailAddress);
+            _outcomeApiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(new GetOversightReviewResponse { ModerationApproved = false, ExternalComments = oversightExternalComments });
+
+            var result = await _service.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(_applicationId, _emailAddress);
 
             result.ModerationPassOverturnedToFail.Should().Be(true);
             result.OversightExternalComments.Should().Be(oversightExternalComments);
             result.Sequences.Should().BeNullOrEmpty();
         }
 
-        [TestCase(GatewayReviewStatus.Pass, true, false)] 
+        [TestCase(GatewayReviewStatus.Pass, true, false)]
         [TestCase(GatewayReviewStatus.Pass, false, true)]
         [TestCase(GatewayReviewStatus.Fail, true, false)]
         [TestCase(GatewayReviewStatus.Fail, false, false)]
-        public async Task application_unsuccessful_gateway_settings_work_as_expected(string gatewayReviewStatus,bool gatewayApproved, bool gatewayPassOverturnedToFail) //, string moderationStatus, bool moderationApproved, bool applicationUnsuccessfulModerationFail, bool moderationFailedAndOverturned)
+        public async Task application_unsuccessful_gateway_settings_work_as_expected(string gatewayReviewStatus, bool gatewayApproved, bool gatewayPassOverturnedToFail) //, string moderationStatus, bool moderationApproved, bool applicationUnsuccessfulModerationFail, bool moderationFailedAndOverturned)
         {
             var moderationStatus = ModerationStatus.Pass;
 
@@ -422,21 +465,25 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 }
             };
 
+            _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(submittedApp);
+
+            _applicationApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(default(FinancialReviewDetails));
+
             var oversightExternalComments = "oversight external comments";
 
-            _apiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(new GetOversightReviewResponse { GatewayApproved = gatewayApproved, ModerationApproved = moderationApproved, ExternalComments = oversightExternalComments });
+            _outcomeApiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(new GetOversightReviewResponse { GatewayApproved = gatewayApproved, ModerationApproved = moderationApproved, ExternalComments = oversightExternalComments });
 
-            var result = await _service.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(submittedApp, null, _emailAddress);
+            var result = await _service.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(_applicationId, _emailAddress);
 
             result.GatewayPassOverturnedToFail.Should().Be(gatewayPassOverturnedToFail);
             result.GatewayExternalComments.Should().Be(gatewayExternalComments);
 
         }
 
-        [TestCase(ModerationStatus.Pass, false, true, false, false, false,false)]
-        [TestCase(ModerationStatus.Pass, true, false, true, false,false,false)]
-        [TestCase(ModerationStatus.Fail, false, false, false, true, false,false)]
-        [TestCase(ModerationStatus.Fail, true, false, false, false, true,true)]
+        [TestCase(ModerationStatus.Pass, false, true, false, false, false, false)]
+        [TestCase(ModerationStatus.Pass, true, false, true, false, false, false)]
+        [TestCase(ModerationStatus.Fail, false, false, false, true, false, false)]
+        [TestCase(ModerationStatus.Fail, true, false, false, false, true, true)]
         public async Task application_unsuccessful_moderation_settings_work_as_expected(string moderationStatus, bool moderationApproved, bool moderationPassOverturnedToFail, bool moderationPassApproved, bool moderationFailAndOverturned, bool moderationFailApproved, bool sequencesInjected)
         {
             var gatewayReviewStatus = GatewayAnswerStatus.Pass;
@@ -456,21 +503,32 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 }
             };
 
+            _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(submittedApp);
+
+            var financialReviewDetails = new FinancialReviewDetails
+            {
+                SelectedGrade = FinancialApplicationSelectedGrade.Outstanding,
+                ExternalComments = "financial external comments",
+                Status = FinancialReviewStatus.Pass
+            };
+
+            _applicationApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(financialReviewDetails);
+
             const string oversightExternalComments = "oversight external comments";
 
-            _apiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(new GetOversightReviewResponse { GatewayApproved = true, ModerationApproved = moderationApproved, ExternalComments = oversightExternalComments });
+            _outcomeApiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(new GetOversightReviewResponse { GatewayApproved = true, ModerationApproved = moderationApproved, ExternalComments = oversightExternalComments });
 
             var sequences = SetUpAsessorSequences();
-            _apiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
+            _outcomeApiClient.Setup(x => x.GetClarificationSequences(_applicationId)).ReturnsAsync(sequences);
 
             var clarificationPages = SetUpClarificationOutcomes();
-            _apiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(It.IsAny<Guid>(), It.IsAny<string>()))
+            _outcomeApiClient.Setup(x => x.GetAllClarificationPageReviewOutcomes(It.IsAny<Guid>(), It.IsAny<string>()))
                 .ReturnsAsync(clarificationPages);
             var sections = SetUpApplicationSections(true, false, "answer", null);
 
             _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
 
-            var result = await _service.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(submittedApp,null, _emailAddress);
+            var result = await _service.BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(_applicationId, _emailAddress);
 
             result.ModerationStatus.Should().Be(moderationStatus);
             result.ModerationPassApproved.Should().Be(moderationPassApproved);
@@ -484,16 +542,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 result.Sequences.Should().BeNullOrEmpty();
         }
 
-        
+
         private List<AssessorSequence> SetUpAsessorSequences()
         {
-        var section2_3 = new AssessorSection
-        {
-            LinkTitle = "Section 2.3",
-            SequenceNumber = 2,
-            SectionNumber = 3,
+            var section2_3 = new AssessorSection
+            {
+                LinkTitle = "Section 2.3",
+                SequenceNumber = 2,
+                SectionNumber = 3,
 
-            Pages = new List<Page>
+                Pages = new List<Page>
             {
                 new Page
                 {
@@ -507,27 +565,27 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                     Active = true, Complete = true
                 }
             }
-        };
+            };
 
-        var section2_4 = new AssessorSection
-        {
-            LinkTitle = "Section 2.4",
-            SequenceNumber = 2,
-            SectionNumber = 4,
-            Pages = new List<Page>
+            var section2_4 = new AssessorSection
+            {
+                LinkTitle = "Section 2.4",
+                SequenceNumber = 2,
+                SectionNumber = 4,
+                Pages = new List<Page>
             {
                 new Page {PageId = "Page2.4.1", Active = true, Complete = true},
                 new Page {PageId = "Page2.4.2", Active = true, Complete = false}
             }
-        };
+            };
 
-        var section1_2 = new AssessorSection
-        {
-            LinkTitle = "Section 1.2",
-            SequenceNumber = 1,
-            SectionNumber = 2,
+            var section1_2 = new AssessorSection
+            {
+                LinkTitle = "Section 1.2",
+                SequenceNumber = 1,
+                SectionNumber = 2,
 
-            Pages = new List<Page>
+                Pages = new List<Page>
             {
                 new Page
                 {
@@ -546,9 +604,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                     Active = true, Complete = true
                 }
             }
-        };
+            };
 
-        var sequences = new List<AssessorSequence>
+            var sequences = new List<AssessorSequence>
         {
             new AssessorSequence
             {
@@ -573,12 +631,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             }
         };
 
-        return sequences;
-    }
+            return sequences;
+        }
 
-       private List<ClarificationPageReviewOutcome> SetUpClarificationOutcomes()
-    {
-    var clarificationPages = new List<ClarificationPageReviewOutcome>
+        private List<ClarificationPageReviewOutcome> SetUpClarificationOutcomes()
+        {
+            var clarificationPages = new List<ClarificationPageReviewOutcome>
         {
             new ClarificationPageReviewOutcome
             {
@@ -650,10 +708,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 Status=ModerationStatus.Pass // it has passed from clarification, so should not show up
             }
         };
-    return clarificationPages;
-    }
+            return clarificationPages;
+        }
 
-       private List<ApplicationSection> SetUpApplicationSections(bool pageActive, bool sequence2PagesActive, string answerToQuestion, string questionValue)
+        private List<ApplicationSection> SetUpApplicationSections(bool pageActive, bool sequence2PagesActive, string answerToQuestion, string questionValue)
         {
             var sections = new List<ApplicationSection>();
 
@@ -732,11 +790,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         }
 
        private ApplicationSummaryWithModeratorDetailsViewModel GetCopyOfModel()
-    {
-        var model = new ApplicationSummaryWithModeratorDetailsViewModel
-        { ApplicationId = _applicationId };
+       {
+            var model = new ApplicationSummaryWithModeratorDetailsViewModel { ApplicationId = _applicationId };
 
-        return model;
-    }
+            return model;
+       }
     }
 }

@@ -59,6 +59,9 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ProviderRouteNameOnRegister { get; set; }
         public string OrganisationType { get; set; }
         public string Address { get; set; }
+        public bool? RequestToReapplyMade { get; set; }
+        public string RequestToReapplyBy { get; set; }
+        public DateTime? RequestToReapplyOn { get; set; }
     }
 
 
@@ -175,9 +178,12 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Removed = "Removed";
 
         public const string InProgressOutcome = "InProgessOutcome";
+        public const string InProgressAppeal = "InProgessAppeal";
 
         public const string Successful = "Successful";
         public const string Unsuccessful = "Unsuccessful";
+
+        public const string AppealSuccessful = "AppealSuccessful";
         // Below are other statuses mentioned in the most recent status documentation
         // Please check the flow in RoatpApplicationController, under the line ' switch (application.ApplicationStatus)' if you add new statuses
         // GWResubmitted

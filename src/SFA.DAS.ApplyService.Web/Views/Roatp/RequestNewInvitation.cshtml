@@ -1,0 +1,35 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
+
+@{
+    ViewBag.Title = "Application complete";
+    Layout = "_Layout";
+}
+
+@section Navigation
+{
+    <partial name="~/Views/Appeals/Navigation/_ApplicationSubmittedSignoutOnlyHeader.cshtml" />
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel govuk-panel--confirmation govuk-!-margin-bottom-5">
+                <h1 class="govuk-panel__title">
+                    Invitation requested
+                </h1>
+               
+            </div>
+            <p class="govuk-body">
+                Your request has been received and is being processed.
+            </p>
+            <h1 class="govuk-heading-m">What happens next</h1>
+            
+                
+            <p class="govuk-body">
+                You will be sent a new invitation by email. You will need to submit a full new application, before your application window closes.
+            </p>
+        </div>
+    </div>
+</main>
