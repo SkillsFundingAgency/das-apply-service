@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -323,11 +324,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var applicationReference = "ABC";
             var submittedDate = DateTime.Today.AddDays(-32);
             var externalComments = "external comments";
-            var financialReviewStatus = Domain.Entities.FinancialReviewStatus.Fail;
-            var financialGrade = "pass";
-            var financialExternalComments = "financial external comments";
             var gatewayReviewStatus = GatewayReviewStatus.Pass;
             var moderationStatus = Domain.Apply.ModerationStatus.Fail;
+
             if (string.IsNullOrEmpty(appealStatus))
             {
                 _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
@@ -339,16 +338,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 _appealsApiClient.Setup(x => x.GetAppeal(_applicationId))
                     .ReturnsAsync(new GetAppealResponse { Status = appealStatus, AppealSubmittedDate = DateTime.Today });
             }
+
             var application = new Apply
             {
                 ApplicationId = _applicationId,
                 ExternalComments = externalComments,
-                FinancialReviewStatus = financialReviewStatus,
-                FinancialGrade = new FinancialReviewDetails
-                {
-                    SelectedGrade = financialGrade,
-                    ExternalComments = financialExternalComments
-                },
                 GatewayReviewStatus = gatewayReviewStatus,
                 ModerationStatus = moderationStatus,
                 ApplyData = new ApplyData
@@ -367,6 +361,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(application);
 
+            var financialReviewDetails = new FinancialReviewDetails
+            {
+                SelectedGrade = FinancialApplicationSelectedGrade.Outstanding,
+                ExternalComments = "financial external comments",
+                Status = FinancialReviewStatus.Pass
+            };
+
+            _applicationApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(financialReviewDetails);
+
             var expectedModel = new ApplicationSummaryViewModel
             {
                 ApplicationId = _applicationId,
@@ -378,11 +381,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 ApplicationReference = applicationReference,
                 SubmittedDate = submittedDate,
                 GatewayExternalComments = externalComments,
-                FinancialReviewStatus = financialReviewStatus,
                 GatewayReviewStatus = gatewayReviewStatus,
                 ModerationStatus = moderationStatus,
-                FinancialGrade = financialGrade,
-                FinancialExternalComments = financialExternalComments,
+                FinancialGrade = financialReviewDetails.SelectedGrade,
+                FinancialReviewStatus = financialReviewDetails.Status,
+                FinancialExternalComments = financialReviewDetails.ExternalComments,
                 IsAppealSubmitted = appealSubmitted,
                 AppealStatus = appealStatus
             };
@@ -410,6 +413,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             };
 
             _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(submittedApp);
+
+            var financialReviewDetails = new FinancialReviewDetails
+            {
+                SelectedGrade = FinancialApplicationSelectedGrade.Outstanding,
+                ExternalComments = "financial external comments",
+                Status = FinancialReviewStatus.Pass
+            };
+
+            _applicationApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(financialReviewDetails);
 
             var oversightExternalComments = "oversight external comments";
 
@@ -455,6 +467,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(submittedApp);
 
+            _applicationApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(default(FinancialReviewDetails));
+
             var oversightExternalComments = "oversight external comments";
 
             _outcomeApiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(new GetOversightReviewResponse { GatewayApproved = gatewayApproved, ModerationApproved = moderationApproved, ExternalComments = oversightExternalComments });
@@ -490,6 +504,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             };
 
             _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(submittedApp);
+
+            var financialReviewDetails = new FinancialReviewDetails
+            {
+                SelectedGrade = FinancialApplicationSelectedGrade.Outstanding,
+                ExternalComments = "financial external comments",
+                Status = FinancialReviewStatus.Pass
+            };
+
+            _applicationApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(financialReviewDetails);
 
             const string oversightExternalComments = "oversight external comments";
 
@@ -766,12 +789,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             return sections;
         }
 
-        private ApplicationSummaryWithModeratorDetailsViewModel GetCopyOfModel()
-        {
-            var model = new ApplicationSummaryWithModeratorDetailsViewModel
-            { ApplicationId = _applicationId };
+       private ApplicationSummaryWithModeratorDetailsViewModel GetCopyOfModel()
+       {
+            var model = new ApplicationSummaryWithModeratorDetailsViewModel { ApplicationId = _applicationId };
 
             return model;
-        }
+       }
     }
 }

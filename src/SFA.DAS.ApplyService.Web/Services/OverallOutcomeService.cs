@@ -81,6 +81,8 @@ namespace SFA.DAS.ApplyService.Web.Services
         public async Task<ApplicationSummaryViewModel> BuildApplicationSummaryViewModel(Guid applicationId, string emailAddress)
         {
             var application = await _applicationApiClient.GetApplication(applicationId);
+            var financialReviewDetails = await _applicationApiClient.GetFinancialReviewDetails(applicationId);
+
             GetOversightReviewResponse oversightReview = null;
             GetAppealResponse appeal = null;
 
@@ -104,9 +106,9 @@ namespace SFA.DAS.ApplyService.Web.Services
                 SubmittedDate = applicationData?.ApplicationSubmittedOn,
                 GatewayExternalComments = application.ExternalComments ?? application.ApplyData.GatewayReviewDetails?.ExternalComments,
                 EmailAddress = emailAddress,
-                FinancialReviewStatus = application?.FinancialReviewStatus,
-                FinancialGrade = application?.FinancialGrade?.SelectedGrade,
-                FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
+                FinancialReviewStatus = financialReviewDetails?.Status,
+                FinancialGrade = financialReviewDetails?.SelectedGrade,
+                FinancialExternalComments = financialReviewDetails?.ExternalComments,
                 GatewayReviewStatus = application?.GatewayReviewStatus,
                 ModerationStatus = application?.ModerationStatus,
                 SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit,
@@ -124,11 +126,13 @@ namespace SFA.DAS.ApplyService.Web.Services
         public async Task<ApplicationSummaryWithModeratorDetailsViewModel> BuildApplicationSummaryViewModelWithGatewayAndModerationDetails(Guid applicationId, string emailAddress)
         {
             var getApplicationTask = _applicationApiClient.GetApplication(applicationId);
+            var getFinancialReviewDetailsTask = _applicationApiClient.GetFinancialReviewDetails(applicationId);
             var getOversightReviewTask = _apiClient.GetOversightReview(applicationId);
             var getAppealTask = _appealsApiClient.GetAppeal(applicationId);
-            await Task.WhenAll(getApplicationTask, getOversightReviewTask, getAppealTask);
+            await Task.WhenAll(getApplicationTask, getFinancialReviewDetailsTask, getOversightReviewTask, getAppealTask);
 
             var application = getApplicationTask.Result;
+            var financialReviewDetails = getFinancialReviewDetailsTask.Result;
             var oversightReview = getOversightReviewTask.Result;
             var appeal = getAppealTask.Result;
 
@@ -186,9 +190,9 @@ namespace SFA.DAS.ApplyService.Web.Services
                 SubmittedDate = applicationData?.ApplicationSubmittedOn,
                 GatewayExternalComments = application?.ApplyData?.GatewayReviewDetails?.ExternalComments,
                 EmailAddress = emailAddress,
-                FinancialReviewStatus = application?.FinancialReviewStatus,
-                FinancialGrade = application?.FinancialGrade?.SelectedGrade,
-                FinancialExternalComments = application?.FinancialGrade?.ExternalComments,
+                FinancialReviewStatus = financialReviewDetails?.Status,
+                FinancialGrade = financialReviewDetails?.SelectedGrade,
+                FinancialExternalComments = financialReviewDetails?.ExternalComments,
                 GatewayReviewStatus = application?.GatewayReviewStatus,
                 ModerationStatus = application?.ModerationStatus,
                 ModerationPassOverturnedToFail = moderationPassOverturnedToFail,
