@@ -11,9 +11,9 @@ namespace SFA.DAS.ApplyService.Infrastructure.Database
         private readonly IApplyConfig _configuration;
         private readonly IHostingEnvironment _hostingEnvironment;
 
-        public DbConnectionHelper(IApplyConfig configuration, IHostingEnvironment hostingEnvironment)
+        public DbConnectionHelper(IConfigurationService configurationService, IHostingEnvironment hostingEnvironment)
         {
-            _configuration = configuration;
+            _configuration = configurationService.GetConfig().GetAwaiter().GetResult();
             _hostingEnvironment = hostingEnvironment;
         }
 
