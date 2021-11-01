@@ -21,7 +21,6 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
             _config = configurationService.GetConfig().Result;
 
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
-            SqlMapper.AddTypeHandler(typeof(FinancialReviewDetails), new FinancialReviewDetailsDataHandler());
         }
 
         public async Task<Apply> GetApplication(Guid applicationId)
@@ -49,8 +48,6 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
                     ApplicationStatus = @ApplicationStatus,
                     GatewayReviewStatus = @GatewayReviewStatus,
                     AssessorReviewStatus = @AssessorReviewStatus,
-                    FinancialReviewStatus = @FinancialReviewStatus,
-                    FinancialGrade = @FinancialGrade,
                     Assessor1UserId = @Assessor1UserId,
                     Assessor2UserId = @Assessor2UserId,
                     Assessor1Name = @Assessor1Name,

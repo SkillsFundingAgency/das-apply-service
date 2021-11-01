@@ -7,7 +7,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string SelectedGrade { get; set; }
         public string InadequateMoreInformation { get; set; }
         public string GradedBy { get; set; }
-        public DateTime GradedDateTime { get; set; }
+        public DateTime GradedOn { get; set; }
         public DateTime? FinancialDueDate { get; set; }
     }
 
