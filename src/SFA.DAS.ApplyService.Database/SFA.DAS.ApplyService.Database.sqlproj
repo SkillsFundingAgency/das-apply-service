@@ -94,7 +94,6 @@
     <None Include="AdhocScipts\DataMart\LookupSectionTitles.sql" />
     <None Include="AdhocScipts\DataMart\LookupPageTitles.sql" />
     <None Include="AdhocScipts\DataMart\LookupQuestionTitles.sql" />
-    <None Include="APR-2311.sql" />
     <None Include="SFA.DAS.ApplyService.Database.publish.xml" />
   </ItemGroup>
 </Project>
