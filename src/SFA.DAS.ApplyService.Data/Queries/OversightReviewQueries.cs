@@ -1,33 +1,27 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Domain.QueryResults;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 using OversightReview = SFA.DAS.ApplyService.Domain.QueryResults.OversightReview;
 
 namespace SFA.DAS.ApplyService.Data.Queries
 {
     public class OversightReviewQueries : IOversightReviewQueries
     {
-        private readonly IApplyConfig _config;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
 
-        public OversightReviewQueries(IConfigurationService configurationService)
+        public OversightReviewQueries(IDbConnectionHelper dbConnectionHelper)
         {
-            _config = configurationService.GetConfig().Result;
-        }
-
-        private SqlConnection GetConnection()
-        {
-            return new SqlConnection(_config.SqlConnectionString);
+            _dbConnectionHelper = dbConnectionHelper;
         }
 
         public async Task<PendingOversightReviews> GetPendingOversightReviews(string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
@@ -36,7 +30,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
                             apply.ApplicationStatus,
                             org.Name AS OrganisationName,
                             apply.GatewayReviewStatus,
-                            apply.FinancialReviewStatus,
+                            fr.Status as FinancialReviewStatus,
                             apply.ModerationStatus AS ModerationReviewStatus,
 					        apply.UKPRN,
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
@@ -45,12 +39,15 @@ namespace SFA.DAS.ApplyService.Data.Queries
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                          LEFT JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
+                         LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
+                         LEFT JOIN Appeal Appeal on apply.ApplicationId = Appeal.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
+                          AND Appeal.Status IS NULL
                           AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
                           and r.Status is null
                           and ((GatewayReviewStatus in (@gatewayReviewStatusPass)
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
-						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
+						  and fr.Status in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)) 
                             OR GatewayReviewStatus in (@gatewayReviewStatusFail, @gatewayReviewStatusRejected)
                             OR apply.ApplicationStatus = @applicationStatusRemoved)
                             ORDER BY {orderByClause}, org.Name ASC", new
@@ -76,7 +73,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
         public async Task<CompletedOversightReviews> GetCompletedOversightReviews(string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
@@ -94,7 +91,9 @@ namespace SFA.DAS.ApplyService.Data.Queries
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                           INNER JOIN OversightReview r ON r.ApplicationId = apply.ApplicationId
+                          LEFT JOIN Appeal Appeal on apply.ApplicationId = Appeal.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
+                          AND Appeal.Status IS NULL
                           AND ( @searchString = '%%' OR apply.UKPRN LIKE @searchString OR org.Name LIKE @searchString )
                         ORDER BY {orderByClause}, org.Name ASC", new
                 {
@@ -111,7 +110,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
         public async Task<PendingAppealOutcomes> GetPendingAppealOutcomes(string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForAppeal(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
@@ -147,7 +146,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
         public async Task<CompletedAppealOutcomes> GetCompletedAppealOutcomes(string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForAppealOutcome(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
@@ -185,7 +184,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
         public async Task<ApplicationOversightDetails> GetOversightApplicationDetails(Guid applicationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var applyDataResults = await connection.QueryAsync<ApplicationOversightDetails>(@"SELECT 
                             apply.Id AS Id,
@@ -206,12 +205,12 @@ namespace SFA.DAS.ApplyService.Data.Queries
 							apply.GatewayUserName as GatewayOutcomeMadeBy,
 							JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.Comments') AS GatewayComments,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.ExternalComments') AS GatewayExternalComments,
-							apply.FinancialReviewStatus,
-							JSON_VALUE(apply.FinancialGrade, '$.SelectedGrade') AS FinancialGradeAwarded,
-							JSON_VALUE(apply.FinancialGrade, '$.GradedDateTime') AS FinancialHealthAssessedOn,
-							JSON_VALUE(apply.FinancialGrade, '$.GradedBy') AS FinancialHealthAssessedBy,
-                            JSON_VALUE(apply.FinancialGrade, '$.Comments') AS FinancialHealthComments,
-                            JSON_VALUE(apply.FinancialGrade, '$.ExternalComments') AS FinancialHealthExternalComments,
+							fr.Status as FinancialReviewStatus,
+							fr.SelectedGrade AS FinancialGradeAwarded,
+							fr.GradedOn AS FinancialHealthAssessedOn,
+							fr.GradedBy AS FinancialHealthAssessedBy,
+                            fr.Comments AS FinancialHealthComments,
+                            fr.ExternalComments AS FinancialHealthExternalComments,
 							apply.ModerationStatus as ModerationReviewStatus,
 							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS ModerationOutcomeMadeOn,
 							JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratedBy,
@@ -234,6 +233,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                           LEFT JOIN OversightReview outcome ON outcome.ApplicationId = apply.ApplicationId
 						  LEFT OUTER JOIN contacts on contacts.ApplyOrganisationId = org.Id
+                          LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
                         WHERE apply.ApplicationId = @applicationId",
                     new { applicationId });
 
@@ -243,7 +243,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
         public async Task<OversightReview> GetOversightReview(Guid applicationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var results = await connection.QueryAsync<OversightReview>(@"SELECT 
                         r.[Id],        

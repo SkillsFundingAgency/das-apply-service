@@ -13,7 +13,6 @@
 }
 
 <main class="govuk-main-wrapper" id="main-content" role="main">
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-panel app-panel--error">
@@ -21,11 +20,6 @@
                     Appeal unsuccessful
                 </h1>
             </div>
-        </div>
-    </div>
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">Appeal submitted date</dt>
@@ -36,11 +30,6 @@
                     <dd class="govuk-summary-list__value">@Model.AppealDeterminedDate.ToSfaShortDateString()</dd>
                 </div>
             </dl>
-        </div>
-    </div>
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">
                 Your appeal against the outcome of your application to be on the RoATP has been unsuccessful.
             </p>
@@ -64,22 +53,19 @@
                     }
                 </ul>
             </p>
-            <h1 class="govuk-heading-m">Why your appeal was unsuccessful</h1>
+            <h2 class="govuk-heading-m">Why your appeal was unsuccessful</h2>
             <div class="govuk-inset-text app-inset-text--question-answer">
                 <p class="govuk-body das-multiline-text">
                     @Model.ExternalComments
                 </p>
             </div>
             <p class="govuk-body govuk-!-font-weight-bold">This decision is final and there is no right of a further appeal.</p>
-        </div>
-    </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
             <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
             <h2 class="govuk-heading-m">What happens next</h2>
             <p class="govuk-body">
-                If you are currently on the register, the ESFA will write to you to advise what actions they will take, as explained in the <a href="https://www.gov.uk/guidance/meeting-new-application-requirements-and-removal-from-register-of-apprenticeship-training-providers-roatp#consequences" target="_blank">Consequences section</a> of the new policy.
+                If you are currently on the register, the ESFA will write to you to advise what actions they will take, as explained in the <a href="https://www.gov.uk/guidance/meeting-new-application-requirements-and-removal-from-register-of-apprenticeship-training-providers-roatp#consequences" target="_blank" class="govuk-link" rel="noreferrer noopener">Consequences section</a> of the new policy.
             </p>
             <p class="govuk-body">
                 Your organisation can only make 1 application within a 12-month period.
@@ -89,16 +75,16 @@
             </p>
             <h2 class="govuk-heading-m">How to make a complaint</h2>
             <p class="govuk-body">
-                If you are unhappy with the way your appeal has been handled, your organisation can make a complaint by following the <a href="https://www.gov.uk/government/organisations/department-for-education/about/complaints-procedure" target="_blank">Complaints procedure</a>.
+                If you are unhappy with the way your appeal has been handled, your organisation can make a complaint by following the <a href="https://www.gov.uk/government/organisations/department-for-education/about/complaints-procedure" target="_blank" class="govuk-link" rel="noreferrer noopener">Complaints procedure</a>.
             </p>
             <h2 class="govuk-heading-m">How to contact us</h2>
             <p class="govuk-body">
                 You can contact the Manage apprenticeships service helpdesk on:
-                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-9">
-                    <li>08000 150 600</li>
-                    <li><a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk">helpdesk@manage-apprenticeships.service.gov.uk</a></li>
-                </ul>
             </p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-9">
+                <li>08000 150 600</li>
+                <li><a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk" class="govuk-link">helpdesk@manage-apprenticeships.service.gov.uk</a></li>
+            </ul>
         </div>
     </div>
 </main>

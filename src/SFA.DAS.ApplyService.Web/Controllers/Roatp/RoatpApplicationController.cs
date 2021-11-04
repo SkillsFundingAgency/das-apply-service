@@ -51,6 +51,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IRoatpOrganisationVerificationService _organisationVerificationService;
         private readonly ITaskListOrchestrator _taskListOrchestrator;
         private readonly IUkrlpApiClient _ukrlpApiClient;
+        private readonly IReapplicationCheckService _reapplicationCheckService;
 
         private const string InputClassUpperCase = "app-uppercase";
         private const string NotApplicableAnswerText = "None of the above";
@@ -65,7 +66,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ICustomValidatorFactory customValidatorFactory,  
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
-            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator, IUkrlpApiClient ukrlpApiClient)
+            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator, IUkrlpApiClient ukrlpApiClient, IReapplicationCheckService reapplicationCheckService)
             :base(sessionService)
         {
             _apiClient = apiClient;
@@ -86,46 +87,55 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _organisationVerificationService = organisationVerificationService;
             _taskListOrchestrator = taskListOrchestrator;
             _ukrlpApiClient = ukrlpApiClient;
+            _reapplicationCheckService = reapplicationCheckService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Applications()
         {
-            var username = User.Identity.Name;
-
-            if (string.IsNullOrWhiteSpace(username))
-                return RedirectToAction("PostSignIn", "Users");
-
-            _logger.LogDebug($"Got LoggedInUser from Session: {username}");
-
             var signinId = User.GetSignInId();
             var applications = await GetInFlightApplicationsForSignInId(signinId);
 
-            Apply application;
+            var applicationsReapplicationsOnly = applications.Where(x => x.ApplyData?.ApplyDetails?.RequestToReapplyMade == true
+                                                                         && (x.ApplicationStatus == ApplicationStatus.Rejected
+                                                                             || (x.ApplicationStatus == ApplicationStatus.AppealSuccessful
+                                                                                 && x.GatewayReviewStatus == GatewayReviewStatus.Fail))).ToList();
 
-            if (applications.Count > 1)
+            var applicationCountExcludingReapplications = applications.Except(applicationsReapplicationsOnly).ToList().Count;
+
+            if (applicationCountExcludingReapplications > 1)
             {
                 _logger.LogError($"Multiple in flight applications found for userId: {signinId}");
                 return View("~/Views/Roatp/Applications.cshtml", applications);
             }
-            if (applications.Count == 1)
+
+            Apply application = null;
+            if (applicationCountExcludingReapplications == 1)
             {
                 _logger.LogDebug($"Application found for userId: {signinId}");
-                application = applications[0];                
+                application = applications[0];
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { application.ApplicationId });
             }
-            else
+
+            if (applicationsReapplicationsOnly.Any())
             {
-                _logger.LogDebug($"No applications found for userId: {signinId}");
+                _logger.LogDebug("Applications that allow reapplication exist");
+                application = applicationsReapplicationsOnly.OrderByDescending(x => x.UpdatedAt).FirstOrDefault();
 
-                application = await StartApplication(signinId);
-
-                if (application.ApplicationId == Guid.Empty)
-                {
-                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
-                }       
+                var reapplicationAllowed =
+                    await _reapplicationCheckService.ReapplicationAllowed(signinId, application?.OrganisationId);
+                if (!reapplicationAllowed)
+                    return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { application.ApplicationId });
             }
-            
-            _logger.LogDebug("Applications controller action completed");
+
+            _logger.LogDebug($"No applications found for userId: {signinId}");
+
+            application = await StartApplication(signinId);
+
+            if (application.ApplicationId == Guid.Empty)
+            {
+                return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
+            }
 
             return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new {application.ApplicationId });
         }
@@ -349,7 +359,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             viewModel = await TokeniseViewModelProperties(viewModel);
 
-            PopulateGetHelpWithQuestion(viewModel, pageId);
+            PopulateGetHelpWithQuestion(viewModel);
 
             if (viewModel.DisplayType == PageDisplayType.MultipleFileUpload)
             {
@@ -512,7 +522,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var applicationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
             var model = new EnterNewUkprnViewModel{CurrentUkprn = applicationDetails.OrganisationDetails.UKRLPDetails.UKPRN};
-            PopulateGetHelpWithQuestion(model, "UKPRN");
+            PopulateGetHelpWithQuestion(model);
             return View("~/Views/Roatp/EnterNewUkprn.cshtml", model);
         }
 
@@ -804,6 +814,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
+        private static IEnumerable<Question> GetFutherQuestionsFromPage(Page page)
+        {
+            return page.Questions.Where(q => q.Input.Options?.Any(o => o.FurtherQuestions?.Any() == true) == true);
+        }
+
         private static IEnumerable<Question> GetCheckBoxListQuestionsFromPage(Page page)
         {
             return page.Questions.Where(q => QuestionType.CheckboxList.Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase)
@@ -854,7 +869,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             #region FurtherQuestion_Processing
             // Get all questions that have FurtherQuestions in a ComplexRadio
-            var questionsWithFutherQuestions = GetCheckBoxListQuestionsFromPage(page).Where(x => x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions != null && o.FurtherQuestions.Any()));
+            var questionsWithFutherQuestions = GetFutherQuestionsFromPage(page);
 
             foreach (var question in questionsWithFutherQuestions)
             {
@@ -862,16 +877,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
-
                     // Remove FurtherQuestion answers to all other Options as they were not selected and thus should not be stored
                     foreach (var furtherQuestion in question.Input.Options
                         .Where(opt => opt.Value != answerForQuestion?.Value && opt.FurtherQuestions != null)
                         .SelectMany(opt => opt.FurtherQuestions))
                     {
-                        foreach (var answer in answers.Where(a => a.QuestionId == furtherQuestion.QuestionId))
-                        {
-                            answer.Value = string.Empty;
-                        }
+                        answers.RemoveAll(a => a.QuestionId == furtherQuestion.QuestionId);
                     }
                 }
                 else if (QuestionType.ComplexCheckboxList.Equals(question.Input.Type, StringComparison.InvariantCultureIgnoreCase))
@@ -889,10 +900,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         foreach (var furtherQuestion in option.FurtherQuestions)
                             if (!splitAnswers.Contains(option.Value))
                             {
-                                foreach (var answer in answers.Where(a => a.QuestionId == furtherQuestion.QuestionId))
-                                {
-                                    answer.Value = string.Empty;
-                                }
+                                answers.RemoveAll(a => a.QuestionId == furtherQuestion.QuestionId);
                             }
                     }
                 }
@@ -1149,7 +1157,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var roatpSequences = await roatpSequencesTask;
             var organisationVerificationStatus = await organisationVerificationStatusTask;
             var applicationRoutes = await applicationRoutesTask;
-            var applicationData = (await applicationDataTask) as JObject;
+            var applicationData = await applicationDataTask;
             var address = await addressTask;
 
             await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);

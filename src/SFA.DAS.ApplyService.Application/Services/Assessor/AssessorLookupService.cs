@@ -248,8 +248,9 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
                 case RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.OverallManagerResponsible_Supporting:
                     return "Full name";
                 case RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.OverallManagerExperience_MainEmployer:
-                case RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.OverallManagerExperience_Supporting:
                     return "How much experience do they have in developing and delivering training?";
+                case RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.OverallManagerExperience_Supporting:
+                    return "Do they have at least 3 months experience in developing and delivering training?";
                 default:
                     return null;
             }

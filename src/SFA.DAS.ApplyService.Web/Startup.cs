@@ -107,7 +107,7 @@ namespace SFA.DAS.ApplyService.Web
             {
                 options.Filters.Add<FeatureToggleFilter>();
             })
-            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateAccountValidator>())
+            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ManagementHierarchyValidator>())
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
             .AddSessionStateTempDataProvider();
 
@@ -243,7 +243,6 @@ namespace SFA.DAS.ApplyService.Web
             });
 
             services.AddTransient<IDfeSignInService, DfeSignInService>();
-            services.AddTransient<CreateAccountValidator, CreateAccountValidator>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
             services.AddTransient<IResetRouteQuestionsService, ResetRouteQuestionsService>();
@@ -255,6 +254,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IEmailTokenService, EmailTokenService>();
             services.AddTransient<IAssessorLookupService, AssessorLookupService>();
             services.AddTransient<IGetHelpWithQuestionEmailService, GetHelpWithQuestionEmailService>();
+            services.AddTransient<IReapplicationCheckService, ReapplicationCheckService>();
             services.AddTransient<IRequestInvitationToReapplyEmailService, RequestInvitationToReapplyEmailService>();
             services.AddTransient<INotificationsApi>(x => {
                 var apiConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration

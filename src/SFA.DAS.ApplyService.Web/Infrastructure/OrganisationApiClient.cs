@@ -46,7 +46,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 Name = organisation.Name,
                 OrganisationType = organisation.OrganisationType,
                 OrganisationUkprn = organisation.Ukprn,
-                RoEPAOApproved = organisation.RoEPAOApproved,
                 RoATPApproved = organisation.RoATPApproved,
                 OrganisationDetails = orgDetails,
                 CreatedBy = userId,

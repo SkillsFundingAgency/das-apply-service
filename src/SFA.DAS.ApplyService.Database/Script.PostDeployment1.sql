@@ -1,4 +1,4 @@
-﻿/*
+/*
 Post-Deployment Script Template							
 --------------------------------------------------------------------------------------
  This file contains SQL statements that will be appended to the build script.		
@@ -10,9 +10,4 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
-
-IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPRequestInvitationToReapply')
-BEGIN
-	INSERT INTO EmailTemplates ([Id], [Status], [TemplateName], [TemplateId], [Recipients], [CreatedAt], [CreatedBy]) 
-	VALUES (NEWID(), 'Live', N'RoATPRequestInvitationToReapply', N'872e3ace-4625-4f9b-a909-c44cec7f71ca', N'helpdesk@manage-apprenticeships.service.gov.uk', GETDATE(), 'System')
-END
+:r .\APR-2311.sql

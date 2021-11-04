@@ -81,6 +81,8 @@
     <Build Include="Tables\Appeal.sql" />
     <Build Include="Tables\ExtractedApplications.sql" />
     <Build Include="Tables\SubmittedApplicationAnswers.sql" />
+    <Build Include="Tables\FinancialReview.sql" />
+    <Build Include="Tables\FinancialReviewClarificationFile.sql" />
     <Build Include="Tables\BankHoliday.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -92,6 +94,7 @@
     <None Include="AdhocScipts\DataMart\LookupSectionTitles.sql" />
     <None Include="AdhocScipts\DataMart\LookupPageTitles.sql" />
     <None Include="AdhocScipts\DataMart\LookupQuestionTitles.sql" />
+    <None Include="APR-2311.sql" />
     <None Include="SFA.DAS.ApplyService.Database.publish.xml" />
   </ItemGroup>
 </Project>

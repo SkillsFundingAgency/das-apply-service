@@ -10,14 +10,18 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Controllers.Roatp;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
 using AppealFile = SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals.AppealFile;
 
@@ -33,6 +37,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IOutcomeApiClient> _outcomeApiClient;
         private Mock<IAppealsApiClient> _appealsApiClient;
         private Mock<IApplicationApiClient> _applicationApiClient;
+        private Mock<ILogger<RoatpAppealsController>> _logger;
+        private Mock<IRequestInvitationToReapplyEmailService> _emailService;
 
         [SetUp]
         public void Before_each_test()
@@ -42,7 +48,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _outcomeApiClient = new Mock<IOutcomeApiClient>();
             _appealsApiClient = new Mock<IAppealsApiClient>();
-            _applicationApiClient = new Mock<IApplicationApiClient>();  
+            _applicationApiClient = new Mock<IApplicationApiClient>();
+            _logger = new Mock<ILogger<RoatpAppealsController>>();
+            _emailService = new Mock<IRequestInvitationToReapplyEmailService>();
 
             var signInId = Guid.NewGuid();
             var givenNames = "Test";
@@ -59,14 +67,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var oversightReview = new GetOversightReviewResponse { Status = OversightReviewStatus.Unsuccessful, ApplicationDeterminedDate = _applicationDeterminedDate };
             _outcomeApiClient.Setup(x => x.GetOversightReview(_applicationId)).ReturnsAsync(oversightReview);
-
+           
+            _outcomeApiClient.Setup(x => x.ReapplicationRequested(It.IsAny<Guid>(), It.IsAny<string>()))
+                .ReturnsAsync(true);
+            
             _outcomeApiClient.Setup(x => x.GetWorkingDaysAheadDate(It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(_applicationDeterminedDate.AddDays(10));
 
             _appealsApiClient.Setup(x => x.GetAppeal(_applicationId)).ReturnsAsync(default(GetAppealResponse));
 
             _appealsApiClient.Setup(x => x.GetAppealFileList(_applicationId)).ReturnsAsync(default(GetAppealFileListResponse));
 
-            _controller = new RoatpAppealsController(_outcomeApiClient.Object, _appealsApiClient.Object,_applicationApiClient.Object)
+            _controller = new RoatpAppealsController(_outcomeApiClient.Object, _appealsApiClient.Object,_applicationApiClient.Object, _logger.Object, _emailService.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -457,6 +468,41 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Model.Should().BeEquivalentTo(model);
         }
 
+        [TestCase(AppealStatus.Successful)]
+        [TestCase(AppealStatus.SuccessfulAlreadyActive)]
+        [TestCase(AppealStatus.SuccessfulFitnessForFunding)]
+
+
+        public async Task AppealSubmitted_shows_Successful_Gateway_Fail_page_if_appeal_deemed_Successful_and_Gateway_Fail(string appealStatus)
+        {
+            var model = new AppealSuccessfulViewModel
+            {
+                ApplicationId = _applicationId,
+            };
+
+            var appeal = new GetAppealResponse
+            {
+                Status = appealStatus,
+                ApplicationId = model.ApplicationId,
+            };
+
+            _appealsApiClient.Setup(x => x.GetAppeal(_applicationId)).ReturnsAsync(appeal);
+
+            var application = new Apply
+            {
+                GatewayReviewStatus = GatewayReviewStatus.Fail,
+                ApplicationStatus = ApplicationStatus.AppealSuccessful
+            };
+
+            _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(application);
+            var result = await _controller.AppealSuccessful(_applicationId);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("~/Views/Appeals/AppealSuccessfulGatewayFail.cshtml");
+            viewResult.Model.Should().BeEquivalentTo(model);
+        }
+
         [Test]
         public async Task AppealSubmitted_shows_tasklist_if_appeal_does_not_exist()
         {
@@ -506,5 +552,42 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = await _controller.DownloadAppealFile(_applicationId, fileName) as NotFoundResult;
             Assert.IsNotNull(result);
         }
+
+        [Test]
+        public async Task Application_new_invitation_requested()
+        {
+            var applicationId = Guid.NewGuid();
+
+            var viewModel = new ApplicationSummaryViewModel
+            {
+                ApplicationId = applicationId
+            };
+
+            var result = await _controller.RequestNewInvitation(applicationId);
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("RequestNewInvitationRefresh");
+            _applicationApiClient.Verify(x => x.GetApplication(applicationId), Times.Once);
+            _emailService.Verify(x => x.SendRequestToReapplyEmail(It.IsAny<RequestInvitationToReapply>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Application_new_invitation_refresh_requested()
+        {
+            var applicationId = Guid.NewGuid();
+
+            var viewModel = new ApplicationSummaryViewModel
+            {
+                ApplicationId = applicationId
+            };
+
+            var result = await _controller.RequestNewInvitationRefresh(applicationId);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.Model.Should().BeEquivalentTo(viewModel);
+            viewResult.ViewName.Should().Contain("RequestNewInvitation.cshtml");
+         }
     }
 }

@@ -11,18 +11,17 @@
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <partial name="_ValidationSummaryPartial" />
             <h1 class="govuk-heading-l">Make an appeal</h1>
             <p class="govuk-body">
                 For this section, you'll need to explain how the ESFA has failed to either:
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>follow its own policy or processes</li>
-                    <li>understand or recognise the evidence submitted</li>
-                </ul>
             </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>follow its own policy or processes</li>
+                <li>understand or recognise the evidence submitted</li>
+            </ul>
             <p class="govuk-body">
                 or both. These are the only 2 grounds for making an appeal.
             </p>
@@ -37,7 +36,11 @@
                 <input type="hidden" asp-for="ApplicationId" />
                 <div class="govuk-form-group" sfa-validation-for-list="AppealOnPolicyOrProcesses,AppealOnEvidenceSubmitted" sfa-validationerror-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
-                        <h2 class="govuk-heading-m">What are your grounds for appealing?</h2>
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                            <h2 class="govuk-fieldset__heading">
+                                What are your grounds for appealing?
+                            </h2>
+                        </legend>
                         <span class="govuk-hint">Select all that apply</span>
                         <div class="govuk-form-group">
                             <span class="govuk-error-message" asp-validation-for="AppealOnPolicyOrProcesses"></span>
@@ -59,10 +62,12 @@
                         </div>
                     </fieldset>
                 </div>
-                <button class="govuk-button govuk-!-margin-right-3" data-module="govuk-button" data-disable-on-submit="true">
-                    Save and continue
-                </button>
-                <a id="cancel" class="govuk-link govuk-link--no-visited-state das-inline-button-link" asp-action="CancelAppeal" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Cancel this appeal</a>
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                        Save and continue
+                    </button>
+                    <a id="cancel" class="govuk-link" asp-action="CancelAppeal" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Cancel this appeal</a>
+                </div>
             </form>
         </div>
     </div>

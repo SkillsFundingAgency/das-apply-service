@@ -54,7 +54,8 @@
         public const string CompaniesHousePSCs = "YO-71";
         public const string CompaniesHouseDetailsConfirmed = "YO-75";
         public const string CharityCommissionTrustees = "YO-80";
-        public const string CharityCommissionDetailsConfirmed = "YO-85";
+        public const string CharityCommissionTrusteesConfirmed = "YO-85";
+        public const string CharityCommissionTrusteesDobConfirmed = "YO-86";
         public const string SoleTradeOrPartnership = "YO-100";
         public const string PartnershipType = "YO-101";
         public const string AddPartners = "YO-110";
@@ -208,9 +209,8 @@
         public static class WhosInControl
         {
             public const string CompaniesHouseStartPage = "70";
-            public const string CharityCommissionStartPage = "80";
-            public const string CharityCommissionConfirmTrustees = "80";
-            public const string CharityCommissionNoTrustees = "90";
+            public const string CharityCommissionTrustees = "80";
+            public const string CharityCommissionTrusteesDob = "86";
             public const string SoleTraderPartnership = "100";
             public const string PartnershipType = "101";
             public const string AddPartners = "110";
@@ -370,9 +370,12 @@
         public const string CompaniesHouseDirectors = "CompaniesHouseDirectors";
         public const string CompaniesHousePscs = "CompaniesHousePSCs";
         public const string ManualEntryRequiredCompaniesHouse = "CHManualEntryRequired";
+        public const string DirectorsPSCsConfirmed = "DirectorsPSCsConfirmed";
         public const string UkrlpVerificationCharity = "UKRLPVerificationCharity";
         public const string CharityCommissionTrustees = "CharityTrustees";
         public const string ManualEntryRequiredCharityCommission = "CCTrusteeManualEntry";
+        public const string TrusteesConfirmed = "ConfirmTrustees";
+        public const string TrusteesDobConfirmed = "ConfirmTrusteesDob";
         public const string UkrlpVerificationSoleTraderPartnership = "UKRLPVerificationSoleTraderPartnership";
         public const string SoleTraderOrPartnership = "SoleTradeOrPartnership";
         public const string PartnershipType = "PartnershipType";
@@ -793,7 +796,7 @@
                 {
                     QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                     Value = JsonConvert.SerializeObject(table),
-                    PageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage,
+                    PageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees,
                     SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                     SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl
                 });
@@ -804,7 +807,7 @@
                 {
                     QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                     Value = string.Empty,
-                    PageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage,
+                    PageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees,
                     SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                     SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl
                 });
@@ -874,9 +877,9 @@
         {
             questions.Add(new PreambleAnswer
             {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionDetailsConfirmed,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrusteesConfirmed,
                 Value = string.Empty,
-                PageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionConfirmTrustees,
+                PageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees,
                 SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                 SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl
             });

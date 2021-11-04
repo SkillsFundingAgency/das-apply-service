@@ -12,6 +12,7 @@ using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
 using SFA.DAS.ApplyService.Application.Apply.Snapshot;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -49,6 +50,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetApplicationRequest(applicationId));
         }
 
+
+        [HttpGet("Application/{applicationId}/FinancialReviewDetails")]
+        public async Task<ActionResult<FinancialReviewDetails>> GetFinancialReviewDetails(Guid applicationId)
+        {
+            return await _mediator.Send(new GetFinancialReviewDetailsRequest(applicationId));
+        }
+
         [HttpGet("Application/{applicationId}/Contact")]
         public async Task<ActionResult<Domain.Entities.Contact>> GetContactForApplication(Guid applicationId)
         {
@@ -59,6 +67,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<List<Domain.Entities.Apply>>> GetApplications(string signinId)
         {
             return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(signinId), true));
+        }
+
+        [HttpGet("Applications/ukprn/{ukprn}")]
+        public async Task<ActionResult<List<Domain.Entities.Apply>>> GetApplicationsByUkprn(string ukprn)
+        {
+            return await _mediator.Send(new GetApplicationsByUkprnRequest(ukprn));
         }
 
         [HttpGet("Applications/{signinId}/Organisation")]
@@ -108,6 +122,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("/Application/{applicationId}/AssessorEvaluateSection")]
         public async Task<bool> AssessorEvaluateSection(Guid applicationId,
             [FromBody] AssessorEvaluateSectionRequest request)
+        {
+            return await _mediator.Send(request);
+        }
+
+        [HttpPost("/Application/{applicationId}/ReapplicationRequested")]
+        public async Task<bool> ReeapplicationRequested(Guid applicationId,
+            [FromBody] ReapplicationRequest request)
         {
             return await _mediator.Send(request);
         }

@@ -21,8 +21,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<bool> ChangeProviderRoute(ChangeProviderRouteRequest changeProviderRouteRequest);
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
+        Task<FinancialReviewDetails> GetFinancialReviewDetails(Guid applicationId);
         Task<List<Domain.Entities.Apply>> GetApplications(Guid signinId, bool createdBy);
         Task<Apply> GetApplicationByUserId(Guid applicationId, Guid signinId);
+        Task<List<Domain.Entities.Apply>> GetApplicationsByUkprn(string ukprn);
 
         Task<IEnumerable<RoatpSequences>> GetRoatpSequences();
 
@@ -52,6 +54,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus, string userId);
 
         Task<AllowedProvider> GetAllowedProvider(string ukprn);
+
+        Task<Contact> GetContactBySignInId(Guid contactId);
 
 
     }

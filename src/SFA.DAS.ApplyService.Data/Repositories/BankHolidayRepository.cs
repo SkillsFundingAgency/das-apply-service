@@ -2,28 +2,27 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data.Repositories
 {
     public class BankHolidayRepository: IBankHolidayRepository
     {
-        private readonly IApplyConfig _config;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
 
-        public BankHolidayRepository(IConfigurationService configurationService)
+        public BankHolidayRepository(IDbConnectionHelper dbConnectionHelper)
         {
-            _config = configurationService.GetConfig().Result;
+            _dbConnectionHelper = dbConnectionHelper;
         }
 
         public async Task<List<BankHoliday>> GetBankHolidays()
         {
            
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return (await connection.QueryAsync<BankHoliday>(
                     @"SELECT * FROM BankHoliday where Active=1")).ToList();

@@ -2,11 +2,16 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -17,13 +22,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IOutcomeApiClient _outcomeApiClient;
         private readonly IAppealsApiClient _appealsApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
+        private readonly ILogger<RoatpAppealsController> _logger;
+        private readonly IRequestInvitationToReapplyEmailService _emailService;
 
 
-        public RoatpAppealsController(IOutcomeApiClient apiClient, IAppealsApiClient appealsApiClient, IApplicationApiClient applicationApiClient)
+        public RoatpAppealsController(IOutcomeApiClient apiClient, IAppealsApiClient appealsApiClient, IApplicationApiClient applicationApiClient, ILogger<RoatpAppealsController> logger, IRequestInvitationToReapplyEmailService emailService)
         {
             _outcomeApiClient = apiClient;
             _appealsApiClient = appealsApiClient;
             _applicationApiClient = applicationApiClient;
+            _logger = logger;
+            _emailService = emailService;
         }
 
         [HttpGet("application/{applicationId}/appeal")]
@@ -41,6 +50,41 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             };
 
             return View("~/Views/Appeals/MakeAppeal.cshtml", model);
+        }
+
+        [HttpPost]
+        [Route("application/{applicationId}/request-new-invitation")]
+        public async Task<IActionResult> RequestNewInvitation(Guid applicationId)
+        {
+
+            var success = await _outcomeApiClient.ReapplicationRequested(applicationId, User.GetUserId().ToString());
+
+            if (!success)
+            {
+                _logger.LogError($"Unable to request reapplication: {applicationId}");
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
+            }
+
+            var application = await _applicationApiClient.GetApplication(applicationId);
+
+            var emailRequest = new RequestInvitationToReapply
+            {
+                EmailAddress = User.GetEmail(),
+                UKPRN = application?.ApplyData?.ApplyDetails?.UKPRN,
+                OrganisationName = application?.ApplyData?.ApplyDetails?.OrganisationName
+            };
+
+            await _emailService.SendRequestToReapplyEmail(emailRequest);
+            return RedirectToAction("RequestNewInvitationRefresh", "RoatpAppeals", new {applicationId });
+
+        }
+
+        [HttpGet] 
+        [Authorize(Policy = null)]
+        [Route("application/{applicationId}/request-new-invitation")]
+        public async Task<IActionResult> RequestNewInvitationRefresh(Guid applicationId)
+        {
+            return View("~/Views/Roatp/RequestNewInvitation.cshtml", new ApplicationSummaryViewModel { ApplicationId = applicationId, });
         }
 
         [HttpPost("application/{applicationId}/appeal")]
@@ -206,7 +250,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> AppealSuccessful(Guid applicationId)
         {
             var appeal = await _appealsApiClient.GetAppeal(applicationId);
-            if (appeal==null)
+            if (appeal is null)
                 return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
 
             if (appeal.Status != AppealStatus.Successful && appeal.Status != AppealStatus.SuccessfulFitnessForFunding && appeal.Status != AppealStatus.SuccessfulAlreadyActive)
@@ -228,10 +272,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 SubcontractingLimit = application?.ApplyData?.GatewayReviewDetails?.SubcontractingLimit
             };
 
+            var isGatewayFail = application?.GatewayReviewStatus == GatewayReviewStatus.Fail;
+            if (isGatewayFail && application?.ApplicationStatus == ApplicationStatus.AppealSuccessful)
+            {
+                switch (appeal.Status)
+                {
+                    case AppealStatus.Successful:
+                    case AppealStatus.SuccessfulAlreadyActive:
+                    case AppealStatus.SuccessfulFitnessForFunding:
+                        return View("~/Views/Appeals/AppealSuccessfulGatewayFail.cshtml", model);
+                }
+
+            }
+
             var isSupporting = application?.ApplyData?.ApplyDetails?.ProviderRoute.ToString() ==
                                  Domain.Roatp.ApplicationRoute.SupportingProviderApplicationRoute.ToString();
 
-            switch (appeal?.Status)
+            switch (appeal.Status)
             {
                 case AppealStatus.Successful:
                     return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupporting.cshtml" : "~/Views/Appeals/AppealSuccessful.cshtml", model);
@@ -241,7 +298,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     return View(isSupporting ? "~/Views/Appeals/AppealSuccessfulSupportingFitnessForFunding.cshtml" : "~/Views/Appeals/AppealSuccessfulFitnessForFunding.cshtml", model);
             }
 
-            return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
+            return View("~/Views/Appeals/AppealSuccessful.cshtml", model);
         }
 
         [HttpGet("application/{applicationId}/appeal/file/{fileName}")]

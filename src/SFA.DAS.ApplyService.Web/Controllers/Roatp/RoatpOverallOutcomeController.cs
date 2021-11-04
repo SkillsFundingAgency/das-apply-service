@@ -17,15 +17,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     {
         private readonly IOverallOutcomeService _overallOutcomeService;
         private readonly IOutcomeApiClient _outcomeApiClient;
-        private readonly IApplicationApiClient _applicationApiClient;
-        private readonly IRequestInvitationToReapplyEmailService _emailService;
 
-        public RoatpOverallOutcomeController(IOverallOutcomeService overallOutcomeService, IOutcomeApiClient outcomeApiClient, IRequestInvitationToReapplyEmailService emailService, IApplicationApiClient applicationApiClient)
+
+        public RoatpOverallOutcomeController(IOverallOutcomeService overallOutcomeService, IOutcomeApiClient outcomeApiClient)
         {
             _overallOutcomeService = overallOutcomeService;
             _outcomeApiClient = outcomeApiClient;
-            _emailService = emailService;
-            _applicationApiClient = applicationApiClient;
+
         }
 
         [HttpGet]
@@ -34,23 +32,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             var model = await _overallOutcomeService.GetSectorDetailsViewModel(applicationId, pageId);
             return View("~/Views/Roatp/ApplicationUnsuccessfulSectorAnswers.cshtml", model);
-        }
-
-        [HttpGet]
-        [Route("application/{applicationId}/request-new-invitation")]
-        public async Task<IActionResult> RequestNewInvitation(Guid applicationId)
-        {
-            var application = await _applicationApiClient.GetApplication(applicationId);
-
-            var emailRequest = new RequestInvitationToReapply
-            {
-                EmailAddress = User.GetEmail(),
-                UKPRN = application?.ApplyData?.ApplyDetails?.UKPRN,
-                OrganisationName = application?.ApplyData?.ApplyDetails?.OrganisationName
-            };
-
-            await _emailService.SendRequestToReapplyEmail(emailRequest);
-            return View("~/Views/Roatp/RequestNewInvitation.cshtml", new ApplicationSummaryViewModel { ApplicationId=applicationId});
         }
 
         [HttpGet]
@@ -121,8 +102,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                         return View("~/Views/Roatp/ApplicationUnsuccessfulPostGateway.cshtml", unsuccessfulModel);
                     }
-                case ApplicationStatus.AppealSuccessful: // placeholder status to stop tasklist breaking with new statuses - coverage not added as new stories following
-                    return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
+                case ApplicationStatus.AppealSuccessful:
+                    if(model.GatewayReviewStatus == GatewayReviewStatus.Fail)
+                    {
+                        return RedirectToAction("AppealSuccessful", "RoatpAppeals", new { applicationId });
+                    }
+                    else
+                    {
+                        return View("~/Views/Roatp/ApplicationAppealSuccessful.cshtml", model);
+                    }
                 case ApplicationStatus.FeedbackAdded:
                     return View("~/Views/Roatp/FeedbackAdded.cshtml", model);
                 case ApplicationStatus.Withdrawn:

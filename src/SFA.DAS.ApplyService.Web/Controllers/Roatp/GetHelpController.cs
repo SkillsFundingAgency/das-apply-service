@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.EmailService.Interfaces;
@@ -20,7 +21,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     {
         private readonly ILogger<GetHelpController> _logger;
         private readonly IQnaApiClient _qnaApiClient;
-        private readonly IApplicationApiClient _applicationApiClient;
         private readonly IUsersApiClient _usersApiClient;
         private readonly List<TaskListConfiguration> _taskListConfiguration;
         private readonly ISessionService _sessionService;
@@ -34,13 +34,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private const string MinLengthErrorMessage = "Tell us what you need help with";
         private const string MaxLengthErrorMessage = "Enter at least 250 characters or less";
 
-        public GetHelpController(ILogger<GetHelpController> logger, IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient,
+        public GetHelpController(ILogger<GetHelpController> logger, IQnaApiClient qnaApiClient,
             IUsersApiClient usersApiClient, ISessionService sessionService, IOptions<List<TaskListConfiguration>> taskListConfiguration,
             IGetHelpWithQuestionEmailService emailService)
         {
             _logger = logger;
             _qnaApiClient = qnaApiClient;
-            _applicationApiClient = applicationApiClient;
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _taskListConfiguration = taskListConfiguration.Value;
@@ -75,23 +74,39 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ApplicationSection = $"Not available (Section {sectionId}))",
                 PageTitle = title ?? action,
                 OrganisationName = "Not available",
-                UKPRN = "Not available"
+                UKPRN = "Not available",
+                CompanyNumber = "Not available",
+                CharityNumber = "Not available",
             };
 
             if (applicationId.HasValue && applicationId.Value != Guid.Empty)
             {
                 try 
                 {
-                    var organisationName = await _qnaApiClient.GetAnswerByTag(applicationId.Value, RoatpWorkflowQuestionTags.UkrlpLegalName);
-                    if (!string.IsNullOrWhiteSpace(organisationName?.Value))
+                    var qnaApplicationData = await _qnaApiClient.GetApplicationData(applicationId.Value);
+
+                    var organisationName = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UkrlpLegalName)?.Value<string>();
+                    if (!string.IsNullOrWhiteSpace(organisationName))
                     {
-                        getHelpQuery.OrganisationName = organisationName.Value;
+                        getHelpQuery.OrganisationName = organisationName;
                     }
 
-                    var organisationUKPRN = await _qnaApiClient.GetAnswerByTag(applicationId.Value, RoatpWorkflowQuestionTags.UKPRN);
-                    if (!string.IsNullOrWhiteSpace(organisationUKPRN?.Value))
+                    var organisationUKPRN = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UKPRN)?.Value<string>();
+                    if (!string.IsNullOrWhiteSpace(organisationUKPRN))
                     {
-                        getHelpQuery.UKPRN = organisationUKPRN.Value;
+                        getHelpQuery.UKPRN = organisationUKPRN;
+                    }
+
+                    var organisationCompanyNumber = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UKRLPVerificationCompanyNumber)?.Value<string>();
+                    if (!string.IsNullOrWhiteSpace(organisationCompanyNumber))
+                    {
+                        getHelpQuery.CompanyNumber = organisationCompanyNumber;
+                    }
+
+                    var organisationCharityNumber = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UKRLPVerificationCharityRegNumber)?.Value<string>();
+                    if (!string.IsNullOrWhiteSpace(organisationCharityNumber))
+                    {
+                        getHelpQuery.CharityNumber = organisationCharityNumber;
                     }
 
                     var currentSection = await _qnaApiClient.GetSectionBySectionNo(applicationId.Value, sequenceId, sectionId);
@@ -106,9 +121,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         getHelpQuery.PageTitle = currentPage.Title;
                     }
                 }
-                catch(ApplyService.Infrastructure.Exceptions.ApiClientException)
+                catch(ApplyService.Infrastructure.Exceptions.ApiClientException apiEx)
                 {
                     // Safe to ignore any QnA issues. We just want to send help with as much info as possible.
+                    _logger.LogError(apiEx, $"Unable to retrieve QNA details for application : {applicationId.Value}");
+                }
+                catch (NullReferenceException nullRefEx)
+                {
+                    // Safe to ignore any QnA issues. We just want to send help with as much info as possible.
+                    _logger.LogError(nullRefEx, $"QNA details were not found for application: {applicationId.Value}");
                 }
             }
             else
@@ -127,6 +148,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     if (!string.IsNullOrWhiteSpace(organisationName))
                     {
                         getHelpQuery.OrganisationName = organisationName;
+                    }
+
+                    var organisationCompanyNumber = applicationDetails.UkrlpLookupDetails?.VerificationDetails?.FirstOrDefault(x => x.VerificationAuthority == Domain.Ukrlp.VerificationAuthorities.CompaniesHouseAuthority)?.VerificationId;
+                    if (!string.IsNullOrWhiteSpace(organisationCompanyNumber))
+                    {
+                        getHelpQuery.CompanyNumber = organisationCompanyNumber;
+                    }
+
+                    var organisationCharityNumber = applicationDetails.UkrlpLookupDetails?.VerificationDetails?.FirstOrDefault(x => x.VerificationAuthority == Domain.Ukrlp.VerificationAuthorities.CharityCommissionAuthority)?.VerificationId;
+                    if (!string.IsNullOrWhiteSpace(organisationCharityNumber))
+                    {
+                        getHelpQuery.CharityNumber = organisationCharityNumber;
                     }
                 }                
             }

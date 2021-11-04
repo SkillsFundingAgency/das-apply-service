@@ -7,19 +7,14 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.Clarification;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.AllowedProviders;
-using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
-using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
-using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
-using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -50,9 +45,20 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await Get<Domain.Entities.Apply>($"Application/{applicationId}");
         }
 
+        public async Task<FinancialReviewDetails> GetFinancialReviewDetails(Guid applicationId)
+        {
+            return await Get<FinancialReviewDetails>($"Application/{applicationId}/FinancialReviewDetails");
+        }
+
         public async Task<Apply> GetApplicationByUserId(Guid applicationId, Guid signinId)
         {
             return await Get<Domain.Entities.Apply>($"Application/{applicationId}/Contact/{ signinId}");
+        }
+
+        public async Task<List<Apply>> GetApplicationsByUkprn(string ukprn)
+        {
+            return await Get<List<Domain.Entities.Apply>>($"Applications/ukprn/{ukprn}");
+
         }
 
         public async Task<List<Domain.Entities.Apply>> GetApplications(Guid signinId, bool createdBy)
@@ -171,6 +177,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<AllowedProvider> GetAllowedProvider(string ukprn)
         {
             return await Get<AllowedProvider>($"/AllowedProviders/{ukprn}");
+        }
+
+        public async Task<Contact> GetContactBySignInId(Guid signInId)
+        {
+            return await Get<Contact>($"/Account/{signInId}");
         }
     }
 }
