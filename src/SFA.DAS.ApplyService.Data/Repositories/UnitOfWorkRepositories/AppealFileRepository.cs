@@ -1,29 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 {
     public class AppealFileRepository : IAppealFileRepository
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IApplyConfig _config;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
+        private readonly IUnitOfWork _unitOfWork;   
 
-        public AppealFileRepository(IConfigurationService configurationService, IUnitOfWork unitOfWork)
+        public AppealFileRepository(IDbConnectionHelper dbConnectionHelper, IUnitOfWork unitOfWork)
         {
-            _config = configurationService.GetConfig().Result;
+            _dbConnectionHelper = dbConnectionHelper;
             _unitOfWork = unitOfWork;
-        }
-
-        private SqlConnection GetConnection()
-        {
-            return new SqlConnection(_config.SqlConnectionString);
         }
 
         public void Add(AppealFile entity)
@@ -43,7 +37,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 
         public async Task<AppealFile> Get(Guid entityId)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<AppealFile>(
                     @"SELECT * FROM [AppealFile] WHERE Id = @entityId",
@@ -53,7 +47,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 
         public async Task<AppealFile> Get(Guid applicationId, string fileName)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<AppealFile>(
                     @"SELECT * FROM [AppealFile] WHERE ApplicationId = @applicationId AND FileName = @fileName",
@@ -63,7 +57,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 
         public async Task<IEnumerable<AppealFile>> GetAllForApplication(Guid applicationId)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QueryAsync<AppealFile>(
                     @"SELECT * FROM [AppealFile] WHERE ApplicationId = @applicationId",

@@ -1,33 +1,27 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Domain.QueryResults;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 using OversightReview = SFA.DAS.ApplyService.Domain.QueryResults.OversightReview;
 
 namespace SFA.DAS.ApplyService.Data.Queries
 {
     public class OversightReviewQueries : IOversightReviewQueries
     {
-        private readonly IApplyConfig _config;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
 
-        public OversightReviewQueries(IConfigurationService configurationService)
+        public OversightReviewQueries(IDbConnectionHelper dbConnectionHelper)
         {
-            _config = configurationService.GetConfig().Result;
-        }
-
-        private SqlConnection GetConnection()
-        {
-            return new SqlConnection(_config.SqlConnectionString);
+            _dbConnectionHelper = dbConnectionHelper;
         }
 
         public async Task<PendingOversightReviews> GetPendingOversightReviews(string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
@@ -79,7 +73,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
         public async Task<CompletedOversightReviews> GetCompletedOversightReviews(string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
@@ -116,7 +110,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
         public async Task<PendingAppealOutcomes> GetPendingAppealOutcomes(string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForAppeal(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
@@ -152,7 +146,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
         public async Task<CompletedAppealOutcomes> GetCompletedAppealOutcomes(string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForAppealOutcome(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
@@ -190,7 +184,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
         public async Task<ApplicationOversightDetails> GetOversightApplicationDetails(Guid applicationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var applyDataResults = await connection.QueryAsync<ApplicationOversightDetails>(@"SELECT 
                             apply.Id AS Id,
@@ -249,7 +243,7 @@ namespace SFA.DAS.ApplyService.Data.Queries
 
         public async Task<OversightReview> GetOversightReview(Guid applicationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var results = await connection.QueryAsync<OversightReview>(@"SELECT 
                         r.[Id],        

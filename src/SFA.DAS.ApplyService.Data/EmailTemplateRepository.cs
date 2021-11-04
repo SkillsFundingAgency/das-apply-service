@@ -1,30 +1,25 @@
 ﻿using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data
 {
     public class EmailTemplateRepository : IEmailTemplateRepository
     {
-        private readonly IApplyConfig _config;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
 
-        public EmailTemplateRepository(IConfigurationService configurationService)
+        public EmailTemplateRepository(IDbConnectionHelper dbConnectionHelper)
         {
-            _config = configurationService.GetConfig().Result;
+            _dbConnectionHelper = dbConnectionHelper;
         }
 
         public async Task<EmailTemplate> GetEmailTemplate(string templateName)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
                 var sql =
                     "SELECT * " +
                     "FROM [EmailTemplates] " +

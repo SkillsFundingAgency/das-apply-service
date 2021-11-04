@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly IConfigurationService _configurationService;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
         private readonly List<Func<Task>> _operations;
         private SqlTransaction _transaction;
 
-        public UnitOfWork(IConfigurationService configurationService)
+        public UnitOfWork(IDbConnectionHelper dbConnectionHelper)
         {
-            _configurationService = configurationService;
+            _dbConnectionHelper = dbConnectionHelper;
             _operations = new List<Func<Task>>();
         }
 
@@ -27,9 +27,7 @@ namespace SFA.DAS.ApplyService.Data.UnitOfWork
         {
             if (_operations.Count == 0) { return; }
 
-            var config = await _configurationService.GetConfig();
-
-            using (var connection = new SqlConnection(config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection() as SqlConnection)
             {
                 await connection.OpenAsync();
                 using (_transaction = connection.BeginTransaction())
