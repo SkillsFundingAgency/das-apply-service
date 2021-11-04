@@ -1,28 +1,22 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 {
     public class AppealRepository : IAppealRepository
     {
+        private readonly IDbConnectionHelper _dbConnectionHelper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IApplyConfig _config;
 
-        public AppealRepository(IConfigurationService configurationService, IUnitOfWork unitOfWork)
+        public AppealRepository(IDbConnectionHelper dbConnectionHelper, IUnitOfWork unitOfWork)
         {
-            _config = configurationService.GetConfig().GetAwaiter().GetResult();
+            _dbConnectionHelper = dbConnectionHelper;
             _unitOfWork = unitOfWork;
-        }
-
-        private SqlConnection GetConnection()
-        {
-            return new SqlConnection(_config.SqlConnectionString);
         }
 
         public void Add(Appeal entity)
@@ -42,7 +36,7 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 
         public async Task<Appeal> GetByApplicationId(Guid applicationId)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<Appeal>(
                     @"SELECT * FROM [Appeal] WHERE ApplicationId = @applicationId",

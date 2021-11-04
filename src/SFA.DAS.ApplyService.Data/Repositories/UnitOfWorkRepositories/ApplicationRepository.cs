@@ -1,31 +1,30 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 {
     public class ApplicationRepository : IApplicationRepository
     {
-        private readonly IApplyConfig _config;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
         private readonly IUnitOfWork _unitOfWork;
 
-        public ApplicationRepository(IUnitOfWork unitOfWork, IConfigurationService configurationService)
+        public ApplicationRepository(IDbConnectionHelper dbConnectionHelper, IUnitOfWork unitOfWork)
         {
+            _dbConnectionHelper = dbConnectionHelper;
             _unitOfWork = unitOfWork;
-            _config = configurationService.GetConfig().Result;
 
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
         }
 
         public async Task<Apply> GetApplication(Guid applicationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
 
                 return await connection.QuerySingleOrDefaultAsync<Apply>(

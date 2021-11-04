@@ -1,33 +1,27 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data
 {
     public class OversightReviewRepository : IOversightReviewRepository
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IApplyConfig _config;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
+        private readonly IUnitOfWork _unitOfWork;       
 
-        public OversightReviewRepository(IUnitOfWork unitOfWork, IConfigurationService configurationService)
+        public OversightReviewRepository(IDbConnectionHelper dbConnectionHelper, IUnitOfWork unitOfWork)
         {
+            _dbConnectionHelper = dbConnectionHelper;
             _unitOfWork = unitOfWork;
-            _config = configurationService.GetConfig().Result;
-        }
-
-        private SqlConnection GetConnection()
-        {
-            return new SqlConnection(_config.SqlConnectionString);
         }
 
         public async Task<OversightReview> GetByApplicationId(Guid applicationId)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<OversightReview>(
                     "select * from OversightReview where ApplicationId = @applicationId",
@@ -40,7 +34,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<OversightReview> GetById(Guid entityId)
         {
-            using (var connection = GetConnection())
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<OversightReview>(
                     "select * from OversightReview where Id = @entityId",
