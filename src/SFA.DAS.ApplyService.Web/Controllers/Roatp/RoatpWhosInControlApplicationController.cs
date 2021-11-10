@@ -111,21 +111,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("ConfirmDirectorsPscs", "RoatpWhosInControlApplication", new { applicationId });
         }
 
-        private static string FormatDateOfBirth(DateTime? dateOfBirth)
-        {
-            if (!dateOfBirth.HasValue)
-            {
-                return string.Empty;
-            }
-
-            if (dateOfBirth.Value.Year == 1 && dateOfBirth.Value.Month == 1)
-            {
-                return string.Empty;
-            }
-
-            return dateOfBirth.Value.ToString("MMM yyyy");
-        }
-
         [Route("confirm-directors-pscs")]
         public async Task<IActionResult> ConfirmDirectorsPscs(Guid applicationId)
         {
