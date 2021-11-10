@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Application.Services;
 using Newtonsoft.Json.Linq;
+using AutoMapper;
+using SFA.DAS.ApplyService.Domain.CharityCommission;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -27,10 +29,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IAnswerFormService _answerFormService;
         private readonly ITabularDataRepository _tabularDataRepository;
         private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
+        private readonly ICharityCommissionApiClient _charityCommissionApiClient;
 
         public RoatpWhosInControlApplicationController(IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient,
                                                        IAnswerFormService answerFormService, ITabularDataRepository tabularDataRepository,
-                                                       ISessionService sessionService, ICompaniesHouseApiClient companiesHouseApiClient)
+                                                       ISessionService sessionService,
+                                                       ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient)
             : base(sessionService)
         {
             _qnaApiClient = qnaApiClient;
@@ -38,6 +42,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _answerFormService = answerFormService;
             _tabularDataRepository = tabularDataRepository;
             _companiesHouseApiClient = companiesHouseApiClient;
+            _charityCommissionApiClient = charityCommissionApiClient;
         }
 
         [Route("confirm-who-control")]
@@ -170,6 +175,42 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                 return RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, "Sequence_1");
             }
+        }
+
+        [HttpGet("refresh-trustees")]
+        public async Task<IActionResult> RefreshTrustees(Guid applicationId)
+        {
+            try
+            {
+                var charityNumber = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UKRLPVerificationCharityRegNumber);
+
+                var charityDetails = await _charityCommissionApiClient.GetCharityDetails(int.Parse(charityNumber?.Value ?? "0"));
+
+                if (charityDetails?.Success == true)
+                {
+                    var applicationDetails = new Domain.Roatp.ApplicationDetails
+                    {
+                        CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails)
+                    };
+
+                    // TODO: Save against OrganisationTable here
+                    // implentmentation... 
+
+                    // reset qna
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrusteesDob);
+
+                    // save new information
+                    var trusteeAnswers = RoatpPreambleQuestionBuilder.CreateCharityCommissionWhosInControlQuestions(applicationDetails);
+                    await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees, trusteeAnswers.ToList<Answer>());
+                }
+            }
+            catch
+            {
+                // ignore
+            }
+
+            return RedirectToAction("ConfirmTrustees", "RoatpWhosInControlApplication", new { applicationId });
         }
 
         [HttpGet("confirm-trustees")]
