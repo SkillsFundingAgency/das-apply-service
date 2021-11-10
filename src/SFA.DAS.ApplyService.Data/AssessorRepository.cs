@@ -1,6 +1,5 @@
 using Dapper;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
@@ -11,13 +10,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data
 {
     public class AssessorRepository : IAssessorRepository
     {
-        private readonly IApplyConfig _config;
-        private readonly ILogger<AssessorRepository> _logger;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
+
         private const string ModeratorNameField = "ModeratorName";
 
         private const string ApplicationSummaryFields = @"ApplicationId,
@@ -85,15 +85,14 @@ namespace SFA.DAS.ApplyService.Data
                                     OR org.Name LIKE @searchString
                                 )";
 
-        public AssessorRepository(IConfigurationService configurationService, ILogger<AssessorRepository> logger)
+        public AssessorRepository(IDbConnectionHelper dbConnectionHelper)
         {
-            _logger = logger;
-            _config = configurationService.GetConfig().GetAwaiter().GetResult();
+            _dbConnectionHelper = dbConnectionHelper;
         }
 
         public async Task<List<AssessorApplicationSummary>> GetNewAssessorApplications(string userId, string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
@@ -117,7 +116,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<int> GetNewAssessorApplicationsCount(string userId, string searchTerm)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return (await connection
                     .ExecuteScalarAsync<int>(
@@ -137,7 +136,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task AssignAssessor1(Guid applicationId, string userId, string userName)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET Assessor1UserId = @userId,
@@ -171,7 +170,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task AssignAssessor2(Guid applicationId, string userId, string userName)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET Assessor2UserId = @userId,
@@ -205,7 +204,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<AssessorApplicationSummary>> GetInProgressAssessorApplications(string userId, string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} {GetOrderByDirection(sortOrder)}";
 
@@ -230,7 +229,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<int> GetInProgressAssessorApplicationsCount(string userId, string searchTerm)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return (await connection
                     .ExecuteScalarAsync<int>(
@@ -251,7 +250,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<ModerationApplicationSummary>> GetApplicationsInModeration(string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
@@ -279,7 +278,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<int> GetApplicationsInModerationCount(string searchTerm)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return (await connection
                     .ExecuteScalarAsync<int>(
@@ -301,7 +300,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<ClarificationApplicationSummary>> GetApplicationsInClarification(string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
@@ -329,7 +328,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<int> GetApplicationsInClarificationCount(string searchTerm)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return (await connection
                     .ExecuteScalarAsync<int>(
@@ -351,7 +350,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<ClosedApplicationSummary>> GetClosedApplications(string searchTerm, string sortColumn, string sortOrder)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumnForNew(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
@@ -388,7 +387,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<int> GetClosedApplicationsCount(string searchTerm)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return (await connection
                     .ExecuteScalarAsync<int>(
@@ -410,7 +409,7 @@ namespace SFA.DAS.ApplyService.Data
 
         private async Task<int> GetAssessorNumber(Guid applicationId, string userId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.ExecuteScalarAsync<int>(
                         $@"SELECT
@@ -431,7 +430,7 @@ namespace SFA.DAS.ApplyService.Data
         public async Task SubmitAssessorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId,
                                                     string userId, string userName, string status, string comment)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var assessorNumber = await GetAssessorNumber(applicationId, userId);
 
@@ -474,7 +473,7 @@ namespace SFA.DAS.ApplyService.Data
                                                                     string pageId,
                                                                     string userId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var assessorNumber = await GetAssessorNumber(applicationId, userId);
 
@@ -524,7 +523,7 @@ namespace SFA.DAS.ApplyService.Data
                                                             int sectionNumber,
                                                             string userId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var assessorNumber = await GetAssessorNumber(applicationId, userId);
 
@@ -569,7 +568,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<AssessorPageReviewOutcome>> GetAllAssessorPageReviewOutcomes(Guid applicationId, string userId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var assessorNumber = await GetAssessorNumber(applicationId, userId);
 
@@ -610,7 +609,7 @@ namespace SFA.DAS.ApplyService.Data
 
 		public async Task UpdateAssessorReviewStatus(Guid applicationId, string userId, string status)
 		{
-			using (var connection = new SqlConnection(_config.SqlConnectionString))
+			using (var connection = _dbConnectionHelper.GetDatabaseConnection())
 			{
                 var assessorNumber = await GetAssessorNumber(applicationId, userId);
 
@@ -664,7 +663,7 @@ namespace SFA.DAS.ApplyService.Data
                 );
             }
 
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection() as SqlConnection)
             {
                 await connection.OpenAsync();
                 using (var bulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.Default, null))

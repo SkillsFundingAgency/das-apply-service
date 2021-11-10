@@ -1,10 +1,9 @@
 ﻿using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply.AllowedProviders;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,16 +11,16 @@ namespace SFA.DAS.ApplyService.Data
 {
     public class AllowedProvidersRepository : IAllowedProvidersRepository
     {
-        private readonly IApplyConfig _config;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
 
-        public AllowedProvidersRepository(IConfigurationService configurationService)
+        public AllowedProvidersRepository(IDbConnectionHelper dbConnectionHelper)
         {
-            _config = configurationService.GetConfig().Result;
+            _dbConnectionHelper = dbConnectionHelper;
         }
 
         public async Task<bool> CanUkprnStartApplication(int ukprn)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleAsync<bool>(@"SELECT
                                                                       CASE WHEN EXISTS 
@@ -40,7 +39,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<AllowedProvider>> GetAllowedProvidersList(string sortColumn, string sortOrder)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var orderByClause = $"{GetSortColumn(sortColumn)} { GetOrderByDirection(sortOrder)}";
 
@@ -51,7 +50,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<AllowedProvider> GetAllowedProviderDetails(int ukprn)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<AllowedProvider>($@"SELECT * FROM AllowedProviders
                                                                                       WHERE UKPRN = @ukprn",
@@ -61,7 +60,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> AddToAllowedProvidersList(int ukprn, DateTime startDateTime, DateTime endDateTime)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var insertedUkprn = await connection.QuerySingleAsync<int?>(
                     @"INSERT INTO [AllowedProviders] (UKPRN, StartDateTime, EndDateTime, AddedDateTime)
@@ -79,7 +78,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> RemoveFromAllowedProvidersList(int ukprn)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var rowsAffected = await connection.ExecuteAsync($@"DELETE FROM AllowedProviders
                                                                     WHERE UKPRN = @ukprn",

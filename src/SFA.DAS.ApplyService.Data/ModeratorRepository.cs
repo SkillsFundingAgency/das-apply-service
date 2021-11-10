@@ -6,31 +6,31 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data
 {
     public class ModeratorRepository : IModeratorRepository
     {
-        private readonly IApplyConfig _config;
+        private readonly IDbConnectionHelper _dbConnectionHelper;
         private readonly ILogger<ModeratorRepository> _logger;
 
-        public ModeratorRepository(IConfigurationService configurationService, ILogger<ModeratorRepository> logger)
+        public ModeratorRepository(IDbConnectionHelper dbConnectionHelper, ILogger<ModeratorRepository> logger)
         {
+            _dbConnectionHelper = dbConnectionHelper;
             _logger = logger;
-            _config = configurationService.GetConfig().GetAwaiter().GetResult();
 
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
         }
 
         public async Task<BlindAssessmentOutcome> GetBlindAssessmentOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var blindAssessmentOutcomeResults = await connection.QueryAsync<BlindAssessmentOutcome>(
                                                                 @"SELECT outcome.[ApplicationId]
@@ -61,7 +61,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<ModeratorPageReviewOutcome> GetModeratorPageReviewOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var pageReviewOutcomeResults = await connection.QueryAsync<ModeratorPageReviewOutcome>(
                                                                 @"SELECT [ApplicationId]
@@ -84,7 +84,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<ModeratorPageReviewOutcome>> GetModeratorPageReviewOutcomesForSection(Guid applicationId, int sequenceNumber, int sectionNumber)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var pageReviewOutcomeResults = await connection.QueryAsync<ModeratorPageReviewOutcome>(
                                                                 @"SELECT [ApplicationId]
@@ -106,7 +106,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<ModeratorPageReviewOutcome>> GetAllModeratorPageReviewOutcomes(Guid applicationId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var pageReviewOutcomeResults = await connection.QueryAsync<ModeratorPageReviewOutcome>(
                                                                 @"SELECT [ApplicationId]
@@ -126,7 +126,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> SubmitModeratorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string userId, string userName, string status, string comment)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 // NOTE: CreateEmptyModeratorReview should have been called before getting to this point.
                 // This is so that all PageReviewOutcomes are initialized for the Moderator
@@ -172,7 +172,7 @@ namespace SFA.DAS.ApplyService.Data
                 );
             }
 
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection() as SqlConnection)
             {
                 await connection.OpenAsync();
                 using (var bulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.Default, null))
@@ -191,7 +191,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> UpdateModerationStatus(Guid applicationId, ApplyData applyData, string status, string userId)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var rowsAffected = await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET ModerationStatus = ISNULL(@status, ModerationStatus),
