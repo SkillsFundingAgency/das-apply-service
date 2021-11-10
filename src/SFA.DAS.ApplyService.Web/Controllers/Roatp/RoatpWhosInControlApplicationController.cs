@@ -108,7 +108,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 // ignore
             }
 
-            return RedirectToAction("ConfirmDirectorsPscs", "RoatpWhosInControlApplication", new[] { applicationId });
+            return RedirectToAction("ConfirmDirectorsPscs", "RoatpWhosInControlApplication", new { applicationId });
         }
 
         private static string FormatDateOfBirth(DateTime? dateOfBirth)
