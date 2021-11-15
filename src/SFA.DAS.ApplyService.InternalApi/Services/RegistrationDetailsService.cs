@@ -19,6 +19,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         private const int EmployerProviderTypeId = 2;
         private const string PublicBodyOrganisationType = "A public body";
         private const string EducationalInstituteOrganisationType = "An educational institute";
+        private const string RailFranchise = "A rail franchise operator, licensed and acting on behalf of the Department for Transport";
+        private const string RoatpMatchRailFranchise = "Rail franchise";
 
         public RegistrationDetailsService(IInternalQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, ILogger<RegistrationDetailsService> logger)
         {
@@ -90,23 +92,38 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                                                                         RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, organisationTypePageId);
 
             var organisationDetailsAnswers = organisationTypePage.PageOfAnswers.FirstOrDefault();
-            var organisationTypeAnswer = organisationDetailsAnswers.Answers.FirstOrDefault(x => x.QuestionId == organisationTypeQuestionId);
-
-            var matchingOrganisationType = organisationTypes.FirstOrDefault(x => x.Type.Equals(organisationTypeAnswer.Value.ToString()));
-
-            if (matchingOrganisationType != null)
+            if (organisationDetailsAnswers != null && organisationTypes != null)
             {
-                return matchingOrganisationType.Id;
-            }
+                var organisationTypeAnswer =
+                    organisationDetailsAnswers.Answers.FirstOrDefault(x => x.QuestionId == organisationTypeQuestionId);
 
-            switch (organisationTypeAnswer.Value)
-            {
-                case PublicBodyOrganisationType:
-                    organisationTypeId = await MapPublicBodyOrganisationType(applicationId, providerTypeId, organisationTypes);
-                    break;
-                case EducationalInstituteOrganisationType:
-                    organisationTypeId = await MapEducationalInstituteOrganisationType(applicationId, providerTypeId, organisationTypes);
-                    break;
+                if (organisationTypeAnswer != null)
+                {
+                    var matchingOrganisationType =
+                        organisationTypes.FirstOrDefault(x => x.Type.Equals(organisationTypeAnswer.Value));
+
+                    if (matchingOrganisationType != null)
+                    {
+                        return matchingOrganisationType.Id;
+                    }
+
+                    switch (organisationTypeAnswer.Value)
+                    {
+                        case RailFranchise:
+                            organisationTypeId =
+                                    organisationTypes.FirstOrDefault(x => x.Type == RoatpMatchRailFranchise).Id;
+                            break;
+                        case PublicBodyOrganisationType:
+                            organisationTypeId =
+                                await MapPublicBodyOrganisationType(applicationId, providerTypeId, organisationTypes);
+                            break;
+                        case EducationalInstituteOrganisationType:
+                            organisationTypeId =
+                                await MapEducationalInstituteOrganisationType(applicationId, providerTypeId,
+                                    organisationTypes);
+                            break;
+                    }
+                }
             }
 
             return organisationTypeId;
