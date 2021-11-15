@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Application.Services;
 using Newtonsoft.Json.Linq;
+using SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -24,18 +25,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     {
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
+        private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IAnswerFormService _answerFormService;
         private readonly ITabularDataRepository _tabularDataRepository;
+        private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
 
         public RoatpWhosInControlApplicationController(IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient, 
                                                        IAnswerFormService answerFormService, ITabularDataRepository tabularDataRepository,
-                                                       ISessionService sessionService)
+                                                       ISessionService sessionService, ICompaniesHouseApiClient companiesHouseApiClient, 
+                                                       IOrganisationApiClient organisationApiClient)
             :base(sessionService)
         {
             _qnaApiClient = qnaApiClient;
             _applicationApiClient = applicationApiClient;
             _answerFormService = answerFormService;
             _tabularDataRepository = tabularDataRepository;
+            _companiesHouseApiClient = companiesHouseApiClient;
+            _organisationApiClient = organisationApiClient;
         }
 
         [Route("confirm-who-control")]
@@ -72,6 +78,57 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
 
             return await AddPeopleInControl(applicationId);
+        }
+
+        [HttpGet("refresh-directors-pscs")]
+        public async Task<IActionResult> RefreshDirectorsPscs(Guid applicationId)
+        {
+            try
+            {
+                var companyNumber = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UKRLPVerificationCompanyNumber);
+
+                var companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber?.Value);
+
+                if (companyDetails != null)
+                {
+                    var applicationDetails = new Domain.Roatp.ApplicationDetails
+                    {
+                        CompanySummary = companyDetails
+                    };
+
+                    //MFCMFC
+                    var application = await _applicationApiClient.GetApplication(applicationId);
+                    var ukprn = application?.ApplyData?.ApplyDetails?.UKPRN;
+                    var organisation = await _applicationApiClient.GetOrganisationByUkprn(ukprn);
+
+                    
+                    organisation.OrganisationDetails.CompaniesHouseDetails.Directors = companyDetails.Directors;
+                    organisation.OrganisationDetails.CompaniesHouseDetails.PersonsSignificationControl = companyDetails.PersonsWithSignificantControl;
+
+                    await _organisationApiClient.Update(organisation, User.GetUserId());
+  // _organisationApiClient.Update(organisationRequest,)
+
+                    //await  _applicationApiClient
+
+                    // TODO: Save against OrganisationTable here
+                    // implentmentation... 
+
+                    // reset qna
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage);
+
+                    // TODO: reset section 3.4
+
+                    // save new information
+                    var directorsAnswers = RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails);
+                    await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, directorsAnswers.ToList<Answer>());
+                }
+            }
+            catch
+            {
+                // ignore
+            }
+
+            return RedirectToAction("ConfirmDirectorsPscs", "RoatpWhosInControlApplication", new { applicationId });
         }
 
         [Route("confirm-directors-pscs")]

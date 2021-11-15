@@ -28,6 +28,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IAnswerFormService> _answerFormService;
         private Mock<ITabularDataRepository> _tabularDataRepository;
         private Mock<ISessionService> _sessionService;
+        private Mock<IOrganisationApiClient> _organisationApiClient;
+        private Mock<ICompaniesHouseApiClient> _companiesHouseApiClient;
         private RoatpWhosInControlApplicationController _controller;
 
         private TabularData _directors;
@@ -41,11 +43,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _answerFormService = new Mock<IAnswerFormService>();
             _tabularDataRepository = new Mock<ITabularDataRepository>();
             _sessionService = new Mock<ISessionService>();
+            _organisationApiClient = new Mock<IOrganisationApiClient>();
+            _companiesHouseApiClient = new Mock<ICompaniesHouseApiClient>();
             _controller = new RoatpWhosInControlApplicationController(_qnaClient.Object, 
                                                                       _applicationClient.Object, 
                                                                       _answerFormService.Object,
                                                                       _tabularDataRepository.Object,
-                                                                      _sessionService.Object);
+                                                                      _sessionService.Object,
+                                                                      _companiesHouseApiClient.Object,
+                                                                      _organisationApiClient.Object);
             _directors = new TabularData
             {
                 Caption = "Directors",
