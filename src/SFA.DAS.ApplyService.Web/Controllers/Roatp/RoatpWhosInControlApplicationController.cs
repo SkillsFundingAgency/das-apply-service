@@ -96,19 +96,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         CompanySummary = companyDetails
                     };
 
-                    //MFCMFC
+
                     var application = await _applicationApiClient.GetApplication(applicationId);
                     var ukprn = application?.ApplyData?.ApplyDetails?.UKPRN;
                     var organisation = await _applicationApiClient.GetOrganisationByUkprn(ukprn);
 
-                    
                     organisation.OrganisationDetails.CompaniesHouseDetails.Directors = companyDetails.Directors;
                     organisation.OrganisationDetails.CompaniesHouseDetails.PersonsSignificationControl = companyDetails.PersonsWithSignificantControl;
 
                     await _organisationApiClient.Update(organisation, User.GetUserId());
-  // _organisationApiClient.Update(organisationRequest,)
-
-                    //await  _applicationApiClient
 
                     // TODO: Save against OrganisationTable here
                     // implentmentation... 
