@@ -35,7 +35,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Gateway
         [SetUp]
         public void SetUp()
         {
-           
+            _autoFixture = new Fixture();
             _repository = new Mock<IApplyRepository>();
             _gatewayRepository = new Mock<IGatewayRepository>();
             _auditService = new Mock<IAuditService>();
