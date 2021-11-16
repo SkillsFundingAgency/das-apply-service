@@ -1,0 +1,61 @@
+﻿CREATE TABLE [dbo].[SubmittedOrganisationAnswers]
+(
+	[Id] INT NOT NULL IDENTITY(1,1), 
+    [ApplicationId] UNIQUEIDENTIFIER NOT NULL,
+
+	[Ukprn] NVARCHAR(255),
+	[LegalName] NVARCHAR(255),
+	[TradingName] NVARCHAR(255),
+	[Website] NVARCHAR(255),
+	[AddressLine1] NVARCHAR(255),
+	[AddressLine2] NVARCHAR(255),
+	[AddressLine3] NVARCHAR(255),
+	[AddressLine4] NVARCHAR(255),
+	[AddressLine5] NVARCHAR(255),
+	[Postcode] NVARCHAR(255),
+	[CompanyNumber] NVARCHAR(255),
+	[CharityNumber] NVARCHAR(255),
+	[SoletraderOrPartnership] NVARCHAR(255),
+	[OnRoatp] NVARCHAR(255),
+	[ProviderRoute] NVARCHAR(255),
+	[LevyPayingEmployer] NVARCHAR(255),
+
+	[HasParentCompany] NVARCHAR(255),
+	[ParentCompanyOrCharityNumber] NVARCHAR(255),
+	[ParentCompanyOrCharityName] NVARCHAR(255),
+	[CompaniesHouseDirectors] NVARCHAR(MAX),
+	[CompaniesHousePSCs] NVARCHAR(MAX),
+	[CharityComissionTrustees] NVARCHAR(MAX),
+	[PeopleInControl] NVARCHAR(MAX),
+
+	[OrganisationType] NVARCHAR(255),
+	[EducationalInstituteType] NVARCHAR(255),
+	[PublicBodyType] NVARCHAR(255),
+	[SchoolType] NVARCHAR(255),
+
+	[DescribeYourOrganisation] NVARCHAR(255),
+	[ActivelyTradingFor] NVARCHAR(255),
+
+	[RegisteredWithESFA] NVARCHAR(255),
+	[ReceivingFundingFromESFA] NVARCHAR(255),
+	[MonitoredByOfficeOfStudents] NVARCHAR(255),
+	[FundedByOfficeOfStudents] NVARCHAR(255),
+
+	[OfferInitialTeacherTraining] NVARCHAR(255),
+	[PostgraduateTeachingApprenticeshipOnly] NVARCHAR(255),
+	[HadFullOfstedInspection] NVARCHAR(255),
+	[GotFullOfstedGrade] NVARCHAR(255),
+	[FullOfstedGradeWithinLast3Years] NVARCHAR(255),
+	[OverallEffectivenessOfstedGrade] NVARCHAR(255),
+	[ApprenticeshipsOfstedGrade] NVARCHAR(255),
+	[HadMonitoringVisit] NVARCHAR(255),
+	[HadTwoInsufficientMonitoringVisits] NVARCHAR(255),
+	[HadMonitoringVisitGradedInadequateInLast18Months] NVARCHAR(255),
+	[MaintainedFundingSinceFullOfstedInspection] NVARCHAR(255),
+	[HadShortOfstedInspectionWithinLast3Years] NVARCHAR(255),
+	[MaintainedGradeInShortOfstedInspection] NVARCHAR(255),
+	[DeliveredApprenticeshipTrainingAsSubcontractor] NVARCHAR(255),
+
+    CONSTRAINT PK_SubmittedOrganisationAnswers PRIMARY KEY (Id),
+	INDEX IX_SubmittedOrganisationAnswers_ApplicationId (ApplicationId)
+)

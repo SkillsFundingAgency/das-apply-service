@@ -84,6 +84,7 @@
     <Build Include="Tables\FinancialReview.sql" />
     <Build Include="Tables\FinancialReviewClarificationFile.sql" />
     <Build Include="Tables\BankHoliday.sql" />
+    <Build Include="Tables\SubmittedOrganisationAnswers.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
