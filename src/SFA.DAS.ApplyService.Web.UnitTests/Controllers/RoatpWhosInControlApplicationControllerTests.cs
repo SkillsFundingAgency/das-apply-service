@@ -13,10 +13,17 @@ using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
 using Newtonsoft.Json.Linq;
+using SFA.DAS.ApplyService.Domain.CompaniesHouse;
+using CompaniesHouseDetails = SFA.DAS.ApplyService.Domain.Entities.CompaniesHouseDetails;
+using OrganisationDetails = SFA.DAS.ApplyService.Domain.Entities.OrganisationDetails;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -30,6 +37,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<ISessionService> _sessionService;
         private Mock<IOrganisationApiClient> _organisationApiClient;
         private Mock<ICompaniesHouseApiClient> _companiesHouseApiClient;
+        private Mock<ILogger<RoatpWhosInControlApplicationController>> _logger;
         private RoatpWhosInControlApplicationController _controller;
 
         private TabularData _directors;
@@ -45,13 +53,35 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService = new Mock<ISessionService>();
             _organisationApiClient = new Mock<IOrganisationApiClient>();
             _companiesHouseApiClient = new Mock<ICompaniesHouseApiClient>();
+            _logger = new Mock<ILogger<RoatpWhosInControlApplicationController>>();
+
+            var signInId = Guid.NewGuid();
+            
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.Name, $"Test user"),
+                new Claim(ClaimTypes.NameIdentifier, "1"),
+                new Claim("Email", "test@test.com"),
+                new Claim("sub", signInId.ToString()),
+                new Claim("custom-claim", "example claim value"),
+            }, "mock"));
+
             _controller = new RoatpWhosInControlApplicationController(_qnaClient.Object, 
                                                                       _applicationClient.Object, 
                                                                       _answerFormService.Object,
                                                                       _tabularDataRepository.Object,
                                                                       _sessionService.Object,
                                                                       _companiesHouseApiClient.Object,
-                                                                      _organisationApiClient.Object);
+                                                                      _organisationApiClient.Object,
+                                                                      _logger.Object)
+            {
+                ControllerContext = new ControllerContext()
+                {
+                    HttpContext = new DefaultHttpContext() { User = user },
+                },
+                TempData = Mock.Of<ITempDataDictionary>()
+            }; 
+
             _directors = new TabularData
             {
                 Caption = "Directors",
@@ -1624,6 +1654,130 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be("ConfirmPeopleInControl");
             _tabularDataRepository.Verify(x => x.SaveTabularDataAnswer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TabularData>()), Times.Once);
+        }
+
+
+        [Test]
+        public void refresh_directors_pcs_and_check_calls_to_organisation_and_qna_occur()
+        {
+            var listOfDirectors = new List<DirectorInformation>
+            {
+                new DirectorInformation
+                {
+                    Id = "1234",
+                    DateOfBirth = new DateTime(1948, 11, 1),
+                    AppointedDate = new DateTime(1960, 12, 12),
+                    ResignedDate = null,
+                    Name = "Mr A Director"
+                },
+                new DirectorInformation
+                {
+                    Id = "1235",
+                    DateOfBirth = new DateTime(1950, 11, 1),
+                    AppointedDate = new DateTime(1962, 12, 12),
+                    ResignedDate = null,
+                    Name = "Mr B Director"
+                }
+            };
+            var listOfPSCs = new List<PersonSignificantControlInformation>
+            {
+                new PersonSignificantControlInformation
+                {
+                    Id = "1234",
+                    DateOfBirth = new DateTime(1948, 11, 1),
+                    Name = "Mr A Director"
+                }
+            };
+
+            var companyNumber = "12345678";
+            var ukprn = "43214321";
+            var _existingApplication = new Apply
+            {
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails
+                    {
+                        UKPRN = ukprn
+                    }
+                }
+            };
+
+            var applicationId = Guid.NewGuid();
+            var activeCompany =new  CompaniesHouseSummary();
+            var organisation = new Organisation { OrganisationDetails = new OrganisationDetails { CompaniesHouseDetails = new CompaniesHouseDetails()} };
+            
+            activeCompany = new CompaniesHouseSummary
+            {
+                CompanyNumber = companyNumber,
+                CompanyType = "ltd",
+                Directors = listOfDirectors,
+                PersonsWithSignificantControl = listOfPSCs,
+                IncorporationDate = new DateTime(1960, 12, 12),
+                Status = "active"
+            };
+
+            _applicationClient.Setup(x => x.GetApplication(applicationId)).ReturnsAsync(_existingApplication);
+            _applicationClient.Setup(x => x.GetOrganisationByUkprn(ukprn)).ReturnsAsync(organisation);
+            _organisationApiClient.Setup(x => x.Update(It.IsAny<Organisation>(),It.IsAny<Guid>())).ReturnsAsync(new Organisation());
+
+            var verifiedCompaniesHouseAnswer = new Answer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompanyNumber,
+                Value = companyNumber
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UKRLPVerificationCompanyNumber, It.IsAny<string>())).ReturnsAsync(verifiedCompaniesHouseAnswer);
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(companyNumber))
+                .Returns(Task.FromResult(activeCompany)).Verifiable();
+
+            var result = _controller.RefreshDirectorsPscs(applicationId).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmDirectorsPscs");
+
+            _organisationApiClient.Verify(x => x.Update(It.Is<Organisation>(
+                    
+                    a => a.OrganisationDetails.CompaniesHouseDetails.Directors == listOfDirectors 
+                         && a.OrganisationDetails.CompaniesHouseDetails.PersonsSignificationControl == listOfPSCs)
+                , It.IsAny<Guid>()), Times.Once);
+            _qnaClient.Verify(x=>x.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, It.IsAny<List<Answer>>()),Times.Once);
+            _qnaClient.Verify(x=>x.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage),Times.Once);
+        }
+
+        [TestCase(CompaniesHouseSummary.ServiceUnavailable, "CompaniesHouseNotAvailable")]
+        [TestCase(CompaniesHouseSummary.CompanyStatusNotFound, "CompanyNotFound")]
+        [TestCase("not_the_word_active", "CompanyNotFound")]
+        public void refresh_directors_pcs_and_send_to_page_if_companies_house_not_active(string companiesHouseStatus, string pageRedirectedTo)
+        {
+            var companyNumber = "12345678";
+            var ukprn = "43214321";
+            var verifiedCompaniesHouseAnswer = new Answer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompanyNumber,
+                Value = companyNumber
+            };
+
+            var applicationId = Guid.NewGuid();
+            var activeCompany = new CompaniesHouseSummary
+            {
+                CompanyNumber = companyNumber,
+                CompanyType = "ltd",
+                IncorporationDate = new DateTime(1960, 12, 12),
+                Status = companiesHouseStatus
+            };
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UKRLPVerificationCompanyNumber, It.IsAny<string>())).ReturnsAsync(verifiedCompaniesHouseAnswer);
+
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(companyNumber))
+                .Returns(Task.FromResult(activeCompany)).Verifiable();
+
+            var result = _controller.RefreshDirectorsPscs(applicationId).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be(pageRedirectedTo);
+            redirectResult.ControllerName.Should().Be("RoatpShutterPages");
+            _organisationApiClient.Verify(x => x.Update(It.IsAny<Organisation>(), It.IsAny<Guid>()), Times.Never);
+            _qnaClient.Verify(x => x.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, It.IsAny<List<Answer>>()), Times.Never);
+            _qnaClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage), Times.Never);
         }
     }
 }

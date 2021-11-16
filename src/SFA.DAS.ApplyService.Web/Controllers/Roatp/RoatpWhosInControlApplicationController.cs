@@ -13,10 +13,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Application.Services;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation;
+using SFA.DAS.ApplyService.Domain.CompaniesHouse;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -29,11 +31,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IAnswerFormService _answerFormService;
         private readonly ITabularDataRepository _tabularDataRepository;
         private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
+        private readonly ILogger<RoatpWhosInControlApplicationController> _logger;
 
         public RoatpWhosInControlApplicationController(IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient, 
                                                        IAnswerFormService answerFormService, ITabularDataRepository tabularDataRepository,
                                                        ISessionService sessionService, ICompaniesHouseApiClient companiesHouseApiClient, 
-                                                       IOrganisationApiClient organisationApiClient)
+                                                       IOrganisationApiClient organisationApiClient, ILogger<RoatpWhosInControlApplicationController> logger)
             :base(sessionService)
         {
             _qnaApiClient = qnaApiClient;
@@ -42,6 +45,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _tabularDataRepository = tabularDataRepository;
             _companiesHouseApiClient = companiesHouseApiClient;
             _organisationApiClient = organisationApiClient;
+            _logger = logger;
         }
 
         [Route("confirm-who-control")]
@@ -86,16 +90,28 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             try
             {
                 var companyNumber = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UKRLPVerificationCompanyNumber);
-
                 var companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber?.Value);
 
                 if (companyDetails != null)
                 {
-                    var applicationDetails = new Domain.Roatp.ApplicationDetails
+                    switch (companyDetails.Status)
                     {
-                        CompanySummary = companyDetails
-                    };
+                        case CompaniesHouseSummary.ServiceUnavailable:
+                            _logger.LogInformation($"Issue refreshing directors/pscs - applicationId {applicationId} | Company Number : {companyNumber} | Status : Service Unavailable");
+                            return RedirectToAction("CompaniesHouseNotAvailable", "RoatpShutterPages");
+                        case CompaniesHouseSummary.CompanyStatusNotFound:
+                            _logger.LogInformation(
+                                $"Issue refreshing directors/pscs - applicationId {applicationId} | Company Number : {companyNumber} | Status : Company Status Not Found");
+                            return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
+                    }
 
+                    if (!CompaniesHouseValidator.CompaniesHouseStatusValid(companyDetails.CompanyNumber, companyDetails.Status))
+                    {
+                        _logger.LogInformation($"Issue refreshing directors/pscs - applicationId {applicationId} | Company Number : {companyDetails.CompanyNumber} | Status : Companies House status not valid: {companyDetails.Status}");
+                        return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
+                    }
+
+                    var applicationDetails = new Domain.Roatp.ApplicationDetails { CompanySummary = companyDetails };
 
                     var application = await _applicationApiClient.GetApplication(applicationId);
                     var ukprn = application?.ApplyData?.ApplyDetails?.UKPRN;
@@ -106,22 +122,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                     await _organisationApiClient.Update(organisation, User.GetUserId());
 
-                    // TODO: Save against OrganisationTable here
-                    // implentmentation... 
-
-                    // reset qna
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage);
-
-                    // TODO: reset section 3.4
-
-                    // save new information
                     var directorsAnswers = RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails);
                     await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, directorsAnswers.ToList<Answer>());
+                    
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage);
+                    // TODO: reset section 3.4
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // ignore
+                _logger.LogError(ex, $"Error when processing directors/pscs - applicationId {applicationId}");
+                return RedirectToAction("CompaniesHouseNotAvailable", "RoatpShutterPages");
             }
 
             return RedirectToAction("ConfirmDirectorsPscs", "RoatpWhosInControlApplication", new { applicationId });
