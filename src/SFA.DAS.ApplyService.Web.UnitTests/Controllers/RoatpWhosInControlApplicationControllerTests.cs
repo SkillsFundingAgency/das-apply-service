@@ -1713,7 +1713,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _applicationClient.Setup(x => x.GetOrganisationByUkprn(ukprn)).ReturnsAsync(organisation);
             _organisationApiClient.Setup(x => x.Update(It.IsAny<Organisation>(),It.IsAny<Guid>())).ReturnsAsync(new Organisation());
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(companyNumber))
-                .Returns(Task.FromResult(activeCompany)).Verifiable();
+                .ReturnsAsync(activeCompany).Verifiable();
 
             var result = _controller.RefreshDirectorsPscs(applicationId, ukprn,companyNumber).GetAwaiter().GetResult();
 
@@ -1747,7 +1747,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
       
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(companyNumber))
-                .Returns(Task.FromResult(activeCompany)).Verifiable();
+                .ReturnsAsync(activeCompany).Verifiable();
 
             var result = _controller.RefreshDirectorsPscs(applicationId, ukprn,companyNumber).GetAwaiter().GetResult();
 
