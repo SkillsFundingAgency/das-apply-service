@@ -19,5 +19,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public string GetHelpContoller { get { return "RoatpWhosInControlApplication"; } set { } }
         public string GetHelpAction { get { return "ConfirmDirectorsPscs"; } set { } }
+
+        public string CompanyNumber { get; set; }
+        public string Ukprn { get; set; }
     }
 }

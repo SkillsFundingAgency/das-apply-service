@@ -10,14 +10,12 @@ using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Application.Services;
 using Newtonsoft.Json.Linq;
-using SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation;
 using SFA.DAS.ApplyService.Domain.CompaniesHouse;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
@@ -53,12 +51,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             var qnaApplicationData = await _qnaApiClient.GetApplicationData(applicationId);
 
+            var companyNumber = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UKRLPVerificationCompanyNumber)?.Value<string>();
+            var ukprn = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UKPRN)?.Value<string>();
             var verificationCompanyAnswer = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UkrlpVerificationCompany)?.Value<string>();
             var companiesHouseManualEntryAnswer = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.ManualEntryRequiredCompaniesHouse)?.Value<string>();
             if (verificationCompanyAnswer == "TRUE"
                 && companiesHouseManualEntryAnswer != "TRUE")
             {
-                return await ConfirmDirectorsPscs(applicationId);
+                return await ConfirmDirectorsPscs(applicationId, ukprn, companyNumber);
             }
 
             var verificationCharityAnswer = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UkrlpVerificationCharity)?.Value<string>();
@@ -85,12 +85,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet("refresh-directors-pscs")]
-        public async Task<IActionResult> RefreshDirectorsPscs(Guid applicationId)
+        public async Task<IActionResult> RefreshDirectorsPscs(Guid applicationId, string ukprn, string companyNumber)
         {
             try
             {
-                var companyNumber = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UKRLPVerificationCompanyNumber);
-                var companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber?.Value);
+                var companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber);
 
                 if (companyDetails != null)
                 {
@@ -113,8 +112,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                     var applicationDetails = new Domain.Roatp.ApplicationDetails { CompanySummary = companyDetails };
 
-                    var application = await _applicationApiClient.GetApplication(applicationId);
-                    var ukprn = application?.ApplyData?.ApplyDetails?.UKPRN;
                     var organisation = await _applicationApiClient.GetOrganisationByUkprn(ukprn);
 
                     organisation.OrganisationDetails.CompaniesHouseDetails.Directors = companyDetails.Directors;
@@ -139,7 +136,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [Route("confirm-directors-pscs")]
-        public async Task<IActionResult> ConfirmDirectorsPscs(Guid applicationId)
+        public async Task<IActionResult> ConfirmDirectorsPscs(Guid applicationId, string ukprn, string companyNumber)
         {
             var directorsData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
             var pscsData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CompaniesHousePscs);
@@ -156,7 +153,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 {
                     QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
                     TableData = pscsData
-                }
+                },
+                CompanyNumber = companyNumber,
+                Ukprn = ukprn
             };
 
             PopulateGetHelpWithQuestion(model);

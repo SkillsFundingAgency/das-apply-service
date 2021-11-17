@@ -308,10 +308,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Confirm_directors_pscs_presents_lists_of_directors_and_pscs()
         {
+            var ukprn = "12345678";
+            var companyNumber = "87654321";
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHouseDirectors)).ReturnsAsync(_directors);
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHousePscs)).ReturnsAsync(_pscs);
             
-            var result = _controller.ConfirmDirectorsPscs(Guid.NewGuid()).GetAwaiter().GetResult();
+            var result = _controller.ConfirmDirectorsPscs(Guid.NewGuid(),ukprn,companyNumber ).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
@@ -327,6 +329,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Confirm_directors_pscs_presents_list_of_pscs_but_no_directors()
         {
+            var ukprn = "12345678";
+            var companyNumber = "87654321";
             var directorsData = new TabularData
             {
                 DataRows = new List<TabularDataRow>()
@@ -335,7 +339,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHouseDirectors)).ReturnsAsync(directorsData);
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHousePscs)).ReturnsAsync(_pscs);
             
-            var result = _controller.ConfirmDirectorsPscs(Guid.NewGuid()).GetAwaiter().GetResult();
+            var result = _controller.ConfirmDirectorsPscs(Guid.NewGuid(),ukprn,companyNumber).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
@@ -1691,17 +1695,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var companyNumber = "12345678";
             var ukprn = "43214321";
-            var _existingApplication = new Apply
-            {
-                ApplyData = new ApplyData
-                {
-                    ApplyDetails = new ApplyDetails
-                    {
-                        UKPRN = ukprn
-                    }
-                }
-            };
-
+            
             var applicationId = Guid.NewGuid();
             var activeCompany =new  CompaniesHouseSummary();
             var organisation = new Organisation { OrganisationDetails = new OrganisationDetails { CompaniesHouseDetails = new CompaniesHouseDetails()} };
@@ -1716,21 +1710,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 Status = "active"
             };
 
-            _applicationClient.Setup(x => x.GetApplication(applicationId)).ReturnsAsync(_existingApplication);
             _applicationClient.Setup(x => x.GetOrganisationByUkprn(ukprn)).ReturnsAsync(organisation);
             _organisationApiClient.Setup(x => x.Update(It.IsAny<Organisation>(),It.IsAny<Guid>())).ReturnsAsync(new Organisation());
-
-            var verifiedCompaniesHouseAnswer = new Answer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompanyNumber,
-                Value = companyNumber
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UKRLPVerificationCompanyNumber, It.IsAny<string>())).ReturnsAsync(verifiedCompaniesHouseAnswer);
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(companyNumber))
                 .Returns(Task.FromResult(activeCompany)).Verifiable();
 
-            var result = _controller.RefreshDirectorsPscs(applicationId).GetAwaiter().GetResult();
+            var result = _controller.RefreshDirectorsPscs(applicationId, ukprn,companyNumber).GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be("ConfirmDirectorsPscs");
@@ -1751,12 +1736,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var companyNumber = "12345678";
             var ukprn = "43214321";
-            var verifiedCompaniesHouseAnswer = new Answer
-            {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompanyNumber,
-                Value = companyNumber
-            };
-
+            
             var applicationId = Guid.NewGuid();
             var activeCompany = new CompaniesHouseSummary
             {
@@ -1765,12 +1745,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 IncorporationDate = new DateTime(1960, 12, 12),
                 Status = companiesHouseStatus
             };
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UKRLPVerificationCompanyNumber, It.IsAny<string>())).ReturnsAsync(verifiedCompaniesHouseAnswer);
-
+      
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(companyNumber))
                 .Returns(Task.FromResult(activeCompany)).Verifiable();
 
-            var result = _controller.RefreshDirectorsPscs(applicationId).GetAwaiter().GetResult();
+            var result = _controller.RefreshDirectorsPscs(applicationId, ukprn,companyNumber).GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be(pageRedirectedTo);
