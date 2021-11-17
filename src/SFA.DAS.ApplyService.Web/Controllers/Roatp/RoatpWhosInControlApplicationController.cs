@@ -120,10 +120,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     await _organisationApiClient.Update(organisation, User.GetUserId());
 
                     var directorsAnswers = RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails);
-                    await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, directorsAnswers.ToList<Answer>());
                     
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage);
                     // TODO: reset section 3.4
+
+                    await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, directorsAnswers.ToList<Answer>());
                 }
             }
             catch (Exception ex)
@@ -132,7 +133,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction("CompaniesHouseNotAvailable", "RoatpShutterPages");
             }
 
-            return RedirectToAction("ConfirmDirectorsPscs", "RoatpWhosInControlApplication", new { applicationId });
+            return RedirectToAction("ConfirmDirectorsPscs", "RoatpWhosInControlApplication", new { applicationId, ukprn,companyNumber });
         }
 
         [Route("confirm-directors-pscs")]
