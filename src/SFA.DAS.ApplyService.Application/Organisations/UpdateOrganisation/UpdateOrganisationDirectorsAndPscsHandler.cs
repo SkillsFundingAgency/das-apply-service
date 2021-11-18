@@ -31,7 +31,5 @@ namespace SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation
 
             return false;
         }
-
-      
     }
 }
