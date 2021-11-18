@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -38,7 +40,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
             applyData.ModeratorReviewDetails = moderatorReviewDetails;
 
             _logger.LogInformation($"submitting moderator outcome for ApplicationId: {request.ApplicationId}");
-            return await _moderatorRepository.UpdateModerationStatus(request.ApplicationId, applyData, request.Status, request.UserId);
+
+            var tasks = new List<Task<bool>>() 
+            { 
+                _moderatorRepository.UpdateUserForAutoModerationOutcomes(request.ApplicationId, request.UserId, request.UserName),
+                _moderatorRepository.UpdateModerationStatus(request.ApplicationId, applyData, request.Status, request.UserId)
+            };
+            await Task.WhenAll(tasks);
+            return tasks.All(t => t.Result);
         }
     }
 }

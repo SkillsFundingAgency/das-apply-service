@@ -59,6 +59,33 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<List<BlindAssessmentOutcome>> GetAllBlindAssessmentOutcome(Guid applicationId)
+        {
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
+            {
+                var blindAssessmentOutcomeResults = 
+                    await connection.QueryAsync<BlindAssessmentOutcome>(
+                        @"SELECT outcome.[ApplicationId]
+                            ,outcome.[SequenceNumber]
+                            ,outcome.[SectionNumber]
+                            ,outcome.[PageId]
+                            ,apply.[Assessor1Name]
+                            ,outcome.[Assessor1UserId]
+                            ,outcome.[Assessor1ReviewStatus]
+                            ,outcome.[Assessor1ReviewComment]
+                            ,apply.[Assessor2Name]
+                            ,outcome.[Assessor2UserId]
+                            ,outcome.[Assessor2ReviewStatus]
+                            ,outcome.[Assessor2ReviewComment]
+                        FROM [dbo].[AssessorPageReviewOutcome] outcome
+                        INNER JOIN [dbo].[Apply] apply ON outcome.ApplicationId = apply.ApplicationId
+                        WHERE outcome.[ApplicationId] = @applicationId",
+                    new { applicationId});
+
+                return blindAssessmentOutcomeResults.ToList();
+            }
+        }
+
         public async Task<ModeratorPageReviewOutcome> GetModeratorPageReviewOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
         {
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
@@ -159,6 +186,7 @@ namespace SFA.DAS.ApplyService.Data
             dataTable.Columns.Add("PageId", typeof(string));
             dataTable.Columns.Add("CreatedAt", typeof(DateTime));
             dataTable.Columns.Add("CreatedBy", typeof(string));
+            dataTable.Columns.Add("ModeratorReviewStatus", typeof(string));
 
             foreach (var outcome in pageReviewOutcomes)
             {
@@ -168,7 +196,8 @@ namespace SFA.DAS.ApplyService.Data
                     outcome.SectionNumber,
                     outcome.PageId,
                     createdAtDateTime,
-                    userId
+                    userId,
+                    outcome.ModeratorReviewStatus
                 );
             }
 
@@ -186,6 +215,33 @@ namespace SFA.DAS.ApplyService.Data
                     await bulkCopy.WriteToServerAsync(dataTable);
                 }
                 connection.Close();
+            }
+        }
+        public async Task<bool> UpdateUserForAutoModerationOutcomes(Guid applicationId, string userId, string userName)
+        {
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
+            {
+                var rowsAffected = await connection.ExecuteAsync(@"
+                    UPDATE 
+                        ModeratorPageReviewOutcome 
+                    SET 
+                        ModeratorUserId = @userId, 
+                        ModeratorUserName = @userName, 
+                        UpdatedBy = @userId,
+                        UpdatedAt = GETUTCDATE()
+                    WHERE 
+                        ApplicationId = @applicationId 
+                        AND ModeratorReviewStatus = 'Pass' 
+                        AND ModeratorUserId IS NULL 
+                        AND ModeratorUserName IS NULL",
+                new
+                {
+                    applicationId,
+                    userId,
+                    userName
+                });
+                
+                return rowsAffected > 0;
             }
         }
 
