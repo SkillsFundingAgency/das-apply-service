@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation;
+using SFA.DAS.ApplyService.Domain.CompaniesHouse;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Types;
@@ -66,19 +68,32 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await Get<Organisation>($"Organisations/UserId/{userId}");
         }
 
-        public async Task<Organisation> Update(Organisation organisation, Guid userId)
+        // public async Task<Organisation> Update(Organisation organisation, Guid userId)
+        // {
+        //     var request = new UpdateOrganisationRequest
+        //     {
+        //         OrganisationDetails = organisation.OrganisationDetails,
+        //         Name = organisation.Name,
+        //         RoATPApproved = organisation.RoATPApproved,
+        //         OrganisationType = organisation.OrganisationType,
+        //         OrganisationUkprn = organisation.OrganisationUkprn,
+        //         UpdatedBy = userId
+        //     };
+        //
+        //     return await Put<UpdateOrganisationRequest, Organisation>($"/Organisations", request);
+        // }
+
+        public async Task<bool> UpdateDirectorsAndPscs(string ukprn, List<DirectorInformation> directors, List<PersonSignificantControlInformation> personsWithSignificantControl, Guid userId)
         {
-            var request = new UpdateOrganisationRequest
+            var request = new UpdateOrganisationDirectorsAndPscsRequest
             {
-                OrganisationDetails = organisation.OrganisationDetails,
-                Name = organisation.Name,
-                RoATPApproved = organisation.RoATPApproved,
-                OrganisationType = organisation.OrganisationType,
-                OrganisationUkprn = organisation.OrganisationUkprn,
-                UpdatedBy = userId
+                Ukprn = ukprn,
+                UpdatedBy = userId,
+                Directors = directors,
+                PersonsSignificantControl = personsWithSignificantControl
             };
 
-            return await Put<UpdateOrganisationRequest, Organisation>($"/Organisations", request);
+            return await Put<UpdateOrganisationDirectorsAndPscsRequest, bool>($"/Organisations/DirectorsAndPscs", request);
         }
     }
 }

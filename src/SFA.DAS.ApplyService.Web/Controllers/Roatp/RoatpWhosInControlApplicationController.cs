@@ -87,45 +87,58 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [HttpGet("refresh-directors-pscs")]
         public async Task<IActionResult> RefreshDirectorsPscs(Guid applicationId, string ukprn, string companyNumber)
         {
+            CompaniesHouseSummary companyDetails;
+
             try
             {
-                var companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber);
+                _logger.LogInformation($"RefreshDirectorsPscs: Retrieving company details applicationId {applicationId} | Company Number : {companyNumber}");
+                companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error when retrieving company details from companies house - applicationId {applicationId} | Company Number: {companyNumber}");
+                return RedirectToAction("CompaniesHouseNotAvailable", "RoatpShutterPages");
+            }
 
-                if (companyDetails != null)
+            try
+            {
+                switch (companyDetails.Status)
                 {
-                    switch (companyDetails.Status)
-                    {
-                        case CompaniesHouseSummary.ServiceUnavailable:
-                            _logger.LogInformation($"Issue refreshing directors/pscs - applicationId {applicationId} | Company Number : {companyNumber} | Status : Service Unavailable");
-                            return RedirectToAction("CompaniesHouseNotAvailable", "RoatpShutterPages");
-                        case CompaniesHouseSummary.CompanyStatusNotFound:
-                            _logger.LogInformation(
-                                $"Issue refreshing directors/pscs - applicationId {applicationId} | Company Number : {companyNumber} | Status : Company Status Not Found");
-                            return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
-                    }
-
-                    if (!CompaniesHouseValidator.CompaniesHouseStatusValid(companyDetails.CompanyNumber, companyDetails.Status))
-                    {
-                        _logger.LogInformation($"Issue refreshing directors/pscs - applicationId {applicationId} | Company Number : {companyDetails.CompanyNumber} | Status : Companies House status not valid: {companyDetails.Status}");
+                    case CompaniesHouseSummary.ServiceUnavailable:
+                        _logger.LogInformation($"Issue refreshing directors/pscs - applicationId {applicationId} | Company Number : {companyNumber} | Status : Service Unavailable");
+                        return RedirectToAction("CompaniesHouseNotAvailable", "RoatpShutterPages");
+                    case CompaniesHouseSummary.CompanyStatusNotFound:
+                        _logger.LogInformation(
+                            $"Issue refreshing directors/pscs - applicationId {applicationId} | Company Number : {companyNumber} | Status : Company Status Not Found");
                         return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
-                    }
-
-                    var applicationDetails = new Domain.Roatp.ApplicationDetails { CompanySummary = companyDetails };
-
-                    var organisation = await _applicationApiClient.GetOrganisationByUkprn(ukprn);
-
-                    organisation.OrganisationDetails.CompaniesHouseDetails.Directors = companyDetails.Directors;
-                    organisation.OrganisationDetails.CompaniesHouseDetails.PersonsSignificationControl = companyDetails.PersonsWithSignificantControl;
-
-                    await _organisationApiClient.Update(organisation, User.GetUserId());
-
-                    var directorsAnswers = RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails);
-                    
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage);
-                    // TODO: reset section 3.4
-
-                    await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, directorsAnswers.ToList<Answer>());
                 }
+
+                if (!CompaniesHouseValidator.CompaniesHouseStatusValid(companyDetails.CompanyNumber, companyDetails.Status))
+                {
+                    _logger.LogInformation($"Issue refreshing directors/pscs - applicationId {applicationId} | Company Number : {companyDetails.CompanyNumber} | Status : Companies House status not valid: {companyDetails.Status}");
+                    return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
+                }
+
+                var applicationDetails = new Domain.Roatp.ApplicationDetails { CompanySummary = companyDetails };
+
+                _logger.LogInformation($"RefreshDirectorsPscs: updating organisation directors/pscs applicationId {applicationId}");
+
+                var success = await _organisationApiClient.UpdateDirectorsAndPscs(ukprn, companyDetails.Directors, companyDetails.PersonsWithSignificantControl, User.GetUserId());
+
+                if (!success)
+                {
+                    _logger.LogInformation( $"Organisation director/pscs update failed - applicationId {applicationId}");
+                    return RedirectToAction("CompaniesHouseNotAvailable", "RoatpShutterPages");
+                }
+
+                var directorsAnswers = RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails);
+
+                _logger.LogInformation($"RefreshDirectorsPscs: resetting page answers for companies, applicationId {applicationId}");
+                await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage);
+                // TODO: reset section 3.4
+
+                _logger.LogInformation($"RefreshDirectorsPscs: updating page answers for companies, applicationId {applicationId}");
+                await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, directorsAnswers.ToList<Answer>());
             }
             catch (Exception ex)
             {
@@ -133,7 +146,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction("CompaniesHouseNotAvailable", "RoatpShutterPages");
             }
 
-            return RedirectToAction("ConfirmDirectorsPscs", "RoatpWhosInControlApplication", new { applicationId, ukprn,companyNumber });
+            return RedirectToAction("StartPage", "RoatpWhosInControlApplication", new { applicationId});
         }
 
         [Route("confirm-directors-pscs")]

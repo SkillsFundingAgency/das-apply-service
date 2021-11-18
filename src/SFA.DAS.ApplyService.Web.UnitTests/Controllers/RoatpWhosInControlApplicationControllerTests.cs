@@ -1660,7 +1660,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _tabularDataRepository.Verify(x => x.SaveTabularDataAnswer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TabularData>()), Times.Once);
         }
 
-
         [Test]
         public void refresh_directors_pcs_and_check_calls_to_organisation_and_qna_occur()
         {
@@ -1697,10 +1696,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var ukprn = "43214321";
             
             var applicationId = Guid.NewGuid();
-            var activeCompany =new  CompaniesHouseSummary();
-            var organisation = new Organisation { OrganisationDetails = new OrganisationDetails { CompaniesHouseDetails = new CompaniesHouseDetails()} };
-            
-            activeCompany = new CompaniesHouseSummary
+            var activeCompany = new CompaniesHouseSummary
             {
                 CompanyNumber = companyNumber,
                 CompanyType = "ltd",
@@ -1709,22 +1705,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 IncorporationDate = new DateTime(1960, 12, 12),
                 Status = "active"
             };
-
-            _applicationClient.Setup(x => x.GetOrganisationByUkprn(ukprn)).ReturnsAsync(organisation);
-            _organisationApiClient.Setup(x => x.Update(It.IsAny<Organisation>(),It.IsAny<Guid>())).ReturnsAsync(new Organisation());
+            
+            _organisationApiClient.Setup(x => x.UpdateDirectorsAndPscs(ukprn,It.IsAny<List<DirectorInformation>>(), It.IsAny<List<PersonSignificantControlInformation>>(), It.IsAny<Guid>())).ReturnsAsync(true);
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(companyNumber))
                 .ReturnsAsync(activeCompany).Verifiable();
 
             var result = _controller.RefreshDirectorsPscs(applicationId, ukprn,companyNumber).GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("ConfirmDirectorsPscs");
+            redirectResult.ActionName.Should().Be("StartPage");
 
-            _organisationApiClient.Verify(x => x.Update(It.Is<Organisation>(
-                    
-                    a => a.OrganisationDetails.CompaniesHouseDetails.Directors == listOfDirectors 
-                         && a.OrganisationDetails.CompaniesHouseDetails.PersonsSignificationControl == listOfPSCs)
-                , It.IsAny<Guid>()), Times.Once);
+            _organisationApiClient.Verify(x => x.UpdateDirectorsAndPscs(ukprn,listOfDirectors,listOfPSCs, It.IsAny<Guid>()), Times.Once);
             _qnaClient.Verify(x=>x.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, It.IsAny<List<Answer>>()),Times.Once);
             _qnaClient.Verify(x=>x.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage),Times.Once);
         }
@@ -1754,7 +1745,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be(pageRedirectedTo);
             redirectResult.ControllerName.Should().Be("RoatpShutterPages");
-            _organisationApiClient.Verify(x => x.Update(It.IsAny<Organisation>(), It.IsAny<Guid>()), Times.Never);
+            _organisationApiClient.Verify(x => x.UpdateDirectorsAndPscs(ukprn, It.IsAny<List<DirectorInformation>>(), It.IsAny<List<PersonSignificantControlInformation>>(), It.IsAny<Guid>()), Times.Never);
             _qnaClient.Verify(x => x.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, It.IsAny<List<Answer>>()), Times.Never);
             _qnaClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage), Times.Never);
         }
