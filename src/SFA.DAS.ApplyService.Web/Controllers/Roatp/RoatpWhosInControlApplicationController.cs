@@ -10,6 +10,7 @@ using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -87,21 +88,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [HttpGet("refresh-directors-pscs")]
         public async Task<IActionResult> RefreshDirectorsPscs(Guid applicationId, string ukprn, string companyNumber)
         {
-            CompaniesHouseSummary companyDetails;
-
             try
             {
+                var startProcess = DateTime.Now;
                 _logger.LogInformation($"RefreshDirectorsPscs: Retrieving company details applicationId {applicationId} | Company Number : {companyNumber}");
-                companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error when retrieving company details from companies house - applicationId {applicationId} | Company Number: {companyNumber}");
-                return RedirectToAction("CompaniesHouseNotAvailable", "RoatpShutterPages");
-            }
+                var companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber);
+                var timeToCallCompanyDetails = DateTime.Now.Subtract(startProcess);
 
-            try
-            {
                 switch (companyDetails.Status)
                 {
                     case CompaniesHouseSummary.ServiceUnavailable:
@@ -139,8 +132,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                 _logger.LogInformation($"RefreshDirectorsPscs: updating page answers for companies, applicationId {applicationId}");
                 await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, directorsAnswers.ToList<Answer>());
-                _logger.LogInformation($"RefreshDirectorsPscs: all updates completed for {applicationId}");
-            }
+               
+                var timeToDoEntireCall = DateTime.Now.Subtract(startProcess);
+                _logger.LogInformation($"RefreshDirectorsPscs: all updates completed for {applicationId} - entire call timespan: {timeToDoEntireCall:c}, Company call timespan: {timeToCallCompanyDetails:c}");
+               }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error when processing directors/pscs - applicationId {applicationId}");
