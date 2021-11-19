@@ -139,6 +139,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                 _logger.LogInformation($"RefreshDirectorsPscs: updating page answers for companies, applicationId {applicationId}");
                 await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, directorsAnswers.ToList<Answer>());
+                _logger.LogInformation($"RefreshDirectorsPscs: all updates completed for {applicationId}");
             }
             catch (Exception ex)
             {
