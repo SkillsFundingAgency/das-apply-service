@@ -68,21 +68,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await Get<Organisation>($"Organisations/UserId/{userId}");
         }
 
-        // public async Task<Organisation> Update(Organisation organisation, Guid userId)
-        // {
-        //     var request = new UpdateOrganisationRequest
-        //     {
-        //         OrganisationDetails = organisation.OrganisationDetails,
-        //         Name = organisation.Name,
-        //         RoATPApproved = organisation.RoATPApproved,
-        //         OrganisationType = organisation.OrganisationType,
-        //         OrganisationUkprn = organisation.OrganisationUkprn,
-        //         UpdatedBy = userId
-        //     };
-        //
-        //     return await Put<UpdateOrganisationRequest, Organisation>($"/Organisations", request);
-        // }
-
         public async Task<bool> UpdateDirectorsAndPscs(string ukprn, List<DirectorInformation> directors, List<PersonSignificantControlInformation> personsWithSignificantControl, Guid userId)
         {
             var request = new UpdateOrganisationDirectorsAndPscsRequest
