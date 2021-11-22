@@ -1718,6 +1718,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _organisationApiClient.Verify(x => x.UpdateDirectorsAndPscs(ukprn,listOfDirectors,listOfPSCs, It.IsAny<Guid>()), Times.Once);
             _qnaClient.Verify(x=>x.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, It.IsAny<List<Answer>>()),Times.Once);
             _qnaClient.Verify(x=>x.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage),Times.Once);
+            _qnaClient.Verify(x => x.ResetPageAnswersBySection(applicationId,RoatpWorkflowSequenceIds.CriminalComplianceChecks, RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl),Times.Once);
         }
 
         [TestCase(CompaniesHouseSummary.ServiceUnavailable, "CompaniesHouseNotAvailable")]
