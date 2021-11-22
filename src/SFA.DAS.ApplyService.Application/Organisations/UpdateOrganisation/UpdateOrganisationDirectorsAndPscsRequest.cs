@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using MediatR;
 using SFA.DAS.ApplyService.Domain.CompaniesHouse;
-using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation
 {
