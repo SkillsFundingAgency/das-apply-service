@@ -279,17 +279,15 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             {
                 return JsonConvert.DeserializeObject<ResetSectionAnswersResponse>(json);
             }
-            else
-            {
-                var apiError = GetApiErrorFromJson(json);
-                var apiErrorMessage = apiError?.Message ?? json;
-                var errorMessage =
-                    $"Error Resetting Page Answers into QnA section. Application: {applicationId} | SequenceNo: {sequenceNo}| SectionNo: {sectionNo} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}";
 
-                _logger.LogError(errorMessage);
+            var apiError = GetApiErrorFromJson(json);
+            var apiErrorMessage = apiError?.Message ?? json;
+            var errorMessage =
+                $"Error Resetting Page Answers into QnA section. Application: {applicationId} | SequenceNo: {sequenceNo}| SectionNo: {sectionNo} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}";
 
-                return new ResetSectionAnswersResponse { ValidationPassed = false, ValidationErrors = null };
-            }
+            _logger.LogError(errorMessage);
+
+            return new ResetSectionAnswersResponse { ValidationPassed = false, ValidationErrors = null };
         }
 
         public async Task<ResetPageAnswersResponse> ResetPageAnswersBySequenceAndSectionNumber(Guid applicationId, int sequenceNo,

@@ -94,7 +94,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 var timer = new Stopwatch();
                 timer.Start(); 
                 var companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber);
-                var timeToCallCompanyDetails = TimeSpan.FromMilliseconds(timer.ElapsedMilliseconds);
+                var timeToCallCompanyDetails = $"{timer.ElapsedMilliseconds} ms";
 
                 switch (companyDetails.Status)
                 {
@@ -135,9 +135,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 _logger.LogInformation($"RefreshDirectorsPscs: updating page answers for companies, applicationId {applicationId}");
                 await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, directorsAnswers.ToList<Answer>());
 
-                var timeToDoEntireCall = TimeSpan.FromMilliseconds(timer.ElapsedMilliseconds);
+                var timeToDoEntireCall = $"{timer.ElapsedMilliseconds} ms";
                 timer.Stop();
-                _logger.LogInformation($"RefreshDirectorsPscs: all updates completed for {applicationId} - entire call timespan: {timeToDoEntireCall:c}, Company call timespan: {timeToCallCompanyDetails:c}");
+                _logger.LogInformation($"RefreshDirectorsPscs: all updates completed for {applicationId} - entire call timespan: {timeToDoEntireCall}, Company call timespan: {timeToCallCompanyDetails}");
                }
             catch (Exception ex)
             {
