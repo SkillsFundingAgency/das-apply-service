@@ -136,6 +136,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, directorsAnswers.ToList<Answer>());
 
                 var timeToDoEntireCall = TimeSpan.FromMilliseconds(timer.ElapsedMilliseconds);
+                timer.Stop();
                 _logger.LogInformation($"RefreshDirectorsPscs: all updates completed for {applicationId} - entire call timespan: {timeToDoEntireCall:c}, Company call timespan: {timeToCallCompanyDetails:c}");
                }
             catch (Exception ex)
