@@ -90,10 +90,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             try
             {
-                var startProcess = DateTime.Now;
                 _logger.LogInformation($"RefreshDirectorsPscs: Retrieving company details applicationId {applicationId} | Company Number : {companyNumber}");
+                var timer = new Stopwatch();
+                timer.Start(); 
                 var companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber);
-                var timeToCallCompanyDetails = DateTime.Now.Subtract(startProcess);
+                var timeToCallCompanyDetails = $"{timer.ElapsedMilliseconds} ms";
 
                 switch (companyDetails.Status)
                 {
@@ -127,13 +128,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 var directorsAnswers = RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails);
 
                 _logger.LogInformation($"RefreshDirectorsPscs: resetting page answers for companies, applicationId {applicationId}");
-                await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage);
+                var resetSection1_3 =   _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage);
+                var resetSection3_4 =   _qnaApiClient.ResetPageAnswersBySection(applicationId, RoatpWorkflowSequenceIds.CriminalComplianceChecks, RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl);
+                await Task.WhenAll(resetSection1_3, resetSection3_4);
 
                 _logger.LogInformation($"RefreshDirectorsPscs: updating page answers for companies, applicationId {applicationId}");
                 await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, directorsAnswers.ToList<Answer>());
-               
-                var timeToDoEntireCall = DateTime.Now.Subtract(startProcess);
-                _logger.LogInformation($"RefreshDirectorsPscs: all updates completed for {applicationId} - entire call timespan: {timeToDoEntireCall:c}, Company call timespan: {timeToCallCompanyDetails:c}");
+
+                var timeToDoEntireCall = $"{timer.ElapsedMilliseconds} ms";
+                timer.Stop();
+                _logger.LogInformation($"RefreshDirectorsPscs: all updates completed for {applicationId} - entire call timespan: {timeToDoEntireCall}, Company call timespan: {timeToCallCompanyDetails}");
                }
             catch (Exception ex)
             {

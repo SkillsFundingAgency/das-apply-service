@@ -41,6 +41,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<ResetPageAnswersResponse> ResetPageAnswers(Guid applicationId, Guid sectionId, string pageId);
 
+        Task<ResetSectionAnswersResponse> ResetPageAnswersBySection(Guid applicationId, int sequenceNo, int sectionNo);
+
         Task<ResetPageAnswersResponse> ResetPageAnswersBySequenceAndSectionNumber(Guid applicationId, int sequenceNo,
             int sectionNo, string pageId);
         Task<AddPageAnswerResponse> AddPageAnswerToMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer);
