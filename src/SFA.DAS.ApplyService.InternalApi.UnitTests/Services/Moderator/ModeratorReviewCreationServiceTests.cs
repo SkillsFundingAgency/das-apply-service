@@ -15,7 +15,7 @@ using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Services.Moderator;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
-namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
+namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Moderator
 {
     [TestFixture]
     public class ModeratorReviewCreationServiceTests
@@ -98,6 +98,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         {
             _mediator.Setup(x => x.Send(It.IsAny<GetBlindAssessmentOutcomeRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new BlindAssessmentOutcome());
 
+            _mediator.Setup(x => x.Send(It.IsAny<GetAllBlindAssessmentOutcomesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new List<BlindAssessmentOutcome>());
+
             await _reviewCreationService.CreateEmptyReview(_applicationId, _userId, _userName);
 
             var allSections = _sequences.SelectMany(seq => seq.Sections);
@@ -125,6 +127,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
                                                                                 && r.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy
                                                                                 && r.PageId == RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy_Financial), It.IsAny<CancellationToken>()))
                                                                                .ReturnsAsync(default(BlindAssessmentOutcome));
+            _mediator.Setup(x => x.Send(It.IsAny<GetAllBlindAssessmentOutcomesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new List<BlindAssessmentOutcome>());
 
             await _reviewCreationService.CreateEmptyReview(_applicationId, _userId, _userName);
 
@@ -142,6 +145,22 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
                                 sectionPages.Exists(p => p.PageId == y.PageId))),
                         It.IsAny<CancellationToken>()),
                 Times.Once);
+        }
+
+        [TestCase("Pass", null, "Pass", null, true)]
+        [TestCase("Pass", "some comments", "Pass", null, false)]
+        [TestCase("Pass", null, "Pass", "some comments", false)]
+        [TestCase("Fail", null, "Pass", null, false)]
+        [TestCase("Pass", null, "Fail", null, false)]
+        [TestCase("Fail", null, "Fail", null, false)]
+        public void CreateEmptyReview_CheckAutoPass_AppliesPassStatusToModerationWhereApplicable(
+            string assessor1ReviewStatus, string assessor1ReviewComments,
+            string assessor2ReviewStatus, string assessor2ReviewComments, bool IsModerationStatusSetToPass)
+        {
+            _mediator.Setup(x => x.Send(It.IsAny<GetBlindAssessmentOutcomeRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new BlindAssessmentOutcome());
+
+            _mediator.Setup(x => x.Send(It.IsAny<GetAllBlindAssessmentOutcomesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new List<BlindAssessmentOutcome>());
+
         }
     }
 }

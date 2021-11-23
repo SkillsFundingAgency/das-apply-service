@@ -72,11 +72,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
 
         private Task<List<BlindAssessmentOutcome>> GetAllBlindAssessmentOutcomes(Guid applicationId)
         {
-            // get all blind assessments records : await _mediator.Send(new GetAllBlindAssessmentOutcomesRequest(applicationId));
-            // foreach (var record in all blind assessments records)
-            // check for ba1 pass + ba2 pass and no comments
-            // update the record
-            // await _mediator.Send(new CreateEmptyModeratorReviewRequest(applicationId, moderatorUserId, moderatorUserName, reviewOutcomes));
             return _mediator.Send(new GetAllBlindAssessmentOutcomesRequest(applicationId));
         }
 
