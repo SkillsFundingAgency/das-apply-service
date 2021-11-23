@@ -1,8 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation;
+using SFA.DAS.ApplyService.Domain.CompaniesHouse;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Types;
@@ -63,6 +66,19 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<Organisation> GetByUser(Guid userId)
         {
             return await Get<Organisation>($"Organisations/UserId/{userId}");
+        }
+
+        public async Task<bool> UpdateDirectorsAndPscs(string ukprn, List<DirectorInformation> directors, List<PersonSignificantControlInformation> personsWithSignificantControl, Guid userId)
+        {
+            var request = new UpdateOrganisationDirectorsAndPscsRequest
+            {
+                Ukprn = ukprn,
+                UpdatedBy = userId,
+                Directors = directors,
+                PersonsSignificantControl = personsWithSignificantControl
+            };
+
+            return await Put<UpdateOrganisationDirectorsAndPscsRequest, bool>($"/Organisations/DirectorsAndPscs", request);
         }
     }
 }

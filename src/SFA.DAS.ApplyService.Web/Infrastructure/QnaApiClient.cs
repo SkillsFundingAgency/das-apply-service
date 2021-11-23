@@ -267,6 +267,29 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
+        public async Task<ResetSectionAnswersResponse> ResetPageAnswersBySection(Guid applicationId, int sequenceNo, int sectionNo)
+        {
+            var response = await _httpClient.PostAsJsonAsync(
+                $"/Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/reset",
+                new { });
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<ResetSectionAnswersResponse>(json);
+            }
+
+            var apiError = GetApiErrorFromJson(json);
+            var apiErrorMessage = apiError?.Message ?? json;
+            var errorMessage =
+                $"Error Resetting Page Answers into QnA section. Application: {applicationId} | SequenceNo: {sequenceNo}| SectionNo: {sectionNo} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}";
+
+            _logger.LogError(errorMessage);
+
+            return new ResetSectionAnswersResponse { ValidationPassed = false, ValidationErrors = null };
+        }
+
         public async Task<ResetPageAnswersResponse> ResetPageAnswersBySequenceAndSectionNumber(Guid applicationId, int sequenceNo,
             int sectionNo, string pageId)
         {
