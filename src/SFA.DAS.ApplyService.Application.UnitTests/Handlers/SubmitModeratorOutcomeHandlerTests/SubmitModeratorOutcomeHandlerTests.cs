@@ -60,7 +60,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitModeratorOut
 
             //Assert
             Assert.IsTrue(successfulSave);
-            _moderatorRepository.Verify(x => x.UpdateModerationStatus(_applicationId, It.IsAny<ApplyData>(), _status, _userId), Times.Once);
+            _moderatorRepository.VerifyAll();
+            
         }
     }
 }

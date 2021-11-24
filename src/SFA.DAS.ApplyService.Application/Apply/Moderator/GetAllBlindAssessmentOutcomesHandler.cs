@@ -13,6 +13,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
         private readonly IModeratorRepository _repository;
         private readonly ILogger<GetAllBlindAssessmentOutcomesHandler> _logger;
 
+        public GetAllBlindAssessmentOutcomesHandler()
+        {
+        }
+
         public GetAllBlindAssessmentOutcomesHandler(IModeratorRepository repository, ILogger<GetAllBlindAssessmentOutcomesHandler> logger)
         {
             _repository = repository;
