@@ -10,10 +10,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
         public GetAllBlindAssessmentOutcomesRequest(Guid applicationId)
         {
             ApplicationId = applicationId;
-            
         }
 
         public Guid ApplicationId { get; }
-       
     }
 }

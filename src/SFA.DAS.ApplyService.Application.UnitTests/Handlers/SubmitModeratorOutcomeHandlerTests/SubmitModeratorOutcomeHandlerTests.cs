@@ -1,13 +1,12 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitModeratorOutcomeHandlerTests
 {
@@ -61,7 +60,6 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitModeratorOut
             //Assert
             Assert.IsTrue(successfulSave);
             _moderatorRepository.VerifyAll();
-            
         }
     }
 }

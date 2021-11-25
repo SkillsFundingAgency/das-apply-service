@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Apply.Moderator;
-using System.Threading;
-using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 {
@@ -12,10 +12,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
     {
         private readonly IModeratorRepository _repository;
         private readonly ILogger<GetAllBlindAssessmentOutcomesHandler> _logger;
-
-        public GetAllBlindAssessmentOutcomesHandler()
-        {
-        }
 
         public GetAllBlindAssessmentOutcomesHandler(IModeratorRepository repository, ILogger<GetAllBlindAssessmentOutcomesHandler> logger)
         {
