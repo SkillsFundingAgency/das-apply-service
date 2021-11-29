@@ -10,11 +10,12 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
     {
         Task<bool> SubmitModeratorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string userId, string userName, string status, string comment);
         Task<BlindAssessmentOutcome> GetBlindAssessmentOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId);
+        Task<List<BlindAssessmentOutcome>> GetAllBlindAssessmentOutcome(Guid applicationId);
         Task<ModeratorPageReviewOutcome> GetModeratorPageReviewOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId);
         Task<List<ModeratorPageReviewOutcome>> GetModeratorPageReviewOutcomesForSection(Guid applicationId, int sequenceNumber, int sectionNumber);
         Task<List<ModeratorPageReviewOutcome>> GetAllModeratorPageReviewOutcomes(Guid applicationId);
         Task CreateEmptyModeratorReview(Guid applicationId, string userId, string userName, List<ModeratorPageReviewOutcome> pageReviewOutcomes);
         Task<bool> UpdateModerationStatus(Guid applicationId, ApplyData applyData, string status, string userId);
-
+        Task<bool> UpdateUserForAutoModerationOutcomes(Guid applicationId, string userId, string userName);
     }
 }

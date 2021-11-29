@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApplyService.Application.Apply.Moderator;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
@@ -49,7 +50,29 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
                 }
             }
 
+            var allBlindAssessmentOutcomes = await GetAllBlindAssessmentOutcomes(applicationId);
+
+            UpdateReviewOutcomesWithAutoPass(reviewOutcomes, allBlindAssessmentOutcomes);
+
             await _mediator.Send(new CreateEmptyModeratorReviewRequest(applicationId, moderatorUserId, moderatorUserName, reviewOutcomes));
+        }
+
+        private void UpdateReviewOutcomesWithAutoPass(List<ModeratorPageReviewOutcome> reviewOutcomes, List<BlindAssessmentOutcome> allBlindAssessmentOutcomes)
+        {
+            foreach(var blindOutcome in allBlindAssessmentOutcomes)
+            {
+                if (blindOutcome.Assessor1ReviewStatus == ModerationStatus.Pass && string.IsNullOrWhiteSpace(blindOutcome.Assessor1ReviewComment) 
+                    && blindOutcome.Assessor2ReviewStatus == ModerationStatus.Pass && string.IsNullOrWhiteSpace(blindOutcome.Assessor2ReviewComment))
+                {
+                    var reviewOutcome = reviewOutcomes.FirstOrDefault(r => r.SequenceNumber == blindOutcome.SequenceNumber && r.SectionNumber == blindOutcome.SectionNumber && r.PageId == blindOutcome.PageId);
+                    reviewOutcome.ModeratorReviewStatus = ModerationStatus.Pass;
+                }
+            }
+        }
+
+        private Task<List<BlindAssessmentOutcome>> GetAllBlindAssessmentOutcomes(Guid applicationId)
+        {
+            return _mediator.Send(new GetAllBlindAssessmentOutcomesRequest(applicationId));
         }
 
         private async Task<List<ModeratorPageReviewOutcome>> GenerateSectionReviewOutcomes(Guid applicationId, AssessorSection section, string moderatorUserId)

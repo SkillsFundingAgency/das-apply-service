@@ -1,13 +1,12 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitModeratorOutcomeHandlerTests
 {
@@ -43,17 +42,24 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitModeratorOut
         [Test]
         public async Task SubmitModeratorOutcome_is_stored()
         {
+            //Arrange
             var applyData = new ApplyData { ModeratorReviewDetails = new ModeratorReviewDetails() };
             _applyRepository.Setup(x => x.GetApplyData(_applicationId)).ReturnsAsync(applyData);
 
             _moderatorRepository.Setup(x => x.UpdateModerationStatus(_applicationId, It.IsAny<ApplyData>(), _status, _userId))
                 .ReturnsAsync(true);
 
+            _moderatorRepository.Setup(x => x.UpdateUserForAutoModerationOutcomes(_applicationId, _userId, _userName))
+                .ReturnsAsync(true);
+
             var request = new SubmitModeratorOutcomeRequest(_applicationId, _userId, _userName, _status, _comment);
+
+            //Action
             var successfulSave = await _handler.Handle(request, new CancellationToken());
 
+            //Assert
             Assert.IsTrue(successfulSave);
-            _moderatorRepository.Verify(x => x.UpdateModerationStatus(_applicationId, It.IsAny<ApplyData>(), _status, _userId), Times.Once);
+            _moderatorRepository.VerifyAll();
         }
     }
 }
