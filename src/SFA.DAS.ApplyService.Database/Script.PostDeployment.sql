@@ -10,4 +10,4 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
-:r .\AdhocScipts\SetupEmailTemplates.sql
+:r .\Scripts\Seed\EmailTemplates.sql
