@@ -62,6 +62,8 @@
     <Folder Include="Sequences" />
     <Folder Include="AdhocScipts" />
     <Folder Include="AdhocScipts\DataMart" />
+    <Folder Include="Scripts" />
+    <Folder Include="Scripts\Seed" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Contacts.sql" />
@@ -84,9 +86,10 @@
     <Build Include="Tables\FinancialReview.sql" />
     <Build Include="Tables\FinancialReviewClarificationFile.sql" />
     <Build Include="Tables\BankHoliday.sql" />
+    <None Include="Scripts\Seed\EmailTemplates.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PostDeploy Include="Script.PostDeployment1.sql" />
+    <PostDeploy Include="Script.PostDeployment.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AdhocScipts\DataMart\LookupOversightReviewStatus.sql" />
