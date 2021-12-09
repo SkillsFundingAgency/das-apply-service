@@ -94,11 +94,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [Test]
         public void Validator_returns_error_if_month_and_year_in_future()
         {
+            var fieldMonthOrYear = "Month";
             var dobDate = DateTime.Now.AddMonths(1);
+            if (DateTime.Now.Month == 12)
+                fieldMonthOrYear = "Year";
 
             var errorMessages = DateOfBirthAnswerValidator.ValidateDateOfBirth(dobDate.Month.ToString(), dobDate.Year.ToString(), FieldPrefix);
 
-            var fieldKey = $"{FieldPrefix}Month";
+            var fieldKey = $"{FieldPrefix}{fieldMonthOrYear}";
 
             var validationError = errorMessages.FirstOrDefault(x => x.Field == fieldKey);
             validationError.Should().NotBeNull();
