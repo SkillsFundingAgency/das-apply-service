@@ -33,6 +33,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     using Domain.Apply;
     using SFA.DAS.ApplyService.Web.Validators;
 
+
     [TestFixture]
     public class RoatpApplicationPreambleControllerTests
     {
@@ -42,6 +43,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<ISessionService> _sessionService;
         private Mock<ICompaniesHouseApiClient> _companiesHouseApiClient;
         private Mock<ICharityCommissionApiClient> _charityCommissionApiClient;
+        private Mock<ICharityCommissionOuterApiClient> _charityCommissionOuterApiClient;
         private Mock<IOrganisationApiClient> _organisationApiClient;
         private Mock<IUsersApiClient> _usersApiClient;
         private Mock<IApplicationApiClient> _applicationApiClient;
@@ -69,6 +71,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService = new Mock<ISessionService>();
             _companiesHouseApiClient = new Mock<ICompaniesHouseApiClient>();
             _charityCommissionApiClient = new Mock<ICharityCommissionApiClient>();
+            _charityCommissionOuterApiClient = new Mock<ICharityCommissionOuterApiClient>();
             _organisationApiClient = new Mock<IOrganisationApiClient>();
             _usersApiClient = new Mock<IUsersApiClient>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
@@ -82,6 +85,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 _ukrlpApiClient.Object,
                 _sessionService.Object, _companiesHouseApiClient.Object,
                 _charityCommissionApiClient.Object,
+                _charityCommissionOuterApiClient.Object,
                 _organisationApiClient.Object,
                 _usersApiClient.Object,
                 _applicationApiClient.Object,
@@ -1065,7 +1069,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _applicationDetails.CharitySummary = new CharityCommissionSummary
             {
                 CharityNumber = "12345678",
-                IncorporatedOn = new DateTime(2006, 01, 02),
+                RegistrationDate = new DateTime(2006, 01, 02),
                 Trustees = new List<Domain.CharityCommission.Trustee>
                 {
                     new Domain.CharityCommission.Trustee

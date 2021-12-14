@@ -118,6 +118,7 @@ namespace SFA.DAS.ApplyService.Web
             services.Configure<List<QnaLinksConfiguration>>(_configuration.GetSection("QnaLinks"));
             services.Configure<List<CustomValidationConfiguration>>(_configuration.GetSection("CustomValidations"));
             services.Configure<List<NotRequiredOverrideConfiguration>>(_configuration.GetSection("NotRequiredOverrides"));
+            services.Configure<List<CharityCommissionOuterApiAuthentication>>(_configuration.GetSection("CharityCommissionOuterApiAuthentication"));
 
             services.AddCache(_configService, _env);
             services.AddDataProtection(_configService, _env);
@@ -160,6 +161,12 @@ namespace SFA.DAS.ApplyService.Web
             services.AddHttpClient<ICharityCommissionApiClient, CharityCommissionApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<ICharityCommissionOuterApiClient, CharityCommissionOuterApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.CharityCommissionOuterApiAuthentication.ApiBaseUrl);
             })
             .SetHandlerLifetime(handlerLifeTime);
 

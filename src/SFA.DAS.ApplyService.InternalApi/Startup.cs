@@ -107,6 +107,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.Configure<List<RoatpSequences>>(_configuration.GetSection("RoatpSequences"));
             services.Configure<List<CriminalComplianceGatewayConfig>>(_configuration.GetSection("CriminalComplianceGatewayConfig"));
             services.Configure<List<CriminalComplianceGatewayOverrideConfig>>(_configuration.GetSection("SoleTraderCriminalComplianceGatewayOverrides"));
+            services.Configure<List<CharityCommissionOuterApiAuthentication>>(_configuration.GetSection("CharityCommissionOuterApiAuthentication"));
 
             services.AddCache(_applyConfig, _hostingEnvironment);
             services.AddDataProtection(_applyConfig, _hostingEnvironment);
@@ -173,6 +174,12 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .SetHandlerLifetime(handlerLifeTime);
 
+            services.AddHttpClient<CharityCommissionOuterApiClient, CharityCommissionOuterApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.CharityCommissionOuterApiAuthentication.ApiBaseUrl);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.ApiBaseAddress);
@@ -227,6 +234,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<CharityCommissionService.ISearchCharitiesV1SoapClient, CharityCommissionService.SearchCharitiesV1SoapClient>();
             services.AddTransient<CharityCommissionApiClient, CharityCommissionApiClient>();
             // End of SOAP Services
+            services.AddTransient<CharityCommissionOuterApiClient, CharityCommissionOuterApiClient>();
 
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();

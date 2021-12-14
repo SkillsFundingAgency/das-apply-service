@@ -846,13 +846,13 @@
             questions.Add(new PreambleAnswer
             {
                 QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionCharityName,
-                Value = applicationDetails.CharitySummary?.CharityName
+                Value = applicationDetails.CharitySummary?.Name
             });
 
             var incorporationDate = string.Empty;
-            if (applicationDetails.CharitySummary != null && applicationDetails.CharitySummary.IncorporatedOn.HasValue)
+            if (applicationDetails.CharitySummary != null && applicationDetails.CharitySummary.RegistrationDate.HasValue)
             {
-                incorporationDate = applicationDetails.CharitySummary.IncorporatedOn.Value.ToString();
+                incorporationDate = applicationDetails.CharitySummary.RegistrationDate.Value.ToString();
             }
             questions.Add(new PreambleAnswer
             {

@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
     public class GatewayApiChecksServiceTests
     {
         private Mock<CompaniesHouseApiClient> _companiesHouseApiClient;
-        private Mock<CharityCommissionApiClient> _charityCommissionApiClient;
+        private Mock<CharityCommissionOuterApiClient> _charityCommissionApiClient;
         private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<ILogger<GatewayApiChecksService>> _logger;
@@ -50,7 +50,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _ukprn = "10001234";
             _applicationId = Guid.NewGuid();
             _companiesHouseApiClient = new Mock<CompaniesHouseApiClient>();
-            _charityCommissionApiClient = new Mock<CharityCommissionApiClient>();
+            _charityCommissionApiClient = new Mock<CharityCommissionOuterApiClient>();
             _roatpApiClient = new Mock<IRoatpApiClient>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _logger = new Mock<ILogger<GatewayApiChecksService>>();
@@ -166,7 +166,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             result.CharityCommissionDetails.Should().NotBeNull();
             result.CharityCommissionDetails.CharityNumber.Should().Be(charityDetails.CharityNumber);
-            result.CharityCommissionDetails.CharityName.Should().Be(charityDetails.Name);
+            result.CharityCommissionDetails.Name.Should().Be(charityDetails.Name);
         }
 
         [Test]

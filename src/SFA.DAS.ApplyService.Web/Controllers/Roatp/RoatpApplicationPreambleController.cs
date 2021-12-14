@@ -35,6 +35,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IUkrlpApiClient _ukrlpApiClient;
         private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
         private readonly ICharityCommissionApiClient _charityCommissionApiClient;
+        private readonly ICharityCommissionOuterApiClient _charityCommissionOuterApiClient;
         private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IUsersApiClient _usersApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
@@ -47,6 +48,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                                                   IUkrlpApiClient ukrlpApiClient, ISessionService sessionService,
                                                   ICompaniesHouseApiClient companiesHouseApiClient,
                                                   ICharityCommissionApiClient charityCommissionApiClient,
+                                                  ICharityCommissionOuterApiClient charityCommissionOuterApiClient,
                                                   IOrganisationApiClient organisationApiClient,
                                                   IUsersApiClient usersApiClient,
                                                   IApplicationApiClient applicationApiClient,
@@ -61,6 +63,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _sessionService = sessionService;
             _companiesHouseApiClient = companiesHouseApiClient;
             _charityCommissionApiClient = charityCommissionApiClient;
+            _charityCommissionOuterApiClient = charityCommissionOuterApiClient;
             _organisationApiClient = organisationApiClient;
             _usersApiClient = usersApiClient;
             _applicationApiClient = applicationApiClient;
@@ -484,7 +487,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         return RedirectToAction("CharityNotFound", "RoatpShutterPages");
                     }
 
-                    var charityApiResponse = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
+                    //var charityApiResponse = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
+                    var charityApiResponse = await _charityCommissionOuterApiClient.GetCharityDetails(charityNumber);
+                    
                     if (!charityApiResponse.Success)
                     {
                         return RedirectToAction("CharityCommissionNotAvailable", "RoatpShutterPages");

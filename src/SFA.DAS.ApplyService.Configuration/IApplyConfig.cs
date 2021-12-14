@@ -15,7 +15,10 @@ namespace SFA.DAS.ApplyService.Configuration
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
         CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
+
         CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
+
+        CharityCommissionOuterApiAuthentication CharityCommissionOuterApiAuthentication { get; set; }
 
         RoatpApiAuthentication RoatpApiAuthentication { get; set; }
 
