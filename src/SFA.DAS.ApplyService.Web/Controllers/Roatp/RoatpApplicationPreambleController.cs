@@ -484,7 +484,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         return RedirectToAction("CharityNotFound", "RoatpShutterPages");
                     }
 
-                    //var charityApiResponse = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
                     var charityApiResponse = await _charityCommissionOuterApiClient.GetCharityDetails(charityNumber);
                     
                     if (!charityApiResponse.Success)
