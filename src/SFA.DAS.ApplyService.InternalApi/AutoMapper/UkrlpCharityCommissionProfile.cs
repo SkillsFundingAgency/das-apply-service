@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using CharityCommissionService;
 using SFA.DAS.ApplyService.Domain.CharityCommission;
-using SFA.DAS.ApplyService.Domain.CompaniesHouse;
-using System.Linq;
+
 namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
 {
     public class UkrlpCharityCommissionProfile : Profile
@@ -26,8 +24,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public CharityTrusteeProfile()
         {
-            CreateMap<InternalApi.Types.CharityCommission.Trustee, Domain.CharityCommission.Trustee>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
+            CreateMap<InternalApi.Types.CharityCommission.Trustee, Trustee>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForAllOtherMembers(opt => opt.Ignore());
         }

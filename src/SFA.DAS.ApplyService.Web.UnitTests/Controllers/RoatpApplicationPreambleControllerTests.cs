@@ -127,7 +127,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     {
                         new Trustee
                         {
-                            Id = 1,
                             Name = "MR A TRUSTEE"
                         }
                     },
@@ -1070,12 +1069,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 {
                     new Domain.CharityCommission.Trustee
                     {
-                        Id = "1",
                         Name = "Mr A Trustee"
                     },
                     new Domain.CharityCommission.Trustee
                     {
-                        Id = "2",
                         Name = "Mrs B Trustworthy"
                     }
                 }
@@ -1103,12 +1100,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     {
                         new Domain.CharityCommission.Trustee
                         {
-                            Id = "1",
                             Name = "Mr A Trustee"
                         },
                         new Domain.CharityCommission.Trustee
                         {
-                            Id = "2",
                             Name = "Mrs B Trustworthy"
                         }
                     }

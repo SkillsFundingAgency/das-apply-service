@@ -786,7 +786,7 @@
                 {
                     var dataRow = new TabularDataRow
                     {
-                        Id = trustee.Id,
+                        Id = Guid.NewGuid().ToString(),
                         Columns = new List<string> { trustee.Name }
                     };
                     table.DataRows.Add(dataRow);

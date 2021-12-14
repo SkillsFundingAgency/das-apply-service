@@ -13,6 +13,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.CharityCommission
 
         public Address RegisteredOfficeAddress { get; set; }
 
+        public string TelephoneNumber { get; set; }
+        public string EmailAddress { get; set; }
+        public string Website { get; set; }        
+
         public IEnumerable<string> NatureOfBusiness { get; set; }
 
         public DateTime? IncorporatedOn { get; set; }

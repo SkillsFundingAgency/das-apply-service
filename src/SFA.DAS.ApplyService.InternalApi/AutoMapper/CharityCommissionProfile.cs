@@ -6,7 +6,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public CharityCommissionProfile()
         {
-            CreateMap<CharityCommissionService.Charity, Types.CharityCommission.Charity>()
+            CreateMap<Infrastructure.CharityCommission.Entities.Charity, Types.CharityCommission.Charity>()
                 .ForMember(dest => dest.CharityNumber, opt => opt.MapFrom(source => source.RegisteredCharityNumber))
                 .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.RegisteredCompanyNumber))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.CharityName.Trim()))
@@ -15,9 +15,13 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
                 .ForMember(dest => dest.NatureOfBusiness, opt => opt.MapFrom(source => source.NatureOfBusiness))
                 .ForMember(dest => dest.IncorporatedOn, opt => opt.MapFrom(source => source.RegistrationDate))
                 .ForMember(dest => dest.DissolvedOn, opt => opt.MapFrom(source => source.RegistrationRemovalDate))
-                .ForMember(dest => dest.RegisteredOfficeAddress, opt => opt.MapFrom(source => Mapper.Map<CharityCommissionService.Address, Types.CharityCommission.Address>(source.Address))) 
-                .ForMember(dest => dest.Accounts, opt => opt.MapFrom(source => Mapper.Map<CharityCommissionService.LatestFiling, Types.CharityCommission.Accounts>(source.LatestFiling)))
-                .ForMember(dest => dest.Trustees, opt => opt.MapFrom(source => Mapper.Map<CharityCommissionService.Trustee[], Types.CharityCommission.Trustee[]>(source.Trustees)))
+                .ForMember(dest => dest.TelephoneNumber, opt => opt.MapFrom(source => source.TelephoneNumber))
+                .ForMember(dest => dest.EmailAddress, opt => opt.MapFrom(source => source.EmailAddress))
+                .ForMember(dest => dest.Website, opt => opt.MapFrom(source => source.WebsiteAddress))
+                .ForMember(dest => dest.RegisteredOfficeAddress, opt => opt.MapFrom(source => Mapper.Map<Infrastructure.CharityCommission.Entities.Charity, Types.CharityCommission.Address>(source)))
+                .ForMember(dest => dest.Accounts, opt => opt.MapFrom(source => Mapper.Map<Infrastructure.CharityCommission.Entities.Charity, Types.CharityCommission.Accounts>(source)))
+                .ForMember(dest => dest.Trustees, opt => opt.MapFrom(source => Mapper.Map<Infrastructure.CharityCommission.Entities.Trustee[], Types.CharityCommission.Trustee[]>(source.Trustees)))
+                .ForMember(dest => dest.TrusteeManualEntryRequired, opt => opt.MapFrom(source => source.Trustees == null || source.Trustees.Length == 0))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
@@ -26,13 +30,13 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public CharityCommissionAddressProfile()
         {
-            CreateMap<CharityCommissionService.Address, Types.CharityCommission.Address>()
+            CreateMap<Infrastructure.CharityCommission.Entities.Charity, Types.CharityCommission.Address>()
                 .BeforeMap((source, dest) => dest.Country = "United Kingdom")
-                .ForMember(dest => dest.AddressLine1, opt => opt.MapFrom(source => source.Line1))
-                .ForMember(dest => dest.AddressLine2, opt => opt.MapFrom(source => string.IsNullOrEmpty(source.Line3) ? null : source.Line2)) // sometimes city is on line 2
-                .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.Line3 ?? source.Line2)) // cope for when it is on line 2, instead of line 3
-                .ForMember(dest => dest.County, opt => opt.MapFrom(source => source.Line4)) // not sure what line 4 is
-                .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(source => source.Postcode))
+                .ForMember(dest => dest.AddressLine1, opt => opt.MapFrom(source => source.AddressLine1))
+                .ForMember(dest => dest.AddressLine2, opt => opt.MapFrom(source => string.IsNullOrEmpty(source.AddressLine3) ? null : source.AddressLine2)) // sometimes city is on line 2
+                .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.AddressLine3 ?? source.AddressLine2)) // cope for when it is on line 2, instead of line 3
+                .ForMember(dest => dest.County, opt => opt.MapFrom(source => source.AddressLine5 ?? source.AddressLine4))
+                .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(source => source.AddressPostcode))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
@@ -41,8 +45,8 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public CharityCommissionAccountsProfile()
         {
-            CreateMap<CharityCommissionService.LatestFiling, Types.CharityCommission.Accounts>()
-                .ForMember(dest => dest.LastAccountsDate, opt => opt.ResolveUsing(source => source.AccountsPeriodDateTime > source.AnnualReturnPeriodDateTime ? source.AccountsPeriodDateTime : source.AnnualReturnPeriodDateTime))
+            CreateMap<Infrastructure.CharityCommission.Entities.Charity, Types.CharityCommission.Accounts>()
+                .ForMember(dest => dest.LastAccountsDate, opt => opt.MapFrom(source => source.LatestAccountsEndDate))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
@@ -51,9 +55,8 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public CharityCommissionTrusteeProfile()
         {
-            CreateMap<CharityCommissionService.Trustee, Types.CharityCommission.Trustee>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.TrusteeNumber))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.TrusteeName))
+            CreateMap<Infrastructure.CharityCommission.Entities.Trustee, Types.CharityCommission.Trustee>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
