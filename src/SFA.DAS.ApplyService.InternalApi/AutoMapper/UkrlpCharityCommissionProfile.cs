@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CharityCommissionService;
 using SFA.DAS.ApplyService.Domain.CharityCommission;
 using SFA.DAS.ApplyService.Domain.CompaniesHouse;
 using System.Linq;
@@ -12,7 +11,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
             CreateMap<InternalApi.Types.CharityCommission.Charity, CharityCommissionSummary>()
                .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                .ForMember(dest => dest.CharityNumber, opt => opt.MapFrom(source => source.CharityNumber))
-               .ForMember(dest => dest.RegistrationDate, opt => opt.MapFrom(source => source.IncorporatedOn))
+               .ForMember(dest => dest.RegistrationDate, opt => opt.MapFrom(source => source.RegistrationDate ))
                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
                .ForMember(dest => dest.Type, opt => opt.MapFrom(source => source.Type))
                .ForMember(dest => dest.Trustees, opt => opt.MapFrom(source => source.Trustees))

@@ -25,7 +25,6 @@ using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Services.Moderator;
-using CharityCommissionApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CharityCommissionApiClient;
 using CompaniesHouseApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CompaniesHouseApiClient;
 using IQnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.IQnaTokenService;
 using IRoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.IRoatpApiClient;
@@ -230,10 +229,6 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
-            // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
-            services.AddTransient<CharityCommissionService.ISearchCharitiesV1SoapClient, CharityCommissionService.SearchCharitiesV1SoapClient>();
-            services.AddTransient<CharityCommissionApiClient, CharityCommissionApiClient>();
-            // End of SOAP Services
             services.AddTransient<CharityCommissionOuterApiClient, CharityCommissionOuterApiClient>();
 
             services.AddTransient<IQnaTokenService, QnaTokenService>();

@@ -5,9 +5,9 @@
 
     public class CharityCommissionSummary
     {
+        public string CharityNumber { get; set; }
         public string RegistrationNumber { get; set; }
         public string Name { get; set; }
-        public string CharityNumber { get; set; }
         public string Status { get; set; }
         public string Type { get; set; }
         public DateTime? RegistrationDate { get; set; }

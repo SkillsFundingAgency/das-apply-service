@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CharityCommissionService;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Configuration;
 using System.Threading.Tasks;
@@ -7,6 +6,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
     using Newtonsoft.Json;
+    using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
     using System;
     using System.Net.Http;
 

@@ -34,7 +34,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IUkrlpApiClient _ukrlpApiClient;
         private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
-        private readonly ICharityCommissionApiClient _charityCommissionApiClient;
         private readonly ICharityCommissionOuterApiClient _charityCommissionOuterApiClient;
         private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IUsersApiClient _usersApiClient;
@@ -47,7 +46,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient,
                                                   IUkrlpApiClient ukrlpApiClient, ISessionService sessionService,
                                                   ICompaniesHouseApiClient companiesHouseApiClient,
-                                                  ICharityCommissionApiClient charityCommissionApiClient,
                                                   ICharityCommissionOuterApiClient charityCommissionOuterApiClient,
                                                   IOrganisationApiClient organisationApiClient,
                                                   IUsersApiClient usersApiClient,
@@ -62,7 +60,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _ukrlpApiClient = ukrlpApiClient;
             _sessionService = sessionService;
             _companiesHouseApiClient = companiesHouseApiClient;
-            _charityCommissionApiClient = charityCommissionApiClient;
             _charityCommissionOuterApiClient = charityCommissionOuterApiClient;
             _organisationApiClient = organisationApiClient;
             _usersApiClient = usersApiClient;
