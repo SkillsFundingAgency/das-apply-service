@@ -84,58 +84,5 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.AreEqual(peopleInControl[1].Name, expectedPersonInControl2.Name);
             Assert.AreEqual(peopleInControl[1].MonthYearOfBirth, expectedPersonInControl2.MonthYearOfBirth);
         }
-
-        [Test]
-        public async Task get_no_trustees_if_apply_data_doesnt_exist()
-        {
-            var result = await _controller.GetTrusteesFromCharityCommission(_applicationId) as OkObjectResult;
-
-            result.Value.Should().BeOfType<List<PersonInControl>>();
-            var peopleInControl = (List<PersonInControl>)result.Value;
-
-            Assert.AreEqual(0, peopleInControl.Count);
-        }
-
-
-        [TestCase("name 1", "alphabetically first name")]
-        [TestCase("name 2", "name 1")]
-
-        public async Task get_list_of_trustees_from_apply(string name1, string name2)
-        {
-            var expectedPersonInControl2 = new PersonInControl { Name = name1, MonthYearOfBirth = null };
-            var expectedPersonInControl1 = new PersonInControl { Name = name2, MonthYearOfBirth = null };
-
-            var application = new Apply
-            {
-                ApplicationId = _applicationId,
-                ApplyData = new ApplyData
-                {
-                    GatewayReviewDetails = new ApplyGatewayDetails
-                    {
-                        CharityCommissionDetails = new CharityCommissionSummary
-                        {
-                            Trustees = new List<Trustee>
-                            {
-                                new Trustee { Name = name1 },
-                                new Trustee { Name = name2 }
-                            }
-                        }
-                    }
-                }
-            };
-
-            _mediator.Setup(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(application);
-
-            var result = await _controller.GetTrusteesFromCharityCommission(_applicationId) as OkObjectResult;
-
-            result.Value.Should().BeOfType<List<PersonInControl>>();
-            var peopleInControl = (List<PersonInControl>)result.Value;
-
-            Assert.AreEqual(2, peopleInControl.Count);
-            Assert.AreEqual(peopleInControl[0].Name, expectedPersonInControl1.Name);
-            Assert.AreEqual(peopleInControl[0].MonthYearOfBirth, expectedPersonInControl1.MonthYearOfBirth);
-            Assert.AreEqual(peopleInControl[1].Name, expectedPersonInControl2.Name);
-            Assert.AreEqual(peopleInControl[1].MonthYearOfBirth, expectedPersonInControl2.MonthYearOfBirth);
-        }
     }
 }
