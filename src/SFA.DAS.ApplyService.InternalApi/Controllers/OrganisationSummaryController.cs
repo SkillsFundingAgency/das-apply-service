@@ -236,6 +236,29 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok(peopleInControl);
         }
 
+        [HttpGet]
+        [Route("TrusteeData/CharityCommission/{applicationId}")]
+        public async Task<IActionResult> GetTrusteesFromCharityCommission(Guid applicationId)
+        {
+            _logger.LogInformation($"Retrieving Apply Data - charity commission - trustees for application {applicationId}");
+            var peopleInControl = new List<PersonInControl>();
+
+            var applyGatewayDetails = await GetApplyGatewayDetails(applicationId);
+
+            var trustees = applyGatewayDetails?.CharityCommissionDetails?.Trustees;
+
+            if (trustees != null)
+            {
+                foreach (var trustee in trustees.OrderBy(x => x.Name))
+                {
+                    var picName = trustee.Name;
+                    peopleInControl.Add(new PersonInControl { Name = picName, MonthYearOfBirth = null });
+                }
+            }
+
+            return Ok(peopleInControl);
+        }
+
 
         [HttpGet]
         [Route("WhosInControlData/Submitted/{applicationId}")]
