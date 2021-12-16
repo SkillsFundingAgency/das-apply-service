@@ -137,7 +137,7 @@
         },
         {
             "apiVersion": "2020-06-01",
-            "name": "[concat(parameters('uiCertificateName'), '-', parameters('utcValue'))]",
+            "name": "[concat('ui-',parameters('uiCertificateName'), '-', parameters('utcValue'))]",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
@@ -161,7 +161,7 @@
         },
         {
             "apiVersion": "2020-06-01",
-            "name": "[concat(parameters('apiCertificateName'), '-', parameters('utcValue'))]",
+            "name": "[concat('api-',parameters('apiCertificateName'), '-', parameters('utcValue'))]",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
