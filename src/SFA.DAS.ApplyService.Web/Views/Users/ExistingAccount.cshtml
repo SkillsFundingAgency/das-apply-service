@@ -19,12 +19,12 @@
 
                 <div class="govuk-form-group" sfa-validation-for="FirstTimeSignin" sfa-validationerror-class="govuk-form-group--error">
 
-                    <span class="govuk-error-message" asp-validation-for="FirstTimeSignin"></span>
 
                     <fieldset class="govuk-fieldset">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                         Do you have an apprenticeship service (AS) sign in account?
+                            Do you have an apprenticeship service (AS) sign in account?
                         </legend>
+                        <span class="govuk-error-message" asp-validation-for="FirstTimeSignin"></span>
                         <div class="govuk-radios">
                             <div class="govuk-radios__item">
                                 <input asp-for="FirstTimeSignin"
