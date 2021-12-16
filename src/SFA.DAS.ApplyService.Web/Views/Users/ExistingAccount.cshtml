@@ -1,7 +1,7 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ExistingAccountViewModel
 
 @{
-    ViewBag.Title = "Do you have an apprenticeship service (AS) sign in account?"; 
+    ViewBag.Title = "Do you have an apprenticeship service (AS) sign in account?";
 }
 
 @section Navigation
@@ -13,8 +13,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-         <partial name="_ValidationSummaryPartial" />
-            <h1 class="govuk-heading-xl">Do you have an apprenticeship service (AS) sign in account?</h1>
+            <partial name="_ValidationSummaryPartial" />
 
             <form method="post" asp-action="ConfirmExistingAccount" novalidate asp-controller="Users">
 
@@ -23,6 +22,11 @@
                     <span class="govuk-error-message" asp-validation-for="FirstTimeSignin"></span>
 
                     <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-fieldset__heading">
+                                Do you have an apprenticeship service (AS) sign in account?
+                            </h1>
+                        </legend>
                         <div class="govuk-radios">
                             <div class="govuk-radios__item">
                                 <input asp-for="FirstTimeSignin"
