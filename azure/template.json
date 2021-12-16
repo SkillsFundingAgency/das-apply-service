@@ -248,8 +248,8 @@
                 }
             },
             "dependsOn": [
-                "ui-app-insights",
-                "ui-app-service-certificate"
+                "[concat(variables('uiAppServiceName'), '-app-insights-', parameters('utcValue'))]",
+                "[concat('ui-',parameters('uiCertificateName'), '-', parameters('utcValue'))]"
             ]
         },
         {
@@ -321,8 +321,8 @@
                 }
             },
             "dependsOn": [
-                "api-app-insights",
-                "api-app-service-certificate"
+                "[concat(variables('apiAppServiceName'), '-app-insights-', parameters('utcValue'))]",
+                "[concat('api-',parameters('uiCertificateName'), '-', parameters('utcValue'))]"
             ]
         },
         {
