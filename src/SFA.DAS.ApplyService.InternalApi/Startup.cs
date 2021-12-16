@@ -106,7 +106,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.Configure<List<RoatpSequences>>(_configuration.GetSection("RoatpSequences"));
             services.Configure<List<CriminalComplianceGatewayConfig>>(_configuration.GetSection("CriminalComplianceGatewayConfig"));
             services.Configure<List<CriminalComplianceGatewayOverrideConfig>>(_configuration.GetSection("SoleTraderCriminalComplianceGatewayOverrides"));
-            services.Configure<List<OuterApiConfiguration>>(_configuration.GetSection("OuterApiConfiguration"));
 
             services.AddCache(_applyConfig, _hostingEnvironment);
             services.AddDataProtection(_applyConfig, _hostingEnvironment);
