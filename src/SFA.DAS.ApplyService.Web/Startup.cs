@@ -118,7 +118,7 @@ namespace SFA.DAS.ApplyService.Web
             services.Configure<List<QnaLinksConfiguration>>(_configuration.GetSection("QnaLinks"));
             services.Configure<List<CustomValidationConfiguration>>(_configuration.GetSection("CustomValidations"));
             services.Configure<List<NotRequiredOverrideConfiguration>>(_configuration.GetSection("NotRequiredOverrides"));
-            services.Configure<List<CharityCommissionOuterApiAuthentication>>(_configuration.GetSection("CharityCommissionOuterApiAuthentication"));
+            services.Configure<List<OuterApiConfiguration>>(_configuration.GetSection("OuterApiConfiguration"));
 
             services.AddCache(_configService, _env);
             services.AddDataProtection(_configService, _env);
@@ -160,12 +160,12 @@ namespace SFA.DAS.ApplyService.Web
             })
             .SetHandlerLifetime(handlerLifeTime);
 
-            services.AddHttpClient<ICharityCommissionOuterApiClient, CharityCommissionOuterApiClient>(config =>
+            services.AddHttpClient<IOuterApiClient, OuterApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.CharityCommissionOuterApiAuthentication.ApiBaseUrl);
+                config.BaseAddress = new Uri(_configService.OuterApiConfiguration.ApiBaseUrl);
                 config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
                 config.DefaultRequestHeaders.Add("X-Version", "1");
-                config.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _configService.CharityCommissionOuterApiAuthentication.SubscriptionKey);
+                config.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _configService.OuterApiConfiguration.SubscriptionKey);
             })
             .SetHandlerLifetime(handlerLifeTime);
 

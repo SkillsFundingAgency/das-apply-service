@@ -9,9 +9,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
     using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 
-    public class CharityCommissionOuterApiClient : ApiClientBase<CharityCommissionOuterApiClient>, ICharityCommissionOuterApiClient
+    public class OuterApiClient : ApiClientBase<OuterApiClient>, IOuterApiClient
     {
-        public CharityCommissionOuterApiClient(HttpClient httpClient, ILogger<CharityCommissionOuterApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
+        public OuterApiClient(HttpClient httpClient, ILogger<OuterApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }

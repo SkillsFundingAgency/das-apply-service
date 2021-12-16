@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.ApplyService.Configuration
 {
-    public class CharityCommissionOuterApiAuthentication
+    public class OuterApiConfiguration
     {
         public string ApiBaseUrl { get; set; }
 

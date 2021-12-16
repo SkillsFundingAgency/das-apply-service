@@ -106,7 +106,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.Configure<List<RoatpSequences>>(_configuration.GetSection("RoatpSequences"));
             services.Configure<List<CriminalComplianceGatewayConfig>>(_configuration.GetSection("CriminalComplianceGatewayConfig"));
             services.Configure<List<CriminalComplianceGatewayOverrideConfig>>(_configuration.GetSection("SoleTraderCriminalComplianceGatewayOverrides"));
-            services.Configure<List<CharityCommissionOuterApiAuthentication>>(_configuration.GetSection("CharityCommissionOuterApiAuthentication"));
+            services.Configure<List<OuterApiConfiguration>>(_configuration.GetSection("OuterApiConfiguration"));
 
             services.AddCache(_applyConfig, _hostingEnvironment);
             services.AddDataProtection(_applyConfig, _hostingEnvironment);
@@ -165,6 +165,8 @@ namespace SFA.DAS.ApplyService.InternalApi
 
         private void ConfigHttpClients(IServiceCollection services)
         {
+            var acceptHeaderName = "Accept";
+            var acceptHeaderValue = "application/json";
             var handlerLifeTime = TimeSpan.FromMinutes(5);
 
             services.AddHttpClient<CompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
@@ -173,9 +175,12 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .SetHandlerLifetime(handlerLifeTime);
 
-            services.AddHttpClient<CharityCommissionOuterApiClient, CharityCommissionOuterApiClient>(config =>
+            services.AddHttpClient<OuterApiClient, OuterApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_applyConfig.CharityCommissionOuterApiAuthentication.ApiBaseUrl);
+                config.BaseAddress = new Uri(_applyConfig.OuterApiConfiguration.ApiBaseUrl);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+                config.DefaultRequestHeaders.Add("X-Version", "1");
+                config.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _applyConfig.OuterApiConfiguration.SubscriptionKey);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
@@ -229,7 +234,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
-            services.AddTransient<CharityCommissionOuterApiClient, CharityCommissionOuterApiClient>();
+            services.AddTransient<OuterApiClient, OuterApiClient>();
 
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();

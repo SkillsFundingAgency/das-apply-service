@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Configuration
 
         public CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
 
-        public CharityCommissionOuterApiAuthentication CharityCommissionOuterApiAuthentication { get; set; }
+        public OuterApiConfiguration OuterApiConfiguration { get; set; }
 
         public RoatpApiAuthentication RoatpApiAuthentication { get; set; }
 

@@ -15,22 +15,22 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
     /// Charity Commission WSDL is located at: https://apps.charitycommission.gov.uk/Showcharity/API/SearchCharitiesV1/SearchCharitiesV1.asmx?WSDL
     /// There is a Web-Friendly version located at: http://beta.charitycommission.gov.uk/charity-search/
     /// </summary>
-    public class CharityCommissionOuterApiClient
+    public class OuterApiClient
     {
         private const string _acceptHeaderName = "Accept";
         protected const string _contentType = "application/json";
 
         private readonly HttpClient _client;
-        private readonly ILogger<CharityCommissionOuterApiClient> _logger;
+        private readonly ILogger<OuterApiClient> _logger;
         private readonly IApplyConfig _config;
 
-        public CharityCommissionOuterApiClient()
+        public OuterApiClient()
         {
             // Constructor used for Mocking CharityCommissionOuterApiClient
         }
 
 
-        public CharityCommissionOuterApiClient(HttpClient client, ILogger<CharityCommissionOuterApiClient> logger, IConfigurationService configurationService)
+        public OuterApiClient(HttpClient client, ILogger<OuterApiClient> logger, IConfigurationService configurationService)
         {
             _client = client;
             _logger = logger;
@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             }
         }
 
-        public async virtual Task<Types.CharityCommission.Charity> GetCharity(int charityNumber)
+        public async virtual Task<Charity> GetCharity(int charityNumber)
         {
             try
             {
