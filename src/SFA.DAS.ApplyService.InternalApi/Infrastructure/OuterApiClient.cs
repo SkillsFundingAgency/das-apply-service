@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Configuration;
 using System.Threading.Tasks;
 
@@ -38,6 +37,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             if (!client.DefaultRequestHeaders.Contains(_acceptHeaderName))
             {
                 client.DefaultRequestHeaders.Add(_acceptHeaderName, _contentType);
+                client.BaseAddress = new Uri(_config.OuterApiConfiguration.ApiBaseUrl);
             }
         }
 

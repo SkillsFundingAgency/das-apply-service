@@ -15,7 +15,7 @@
     {
         private ILogger<CharityCommissionController> _logger;
 
-        private OuterApiClient _outerApiClient;
+        private readonly OuterApiClient _outerApiClient;
 
         private AsyncRetryPolicy _retryPolicy;
 
