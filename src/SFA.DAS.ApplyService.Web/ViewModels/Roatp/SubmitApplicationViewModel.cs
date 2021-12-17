@@ -16,9 +16,14 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         [Range(typeof(bool), "true", "true", ErrorMessage = "Tell us if you confirm that all your answers and file uploads are true and accurate to the best of your knowledge")]
         public bool ConfirmSubmitApplication { get; set; }
 
-        [Range(typeof(bool), "true", "true", ErrorMessage = "Tell us if you agree to give further information on any application answers within 5 working days when requested by ESFA")]
+        [Range(typeof(bool), "true", "true", ErrorMessage = "Tell us if you confirm that all information and evidence is specific to your organisation and you have not used any information or answers from any other organisation's application to the Register")]
+        public bool ConfirmOrganisationSpecificSubmitApplication { get; set; }
+
+       [Range(typeof(bool), "true", "true", ErrorMessage = "Tell us if you agree to give further information on any application answers within 5 working days when requested by ESFA")]
         public bool ConfirmFurtherInfoSubmitApplication { get; set; }
 
+
+  
         [Range(typeof(bool), "true", "true", ErrorMessage = "Tell us if you understand that you must notify ESFA 12 weeks before there is any change of ownership or control within your organisation")]
         public bool ConfirmChangeOfOwnershipSubmitApplication { get; set; }
 
