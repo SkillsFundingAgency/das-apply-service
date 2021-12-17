@@ -24,6 +24,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         private readonly ILogger<OuterApiClient> _logger;
         private readonly IApplyConfig _config;
        
+        public OuterApiClient()
+        {
+            // Constructor used for Mocking OuterApiClient
+        }
+
         public OuterApiClient(HttpClient client, ILogger<OuterApiClient> logger, IConfigurationService configurationService)
         {
             _client = client;
