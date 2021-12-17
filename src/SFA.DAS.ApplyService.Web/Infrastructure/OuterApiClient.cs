@@ -18,7 +18,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<ApiResponse<Charity>> GetCharityDetails(int charityNumber)
         {
-              var responseMessage = await GetResponse($"Charities/{charityNumber}");
+              var responseMessage = await GetResponse($"charities/{charityNumber}");
 
             if (responseMessage.StatusCode == HttpStatusCode.InternalServerError ||
                 responseMessage.StatusCode == HttpStatusCode.ServiceUnavailable)

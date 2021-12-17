@@ -144,8 +144,6 @@ namespace SFA.DAS.ApplyService.Web
 
         private void ConfigHttpClients(IServiceCollection services)
         {
-            var acceptHeaderName = "Accept";
-            var acceptHeaderValue = "application/json";
             var handlerLifeTime = TimeSpan.FromMinutes(5);
 
             services.AddHttpClient<IApplicationApiClient, ApplicationApiClient>(config =>
@@ -163,7 +161,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddHttpClient<IOuterApiClient, OuterApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.OuterApiConfiguration.ApiBaseUrl);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+                config.DefaultRequestHeaders.Add("Accept", "application/json");
                 config.DefaultRequestHeaders.Add("X-Version", "1");
                 config.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _configService.OuterApiConfiguration.SubscriptionKey);
             })

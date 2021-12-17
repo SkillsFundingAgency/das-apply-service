@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
     public class GatewayApiChecksServiceTests
     {
         private Mock<CompaniesHouseApiClient> _companiesHouseApiClient;
-        private Mock<OuterApiClient> _charityCommissionApiClient;
+        private Mock<OuterApiClient> _outerApiClient;
         private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<ILogger<GatewayApiChecksService>> _logger;
@@ -50,7 +50,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _ukprn = "10001234";
             _applicationId = Guid.NewGuid();
             _companiesHouseApiClient = new Mock<CompaniesHouseApiClient>();
-            _charityCommissionApiClient = new Mock<OuterApiClient>();
+            _outerApiClient = new Mock<OuterApiClient>();
             _roatpApiClient = new Mock<IRoatpApiClient>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _logger = new Mock<ILogger<GatewayApiChecksService>>();
@@ -87,7 +87,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(_ukprn)).ReturnsAsync(_registerStatus);
 
-            _service = new GatewayApiChecksService(_companiesHouseApiClient.Object, _charityCommissionApiClient.Object,
+            _service = new GatewayApiChecksService(_companiesHouseApiClient.Object, _outerApiClient.Object,
                                                    _roatpApiClient.Object, _qnaApiClient.Object, _logger.Object);
         }
 
@@ -160,7 +160,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Name = "Test Name"                
             };
 
-            _charityCommissionApiClient.Setup(x => x.GetCharity(charityNumber)).ReturnsAsync(charityDetails);
+            _outerApiClient.Setup(x => x.GetCharity(charityNumber)).ReturnsAsync(charityDetails);
 
             var result = await _service.GetExternalApiCheckDetails(_applicationId);
 
@@ -228,7 +228,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _roatpApiClient.Setup(x => x.GetUkrlpDetails(_ukprn)).ReturnsAsync(_ukrlpDetails);
 
             Charity charityDetails = null;
-            _charityCommissionApiClient.Setup(x => x.GetCharity(charityNumber)).ReturnsAsync(charityDetails);
+            _outerApiClient.Setup(x => x.GetCharity(charityNumber)).ReturnsAsync(charityDetails);
 
             Action serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId).GetAwaiter().GetResult();
             serviceCall.Should().Throw<ServiceUnavailableException>();

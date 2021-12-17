@@ -52,7 +52,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         private async Task<Charity> GetCharityDetails(int charityNumber)
         {
             _logger.LogInformation($"Searching Charity Commission - Charity Details. Charity Number: {charityNumber}");
-            var apiResponse = await _client.GetAsync($"Charities/{charityNumber}");
+            var apiResponse = await _client.GetAsync($"charities/{charityNumber}");
             string json = await apiResponse.Content.ReadAsStringAsync();
             var charityDetails = JsonConvert.DeserializeObject<Charity>(json);
             return charityDetails;
