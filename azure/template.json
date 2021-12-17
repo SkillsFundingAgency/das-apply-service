@@ -322,7 +322,7 @@
             },
             "dependsOn": [
                 "[concat(variables('apiAppServiceName'), '-app-insights-', parameters('utcValue'))]",
-                "[concat('api-',parameters('uiCertificateName'), '-', parameters('utcValue'))]"
+                "[concat('api-',parameters('apiCertificateName'), '-', parameters('utcValue'))]"
             ]
         },
         {
