@@ -246,11 +246,7 @@
                         "value": "[parameters('frontEndAccessRestrictions')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[concat(variables('uiAppServiceName'), '-app-insights-', parameters('utcValue'))]",
-                "[concat('ui-',parameters('uiCertificateName'), '-', parameters('utcValue'))]"
-            ]
+            }
         },
         {
             "apiVersion": "2020-06-01",
@@ -319,11 +315,7 @@
                         "value": "[parameters('backEndAccessRestrictions')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[concat(variables('apiAppServiceName'), '-app-insights-', parameters('utcValue'))]",
-                "[concat('api-',parameters('apiCertificateName'), '-', parameters('utcValue'))]"
-            ]
+            }
         },
         {
             "apiVersion": "2020-06-01",
@@ -348,7 +340,7 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "[concat(variables('apiAppServiceName'), '-', parameters('utcValue'))]",
+            "name": "[concat(variables('apiAppServiceName'), '-apim-subscription-', parameters('utcValue'))]",
             "resourceGroup": "[parameters('sharedApimResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
