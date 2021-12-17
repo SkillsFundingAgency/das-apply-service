@@ -172,7 +172,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .SetHandlerLifetime(handlerLifeTime);
 
-            services.AddHttpClient<OuterApiClient, OuterApiClient>(config =>
+            services.AddHttpClient<IOuterApiClient, OuterApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.OuterApiConfiguration.ApiBaseUrl);
                 config.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -230,8 +230,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IAppealsQueries, AppealsQueries>();
 
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
-
-            services.AddTransient<OuterApiClient, OuterApiClient>();
 
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();

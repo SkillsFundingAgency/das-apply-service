@@ -15,11 +15,11 @@
     {
         private ILogger<CharityCommissionController> _logger;
 
-        private readonly OuterApiClient _outerApiClient;
+        private readonly IOuterApiClient _outerApiClient;
 
         private AsyncRetryPolicy _retryPolicy;
 
-        public CharityCommissionController(ILogger<CharityCommissionController> logger, OuterApiClient outerApiClient)
+        public CharityCommissionController(ILogger<CharityCommissionController> logger, IOuterApiClient outerApiClient)
         {
             _logger = logger;
             _outerApiClient = outerApiClient;

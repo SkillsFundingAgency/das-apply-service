@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
     using Newtonsoft.Json;
+    using SFA.DAS.ApplyService.Infrastructure.ApiClients;
     using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
     using System;
     using System.Net.Http;
@@ -14,30 +15,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
     /// Charity Commission WSDL is located at: https://apps.charitycommission.gov.uk/Showcharity/API/SearchCharitiesV1/SearchCharitiesV1.asmx?WSDL
     /// There is a Web-Friendly version located at: http://beta.charitycommission.gov.uk/charity-search/
     /// </summary>
-    public class OuterApiClient
+    public class OuterApiClient : ApiClientBase<OuterApiClient>, IOuterApiClient
     {
-        private const string _acceptHeaderName = "Accept";
-        protected const string _contentType = "application/json";
-
-        private readonly HttpClient _client;
-        private readonly ILogger<OuterApiClient> _logger;
-       
-        public OuterApiClient()
+        public OuterApiClient(HttpClient httpClient, ILogger<OuterApiClient> logger, IConfigurationService configurationService) : base(httpClient, logger)
         {
-            // Constructor used for Mocking OuterApiClient
-        }
-
-        public OuterApiClient(HttpClient client, ILogger<OuterApiClient> logger, IConfigurationService configurationService)
-        {
-            _client = client;
-            _logger = logger;
             var config = configurationService.GetConfig().Result;
 
-            if (!client.DefaultRequestHeaders.Contains(_acceptHeaderName))
-            {
-                client.DefaultRequestHeaders.Add(_acceptHeaderName, _contentType);
-                client.BaseAddress = new Uri(config.OuterApiConfiguration.ApiBaseUrl);
-            }
+            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+            _httpClient.BaseAddress = new Uri(config.OuterApiConfiguration.ApiBaseUrl);
         }
 
         public async virtual Task<Charity> GetCharity(int charityNumber)
@@ -56,7 +41,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         private async Task<Charity> GetCharityDetails(int charityNumber)
         {
             _logger.LogInformation($"Searching Charity Commission - Charity Details. Charity Number: {charityNumber}");
-            var apiResponse = await _client.GetAsync($"charities/{charityNumber}");
+            var apiResponse = await _httpClient.GetAsync($"charities/{charityNumber}");
             string json = await apiResponse.Content.ReadAsStringAsync();
             var charityDetails = JsonConvert.DeserializeObject<Charity>(json);
             return charityDetails;
