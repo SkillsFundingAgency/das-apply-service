@@ -21,7 +21,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         private readonly HttpClient _client;
         private readonly ILogger<OuterApiClient> _logger;
-        private readonly IApplyConfig _config;
        
         public OuterApiClient()
         {
@@ -32,12 +31,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         {
             _client = client;
             _logger = logger;
-            _config = configurationService.GetConfig().Result;
+            var config = configurationService.GetConfig().Result;
 
             if (!client.DefaultRequestHeaders.Contains(_acceptHeaderName))
             {
                 client.DefaultRequestHeaders.Add(_acceptHeaderName, _contentType);
-                client.BaseAddress = new Uri(_config.OuterApiConfiguration.ApiBaseUrl);
+                client.BaseAddress = new Uri(config.OuterApiConfiguration.ApiBaseUrl);
             }
         }
 
