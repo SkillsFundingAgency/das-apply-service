@@ -240,7 +240,7 @@
                         "value": "[parameters('uiCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[reference('ui-app-service-certificate').outputs.certificateThumbprint.value]"
+                        "value": "[reference(concat('ui-',parameters('uiCertificateName'), '-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('frontEndAccessRestrictions')]"
@@ -313,7 +313,7 @@
                         "value": "[parameters('apiCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[reference('api-app-service-certificate').outputs.certificateThumbprint.value]"
+                        "value": "[reference(concat('api-',parameters('apiCertificateName'), '-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('backEndAccessRestrictions')]"
