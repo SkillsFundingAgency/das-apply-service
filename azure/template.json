@@ -293,7 +293,7 @@
                                 },
                                 {
                                     "name": "FileStorage:StorageConnectionString",
-                                    "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                                    "value": "[reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                                 }
                             ]
                         }
