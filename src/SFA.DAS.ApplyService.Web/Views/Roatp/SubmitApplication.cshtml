@@ -24,6 +24,7 @@
                     <div class="govuk-error-summary__body">
                         <ul class="govuk-list govuk-error-summary__list">
                             <li><a sfa-validation-for="ConfirmSubmitApplication"></a></li>
+                            <li><a sfa-validation-for="ConfirmOrganisationSpecificSubmitApplication"></a></li>
                             <li><a sfa-validation-for="ConfirmFurtherInfoSubmitApplication"></a></li>
                             <li><a sfa-validation-for="ConfirmChangeOfOwnershipSubmitApplication"></a></li>
                             <li><a sfa-validation-for="ConfirmFurtherCommunicationSubmitApplication"></a></li>
@@ -81,6 +82,18 @@
                         </div>
                     </div>
                 </div>
+                <div class="govuk-form-group" sfa-validation-for="ConfirmOrganisationSpecificSubmitApplication" sfa-validationerror-class="govuk-form-group--error">
+                    <span class="govuk-error-message" asp-validation-for="ConfirmOrganisationSpecificSubmitApplication"></span>
+                    <div class="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" type="checkbox" asp-for="ConfirmOrganisationSpecificSubmitApplication" />
+                            <label class="govuk-label govuk-checkboxes__label" asp-for="ConfirmOrganisationSpecificSubmitApplication">
+                                I confirm that all information and evidence is specific to my organisation and I have not used any information or answers from any other organisation's application to the Register.
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="govuk-form-group" sfa-validation-for="ConfirmFurtherInfoSubmitApplication" sfa-validationerror-class="govuk-form-group--error">
                     <span class="govuk-error-message" asp-validation-for="ConfirmFurtherInfoSubmitApplication"></span>
                     <div class="govuk-checkboxes">
