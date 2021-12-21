@@ -25,7 +25,6 @@ using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Services.Moderator;
-using CharityCommissionApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CharityCommissionApiClient;
 using CompaniesHouseApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CompaniesHouseApiClient;
 using IQnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.IQnaTokenService;
 using IRoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.IRoatpApiClient;
@@ -173,6 +172,15 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .SetHandlerLifetime(handlerLifeTime);
 
+            services.AddHttpClient<IOuterApiClient, OuterApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.OuterApiConfiguration.ApiBaseUrl);
+                config.DefaultRequestHeaders.Add("Accept", "application/json");
+                config.DefaultRequestHeaders.Add("X-Version", "1");
+                config.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _applyConfig.OuterApiConfiguration.SubscriptionKey);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.ApiBaseAddress);
@@ -222,11 +230,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IAppealsQueries, AppealsQueries>();
 
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
-
-            // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
-            services.AddTransient<CharityCommissionService.ISearchCharitiesV1SoapClient, CharityCommissionService.SearchCharitiesV1SoapClient>();
-            services.AddTransient<CharityCommissionApiClient, CharityCommissionApiClient>();
-            // End of SOAP Services
 
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();

@@ -4,7 +4,7 @@
     using SFA.DAS.ApplyService.InternalApi.Types;
     using System.Threading.Tasks;
 
-    public interface ICharityCommissionApiClient
+    public interface IOuterApiClient
     {
         Task<ApiResponse<Charity>> GetCharityDetails(int charityNumber);
     }

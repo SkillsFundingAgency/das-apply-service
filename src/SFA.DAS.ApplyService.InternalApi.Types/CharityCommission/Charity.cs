@@ -6,19 +6,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.CharityCommission
     public class Charity
     {
         public string CharityNumber { get; set; }
-        public string CompanyNumber { get; set; }
+        
+        public string RegistrationNumber { get; set; }
+
         public string Name { get; set; }
+
         public string Status { get; set; }
+        
         public string Type { get; set; }
 
-        public Address RegisteredOfficeAddress { get; set; }
-
-        public IEnumerable<string> NatureOfBusiness { get; set; }
-
-        public DateTime? IncorporatedOn { get; set; }
-        public DateTime? DissolvedOn { get; set; }
-
-        public Accounts Accounts { get; set; }
+        public DateTime? RegistrationDate  { get; set; }
+        
+        public DateTime? RemovalDate { get; set; }
 
         public IEnumerable<Trustee> Trustees { get; set; }
 
@@ -26,7 +25,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.CharityCommission
         {
             get
             {
-                return Status.Equals("registered", StringComparison.InvariantCultureIgnoreCase) && DissolvedOn == null;
+                return Status.Equals("registered", StringComparison.InvariantCultureIgnoreCase) && RemovalDate == null;
             }
         }
         
