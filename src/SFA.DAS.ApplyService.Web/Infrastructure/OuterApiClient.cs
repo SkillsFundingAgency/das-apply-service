@@ -9,16 +9,16 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
     using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 
-    public class CharityCommissionApiClient : ApiClientBase<CharityCommissionApiClient>, ICharityCommissionApiClient
+    public class OuterApiClient : ApiClientBase<OuterApiClient>, IOuterApiClient
     {
-        public CharityCommissionApiClient(HttpClient httpClient, ILogger<CharityCommissionApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
+        public OuterApiClient(HttpClient httpClient, ILogger<OuterApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 
         public async Task<ApiResponse<Charity>> GetCharityDetails(int charityNumber)
         {
-            var responseMessage = await GetResponse($"charity-commission-lookup?charityNumber={charityNumber}");
+              var responseMessage = await GetResponse($"charities/{charityNumber}");
 
             if (responseMessage.StatusCode == HttpStatusCode.InternalServerError ||
                 responseMessage.StatusCode == HttpStatusCode.ServiceUnavailable)

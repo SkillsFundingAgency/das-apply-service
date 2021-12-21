@@ -33,6 +33,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     using Domain.Apply;
     using SFA.DAS.ApplyService.Web.Validators;
 
+
     [TestFixture]
     public class RoatpApplicationPreambleControllerTests
     {
@@ -41,7 +42,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IUkrlpApiClient> _ukrlpApiClient;
         private Mock<ISessionService> _sessionService;
         private Mock<ICompaniesHouseApiClient> _companiesHouseApiClient;
-        private Mock<ICharityCommissionApiClient> _charityCommissionApiClient;
+        private Mock<IOuterApiClient> _outerApiClient;
         private Mock<IOrganisationApiClient> _organisationApiClient;
         private Mock<IUsersApiClient> _usersApiClient;
         private Mock<IApplicationApiClient> _applicationApiClient;
@@ -68,7 +69,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _ukrlpApiClient = new Mock<IUkrlpApiClient>();
             _sessionService = new Mock<ISessionService>();
             _companiesHouseApiClient = new Mock<ICompaniesHouseApiClient>();
-            _charityCommissionApiClient = new Mock<ICharityCommissionApiClient>();
+            _outerApiClient = new Mock<IOuterApiClient>();
             _organisationApiClient = new Mock<IOrganisationApiClient>();
             _usersApiClient = new Mock<IUsersApiClient>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
@@ -81,7 +82,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
                 _ukrlpApiClient.Object,
                 _sessionService.Object, _companiesHouseApiClient.Object,
-                _charityCommissionApiClient.Object,
+                _outerApiClient.Object,
                 _organisationApiClient.Object,
                 _usersApiClient.Object,
                 _applicationApiClient.Object,
@@ -131,8 +132,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                             Name = "MR A TRUSTEE"
                         }
                     },
-                    IncorporatedOn = new DateTime(2019, 1, 1),
-                    DissolvedOn = null
+                    RegistrationDate  = new DateTime(2019, 1, 1),
+                    RemovalDate = null
                 }
             };
             
@@ -501,12 +502,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
         }
 
         [Test]
@@ -535,13 +536,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
                 .Returns(Task.FromResult(_activeCharity)).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
         }
 
         [TestCase("SC123456")]
@@ -577,7 +578,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
                 .Returns(Task.FromResult(_activeCharity)).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
@@ -587,7 +588,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("SelectApplicationRoute");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
             _sessionService.Verify(
                 x => x.Set(It.IsAny<string>(),
                     It.Is<ApplicationDetails>(y => y.CharitySummary.TrusteeManualEntryRequired == true)), Times.Once);
@@ -624,13 +625,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
                 .Returns(Task.FromResult(_activeCharity)).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
         }
 
         [TestCase("liquidation")]
@@ -664,7 +665,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(inactiveCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             result.Should().BeOfType<RedirectToActionResult>();
@@ -672,7 +673,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("CompanyNotFound");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
         }
 
         [TestCase(null)]
@@ -707,7 +708,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(inactiveCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             result.Should().BeOfType<RedirectToActionResult>();
@@ -715,7 +716,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("SelectApplicationRoute");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
         }
 
         [Test]
@@ -749,7 +750,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(companyNotFound)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             result.Should().BeOfType<RedirectToActionResult>();
@@ -757,7 +758,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("CompanyNotFound");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
         }
 
         [Test]
@@ -790,12 +791,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 Response = new Charity
                 {
                     Status = "removed",
-                    DissolvedOn = new DateTime(2010, 1, 1)
+                    RemovalDate = new DateTime(2010, 1, 1)
                 }
             };
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
                 .Returns(Task.FromResult(inactiveCharity)).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
@@ -804,7 +805,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("CharityNotFound");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
         }
 
         [Test]
@@ -832,7 +833,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             result.Should().BeOfType<RedirectToActionResult>();
@@ -840,7 +841,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("CharityNotFound");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
         }
 
         [Test]
@@ -868,12 +869,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(new CompaniesHouseSummary())).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
 
             result.Should().BeOfType<RedirectToActionResult>();
             var redirectResult = result as RedirectToActionResult;
@@ -917,12 +918,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be("SelectApplicationRoute");
@@ -1065,7 +1066,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _applicationDetails.CharitySummary = new CharityCommissionSummary
             {
                 CharityNumber = "12345678",
-                IncorporatedOn = new DateTime(2006, 01, 02),
+                RegistrationDate = new DateTime(2006, 01, 02),
                 Trustees = new List<Domain.CharityCommission.Trustee>
                 {
                     new Domain.CharityCommission.Trustee
@@ -1275,7 +1276,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
                 .Returns(Task.FromResult(_activeCharity)).Verifiable();
 
             var registerStatus = new OrganisationRegisterStatus
@@ -1328,7 +1329,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
                 .Returns(Task.FromResult(_activeCharity)).Verifiable();
 
             var registerStatus = new OrganisationRegisterStatus

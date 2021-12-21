@@ -345,7 +345,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         {
             _applicationDetails.CharitySummary = new CharityCommissionSummary
             {
-                CharityName = "Charity name"
+                Name = "Charity name"
             };
 
             var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
@@ -354,7 +354,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
 
             var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.CharityCommissionCharityName);
             question.Should().NotBeNull();
-            question.Value.Should().Be(_applicationDetails.CharitySummary.CharityName);
+            question.Value.Should().Be(_applicationDetails.CharitySummary.Name);
         }
 
         [Test]
@@ -362,7 +362,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         {
             _applicationDetails.CharitySummary = new CharityCommissionSummary
             {
-                IncorporatedOn = new DateTime(2015, 03, 17)
+                RegistrationDate = new DateTime(2015, 03, 17)
             };
 
             var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
@@ -371,7 +371,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
 
             var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.CharityCommissionRegistrationDate);
             question.Should().NotBeNull();
-            question.Value.Should().Be(_applicationDetails.CharitySummary.IncorporatedOn.Value.ToString());
+            question.Value.Should().Be(_applicationDetails.CharitySummary.RegistrationDate.Value.ToString());
         }
 
         [Test]

@@ -15,14 +15,14 @@
     {
         private ILogger<CharityCommissionController> _logger;
 
-        private CharityCommissionApiClient _apiClient;
+        private readonly IOuterApiClient _outerApiClient;
 
         private AsyncRetryPolicy _retryPolicy;
 
-        public CharityCommissionController(ILogger<CharityCommissionController> logger, CharityCommissionApiClient apiClient)
+        public CharityCommissionController(ILogger<CharityCommissionController> logger, IOuterApiClient outerApiClient)
         {
             _logger = logger;
-            _apiClient = apiClient;
+            _outerApiClient = outerApiClient;
             _retryPolicy = GetRetryPolicy();
         }
 
@@ -33,7 +33,7 @@
             try
             {
                 var charityDetails =
-                    await _retryPolicy.ExecuteAsync(context => _apiClient.GetCharity(charityNumber), new Context());
+                    await _retryPolicy.ExecuteAsync(context => _outerApiClient.GetCharity(charityNumber), new Context());
 
                 if (charityDetails == null)
                 {
