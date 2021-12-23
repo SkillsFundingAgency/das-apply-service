@@ -194,7 +194,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             if (isApplicationInFlightWithDifferentUser)
             {
-                return View("~/Views/Roatp/ShutterPages/ApplicationInProgress.cshtml", new ExistingApplicationViewModel { UKPRN = model.UKPRN});
+                return RedirectToAction("ApplicationInProgress", new { UKPRN = model.UKPRN });
             }
 
             var ukrlpLookupResults = await _ukrlpApiClient.GetTrainingProviderByUkprn(ukprn);
@@ -226,6 +226,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
                 return RedirectToAction("UkprnNotFound", "RoatpShutterPages");
             }
+        }
+
+        [Route("application-in-progress")]
+        [HttpGet]
+        public IActionResult ApplicationInProgress(string ukprn)
+        {
+            return View("~/Views/Roatp/ShutterPages/ApplicationInProgress.cshtml", new ExistingApplicationViewModel { UKPRN = ukprn });
         }
 
         [Route("confirm-organisations-details")]
