@@ -59,7 +59,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             if (verificationCompanyAnswer == "TRUE"
                 && companiesHouseManualEntryAnswer != "TRUE")
             {
-                return await ConfirmDirectorsPscs(applicationId, ukprn, companyNumber);
+                return RedirectToAction("ConfirmDirectorsPscs", new { applicationId, ukprn, companyNumber });
             }
 
             var verificationCharityAnswer = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UkrlpVerificationCharity)?.Value<string>();
@@ -67,22 +67,22 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             if (verificationCharityAnswer == "TRUE"
                 && charityCommissionManualEntryAnswer != "TRUE")
             {
-                return await ConfirmTrustees(applicationId);
+                return RedirectToAction("ConfirmTrustees", new { applicationId });
             }
 
             var verificationPartnership = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UkrlpVerificationSoleTraderPartnership)?.Value<string>();
             if (verificationPartnership == "TRUE")
             {
-                return await SoleTraderOrPartnership(applicationId);
+                return RedirectToAction("SoleTraderOrPartnership", new { applicationId });
             }
 
             var peopleData = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.AddPeopleInControl)?.Value<string>();
             if (peopleData != null)
             {
-                return await ConfirmPeopleInControl(applicationId);
+                return RedirectToAction("ConfirmPeopleInControl", new { applicationId });
             }
 
-            return await AddPeopleInControl(applicationId);
+            return RedirectToAction("AddPeopleInControl", new { applicationId });
         }
 
         [HttpGet("refresh-directors-pscs")]
