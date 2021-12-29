@@ -27,6 +27,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     using SFA.DAS.ApplyService.Domain.Entities;
     using SFA.DAS.ApplyService.Application.Apply.Roatp;
     using SFA.DAS.ApplyService.Application.Apply;
+    using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 
     [Authorize]
     public class RoatpApplicationPreambleController : RoatpApplyControllerBase
@@ -510,15 +511,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         return RedirectToAction("CharityNotFound", "RoatpShutterPages");
                     }
 
-                    var charityApiResponse = await _outerApiClient.GetCharityDetails(charityNumber);
-                    
-                    if (!charityApiResponse.Success)
+                    try 
+                    { 
+                        charityDetails = await _outerApiClient.GetCharityDetails(charityNumber);
+                    }
+                    catch(Exception ex)
                     {
+                        _logger.LogError(ex, "Error fetching charity details for charity number `{charityNumber}`", charityNumber);
                         return RedirectToAction("CharityCommissionNotAvailable", "RoatpShutterPages");
                     }
-                    charityDetails = charityApiResponse.Response;
 
-                    if (charityDetails == null || !charityDetails.IsActivelyTrading)
+                    if (!charityDetails.IsActivelyTrading)
                     {
                         return RedirectToAction("CharityNotFound", "RoatpShutterPages");
                     }
