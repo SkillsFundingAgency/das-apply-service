@@ -1,15 +1,16 @@
-﻿namespace SFA.DAS.ApplyService.InternalApi.Controllers
-{
-    using Infrastructure;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using System.Threading.Tasks;
-    using Polly;
-    using Polly.Retry;
-    using System;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+using Polly;
+using Polly.Retry;
+using System;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
+using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 
+namespace SFA.DAS.ApplyService.InternalApi.Controllers
+{
     [Authorize]
     public class CharityCommissionController : Controller
     {
@@ -33,7 +34,7 @@
             try
             {
                 var charityDetails =
-                    await _retryPolicy.ExecuteAsync(context => _outerApiClient.GetCharity(charityNumber), new Context());
+                    await _retryPolicy.ExecuteAsync(context => _outerApiClient.GetCharityDetails(charityNumber), new Context());
 
                 if (charityDetails == null)
                 {

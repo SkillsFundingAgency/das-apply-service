@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.AutoMapper;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Models.Ukrlp;
@@ -160,7 +161,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Name = "Test Name"                
             };
 
-            _outerApiClient.Setup(x => x.GetCharity(charityNumber)).ReturnsAsync(charityDetails);
+            _outerApiClient.Setup(x => x.GetCharityDetails(charityNumber)).ReturnsAsync(charityDetails);
 
             var result = await _service.GetExternalApiCheckDetails(_applicationId);
 
@@ -228,7 +229,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _roatpApiClient.Setup(x => x.GetUkrlpDetails(_ukprn)).ReturnsAsync(_ukrlpDetails);
 
             Charity charityDetails = null;
-            _outerApiClient.Setup(x => x.GetCharity(charityNumber)).ReturnsAsync(charityDetails);
+            _outerApiClient.Setup(x => x.GetCharityDetails(charityNumber)).ReturnsAsync(charityDetails);
 
             Action serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId).GetAwaiter().GetResult();
             serviceCall.Should().Throw<ServiceUnavailableException>();

@@ -5,6 +5,7 @@ using SFA.DAS.ApplyService.Domain.CharityCommission;
 using SFA.DAS.ApplyService.Domain.CompaniesHouse;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Ukrlp;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using System;
 using System.Linq;
@@ -20,9 +21,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly ILogger<GatewayApiChecksService> _logger;
 
-        public GatewayApiChecksService(CompaniesHouseApiClient companiesHouseApiClient, IOuterApiClient outerApiClient,
-                                       IRoatpApiClient roatpApiClient, IInternalQnaApiClient qnaApiClient,
-                                       ILogger<GatewayApiChecksService> logger)
+        public GatewayApiChecksService(
+            CompaniesHouseApiClient companiesHouseApiClient, 
+            IOuterApiClient outerApiClient,
+            IRoatpApiClient roatpApiClient, 
+            IInternalQnaApiClient qnaApiClient,
+            ILogger<GatewayApiChecksService> logger)
         {
             _companiesHouseApiClient = companiesHouseApiClient;
             _outerApiClient = outerApiClient;
@@ -91,7 +95,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         {
             if (int.TryParse(charityNumberFromUkrlp, out var charityNumber))
             {
-                var charityDetails = await _outerApiClient.GetCharity(charityNumber);
+                var charityDetails = await _outerApiClient.GetCharityDetails(charityNumber);
                 if (charityDetails == null)
                 {
                     var message = $"Unable to retrieve Charity Commission details for charity number {charityNumber}";
