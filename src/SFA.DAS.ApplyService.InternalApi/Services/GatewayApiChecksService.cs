@@ -93,16 +93,22 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
 
         private async Task LookupCharityCommissionDetails(ApplyGatewayDetails applyGatewayDetails, string charityNumberFromUkrlp)
         {
-            if (int.TryParse(charityNumberFromUkrlp, out var charityNumber))
+            if (!int.TryParse(charityNumberFromUkrlp, out var charityNumber))
+            { 
+                _logger.LogError("Unable to parse charity registration number from charity number in ukrlp `{charityNumber}`", charityNumberFromUkrlp);
+                return;
+            }
+
+            try
             {
                 var charityDetails = await _outerApiClient.GetCharityDetails(charityNumber);
-                if (charityDetails == null)
-                {
-                    var message = $"Unable to retrieve Charity Commission details for charity number {charityNumber}";
-                    _logger.LogError(message);
-                    throw new ServiceUnavailableException(message);
-                }
                 applyGatewayDetails.CharityCommissionDetails = Mapper.Map<CharityCommissionSummary>(charityDetails);
+            }
+            catch (Exception ex)
+            {
+                var message = $"Unable to retrieve Charity Commission details for charity number {charityNumber}";
+                _logger.LogError(ex, message);
+                throw new ServiceUnavailableException(message);
             }
         }
     }
