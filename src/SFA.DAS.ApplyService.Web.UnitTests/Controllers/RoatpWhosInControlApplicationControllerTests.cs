@@ -287,6 +287,26 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+        public void Start_page_routes_to_ConfirmPeopleInControl()
+        {
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCompany] = "",
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCharity] = "",
+                [RoatpWorkflowQuestionTags.UkrlpVerificationSoleTraderPartnership] = "FALSE",
+                [RoatpWorkflowQuestionTags.AddPeopleInControl] = "Test"
+            };
+
+            _qnaClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>())).ReturnsAsync(_qnaApplicationData);
+
+            var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmPeopleInControl");
+        }
+
+        [Test]
         public void Start_page_routes_to_add_people_in_control_if_not_verified_with_companies_house_or_charity_commission_or_sole_trader_partnership()
         {
             var _qnaApplicationData = new JObject
