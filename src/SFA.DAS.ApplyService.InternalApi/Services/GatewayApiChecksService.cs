@@ -9,6 +9,7 @@ using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services
@@ -104,7 +105,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 var charityDetails = await _outerApiClient.GetCharityDetails(charityNumber);
                 applyGatewayDetails.CharityCommissionDetails = Mapper.Map<CharityCommissionSummary>(charityDetails);
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
                 var message = $"Unable to retrieve Charity Commission details for charity number {charityNumber}";
                 _logger.LogError(ex, message);

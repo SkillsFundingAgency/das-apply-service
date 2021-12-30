@@ -15,6 +15,7 @@ using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
 using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
@@ -213,7 +214,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public void Service_throws_exception_if_no_charity_commission_details_returned()
+        public async Task Service_throws_exception_if_no_charity_commission_details_returned()
         {
             int charityNumber = 112233;
 
@@ -229,9 +230,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _roatpApiClient.Setup(x => x.GetUkrlpDetails(_ukprn)).ReturnsAsync(_ukrlpDetails);
 
             Charity charityDetails = null;
-            _outerApiClient.Setup(x => x.GetCharityDetails(charityNumber)).ReturnsAsync(charityDetails);
+            _outerApiClient.Setup(x => x.GetCharityDetails(charityNumber)).Throws<HttpRequestException>();
 
-            Action serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId).GetAwaiter().GetResult();
+            Func<Task> serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId);
             serviceCall.Should().Throw<ServiceUnavailableException>();
         }
     }
