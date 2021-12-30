@@ -303,7 +303,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             if (model.ErrorMessages != null & model.ErrorMessages.Count > 0)
             {
-                // TODO: Tech Debt - This should follow the PRG pattern
                 return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesDob.cshtml", model);
             }
 
