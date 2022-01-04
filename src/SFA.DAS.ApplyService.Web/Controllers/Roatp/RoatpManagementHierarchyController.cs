@@ -10,7 +10,6 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp.ManagementHierarchy;
-using SFA.DAS.Validation.Mvc.Filters;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -62,8 +61,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
-        //[ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        [RestoreModelStateFilter]
         public IActionResult AddManagementHierarchy(Guid applicationId)
         {
             var model = new AddEditManagementHierarchyViewModel 
@@ -79,8 +76,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
-        //[ModelStatePersist(ModelStatePersist.Store)]
-        [PreserveModelStateFilter]
         public async Task<IActionResult> AddManagementHierarchyDetails(AddEditManagementHierarchyViewModel model)
         {
             if (!ModelState.IsValid)
@@ -144,8 +139,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
-        //[ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        [RestoreModelStateFilter]
         public async Task<IActionResult> EditManagementHierarchy(Guid applicationId, int index)
         {
             var personTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
@@ -200,8 +193,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
-        //[ModelStatePersist(ModelStatePersist.Store)]
-        [PreserveModelStateFilter]
         public async Task<IActionResult> UpdateManagementHierarchyDetails(AddEditManagementHierarchyViewModel model)
         {
             if (!ModelState.IsValid)
@@ -246,8 +237,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
-        //[ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        [RestoreModelStateFilter]
         public async Task<IActionResult> RemoveManagementHierarchy(Guid applicationId, int index)
         {
             var personTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
@@ -271,8 +260,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
-        //[ModelStatePersist(ModelStatePersist.Store)]
-        [PreserveModelStateFilter]
         public async Task<IActionResult> RemoveManagementHierarchy(ConfirmRemoveManagementHierarchyViewModel model)
         {
             if (!ModelState.IsValid)
