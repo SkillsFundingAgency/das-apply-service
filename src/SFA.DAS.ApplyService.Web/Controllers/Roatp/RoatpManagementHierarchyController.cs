@@ -62,7 +62,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
-        //[ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [RestoreModelStateFilter]
         public IActionResult AddManagementHierarchy(Guid applicationId)
         {
@@ -79,7 +78,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
-        //[ModelStatePersist(ModelStatePersist.Store)]
         [PreserveModelStateFilter]
         public async Task<IActionResult> AddManagementHierarchyDetails(AddEditManagementHierarchyViewModel model)
         {
@@ -144,7 +142,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
-        //[ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [RestoreModelStateFilter]
         public async Task<IActionResult> EditManagementHierarchy(Guid applicationId, int index)
         {
@@ -200,7 +197,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
-        //[ModelStatePersist(ModelStatePersist.Store)]
         [PreserveModelStateFilter]
         public async Task<IActionResult> UpdateManagementHierarchyDetails(AddEditManagementHierarchyViewModel model)
         {
@@ -246,7 +242,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
-        //[ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [RestoreModelStateFilter]
         public async Task<IActionResult> RemoveManagementHierarchy(Guid applicationId, int index)
         {
@@ -271,7 +266,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
-        //[ModelStatePersist(ModelStatePersist.Store)]
         [PreserveModelStateFilter]
         public async Task<IActionResult> RemoveManagementHierarchy(ConfirmRemoveManagementHierarchyViewModel model)
         {
