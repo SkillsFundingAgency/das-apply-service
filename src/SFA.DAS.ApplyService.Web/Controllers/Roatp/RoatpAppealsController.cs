@@ -36,7 +36,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet("application/{applicationId}/appeal")]
-        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> MakeAppeal(Guid applicationId)
         {
             if (!await CanMakeAppeal(applicationId))
@@ -88,7 +87,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost("application/{applicationId}/appeal")]
-        [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> MakeAppeal(MakeAppealViewModel model)
         {
             if (!await CanMakeAppeal(model.ApplicationId))
@@ -98,14 +96,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("MakeAppeal", new { model.ApplicationId });
+                return View("~/Views/Appeals/MakeAppeal.cshtml", model);
             }
 
             return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
         }
 
         [HttpGet("application/{applicationId}/grounds-of-appeal")]
-        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> GroundsOfAppeal(Guid applicationId, bool appealOnPolicyOrProcesses, bool appealOnEvidenceSubmitted)
         {
             if (!await CanMakeAppeal(applicationId))
@@ -129,7 +126,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost("application/{applicationId}/grounds-of-appeal")]
-        [ModelStatePersist(ModelStatePersist.Store)]
         [Authorize(Policy = "AccessAppealNotYetSubmitted")]
         public async Task<IActionResult> GroundsOfAppeal(GroundsOfAppealViewModel model)
         {
@@ -140,7 +136,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("GroundsOfAppeal", new { model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted });
+                return View("~/Views/Appeals/GroundsOfAppeal.cshtml", model);
             }
 
             var signInId = User.GetSignInId().ToString();
