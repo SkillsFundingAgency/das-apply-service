@@ -14,17 +14,17 @@ namespace SFA.DAS.ApplyService.Web.Authorization
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IApplicationApiClient _apiClient;
-        private readonly IUserService _userService;
+        private readonly IAppealsApiClient _appealsApiClient;
         private readonly ILogger<AuthorizationHandler> _logger;
 
         public AuthorizationHandler(IHttpContextAccessor httpContextAccessor,
             IApplicationApiClient apiClient,
-            IUserService userService,
+            IAppealsApiClient appealsApiClient,
             ILogger<AuthorizationHandler> logger)
         {
             _httpContextAccessor = httpContextAccessor;
             _apiClient = apiClient;
-            _userService = userService;
+            _appealsApiClient = appealsApiClient;
             _logger = logger;
         }
 
@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Web.Authorization
             _logger.LogInformation("AccessApplicationRequirementHandler invoked");
 
             var pendingRequirements = context.PendingRequirements.ToList();
-            if (!pendingRequirements.Exists(x => x is AccessApplicationRequirement || x is ApplicationStatusRequirement))
+            if (!pendingRequirements.Exists(x => x is AccessApplicationRequirement || x is ApplicationStatusRequirement || x is AppealNotYetSubmittedRequirement))
             {
                 return;
             }
@@ -44,7 +44,7 @@ namespace SFA.DAS.ApplyService.Web.Authorization
             if (Guid.TryParse(requestedApplicationId, out var applicationId))
             {
                 _logger.LogInformation($"Requested application {applicationId}");
-                var signInId = await _userService.GetSignInId();
+                var signInId = _httpContextAccessor.HttpContext.User.GetSignInId();
                 application = await _apiClient.GetApplicationByUserId(applicationId, signInId);
             }
             else
@@ -83,26 +83,66 @@ namespace SFA.DAS.ApplyService.Web.Authorization
                         _logger.LogInformation($"Requirement {requirement.GetType().Name} not met - application status required: one of [{requiredStatus}], actual {actualStatus}");
                     }
                 }
+
+                if (requirement is AppealNotYetSubmittedRequirement)
+                {
+                    if (application != null)
+                    {
+                        var appeal = await _appealsApiClient.GetAppeal(application.ApplicationId);
+
+                        if (appeal?.AppealSubmittedDate is null)
+                        {
+                            context.Succeed(requirement);
+                            _logger.LogInformation($"Requirement {requirement.GetType().Name} met");
+                        }
+                        else
+                        {
+                            _logger.LogInformation($"Requirement {requirement.GetType().Name} not met - appeal has been submitted");
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"Requirement {requirement.GetType().Name} not met - application not found");
+                    }
+                }
+                
             }
         }
 
         private string GetRequestedApplicationId()
         {
-            var result = _httpContextAccessor.HttpContext.Request.Method == HttpMethod.Get.Method
-                ? _httpContextAccessor.HttpContext.Request.Query["ApplicationId"].ToString()
-                : _httpContextAccessor.HttpContext.Request.Form["ApplicationId"].ToString();
+            string requestedApplicationId;
 
-            if(string.IsNullOrWhiteSpace(result))
+            try
+            {
+                requestedApplicationId = _httpContextAccessor.HttpContext.Request.Method == HttpMethod.Get.Method
+                    ? _httpContextAccessor.HttpContext.Request.Query["ApplicationId"].ToString()
+                    : _httpContextAccessor.HttpContext.Request.Form["ApplicationId"].ToString();
+            }
+            catch(Exception ex) when (ex is NullReferenceException || ex is InvalidOperationException)
+            {
+                _logger.LogError(ex, $"Unable to determine requested ApplicationId from HttpContext");
+                requestedApplicationId = null;
+            }
+
+            if(string.IsNullOrWhiteSpace(requestedApplicationId))
             {
                 var path = _httpContextAccessor.HttpContext.Request.Path.Value;
 
-                if (path.StartsWith("/Application/"))
+                if (path.StartsWith("/Application/", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    result = path.Split('/').Last();
+                    foreach(var substring in path.Split('/'))
+                    {
+                        if(Guid.TryParse(substring, out var applicationId))
+                        {
+                            requestedApplicationId = applicationId.ToString();
+                            break;
+                        }
+                    }
                 }
             }
 
-            return result;
+            return requestedApplicationId;
         }
     }
 }

@@ -11,7 +11,10 @@
 
 }
 
-<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
+}
 
 <a class="govuk-back-link" asp-action="SoleTraderOrPartnership" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId">Back</a>
 

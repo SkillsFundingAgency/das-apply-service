@@ -1,28 +1,22 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.Database;
 
 namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
 {
     public class AppealRepository : IAppealRepository
     {
+        private readonly IDbConnectionHelper _dbConnectionHelper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IApplyConfig _config;
 
-        public AppealRepository(IConfigurationService configurationService, IUnitOfWork unitOfWork)
+        public AppealRepository(IDbConnectionHelper dbConnectionHelper, IUnitOfWork unitOfWork)
         {
-            _config = configurationService.GetConfig().Result;
+            _dbConnectionHelper = dbConnectionHelper;
             _unitOfWork = unitOfWork;
-        }
-
-        private SqlConnection GetConnection()
-        {
-            return new SqlConnection(_config.SqlConnectionString);
         }
 
         public void Add(Appeal entity)
@@ -30,13 +24,23 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
             _unitOfWork.Register(() => PersistAdd(entity));
         }
 
-        public async Task<Appeal> GetByOversightReviewId(Guid oversightReviewId)
+        public void Update(Appeal entity)
         {
-            using (var connection = GetConnection())
+            _unitOfWork.Register(() => PersistUpdate(entity));
+        }
+
+        public void Remove(Guid entityId)
+        {
+            _unitOfWork.Register(() => PersistRemoval(entityId));
+        }
+
+        public async Task<Appeal> GetByApplicationId(Guid applicationId)
+        {
+            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<Appeal>(
-                    @"SELECT * FROM [Appeal] WHERE OversightReviewId = @oversightReviewId",
-                    new { oversightReviewId });
+                    @"SELECT * FROM [Appeal] WHERE ApplicationId = @applicationId",
+                    new { applicationId });
             }
         }
 
@@ -47,19 +51,73 @@ namespace SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories
             await transaction.Connection.ExecuteAsync(
                 @"INSERT INTO [Appeal]
                     ([Id],
-                    [OversightReviewId],
-                    [Message],
+                    [ApplicationId],
+                    [Status],
+                    [HowFailedOnPolicyOrProcesses],
+                    [HowFailedOnEvidenceSubmitted],
+                    [AppealSubmittedDate],
+                    [InternalComments],
+                    [ExternalComments],
                     [UserId],
                     [UserName],
+                    [InProgressDate],
+                    [InProgressUserId],
+                    [InProgressUserName],
+                    [InProgressInternalComments],
+                    [InProgressExternalComments],
                     [CreatedOn])
                     VALUES (
                     @Id,
-                    @OversightReviewId,
-                    @Message,
+                    @ApplicationId,
+                    @Status,
+                    @HowFailedOnPolicyOrProcesses,
+                    @HowFailedOnEvidenceSubmitted,
+                    @AppealSubmittedDate,
+                    @InternalComments,
+                    @ExternalComments,
                     @UserId,
                     @UserName,
+                    @InProgressDate,
+                    @InProgressUserId,
+                    @InProgressUserName,
+                    @InProgressInternalComments,
+                    @InProgressExternalComments,
                     @CreatedOn)",
                 entity, transaction);
+        }
+
+        public async Task PersistUpdate(Appeal entity)
+        {
+            var transaction = _unitOfWork.GetTransaction();
+
+            await transaction.Connection.ExecuteAsync(
+                @"UPDATE [Appeal]
+                    SET [Status] = @Status,
+                    [HowFailedOnPolicyOrProcesses] = @HowFailedOnPolicyOrProcesses,
+                    [HowFailedOnEvidenceSubmitted] = @HowFailedOnEvidenceSubmitted,
+                    [AppealDeterminedDate] = @AppealDeterminedDate,
+                    [InternalComments] = @InternalComments,
+                    [ExternalComments] = @ExternalComments,
+                    [UserId] =  @UserId,
+                    [UserName] =  @UserName,
+                    [InProgressDate] = @InProgressDate,
+                    [InProgressUserId] = @InProgressUserId,
+                    [InProgressUserName] = @InProgressUserName,
+                    [InProgressInternalComments] = @InProgressInternalComments,
+                    [InProgressExternalComments] = @InProgressExternalComments,
+                    [UpdatedOn] = @UpdatedOn
+                    WHERE [Id] = @Id",
+                entity, transaction);
+
+        }
+
+        public async Task PersistRemoval(Guid entityId)
+        {
+            var transaction = _unitOfWork.GetTransaction();
+
+            await transaction.Connection.ExecuteAsync(
+                "DELETE FROM [Appeal] WHERE Id = @entityId",
+                    new { entityId }, transaction);
         }
     }
 }

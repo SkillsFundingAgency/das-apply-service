@@ -60,6 +60,10 @@
     <Folder Include="Tables\" />
     <Folder Include="StoredProcedures" />
     <Folder Include="Sequences" />
+    <Folder Include="AdhocScipts" />
+    <Folder Include="AdhocScipts\DataMart" />
+    <Folder Include="Scripts" />
+    <Folder Include="Scripts\Seed" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Contacts.sql" />
@@ -68,22 +72,31 @@
     <Build Include="Sequences\RoatpAppReferenceSequence.sql" />
     <Build Include="Tables\Apply.sql" />
     <Build Include="Tables\ApplySnapshots.sql" />
-    <Build Include="Tables\WhitelistedProviders.sql" />
+    <Build Include="Tables\AllowedProviders.sql" />
     <Build Include="Tables\GatewayAnswer.sql" />
     <Build Include="Tables\AssessorPageReviewOutcome.sql" />
     <Build Include="Tables\ModeratorPageReviewOutcome.sql" />
     <Build Include="Tables\FinancialData.sql" />
     <Build Include="Tables\Audit.sql" />
     <Build Include="Tables\OversightReview.sql" />
-    <Build Include="Tables\AppealUpload.sql" />
+    <Build Include="Tables\AppealFile.sql" />
     <Build Include="Tables\Appeal.sql" />
     <Build Include="Tables\ExtractedApplications.sql" />
     <Build Include="Tables\SubmittedApplicationAnswers.sql" />
+    <Build Include="Tables\FinancialReview.sql" />
+    <Build Include="Tables\FinancialReviewClarificationFile.sql" />
+    <Build Include="Tables\BankHoliday.sql" />
+    <None Include="Scripts\Seed\EmailTemplates.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PostDeploy Include="Script.PostDeployment1.sql" />
+    <PostDeploy Include="Script.PostDeployment.sql" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="AdhocScipts\DataMart\LookupOversightReviewStatus.sql" />
+    <None Include="AdhocScipts\DataMart\LookupSequenceTitles.sql" />
+    <None Include="AdhocScipts\DataMart\LookupSectionTitles.sql" />
+    <None Include="AdhocScipts\DataMart\LookupPageTitles.sql" />
+    <None Include="AdhocScipts\DataMart\LookupQuestionTitles.sql" />
     <None Include="SFA.DAS.ApplyService.Database.publish.xml" />
   </ItemGroup>
 </Project>

@@ -12,14 +12,10 @@
     var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
 }
 
-<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
-
-@*
-<form asp-controller="RoatpWhosInControlApplication" asp-action="@Model.BackAction" method="get" name="backForm" novalidate>
-    <input type="hidden" asp-for="ApplicationId" />
-    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-</form>
-*@
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -71,7 +67,7 @@
 
                                 <input asp-for="Confirmation" class="govuk-radios__input" id="Confirmation-Yes"
                                        name="Confirmation" type="radio" value="Y"
-                                       sfa-validation-for="PartnershipType" sfa-validationerror-class="form-control-error">
+                                       sfa-validation-for="Confirmation" sfa-validationerror-class="form-control-error">
                                 <label class="govuk-label govuk-radios__label" for="Confirmation-Yes">
                                     Yes
                                 </label>

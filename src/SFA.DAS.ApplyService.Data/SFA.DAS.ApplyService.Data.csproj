@@ -8,10 +8,10 @@
     <ItemGroup>
       <ProjectReference Include="..\SFA.DAS.ApplyService.Configuration\SFA.DAS.ApplyService.Configuration.csproj" />
       <ProjectReference Include="..\SFA.DAS.ApplyService.Domain\SFA.DAS.ApplyService.Domain.csproj" />
+      <ProjectReference Include="..\SFA.DAS.ApplyService.Infrastructure\SFA.DAS.ApplyService.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Azure.Storage.Blobs" Version="12.8.0" />
       <PackageReference Include="Dapper">
         <Version>1.50.5</Version>
       </PackageReference>

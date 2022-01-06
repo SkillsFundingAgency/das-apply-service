@@ -1,9 +1,10 @@
 ﻿@using MoreLinq;
 @model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmTrusteesDateOfBirthViewModel
 
-<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
-
-@*<a class="govuk-back-link" asp-action="ConfirmTrusteesNoDob" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId">Back</a>*@
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeader.cshtml" />
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -36,7 +37,7 @@
                 <h1 class="govuk-heading-xl">Enter the date of birth for trustees</h1>
             }
 
-        <form method="post" asp-action="TrusteesDobsConfirmed" enctype="multipart/form-data" novalidate>
+        <form method="post" asp-action="TrusteesDobsConfirmed" asp-route-applicationId="@Model.ApplicationId" enctype="multipart/form-data" novalidate>
             <input type="hidden" asp-for="ApplicationId" />
             <input type="hidden" asp-for="GetHelpAction" />
 

@@ -1,46 +1,42 @@
-using System.Security.Claims;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
-using SFA.DAS.ApplyService.Web.Validators;
+using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
-    using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class UsersController : Controller
     {
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private readonly CreateAccountValidator _createAccountValidator;
+        private readonly IReapplicationCheckService _reapplicationCheckService;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IHttpContextAccessor contextAccessor, 
-                               CreateAccountValidator createAccountValidator)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
-            _contextAccessor = contextAccessor;
-            _createAccountValidator = createAccountValidator;
+            _reapplicationCheckService = reapplicationCheckService;
         }
-        
+
         [HttpGet]
         public IActionResult CreateAccount()
         {
             var vm = new CreateAccountViewModel();
             return View(vm);
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel vm)
         {
@@ -48,7 +44,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return View(vm);
             }
-            
+
             var inviteSuccess = await _usersApiClient.InviteUser(vm);
 
             _sessionService.Set("NewAccount", vm);
@@ -59,29 +55,33 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public IActionResult SignIn()
         {
-            return Challenge(new AuthenticationProperties() {RedirectUri = Url.Action("PostSignIn", "Users")},
+            return Challenge(new AuthenticationProperties() { RedirectUri = Url.Action("PostSignIn", "Users") },
                 OpenIdConnectDefaults.AuthenticationScheme);
         }
-        
+
         [HttpGet]
         public IActionResult SignOut()
         {
-            _contextAccessor.HttpContext.Session.Clear();
-            foreach (var cookie in _contextAccessor.HttpContext.Request.Cookies.Keys)
+            HttpContext.Session.Clear();
+            foreach (var cookie in HttpContext.Request.Cookies.Keys)
             {
-                _contextAccessor.HttpContext.Response.Cookies.Delete(cookie);
+                HttpContext.Response.Cookies.Delete(cookie);
             }
 
-            if (string.IsNullOrEmpty(_contextAccessor.HttpContext.User.FindFirstValue("display_name")))
+            if (!User.Identity.IsAuthenticated)
+            {
+                // If they are no longer authenticated then the cookie has expired. Don't try to signout.
+                return RedirectToAction("Index", "Home");
+            }
+            else
             {
                 var authenticationProperties = new AuthenticationProperties
                 {
                     RedirectUri = Url.Action("Index", "Home")
                 };
+
                 return SignOut(authenticationProperties, CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
             }
-
-            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult InviteSent()
@@ -90,7 +90,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (viewModel?.Email is null)
             {
-                RedirectToAction("CreateAccount");
+                return RedirectToAction("CreateAccount");
             }
 
             return View(viewModel);
@@ -98,8 +98,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public async Task<IActionResult> PostSignIn()
         {
-            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
-           
+            var signInId = User.GetSignInId();
+            var user = await _usersApiClient.GetUserBySignInId(signInId);
+
             if (user is null)
             {
                 return RedirectToAction("NotSetUp");
@@ -109,10 +110,31 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
             }
 
-            var selectedApplicationType = ApplicationTypes.RegisterTrainingProviders;
+            var reapplicationAllowed =
+                await _reapplicationCheckService.ReapplicationAllowed(signInId, user.ApplyOrganisationId);
             
-            return RedirectToAction("Applications", "RoatpApplication", new { applicationType = selectedApplicationType });
+            if (reapplicationAllowed)
+            {
+                var ukprn = await _reapplicationCheckService.ReapplicationUkprnForUser(User.GetSignInId());
 
+                if (string.IsNullOrEmpty(ukprn))
+                {
+                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
+                }
+             }
+
+            var reapplicationRequestedAndPending =
+                await _reapplicationCheckService.ReapplicationRequestedAndPending(signInId, user.ApplyOrganisationId);
+
+            if (reapplicationRequestedAndPending)
+            {
+                var applicationId = await _reapplicationCheckService.ReapplicationApplicationIdForUser(signInId);
+                if (applicationId!=null && applicationId!=Guid.Empty)
+                    return RedirectToAction("RequestNewInvitationRefresh", "RoatpAppeals", new { applicationId });
+            }
+
+            return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
+            
         }
 
         [HttpGet("/Users/SignedOut")]
@@ -128,37 +150,30 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpGet]
         [Route("first-time-apprenticeship-service")]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public IActionResult ExistingAccount()
         {
             return View(new ExistingAccountViewModel());
         }
 
         [HttpPost]
+        [Route("first-time-apprenticeship-service")]
+        [ModelStatePersist(ModelStatePersist.Store)]
         public IActionResult ConfirmExistingAccount(ExistingAccountViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                model.ErrorMessages = new List<ValidationErrorDetail>();
-
-                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var modelError in modelErrors)
-                {
-                    model.ErrorMessages.Add(new ValidationErrorDetail
-                    {
-                        Field = "ExistingAccount",
-                        ErrorMessage = modelError.ErrorMessage
-                    });
-                }
-
-                return View("~/Views/Users/ExistingAccount.cshtml", model);
+                return RedirectToAction("ExistingAccount");
             }
 
-            if (model.FirstTimeSignin == "Y")
+            if (model.FirstTimeSignin == true)
             {
                 return RedirectToAction("CreateAccount");
             }
-
-            return RedirectToAction("SignIn");
+            else
+            {
+                return RedirectToAction("SignIn");
+            }
         }
     }
 }

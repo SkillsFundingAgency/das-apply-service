@@ -16,12 +16,9 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ApplicationStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
-        public string FinancialReviewStatus { get; set; }
         public string ModerationStatus { get; set; }
 
         public ApplyData ApplyData { get; set; }
-        public FinancialReviewDetails FinancialGrade { get; set; }
-
         public string Assessor1UserId { get; set; }
         public string Assessor1Name{ get; set; }
         public string Assessor1ReviewStatus { get; set; }
@@ -62,6 +59,9 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ProviderRouteNameOnRegister { get; set; }
         public string OrganisationType { get; set; }
         public string Address { get; set; }
+        public bool? RequestToReapplyMade { get; set; }
+        public string RequestToReapplyBy { get; set; }
+        public DateTime? RequestToReapplyOn { get; set; }
     }
 
 
@@ -112,10 +112,12 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
     public class FinancialReviewDetails
     {
+        public Guid ApplicationId { get; set; }
+        public string Status { get; set; }
         public string SelectedGrade { get; set; }
         public DateTime? FinancialDueDate { get; set; }
         public string GradedBy { get; set; }
-        public DateTime? GradedDateTime { get; set; }
+        public DateTime? GradedOn { get; set; }
         public string Comments { get; set; }
         public string ExternalComments { get; set; }
         public List<FinancialEvidence> FinancialEvidences { get; set; }
@@ -124,7 +126,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ClarificationRequestedBy { get; set; }
         public string ClarificationResponse { get; set; }
     }
-
     public class FinancialEvidence
     {
         public string Filename { get; set; }
@@ -171,11 +172,18 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string GatewayAssessed = "GatewayAssessed";	
         public const string FeedbackAdded = "FeedbackAdded";	
         public const string Rejected = "Rejected";	
-        public const string Approved = "Approved";	
+    
         public const string Cancelled = "Cancelled";
         public const string Withdrawn = "Withdrawn";
         public const string Removed = "Removed";
 
+        public const string InProgressOutcome = "InProgessOutcome";
+        public const string InProgressAppeal = "InProgessAppeal";
+
+        public const string Successful = "Successful";
+        public const string Unsuccessful = "Unsuccessful";
+
+        public const string AppealSuccessful = "AppealSuccessful";
         // Below are other statuses mentioned in the most recent status documentation
         // Please check the flow in RoatpApplicationController, under the line ' switch (application.ApplicationStatus)' if you add new statuses
         // GWResubmitted
@@ -205,7 +213,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Resubmitted = "Re-submitted"; // TECH DEBT: Correct to "Resubmitted"
         public const string Fail = "Fail";
         public const string Pass = "Pass";
-        public const string Reject = "Reject";
+        public const string Rejected = "Rejected";
     }
 
     public static class AssessorReviewStatus

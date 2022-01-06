@@ -54,6 +54,21 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok(org);
         }
 
+
+        [HttpPut("DirectorsAndPscs")]
+        [PerformValidation]
+        public async Task<ActionResult<bool>> UpdateOrganisationDirectorsAndPscs([FromBody] UpdateOrganisationDirectorsAndPscsRequest request)
+        {
+            var result = await _mediator.Send(request);
+
+            if (result is false)
+            {
+                return BadRequest();
+            }
+
+            return Ok(result);
+        }
+
         [HttpGet("name/{name}")]
         public async Task<ActionResult<Organisation>> GetOrganisationByName(string name)
         {
@@ -118,12 +133,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             }
 
             return Ok(org);
-        }
-
-        [HttpPost("{applicationId}/{contactId}/{endPointAssessorOrganisationId}/RoEpaoApproved/{roEpaoApprovedFlag}")]
-        public async Task UpdateRoEpaoApprovedFlag(Guid applicationId, Guid contactId,string endPointAssessorOrganisationId, bool roEpaoApprovedFlag)
-        {
-            await _mediator.Send(new UpdateRoEpaoApprovedFlagRequest(applicationId, contactId, endPointAssessorOrganisationId, roEpaoApprovedFlag));
         }
     }
 }

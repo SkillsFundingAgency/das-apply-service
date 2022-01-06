@@ -1,13 +1,12 @@
-using Newtonsoft.Json;
-
 namespace SFA.DAS.ApplyService.Configuration
 {
     public interface IApplyConfig
     {
-        ApiAuthentication ApiAuthentication { get; set; }
         InternalApiConfig InternalApi { get; set; }
         string SignInPage { get; set; }
         string SessionRedisConnectionString { get; set; }
+        string SessionCachingDatabase { get; set; }
+        string DataProtectionKeysDatabase { get; set; }
         DfeSignInConfig DfeSignIn { get; set; }
         string SqlConnectionString { get; set; }
 
@@ -15,26 +14,16 @@ namespace SFA.DAS.ApplyService.Configuration
 
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
-        AssessorServiceApiAuthentication AssessorServiceApiAuthentication { get; set; }
-
-        ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
-
         CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
-        CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
+
+        OuterApiConfiguration OuterApiConfiguration { get; set; }
 
         RoatpApiAuthentication RoatpApiAuthentication { get; set; }
 
         QnaApiAuthentication QnaApiAuthentication { get; set; }
-    }
 
-    public class ApiAuthentication
-    {
-        [JsonRequired] public string ClientId { get; set; }
+        AzureActiveDirectoryConfiguration AzureActiveDirectoryConfiguration { get; set; }
 
-        [JsonRequired] public string Instance { get; set; }
-
-        [JsonRequired] public string TenantId { get; set; }
-
-        [JsonRequired] public string Audience { get; set; }
+        FeatureToggles FeatureToggles { get; set; }
     }
 }

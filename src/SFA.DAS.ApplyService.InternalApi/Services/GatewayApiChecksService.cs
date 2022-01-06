@@ -15,17 +15,17 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
     public class GatewayApiChecksService : IGatewayApiChecksService
     {
         private readonly CompaniesHouseApiClient _companiesHouseApiClient;
-        private readonly CharityCommissionApiClient _charityCommissionClient;
+        private readonly IOuterApiClient _outerApiClient;
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly ILogger<GatewayApiChecksService> _logger;
 
-        public GatewayApiChecksService(CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiClient,
+        public GatewayApiChecksService(CompaniesHouseApiClient companiesHouseApiClient, IOuterApiClient outerApiClient,
                                        IRoatpApiClient roatpApiClient, IInternalQnaApiClient qnaApiClient,
                                        ILogger<GatewayApiChecksService> logger)
         {
             _companiesHouseApiClient = companiesHouseApiClient;
-            _charityCommissionClient = charityCommissionApiClient;
+            _outerApiClient = outerApiClient;
             _roatpApiClient = roatpApiClient;
             _qnaApiClient = qnaApiClient;
             _logger = logger;
@@ -91,7 +91,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         {
             if (int.TryParse(charityNumberFromUkrlp, out var charityNumber))
             {
-                var charityDetails = await _charityCommissionClient.GetCharity(charityNumber);
+                var charityDetails = await _outerApiClient.GetCharity(charityNumber);
                 if (charityDetails == null)
                 {
                     var message = $"Unable to retrieve Charity Commission details for charity number {charityNumber}";

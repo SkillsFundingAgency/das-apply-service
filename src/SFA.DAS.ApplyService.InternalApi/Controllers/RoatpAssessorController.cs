@@ -44,49 +44,49 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("Assessor/Applications/{userId}")]
-        public async Task<AssessorApplicationCounts> GetApplicationCounts(string userId)
+        public async Task<AssessorApplicationCounts> GetApplicationCounts(string userId, string searchTerm)
         {
-            var summary = await _mediator.Send(new AssessorApplicationCountsRequest(userId));
+            var summary = await _mediator.Send(new AssessorApplicationCountsRequest(userId, searchTerm));
 
             return summary;
         }
 
         [HttpGet("Assessor/Applications/{userId}/New")]
-        public async Task<List<AssessorApplicationSummary>> NewApplications(string userId)
+        public async Task<List<AssessorApplicationSummary>> NewApplications(string userId, string searchTerm, string sortColumn, string sortOrder)
         {
-            var applications = await _mediator.Send(new NewAssessorApplicationsRequest(userId));
+            var applications = await _mediator.Send(new NewAssessorApplicationsRequest(userId, searchTerm, sortColumn, sortOrder));
 
             return applications;
         }
 
         [HttpGet("Assessor/Applications/{userId}/InProgress")]
-        public async Task<List<AssessorApplicationSummary>> InProgressApplications(string userId)
+        public async Task<List<AssessorApplicationSummary>> InProgressApplications(string userId, string searchTerm, string sortColumn, string sortOrder)
         {
-            var applications = await _mediator.Send(new InProgressAssessorApplicationsRequest(userId));
+            var applications = await _mediator.Send(new InProgressAssessorApplicationsRequest(userId, searchTerm, sortColumn, sortOrder));
 
             return applications;
         }
 
         [HttpGet("Assessor/Applications/{userId}/InModeration")]
-        public async Task<List<ModerationApplicationSummary>> InModerationApplications(string userId)
+        public async Task<List<ModerationApplicationSummary>> InModerationApplications(string userId, string searchTerm, string sortColumn, string sortOrder)
         {
-            var applications = await _mediator.Send(new ApplicationsInModerationRequest(userId));
+            var applications = await _mediator.Send(new ApplicationsInModerationRequest(userId, searchTerm, sortColumn, sortOrder));
 
             return applications;
         }
 
         [HttpGet("Assessor/Applications/{userId}/InClarification")]
-        public async Task<List<ClarificationApplicationSummary>> InClarificationApplications(string userId)
+        public async Task<List<ClarificationApplicationSummary>> InClarificationApplications(string userId, string searchTerm, string sortColumn, string sortOrder)
         {
-            var applications = await _mediator.Send(new ApplicationsInClarificationRequest(userId));
+            var applications = await _mediator.Send(new ApplicationsInClarificationRequest(userId, searchTerm, sortColumn, sortOrder));
 
             return applications;
         }
 
         [HttpGet("Assessor/Applications/{userId}/Closed")]
-        public async Task<List<ClosedApplicationSummary>> ClosedApplications(string userId)
+        public async Task<List<ClosedApplicationSummary>> ClosedApplications(string userId, string searchTerm, string sortColumn, string sortOrder)
         {
-            var applications = await _mediator.Send(new ClosedAssessorApplicationsRequest(userId));
+            var applications = await _mediator.Send(new ClosedAssessorApplicationsRequest(userId, searchTerm, sortColumn, sortOrder));
 
             return applications;
         }

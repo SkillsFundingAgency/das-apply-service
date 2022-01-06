@@ -24,10 +24,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
 
-        public bool RoEPAOApproved { get; set; }
         public bool RoATPApproved { get; set; }
-
-        public string EasApiOrganisationType { get; set; }
         
         public DateTime? FinancialDueDate { get; set; }
         public bool? FinancialExempt { get; set; }

@@ -84,7 +84,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
         }
 
         [Test]
-        public async Task Handle_Application_Status_Is_Set_To_Rejected()
+        public async Task Handle_Application_Status_Is_Set_To_Unsuccessful()
         {
             var request = new RecordOversightGatewayFailOutcomeCommand
             {
@@ -96,7 +96,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             await _handler.Handle(request, new CancellationToken());
 
             _applyRepository.Verify(x => x.Update(It.Is<Domain.Entities.Apply>(apply =>
-                    apply.ApplicationId == _applicationId && apply.ApplicationStatus == ApplicationStatus.Rejected)),
+                    apply.ApplicationId == _applicationId && apply.ApplicationStatus == ApplicationStatus.Unsuccessful)),     
                 Times.Once);
         }
     }

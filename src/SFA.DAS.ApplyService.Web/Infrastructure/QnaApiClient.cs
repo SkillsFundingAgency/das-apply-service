@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -64,11 +64,24 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
-        public async Task<object> GetApplicationData(Guid applicationId)
+        public async Task<JObject> GetApplicationData(Guid applicationId)
         {
             var response = await GetResponse($"Applications/{applicationId}/applicationData");
 
-            return await response.Content.ReadAsAsync<object>();
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsAsync<object>();
+                return content as JObject;
+            }
+            else
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var apiError = GetApiErrorFromJson(json);
+                var apiErrorMessage = apiError?.Message ?? json;
+
+                _logger.LogError($"Error in QnaApiClient.GetApplicationData() - applicationId {applicationId}  | StatusCode : {response.StatusCode} | ErrorMessage: { apiErrorMessage }");
+                return null;
+            }
         }
 
         public async Task<string> GetQuestionTag(Guid applicationId, string questionTag)
@@ -252,6 +265,29 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
                 return new ResetPageAnswersResponse { ValidationPassed = false, ValidationErrors = null  };
             }
+        }
+
+        public async Task<ResetSectionAnswersResponse> ResetPageAnswersBySection(Guid applicationId, int sequenceNo, int sectionNo)
+        {
+            var response = await _httpClient.PostAsJsonAsync(
+                $"/Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/reset",
+                new { });
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<ResetSectionAnswersResponse>(json);
+            }
+
+            var apiError = GetApiErrorFromJson(json);
+            var apiErrorMessage = apiError?.Message ?? json;
+            var errorMessage =
+                $"Error Resetting Page Answers into QnA section. Application: {applicationId} | SequenceNo: {sequenceNo}| SectionNo: {sectionNo} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}";
+
+            _logger.LogError(errorMessage);
+
+            return new ResetSectionAnswersResponse { ValidationPassed = false, ValidationErrors = null };
         }
 
         public async Task<ResetPageAnswersResponse> ResetPageAnswersBySequenceAndSectionNumber(Guid applicationId, int sequenceNo,

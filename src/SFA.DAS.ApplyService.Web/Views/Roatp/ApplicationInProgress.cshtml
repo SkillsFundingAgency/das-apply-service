@@ -1,0 +1,37 @@
+﻿@using SFA.DAS.ApplyService.Domain.Apply
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
+
+@{
+    ViewBag.Title = "Application under review";
+    Layout = "_Layout";
+}
+
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationHeaderReadOnly.cshtml" />
+}
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel app-panel--inprogress">
+                <h1 class="govuk-panel__title">
+                    Application in progress
+                </h1>
+            </div>
+
+            <partial name="~/Views/Roatp/_ApplicationDetailsTable.cshtml" model="@Model" />
+
+            @if(!String.IsNullOrEmpty(Model.OversightInProgressExternalComments))
+            {
+            <h1 class="govuk-heading-l">Why your application is in progress</h1>
+
+            <p class="govuk-body  das-multiline-text">
+                @Model.OversightInProgressExternalComments
+            </p>
+               
+            }
+        </div>
+    </div>
+</main>

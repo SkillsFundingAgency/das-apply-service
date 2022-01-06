@@ -8,7 +8,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
 
-    [Authorize(Policy = "AccessInProgressApplication")]
+    [Authorize]
     public class ApplicationController: Controller
     {
         private readonly IQnaApiClient _qnaApiClient;
@@ -20,6 +20,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _apiClient = apiClient;
         }
 
+        [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> Download(Guid Id, int sequenceNo, int sectionId, string pageId, string questionId, string filename)
         {
             var selectedSection = await _qnaApiClient.GetSectionBySectionNo(Id, sequenceNo, sectionId);
@@ -31,7 +32,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         }
 
-
+        [Authorize(Policy = "AccessInProgressApplication")]
         public async Task<IActionResult> DeleteFile(Guid Id, int sequenceNo, int sectionId, string pageId, string questionId, string filename, string __redirectAction)
         {
             var selectedSection = await _qnaApiClient.GetSectionBySectionNo(Id, sequenceNo, sectionId);

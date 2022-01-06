@@ -1,269 +1,90 @@
-﻿using System;
-using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
+﻿using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+using FluentValidation;
 
 namespace SFA.DAS.ApplyService.Web.Validators
 {
-    public static class ManagementHierarchyValidator
+    public class ManagementHierarchyValidator : AbstractValidator<AddEditManagementHierarchyViewModel>
     {
         public const string FirstNameMinLengthError = "Enter first name";
         public const string FirstNameMaxLengthError = "Enter a first name using 255 characters or less";
+
         public const string LastNameMinLengthError = "Enter last name";
         public const string LastNameMaxLengthError = "Enter a last name using 255 characters or less";
+
         public const string JobRoleMinLengthError = "Enter a job role";
         public const string JobRoleMaxLengthError = "Enter a job role using 255 characters or less";
+
         public const string TimeInRoleError = "Enter a year and month";
         public const string TimeInRoleMonthsTooBigError = "Enter 11 or less for month";
         public const string TimeInRoleYearsTooBigError = "Enter 99 or less for year";
+
         public const string IsPartOfOtherOrgThatGetsFundingError = "Tell us if this person is part of any other organisations";
         public const string OtherOrgNameError = "Enter the names of all these organisations";
         public const string OtherOrgNameLengthError = "Enter the names of all these organisations using 750 characters or less";
 
-        public const string DobFieldPrefix = "Dob";
+        public const string ValidEmailPattern = @"^[-!#$%&'*+/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+/0-9=?A-Z^_a-z{|}~])*@[a-zA-Z](-?[a-zA-Z0-9])*(\.[a-zA-Z](-?[a-zA-Z0-9])*)+$";
         public const string EmailError = "Enter your email";
         public const string EmailErrorTooLong = "Enter your email using 320 characters or less";
         public const string EmailErrorWrongFormat = "Enter your email address using an acceptable format (eg name@location.com)";
+
         public const string ContactNumberError = "Enter your contact number";
         public const string ContactNumberTooLongError = "Enter your contact number using 50 characters or less";
 
-
-        public static List<ValidationErrorDetail> Validate(AddEditManagementHierarchyViewModel model)
+        public ManagementHierarchyValidator()
         {
-            var errorMessages = new List<ValidationErrorDetail>();
+            RuleFor(x => x.FirstName)
+                .NotEmpty().WithMessage(FirstNameMinLengthError)
+                .MaximumLength(255).WithMessage(FirstNameMaxLengthError);
 
-            EvaluateFirstName(model, errorMessages);
-            EvaluateLastName(model, errorMessages);
-            EvaluateJobRole(model, errorMessages);
-            EvaluateTimeInRole(model, errorMessages);
-            EvaluateOrganisationDetails(model, errorMessages);
-            EvaluationDateOfBirth(model, errorMessages);
-            EvaluationEmail(model, errorMessages);
-            EvaluationContactNumber(model, errorMessages);
-            return errorMessages;
-        }
+            RuleFor(x => x.LastName)
+                .NotEmpty().WithMessage(LastNameMinLengthError)
+                .MaximumLength(255).WithMessage(LastNameMaxLengthError);
 
-        private static void EvaluationContactNumber(AddEditManagementHierarchyViewModel model, List<ValidationErrorDetail> errorMessages)
-        {
-            if (string.IsNullOrEmpty(model.ContactNumber))
-            {
-                errorMessages.Add(
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage = ContactNumberError,
-                        Field = "ContactNumber"
-                    });
-            }
-            else if (model.ContactNumber.Length >50)
-            {
-                errorMessages.Add(
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage = ContactNumberTooLongError,
-                        Field = "ContactNumber"
-                    });
-            }
-        }
+            RuleFor(x => x.JobRole)
+                .NotEmpty().WithMessage(JobRoleMinLengthError)
+                .MaximumLength(255).WithMessage(JobRoleMaxLengthError);
 
-        private static void EvaluationEmail(AddEditManagementHierarchyViewModel model, List<ValidationErrorDetail> errorMessages)
-        {
-            if (string.IsNullOrEmpty(model.Email))
-            {
-                errorMessages.Add(
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage = EmailError,
-                        Field = "Email"
-                    });
-            }
-            else if (model.Email.Length > 320)
-            {
-                errorMessages.Add(
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage = EmailErrorTooLong,
-                        Field = "Email"
-                    });
-            }
-            else
-            {
-                string validEmailPattern = @"^(?!\.)(""([^""\r\\]|\\[""\r\\])*""|"
-                                           + @"([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)"
-                                           + @"@[a-z0-9][\w\.-]*[a-z0-9]\.[a-z][a-z\.]*[a-z]$";
-
-                var emailRegex = new Regex(validEmailPattern, RegexOptions.IgnoreCase);
-                if (!emailRegex.IsMatch(model.Email))
+            RuleFor(x => x.TimeInRoleMonths)
+                .Transform(value => long.TryParse(value, out long val) ? (long?)val : null)
+                .NotEmpty().WithMessage(TimeInRoleError)
+                .LessThanOrEqualTo(11).WithMessage(TimeInRoleMonthsTooBigError)
+                .DependentRules(() =>
                 {
-                    errorMessages.Add(
-                        new ValidationErrorDetail
-                        {
-                            ErrorMessage = EmailErrorWrongFormat,
-                            Field = "Email"
-                        });
-                }
-            }
-        }
+                    RuleFor(x => x.TimeInRoleYears)
+                        .Transform(value => long.TryParse(value, out long val) ? (long?)val : null)
+                        .NotEmpty().WithMessage(TimeInRoleError)
+                        .LessThanOrEqualTo(99).WithMessage(TimeInRoleYearsTooBigError);
+                });
 
-        private static void EvaluationDateOfBirth(AddEditManagementHierarchyViewModel model, List<ValidationErrorDetail> errorMessages)
-        {
-            var dobErrorMessages = DateOfBirthAnswerValidator.ValidateDateOfBirth(model.DobMonth, model.DobYear, DobFieldPrefix);
-            if (dobErrorMessages.Any())
-            {
-                errorMessages.AddRange(dobErrorMessages);
-            }
-        }
-
-        private static void EvaluateOrganisationDetails(AddEditManagementHierarchyViewModel model, List<ValidationErrorDetail> errorMessages)
-        {
-            if (string.IsNullOrEmpty(model.IsPartOfOtherOrgThatGetsFunding))
-            {
-                errorMessages.Add(
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage = IsPartOfOtherOrgThatGetsFundingError,
-                        Field = "IsPartOfOtherOrgThatGetsFunding"
-                    });
-            }
-            else if (model.IsPartOfOtherOrgThatGetsFunding == "Yes")
-            {
-                if (string.IsNullOrEmpty(model.OtherOrgName))
+            RuleFor(x => x.IsPartOfOtherOrgThatGetsFunding)
+                .NotEmpty().WithMessage(IsPartOfOtherOrgThatGetsFundingError)
+                .DependentRules(() =>
                 {
-                    errorMessages.Add(
-                        new ValidationErrorDetail
-                        {
-                            ErrorMessage = OtherOrgNameError,
-                            Field = "IsPartOfOtherOrgThatGetsFunding"
-                        });
-                }
-                else if (model.OtherOrgName.Length > 750)
+                    RuleFor(x => x.OtherOrgName)
+                        .NotEmpty().When(x => x.IsPartOfOtherOrgThatGetsFunding == "Yes").WithMessage(OtherOrgNameError)
+                        .MaximumLength(750).When(x => x.IsPartOfOtherOrgThatGetsFunding == "Yes").WithMessage(OtherOrgNameLengthError);
+                });
+
+            RuleFor(x => x)
+                .Custom((viewModel, content) =>
                 {
-                    errorMessages.Add(
-                        new ValidationErrorDetail
-                        {
-                            ErrorMessage = OtherOrgNameLengthError,
-                            Field = "IsPartOfOtherOrgThatGetsFunding"
-                        });
-                }
-            }
-        }
-
-
-        private static void EvaluateFirstName(AddEditManagementHierarchyViewModel model, ICollection<ValidationErrorDetail> errorMessages)
-        {
-            if (string.IsNullOrEmpty(model.FirstName))
-            {
-                errorMessages.Add(
-                    new ValidationErrorDetail
+                    // maybe move away from this and use Transform trick
+                    const string DobFieldPrefix = "Dob";
+                    var dobErrorMessages = DateOfBirthAnswerValidator.ValidateDateOfBirth(viewModel.DobMonth, viewModel.DobYear, DobFieldPrefix);
+                    foreach(var error in dobErrorMessages)
                     {
-                        ErrorMessage = FirstNameMinLengthError,
-                        Field = "FirstName"
-                    });
-            }
-            else if (model.FirstName.Length > 255)
-            {
-                errorMessages.Add(
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage = FirstNameMaxLengthError,
-                        Field = "FirstName"
-                    });
-            }
-        }
-        private static void EvaluateLastName(AddEditManagementHierarchyViewModel model, ICollection<ValidationErrorDetail> errorMessages)
-        {
-            if (string.IsNullOrEmpty(model.LastName))
-            {
-                errorMessages.Add(
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage = LastNameMinLengthError,
-                        Field = "LastName"
-                    });
-            }
-            else if (model.LastName.Length > 255)
-            {
-                errorMessages.Add(
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage =LastNameMaxLengthError,
-                        Field = "LastName"
-                    });
-            }
-        }
-
-        private static void EvaluateJobRole(AddEditManagementHierarchyViewModel model, List<ValidationErrorDetail> errorMessages)
-        {
-            if (string.IsNullOrEmpty(model.JobRole))
-            {
-                errorMessages.Add(
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage = JobRoleMinLengthError,
-                        Field = "JobRole"
-                    });
-            }
-            else if (model.JobRole.Length > 255)
-            {
-                errorMessages.Add(
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage = JobRoleMaxLengthError,
-                        Field = "JobRole"
-                    });
-            }
-        }
-
-        private static void EvaluateTimeInRole(AddEditManagementHierarchyViewModel model, List<ValidationErrorDetail> errorMessages)
-        {
-            if (string.IsNullOrEmpty(model.TimeInRoleMonths) || string.IsNullOrEmpty(model.TimeInRoleYears))
-            {
-                errorMessages.Add(
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage = TimeInRoleError,
-                        Field = "TimeInRole"
-                    });
-            }
-            else
-            {
-                var monthsOk = int.TryParse(model.TimeInRoleMonths, out var months);
-                var yearsOk = int.TryParse(model.TimeInRoleYears, out var years);
-
-                if (!monthsOk || !yearsOk || months + years <= 0)
-                {
-                    errorMessages.Add(
-                        new ValidationErrorDetail
-                        {
-                            ErrorMessage = TimeInRoleError,
-                            Field = "TimeInRole"
-                        });
-                }
-                else
-                {
-                    if (months > 11)
-                    {
-                        errorMessages.Add(
-                            new ValidationErrorDetail
-                            {
-                                ErrorMessage = TimeInRoleMonthsTooBigError,
-                                Field = "TimeInRole"
-                            });
+                        content.AddFailure(error.Field, error.ErrorMessage);
                     }
+                });
 
-                    if (years > 99)
-                    {
-                        errorMessages.Add(
-                            new ValidationErrorDetail
-                            {
-                                ErrorMessage = TimeInRoleYearsTooBigError,
-                                Field = "TimeInRole"
-                            });
-                    }
-                }
-            }
+            RuleFor(x => x.Email)
+                .NotEmpty().WithMessage(EmailError)
+                .MaximumLength(320).WithMessage(EmailErrorTooLong)
+                .Matches(ValidEmailPattern).WithMessage(EmailErrorWrongFormat);
+
+            RuleFor(x => x.ContactNumber)
+                .NotEmpty().WithMessage(ContactNumberError)
+                .MaximumLength(50).WithMessage(ContactNumberTooLongError);
         }
     }
 }

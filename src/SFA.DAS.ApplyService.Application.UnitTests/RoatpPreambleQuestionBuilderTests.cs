@@ -345,7 +345,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         {
             _applicationDetails.CharitySummary = new CharityCommissionSummary
             {
-                CharityName = "Charity name"
+                Name = "Charity name"
             };
 
             var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
@@ -354,7 +354,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
 
             var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.CharityCommissionCharityName);
             question.Should().NotBeNull();
-            question.Value.Should().Be(_applicationDetails.CharitySummary.CharityName);
+            question.Value.Should().Be(_applicationDetails.CharitySummary.Name);
         }
 
         [Test]
@@ -362,7 +362,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         {
             _applicationDetails.CharitySummary = new CharityCommissionSummary
             {
-                IncorporatedOn = new DateTime(2015, 03, 17)
+                RegistrationDate = new DateTime(2015, 03, 17)
             };
 
             var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
@@ -371,7 +371,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
 
             var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.CharityCommissionRegistrationDate);
             question.Should().NotBeNull();
-            question.Value.Should().Be(_applicationDetails.CharitySummary.IncorporatedOn.Value.ToString());
+            question.Value.Should().Be(_applicationDetails.CharitySummary.RegistrationDate.Value.ToString());
         }
 
         [Test]
@@ -456,6 +456,25 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
             var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.RoatpCurrentStatus);
             question.Should().NotBeNull();
             question.Value.Should().Be(OrganisationStatus.Active.ToString());
+        }
+
+        [TestCase(true, ApplicationRoute.MainProviderApplicationRoute, RouteAndOnRoatpTags.MainOnRoatp)]
+        [TestCase(false, ApplicationRoute.MainProviderApplicationRoute, RouteAndOnRoatpTags.MainNotOnRoatp)]
+        [TestCase(true, ApplicationRoute.EmployerProviderApplicationRoute, RouteAndOnRoatpTags.EmployerOnRoatp)]
+        [TestCase(false, ApplicationRoute.EmployerProviderApplicationRoute, RouteAndOnRoatpTags.EmployerNotOnRoatp)]
+        [TestCase(true, ApplicationRoute.SupportingProviderApplicationRoute, RouteAndOnRoatpTags.SupportingOnRoatp)]
+        [TestCase(false, ApplicationRoute.SupportingProviderApplicationRoute, RouteAndOnRoatpTags.SupportingNotOnRoatp)]
+        public void Preamble_questions_contains_roatp_RouteAndOnRoatp_status(bool onRegister, int route, string expectedValue)
+        {
+            _applicationDetails.RoatpRegisterStatus = new OrganisationRegisterStatus { UkprnOnRegister = onRegister};
+            _applicationDetails.ApplicationRoute = new ApplicationRoute {Id=route};
+
+            var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
+
+            questions.Should().NotBeNull();
+            var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.RouteAndOnRoatp);
+            question.Should().NotBeNull();
+            question.Value.Should().Be(expectedValue);
         }
 
         [Test]

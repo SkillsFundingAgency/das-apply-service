@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
+using SFA.DAS.ApplyService.Web.Services;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -8,7 +9,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     using Microsoft.Extensions.Logging;
     using Moq;
     using NUnit.Framework;
-    using SFA.DAS.ApplyService.Session;
+    using Session;
     using SFA.DAS.ApplyService.Web.Controllers.Roatp;
     using SFA.DAS.ApplyService.Web.Infrastructure;
     using System.Collections.Generic;
@@ -19,18 +20,19 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     using Microsoft.AspNetCore.Mvc;
     using ViewModels.Roatp;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
-    using SFA.DAS.ApplyService.Domain.Ukrlp;
+    using Domain.Ukrlp;
     using System.Threading.Tasks;
     using Domain.CharityCommission;
     using Domain.Entities;
     using InternalApi.Types;
     using InternalApi.Types.CharityCommission;
-    using SFA.DAS.ApplyService.Domain.CompaniesHouse;
-    using SFA.DAS.ApplyService.Web.AutoMapper;
+    using Domain.CompaniesHouse;
+    using AutoMapper;
     using Trustee = InternalApi.Types.CharityCommission.Trustee;
-    using SFA.DAS.ApplyService.Application.Apply.Roatp;
-    using SFA.DAS.ApplyService.Domain.Apply;
+    using Application.Apply.Roatp;
+    using Domain.Apply;
     using SFA.DAS.ApplyService.Web.Validators;
+
 
     [TestFixture]
     public class RoatpApplicationPreambleControllerTests
@@ -40,13 +42,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IUkrlpApiClient> _ukrlpApiClient;
         private Mock<ISessionService> _sessionService;
         private Mock<ICompaniesHouseApiClient> _companiesHouseApiClient;
-        private Mock<ICharityCommissionApiClient> _charityCommissionApiClient;
+        private Mock<IOuterApiClient> _outerApiClient;
         private Mock<IOrganisationApiClient> _organisationApiClient;
         private Mock<IUsersApiClient> _usersApiClient;
         private Mock<IApplicationApiClient> _applicationApiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
-        private Mock<IUkprnWhitelistValidator> _ukprnWhitelistValidator;
+        private Mock<IAllowedUkprnValidator> _allowedUkprnValidator;
         private Mock<IResetRouteQuestionsService> _resetRoutQuestionsService;
+        private Mock<IReapplicationCheckService> _reapplicationCheckService;
+
         private RoatpApplicationPreambleController _controller;
 
         private CompaniesHouseSummary _activeCompany;
@@ -65,23 +69,25 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _ukrlpApiClient = new Mock<IUkrlpApiClient>();
             _sessionService = new Mock<ISessionService>();
             _companiesHouseApiClient = new Mock<ICompaniesHouseApiClient>();
-            _charityCommissionApiClient = new Mock<ICharityCommissionApiClient>();
+            _outerApiClient = new Mock<IOuterApiClient>();
             _organisationApiClient = new Mock<IOrganisationApiClient>();
             _usersApiClient = new Mock<IUsersApiClient>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
             _qnaApiClient = new Mock<IQnaApiClient>();
-            _ukprnWhitelistValidator = new Mock<IUkprnWhitelistValidator>();
+            _allowedUkprnValidator = new Mock<IAllowedUkprnValidator>();
             _resetRoutQuestionsService = new Mock<IResetRouteQuestionsService>();
+            _reapplicationCheckService = new Mock<IReapplicationCheckService>();
+       
 
-            _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
+        _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
                 _ukrlpApiClient.Object,
                 _sessionService.Object, _companiesHouseApiClient.Object,
-                _charityCommissionApiClient.Object,
+                _outerApiClient.Object,
                 _organisationApiClient.Object,
                 _usersApiClient.Object,
                 _applicationApiClient.Object,
                 _qnaApiClient.Object,
-                _ukprnWhitelistValidator.Object, _resetRoutQuestionsService.Object);
+                _allowedUkprnValidator.Object, _resetRoutQuestionsService.Object, _reapplicationCheckService.Object);
 
             _activeCompany = new CompaniesHouseSummary
             {
@@ -126,8 +132,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                             Name = "MR A TRUSTEE"
                         }
                     },
-                    IncorporatedOn = new DateTime(2019, 1, 1),
-                    DissolvedOn = null
+                    RegistrationDate  = new DateTime(2019, 1, 1),
+                    RemovalDate = null
                 }
             };
             
@@ -207,7 +213,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 OrganisationType = "TrainingProvider",
                 OrganisationUkprn = Convert.ToInt32(_applicationDetails.UkrlpLookupDetails.UKPRN),
                 RoATPApproved = false,
-                RoEPAOApproved = false,
                 PrimaryContactEmail = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactEmail,
                 OrganisationDetails = new InternalApi.Types.OrganisationDetails
                 {
@@ -276,7 +281,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase("1234567A")]
         public void Validation_error_is_triggered_if_UKPRN_not_in_correct_format(string ukprn)
         {
-            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(It.IsAny<int>())).ReturnsAsync(true);
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(It.IsAny<int>())).ReturnsAsync(true);
 
             var model = new SearchByUkprnViewModel
             {
@@ -300,7 +305,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase(12345678, true)]
         [TestCase(87654321, true)]
         [TestCase(99999999, false)]
-        public void Validation_error_is_triggered_if_UKPRN_is_not_in_whitelisted(int ukprn, bool isUkprnWhitelisted)
+        public void Validation_error_is_triggered_if_UKPRN_is_not_on_allowed_list(int ukprn, bool isUkprnWhitelisted)
         {
             var noResults = new UkrlpLookupResults { Success = true, Results = new List<ProviderDetails> { new ProviderDetails() } };
 
@@ -308,7 +313,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
-            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(ukprn)).ReturnsAsync(isUkprnWhitelisted);        
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(ukprn)).ReturnsAsync(isUkprnWhitelisted);        
 
             var model = new SearchByUkprnViewModel
             {
@@ -347,7 +352,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
-            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(10001000)).ReturnsAsync(true);
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(10001000)).ReturnsAsync(true);
 
             var model = new SearchByUkprnViewModel
             {
@@ -365,7 +370,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void UKPRN_is_found_on_UKRLP()
         {
-            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(10001000)).ReturnsAsync(true);
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(10001000)).ReturnsAsync(true);
 
             var matchingResult = new UkrlpLookupResults
             {
@@ -396,6 +401,81 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("ConfirmOrganisation");
         }
 
+        [Test] public void User_already_has_reapplication_with_different_ukprn_in_progress()
+        {
+            var ukprn = 10001000;
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(10001000)).ReturnsAsync(true);
+
+            var matchingResult = new UkrlpLookupResults
+            {
+                Success = true,
+                Results = new List<ProviderDetails>
+                {
+                    new ProviderDetails
+                    {
+                        UKPRN = ukprn.ToString(),
+                        ProviderName = "Test Provider"
+                    }
+                }
+            };
+            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<int>())).ReturnsAsync(matchingResult);
+
+            _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
+            _reapplicationCheckService.Setup(x => x.ReapplicationUkprnForUser(It.IsAny<Guid>()))
+                .ReturnsAsync("33333333");
+
+            var model = new SearchByUkprnViewModel
+            {
+                UKPRN = ukprn.ToString()
+            };
+
+            var result = _controller.SearchByUkprn(model).GetAwaiter().GetResult();
+
+            result.Should().BeOfType<RedirectToActionResult>();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ReapplicationDifferentUkprn");
+        }
+
+        [Test]
+        public void Reapplication_already_in_flight_with_different_user()
+        {
+            var ukprn = 10001000;
+            _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(10001000)).ReturnsAsync(true);
+
+            var matchingResult = new UkrlpLookupResults
+            {
+                Success = true,
+                Results = new List<ProviderDetails>
+                {
+                    new ProviderDetails
+                    {
+                        UKPRN = ukprn.ToString(),
+                        ProviderName = "Test Provider"
+                    }
+                }
+            };
+            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<int>())).ReturnsAsync(matchingResult);
+
+            _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
+            _reapplicationCheckService.Setup(x => x.ReapplicationUkprnForUser(It.IsAny<Guid>()))
+                .ReturnsAsync(ukprn.ToString());
+
+            _reapplicationCheckService
+                .Setup(x => x.ApplicationInFlightWithDifferentUser(It.IsAny<Guid>(), ukprn.ToString()))
+                .ReturnsAsync(true);
+            var model = new SearchByUkprnViewModel
+            {
+                UKPRN = ukprn.ToString()
+            };
+
+            var result = _controller.SearchByUkprn(model).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.ViewName.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ApplicationInProgress");
+        }
+
         [Test]
         public void UKPRN_is_verified_against_companies_house()
         {
@@ -422,12 +502,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
         }
 
         [Test]
@@ -456,13 +536,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
                 .Returns(Task.FromResult(_activeCharity)).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
         }
 
         [TestCase("SC123456")]
@@ -498,7 +578,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
                 .Returns(Task.FromResult(_activeCharity)).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
@@ -508,7 +588,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("SelectApplicationRoute");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
             _sessionService.Verify(
                 x => x.Set(It.IsAny<string>(),
                     It.Is<ApplicationDetails>(y => y.CharitySummary.TrusteeManualEntryRequired == true)), Times.Once);
@@ -545,13 +625,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
                 .Returns(Task.FromResult(_activeCharity)).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
         }
 
         [TestCase("liquidation")]
@@ -585,7 +665,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(inactiveCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             result.Should().BeOfType<RedirectToActionResult>();
@@ -593,7 +673,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("CompanyNotFound");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
         }
 
         [TestCase(null)]
@@ -628,7 +708,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(inactiveCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             result.Should().BeOfType<RedirectToActionResult>();
@@ -636,7 +716,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("SelectApplicationRoute");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
         }
 
         [Test]
@@ -670,7 +750,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(companyNotFound)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             result.Should().BeOfType<RedirectToActionResult>();
@@ -678,7 +758,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("CompanyNotFound");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
         }
 
         [Test]
@@ -711,12 +791,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 Response = new Charity
                 {
                     Status = "removed",
-                    DissolvedOn = new DateTime(2010, 1, 1)
+                    RemovalDate = new DateTime(2010, 1, 1)
                 }
             };
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
                 .Returns(Task.FromResult(inactiveCharity)).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
@@ -725,7 +805,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("CharityNotFound");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
         }
 
         [Test]
@@ -753,7 +833,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             result.Should().BeOfType<RedirectToActionResult>();
@@ -761,7 +841,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("CharityNotFound");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
         }
 
         [Test]
@@ -789,12 +869,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(new CompaniesHouseSummary())).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
 
             result.Should().BeOfType<RedirectToActionResult>();
             var redirectResult = result as RedirectToActionResult;
@@ -838,12 +918,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
 
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+            _outerApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be("SelectApplicationRoute");
@@ -908,8 +988,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
-            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(_user);
-            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
                 .ReturnsAsync(new Organisation()).Verifiable();
@@ -987,7 +1066,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _applicationDetails.CharitySummary = new CharityCommissionSummary
             {
                 CharityNumber = "12345678",
-                IncorporatedOn = new DateTime(2006, 01, 02),
+                RegistrationDate = new DateTime(2006, 01, 02),
                 Trustees = new List<Domain.CharityCommission.Trustee>
                 {
                     new Domain.CharityCommission.Trustee
@@ -1005,8 +1084,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
-            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(_user);
-            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
                 .ReturnsAsync(new Organisation()).Verifiable();
@@ -1067,8 +1145,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
-            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(_user);
-            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
                 .ReturnsAsync(new Organisation()).Verifiable();
@@ -1122,8 +1199,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
-            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(_user);
-            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(_user);
 
             _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
                 .ReturnsAsync(new Organisation()).Verifiable();
@@ -1200,7 +1276,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
                 .Returns(Task.FromResult(_activeCharity)).Verifiable();
 
             var registerStatus = new OrganisationRegisterStatus
@@ -1253,7 +1329,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+            _outerApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
                 .Returns(Task.FromResult(_activeCharity)).Verifiable();
 
             var registerStatus = new OrganisationRegisterStatus

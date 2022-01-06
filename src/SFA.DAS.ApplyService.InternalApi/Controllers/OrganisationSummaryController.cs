@@ -236,7 +236,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok(peopleInControl);
         }
 
-
         [HttpGet]
         [Route("TrusteeData/CharityCommission/{applicationId}")]
         public async Task<IActionResult> GetTrusteesFromCharityCommission(Guid applicationId)
@@ -259,6 +258,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return Ok(peopleInControl);
         }
+
 
         [HttpGet]
         [Route("WhosInControlData/Submitted/{applicationId}")]

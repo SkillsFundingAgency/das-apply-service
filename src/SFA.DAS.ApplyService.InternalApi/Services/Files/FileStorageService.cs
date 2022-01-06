@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Configuration;
 using System;
@@ -16,6 +15,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
     {
         private readonly ILogger<FileStorageService> _logger;
         private readonly FileStorageConfig _fileStorageConfig;
+
         public FileStorageService(ILogger<FileStorageService> logger, IConfigurationService configurationService)
         {
             _logger = logger;
@@ -24,9 +24,25 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
             _fileStorageConfig = config.FileStorage;
         }
 
-        public async Task<IEnumerable<string>> GetPageFileList(Guid applicationId, int? sequenceNumber, int? sectionNumber, string pageId, ContainerType containerType, CancellationToken cancellationToken)
+        public async Task<IEnumerable<DownloadFileInfo>> GetApplicationFileList(Guid applicationId, ContainerType containerType, CancellationToken cancellationToken)
         {
-            var fileList = new List<string>();
+            var fileList = new List<DownloadFileInfo>();
+
+            var container = await BlobContainerHelpers.GetContainer(_fileStorageConfig, containerType);
+
+            if (container != null)
+            {
+                var applicationDirectory = container.GetDirectory(applicationId);
+                var directoryFileList = applicationDirectory.GetFileList();
+                fileList.AddRange(directoryFileList);
+            }
+
+            return fileList;
+        }
+
+        public async Task<IEnumerable<DownloadFileInfo>> GetFileList(Guid applicationId, int? sequenceNumber, int? sectionNumber, string pageId, ContainerType containerType, CancellationToken cancellationToken)
+        {
+            var fileList = new List<DownloadFileInfo>();
 
             if (!string.IsNullOrWhiteSpace(pageId))
             {
@@ -35,17 +51,30 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
                 if (container != null)
                 {
                     var pageDirectory = container.GetDirectory(applicationId, sequenceNumber, sectionNumber, pageId);
-                    var fileBlobs = pageDirectory.ListBlobs(useFlatBlobListing: true).ToList();
-
-                    foreach (var blob in fileBlobs.OfType<CloudBlob>())
-                    {
-                        string fileName = Path.GetFileName(blob.Name);
-                        fileList.Add(fileName);
-                    }
+                    var directoryFileList = pageDirectory.GetFileList();
+                    fileList.AddRange(directoryFileList);
                 }
             }
 
             return fileList;
+        }
+
+        public async Task<bool> UploadApplicationFiles(Guid applicationId, IFormFileCollection files, ContainerType containerType, CancellationToken cancellationToken)
+        {
+            var success = false;
+
+            if (files != null)
+            {
+                var container = await BlobContainerHelpers.GetContainer(_fileStorageConfig, containerType);
+
+                if (container != null)
+                {
+                    var applicationDirectory = container.GetDirectory(applicationId);
+                    success = await applicationDirectory.UploadFiles(files, _logger, cancellationToken);
+                }
+            }
+
+            return success;
         }
 
         public async Task<bool> UploadFiles(Guid applicationId, int? sequenceNumber, int? sectionNumber, string pageId, IFormFileCollection files, ContainerType containerType, CancellationToken cancellationToken)
@@ -58,25 +87,26 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
 
                 if (container != null)
                 {
-                    var questionDirectory = container.GetDirectory(applicationId, sequenceNumber, sectionNumber, pageId);
+                    var pageDirectory = container.GetDirectory(applicationId, sequenceNumber, sectionNumber, pageId);
+                    success = await pageDirectory.UploadFiles(files, _logger, cancellationToken);
+                }
+            }
 
-                    try
-                    {
-                        foreach (var file in files)
-                        {
-                            var blob = questionDirectory.GetBlockBlobReference(file.FileName);
-                            blob.Properties.ContentType = file.ContentType;
+            return success;
+        }
 
-                            await blob.UploadFromStreamAsync(file.OpenReadStream(), cancellationToken);
-                        }
+        public async Task<bool> DeleteApplicationFile(Guid applicationId, string fileName, ContainerType containerType, CancellationToken cancellationToken)
+        {
+            var success = false;
 
-                        success = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($"Error uploading files to directory: {questionDirectory.Uri} || Message: {ex.Message} || Stack trace: {ex.StackTrace}");
-                        success = false;
-                    }
+            if (!string.IsNullOrWhiteSpace(fileName))
+            {
+                var container = await BlobContainerHelpers.GetContainer(_fileStorageConfig, containerType);
+
+                if (container != null)
+                {
+                    var applicationDirectory = container.GetDirectory(applicationId);
+                    success = await applicationDirectory.DeleteFile(fileName, cancellationToken);
                 }
             }
 
@@ -94,13 +124,29 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
                 if (container != null)
                 {
                     var pageDirectory = container.GetDirectory(applicationId, sequenceNumber, sectionNumber, pageId);
-                    var pageFileBlob = pageDirectory.GetBlobReference(fileName);
-
-                    success = await pageFileBlob.DeleteIfExistsAsync(cancellationToken);
+                    success = await pageDirectory.DeleteFile(fileName, cancellationToken);
                 }
             }
 
             return success;
+        }
+
+        public async Task<DownloadFile> DownloadApplicationFile(Guid applicationId, string fileName, ContainerType containerType, CancellationToken cancellationToken)
+        {
+            var file = default(DownloadFile);
+
+            if (!string.IsNullOrWhiteSpace(fileName))
+            {
+                var container = await BlobContainerHelpers.GetContainer(_fileStorageConfig, containerType);
+
+                if (container != null)
+                {
+                    var applicationDirectory = container.GetDirectory(applicationId);
+                    file = await applicationDirectory.DownloadFile(fileName, cancellationToken);
+                }
+            }
+
+            return file;
         }
 
         public async Task<DownloadFile> DownloadFile(Guid applicationId, int? sequenceNumber, int? sectionNumber, string pageId, string fileName, ContainerType containerType, CancellationToken cancellationToken)
@@ -114,19 +160,34 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
                 if (container != null)
                 {
                     var pageDirectory = container.GetDirectory(applicationId, sequenceNumber, sectionNumber, pageId);
-                    var pageFileBlob = pageDirectory.GetBlobReference(fileName);
-
-                    if (pageFileBlob.Exists())
-                    {
-                        file = await DownloadFileFromBlob(pageFileBlob, cancellationToken);
-                    }
+                    file = await pageDirectory.DownloadFile(fileName, cancellationToken);
                 }
             }
 
             return file;
         }
 
-        public async Task<DownloadFile> DownloadPageFiles(Guid applicationId, int? sequenceNumber, int? sectionNumber, string pageId, ContainerType containerType, CancellationToken cancellationToken)
+        public async Task<DownloadFile> DownloadApplicationFiles(Guid applicationId, ContainerType containerType, CancellationToken cancellationToken)
+        {
+            var zipFile = default(DownloadFile);
+
+            var container = await BlobContainerHelpers.GetContainer(_fileStorageConfig, containerType);
+
+            if (container != null)
+            {
+                var applicationDirectory = container.GetDirectory(applicationId);
+                var files = await applicationDirectory.DownloadDirectoryFiles(cancellationToken);
+
+                if (files.Any())
+                {
+                    zipFile = ZipDownloadFiles(files, $"uploads.zip");
+                }
+            }
+
+            return zipFile;
+        }
+
+        public async Task<DownloadFile> DownloadFiles(Guid applicationId, int? sequenceNumber, int? sectionNumber, string pageId, ContainerType containerType, CancellationToken cancellationToken)
         {
             var zipFile = default(DownloadFile);
 
@@ -137,7 +198,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
                 if (container != null)
                 {
                     var pageDirectory = container.GetDirectory(applicationId, sequenceNumber, sectionNumber, pageId);
-                    var files = await DownloadFilesFromDirectory(pageDirectory, cancellationToken);
+                    var files = await pageDirectory.DownloadDirectoryFiles(cancellationToken);
 
                     if (files.Any())
                     {
@@ -149,32 +210,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
             return zipFile;
         }
 
-        private async Task<DownloadFile> DownloadFileFromBlob(CloudBlob blob, CancellationToken cancellationToken)
-        {
-            var blobStream = new MemoryStream();
-
-            await blob.DownloadToStreamAsync(blobStream, null, new BlobRequestOptions() { DisableContentMD5Validation = true }, null, cancellationToken);
-            blobStream.Position = 0;
-
-            return new DownloadFile { FileName = Path.GetFileName(blob.Name), ContentType = blob.Properties.ContentType, Stream = blobStream };
-        }
-
-        private async Task<List<DownloadFile>> DownloadFilesFromDirectory(CloudBlobDirectory directory, CancellationToken cancellationToken)
-        {
-            var questionFileBlobs = directory.ListBlobs(useFlatBlobListing: true).ToList();
-
-            var downloadFiles = new List<DownloadFile>(questionFileBlobs.Count);
-
-            foreach (var blob in questionFileBlobs.OfType<CloudBlob>())
-            {
-                var downloadFile = await DownloadFileFromBlob(blob, cancellationToken);
-                downloadFiles.Add(downloadFile);
-            }
-
-            return downloadFiles;
-        }
-
-        private DownloadFile ZipDownloadFiles(List<DownloadFile> files, string zipFileName)
+        private DownloadFile ZipDownloadFiles(IEnumerable<DownloadFile> files, string zipFileName)
         {
             using (var zipStream = new MemoryStream())
             {
@@ -195,8 +231,40 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
                 zipStream.CopyTo(newStream);
                 newStream.Position = 0;
 
-                return new DownloadFile { FileName = zipFileName ?? "uploads.zip", ContentType = "application/zip", Stream = newStream };
+                return new DownloadFile { FileName = zipFileName, ContentType = "application/zip", Stream = newStream };
             }
+        }
+
+        public async Task<bool> DeleteApplicationDirectory(Guid applicationId, ContainerType containerType, CancellationToken cancellationToken)
+        {
+            var success = false;
+
+            var container = await BlobContainerHelpers.GetContainer(_fileStorageConfig, containerType);
+
+            if (container != null)
+            {
+                var applicationDirectory = container.GetDirectory(applicationId);
+                success = await applicationDirectory.DeleteDirectory(cancellationToken);
+            }
+
+            return success;
+        }
+
+        public async Task<bool> DeleteDirectory(Guid applicationId, int? sequenceNumber, int? sectionNumber, string pageId, ContainerType containerType, CancellationToken cancellationToken)
+        {
+            var success = false;
+
+            if (!string.IsNullOrWhiteSpace(pageId))
+            {
+                var container = await BlobContainerHelpers.GetContainer(_fileStorageConfig, containerType);
+
+                if (container != null)
+                {
+                    var applicationDirectory = container.GetDirectory(applicationId, sequenceNumber, sectionNumber, pageId);
+                    success = await applicationDirectory.DeleteDirectory(cancellationToken);
+                }
+            }
+            return success;
         }
     }
 }

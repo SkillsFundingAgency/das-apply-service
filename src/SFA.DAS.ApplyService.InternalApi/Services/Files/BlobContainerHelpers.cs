@@ -27,6 +27,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
             return container;
         }
 
+        public static CloudBlobDirectory GetDirectory(this CloudBlobContainer container, Guid applicationId)
+        {
+            return container.GetApplicationDirectory(applicationId);
+        }
+
         public static CloudBlobDirectory GetDirectory(this CloudBlobContainer container, Guid applicationId, int? sequenceNumber, int? sectionNumber, string pageId)
         {
             if(string.IsNullOrWhiteSpace(pageId))
@@ -44,16 +49,21 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
             }
         }
 
+        private static CloudBlobDirectory GetApplicationDirectory(this CloudBlobContainer container, Guid applicationId)
+        {
+            return container.GetDirectoryReference(applicationId.ToString());;
+        }
+
         private static CloudBlobDirectory GetPageDirectory(this CloudBlobContainer container, Guid applicationId, string pageId)
         {
-            var applicationFolder = container.GetDirectoryReference(applicationId.ToString());
+            var applicationFolder = container.GetApplicationDirectory(applicationId);
             var pageFolder = applicationFolder.GetDirectoryReference(pageId.ToLower());
             return pageFolder;
         }
 
         private static CloudBlobDirectory GetPageDirectory(this CloudBlobContainer container, Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
         {
-            var applicationFolder = container.GetDirectoryReference(applicationId.ToString());
+            var applicationFolder = container.GetApplicationDirectory(applicationId);
             var sequenceFolder = applicationFolder.GetDirectoryReference(sequenceNumber.ToString());
             var sectionFolder = sequenceFolder.GetDirectoryReference(sectionNumber.ToString());
             var pageFolder = sectionFolder.GetDirectoryReference(pageId.ToLower());
@@ -70,6 +80,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
                     return fileStorageConfig.FinancialContainerName;
                 case ContainerType.Assessor:
                     return fileStorageConfig.AssessorContainerName;
+                case ContainerType.Appeals:
+                    return fileStorageConfig.AppealsContainerName;
                 default:
                     return null;
             }

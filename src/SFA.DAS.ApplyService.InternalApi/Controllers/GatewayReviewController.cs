@@ -6,12 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.Application.Apply.Gateway.Applications;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions;
-using SFA.DAS.ApplyService.Application.Apply.GetApplications;
-using SFA.DAS.ApplyService.Domain.Roatp;
-using SFA.DAS.ApplyService.Configuration;
-using SFA.DAS.ApplyService.EmailService.Interfaces;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.InternalApi.Types.Requests;
+using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -26,30 +22,30 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("GatewayReview/Counts")]
-        public async Task<GetGatewayApplicationCountsResponse> GetApplicationCounts()
+        public async Task<GetGatewayApplicationCountsResponse> GetApplicationCounts(string searchTerm)
         {
-            var applicationCounts = await _mediator.Send(new GetGatewayApplicationCountsRequest());
+            var applicationCounts = await _mediator.Send(new GetGatewayApplicationCountsRequest { SearchTerm = searchTerm });
             return applicationCounts;
         }
 
         [HttpGet("GatewayReview/NewApplications")]
-        public async Task<ActionResult> NewApplications()
+        public async Task<ActionResult> NewApplications(string searchTerm, string sortOrder)
         {
-            var applications = await _mediator.Send(new NewGatewayApplicationsRequest());
+            var applications = await _mediator.Send(new NewGatewayApplicationsRequest { SearchTerm = searchTerm, SortOrder = sortOrder });
             return Ok(applications);
         }
 
         [HttpGet("GatewayReview/InProgressApplications")]
-        public async Task<ActionResult> InProgressApplications()
+        public async Task<ActionResult> InProgressApplications(string searchTerm, string sortColumn, string sortOrder)
         {
-            var applications = await _mediator.Send(new InProgressGatewayApplicationsRequest());
+            var applications = await _mediator.Send(new InProgressGatewayApplicationsRequest { SearchTerm = searchTerm, SortColumn = sortColumn, SortOrder = sortOrder });
             return Ok(applications);
         }
 
         [HttpGet("GatewayReview/ClosedApplications")]
-        public async Task<ActionResult> ClosedApplications()
+        public async Task<ActionResult> ClosedApplications(string searchTerm, string sortColumn, string sortOrder)
         {
-            var applications = await _mediator.Send(new ClosedGatewayApplicationsRequest());
+            var applications = await _mediator.Send(new ClosedGatewayApplicationsRequest { SearchTerm = searchTerm, SortColumn = sortColumn, SortOrder = sortOrder });
             return Ok(applications);
         }
 

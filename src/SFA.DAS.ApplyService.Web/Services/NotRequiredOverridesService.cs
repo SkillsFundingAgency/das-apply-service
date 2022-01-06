@@ -54,7 +54,7 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             List<NotRequiredOverrideConfiguration> configuration = null;
 
-            var applicationData = (await _qnaApiClient.GetApplicationData(applicationId)) as JObject;
+            var applicationData = await _qnaApiClient.GetApplicationData(applicationId);
 
             if (applicationData != null)
             {

@@ -38,6 +38,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 
         public async Task<bool> Handle(UpdateGatewayReviewStatusAndCommentCommand request, CancellationToken cancellationToken)
         {
+            _auditService.StartTracking(UserAction.UpdateGatewayReviewStatus, request.UserId, request.UserName);
+
             var application = await _applyRepository.GetApplication(request.ApplicationId);
 
             if (application?.ApplyData == null)
@@ -49,14 +51,20 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                 application.ApplyData.GatewayReviewDetails = new ApplyGatewayDetails();
             }
 
+            _auditService.AuditUpdate(application);
+
+            application.ApplicationStatus = request.GatewayReviewStatus == GatewayReviewStatus.Rejected ? ApplicationStatus.Rejected : ApplicationStatus.GatewayAssessed;
+            application.GatewayReviewStatus = request.GatewayReviewStatus;
+
             application.ApplyData.GatewayReviewDetails.OutcomeDateTime = DateTime.UtcNow;
             application.ApplyData.GatewayReviewDetails.Comments = request.GatewayReviewComment;
             application.ApplyData.GatewayReviewDetails.ExternalComments = request.GatewayReviewExternalComment;
             application.ApplyData.GatewayReviewDetails.SubcontractingLimit = request.SubcontractingLimit;
 
-            var updatedSuccessfully = await _gatewayRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, request.GatewayReviewStatus, request.UserId, request.UserName);
+            var updatedSuccessfully = await _gatewayRepository.UpdateGatewayReviewStatusAndComment(application.ApplicationId, application.ApplyData, application.GatewayReviewStatus, request.UserId, request.UserName);
+            
 
-            if (updatedSuccessfully && request.GatewayReviewStatus == GatewayReviewStatus.Reject)
+            if (updatedSuccessfully && request.GatewayReviewStatus == GatewayReviewStatus.Rejected)
             {
                 var oversightReview = new OversightReview
                 {
@@ -68,14 +76,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
                     ExternalComments = request.GatewayReviewExternalComment
                 };
 
-                _auditService.StartTracking(UserAction.UpdateGatewayReviewStatus, request.UserId, request.UserName);
                 _auditService.AuditInsert(oversightReview);
                 _oversightReviewRepository.Add(oversightReview);
-                _auditService.Save();
-                await _unitOfWork.Commit();
 
                 await _applicationUpdatedEmailService.SendEmail(request.ApplicationId);
             }
+
+            _auditService.Save();
+            await _unitOfWork.Commit();
 
             return updatedSuccessfully;
         }

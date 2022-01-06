@@ -33,11 +33,11 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetGatewayApplicat
                 new GatewayApplicationStatusCount
                     {GatewayReviewStatus = GatewayReviewStatus.Pass, ApplicationStatus = ApplicationStatus.GatewayAssessed, Count = 16},
                 new GatewayApplicationStatusCount
-                    {GatewayReviewStatus = GatewayReviewStatus.Reject, ApplicationStatus = ApplicationStatus.GatewayAssessed, Count = 32}
+                    {GatewayReviewStatus = GatewayReviewStatus.Rejected, ApplicationStatus = ApplicationStatus.GatewayAssessed, Count = 32}
             };
 
             _repository = new Mock<IGatewayRepository>();
-            _repository.Setup(x => x.GetGatewayApplicationStatusCounts()).ReturnsAsync(data);
+            _repository.Setup(x => x.GetGatewayApplicationStatusCounts(It.IsAny<string>())).ReturnsAsync(data);
 
             _handler = new GetGatewayApplicationsCountsHandler(_repository.Object);
         }

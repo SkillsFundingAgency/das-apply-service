@@ -1,12 +1,12 @@
 ﻿namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 {
+    using Domain.Apply;
+    using Domain.Roatp;
+    using Domain.Ukrlp;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Domain.Apply;
-    using Domain.Roatp;
-    using Newtonsoft.Json;
-    using Domain.Ukrlp;
 
     public static class RoatpPreambleQuestionIdConstants
     {
@@ -35,6 +35,7 @@
         public const string UkrlpVerificationCharity = "PRE-65";
         public const string UkrlpVerificationSoleTraderPartnership = "PRE-70";
         public const string UkrlpPrimaryVerificationSource = "PRE-80";
+        public const string RouteAndOnRoatp = "PRE-89";
         public const string OnRoatp = "PRE-90";
         public const string RoatpCurrentStatus = "PRE-91";
         public const string RoatpRemovedReason = "PRE-92";
@@ -53,7 +54,8 @@
         public const string CompaniesHousePSCs = "YO-71";
         public const string CompaniesHouseDetailsConfirmed = "YO-75";
         public const string CharityCommissionTrustees = "YO-80";
-        public const string CharityCommissionDetailsConfirmed = "YO-85";
+        public const string CharityCommissionTrusteesConfirmed = "YO-85";
+        public const string CharityCommissionTrusteesDobConfirmed = "YO-86";
         public const string SoleTradeOrPartnership = "YO-100";
         public const string PartnershipType = "YO-101";
         public const string AddPartners = "YO-110";
@@ -85,7 +87,7 @@
         public const string GradeWithinLast3YearsNonOfsFunded = "YO-311";
 
         public const string IsPostGradTrainingOnlyApprenticeship = "YO-250";
-		public const string HasDeliveredTrainingAsSubcontractor = "YO-350";
+        public const string HasDeliveredTrainingAsSubcontractor = "YO-350";
         public const string ContractFileName = "YO-360";
     }
 
@@ -207,9 +209,8 @@
         public static class WhosInControl
         {
             public const string CompaniesHouseStartPage = "70";
-            public const string CharityCommissionStartPage = "80";
-            public const string CharityCommissionConfirmTrustees = "80";
-            public const string CharityCommissionNoTrustees = "90";
+            public const string CharityCommissionTrustees = "80";
+            public const string CharityCommissionTrusteesDob = "86";
             public const string SoleTraderPartnership = "100";
             public const string PartnershipType = "101";
             public const string AddPartners = "110";
@@ -219,7 +220,9 @@
 
         public static class ManagementHierarchy
         {
-              public const string AddManagementHierarchy = "7200";
+            public const string AddManagementHierarchy = "7200";
+            public const string EditManagementHierarchy = "EditManagementHierarchy";
+            public const string RemoveManagementHierarchy = "RemoveManagementHierarchy";
         }
 
         public static class DescribeYourOrganisation
@@ -253,13 +256,15 @@
             public const string GradeWithinLast3YearsOfsFunded = "310";
             public const string GradeWithinLast3YearsNonOfsFunded = "311";
             public const string IsPostGradTrainingOnlyApprenticeship = "250";
-			public const string SubcontractorDeclaration = "350";
+            public const string SubcontractorDeclaration = "350";
             public const string SubcontractorContractFile = "360";
         }
 
-        public static class FinancialEvidence
+        public static class YourOrganisationsFinancialEvidence
         {
-            public const string YourOrganisationsFinancialEvidence = "2131";
+            public const string FinancialEvidence_Other = "2120";
+            public const string FinancialEvidence_CompanyOrCharity = "2130";
+            public const string FinancialEvidence_SoleTraderOrPartnership = "2140";
         }
 
         public static class CriminalComplianceChecks
@@ -306,6 +311,9 @@
             public const string TypeOfApprenticeshipTraining_Main = "6201";
             public const string TypeOfApprenticeshipTraining_Employer = "6202";
             public const string TypeOfApprenticeshipTraining_Supporting = "6203";
+            public const string TypeOfApprenticeshipTraining_NewSupporting = "6204";
+            public const string ApprenticeshipStandards_NewMain = "6205";
+            public const string ApprenticeshipStandards_NewEmployer = "6206";
             public const string ApprenticeshipStandards = "6230";
             public const string ApplicationFrameworks_MainEmployer = "6250";
             public const string ApplicationFrameworks_Supporting = "6260";
@@ -354,15 +362,20 @@
     public static class RoatpWorkflowQuestionTags
     {
         public const string ProviderRoute = "ApplyProviderRoute";
+        public const string RouteAndOnRoatp = "RouteAndOnRoatp";
+        public const string OnRoatp = "OnROATP";
         public const string UKPRN = "UKPRN";
         public const string UkrlpLegalName = "UKRLPLegalName";
         public const string UkrlpVerificationCompany = "UKRLPVerificationCompany";
         public const string CompaniesHouseDirectors = "CompaniesHouseDirectors";
         public const string CompaniesHousePscs = "CompaniesHousePSCs";
         public const string ManualEntryRequiredCompaniesHouse = "CHManualEntryRequired";
+        public const string DirectorsPSCsConfirmed = "DirectorsPSCsConfirmed";
         public const string UkrlpVerificationCharity = "UKRLPVerificationCharity";
         public const string CharityCommissionTrustees = "CharityTrustees";
         public const string ManualEntryRequiredCharityCommission = "CCTrusteeManualEntry";
+        public const string TrusteesConfirmed = "ConfirmTrustees";
+        public const string TrusteesDobConfirmed = "ConfirmTrusteesDob";
         public const string UkrlpVerificationSoleTraderPartnership = "UKRLPVerificationSoleTraderPartnership";
         public const string SoleTraderOrPartnership = "SoleTradeOrPartnership";
         public const string PartnershipType = "PartnershipType";
@@ -396,6 +409,17 @@
         public const string AverageNumberofFTEEmployees = "FHAAverageNumberofFTEEmployees";
     }
 
+
+    public static class RouteAndOnRoatpTags
+    {
+
+        public const string MainOnRoatp = "MainOnRoatp";
+        public const string MainNotOnRoatp= "MainNotOnRoatp";
+        public const string EmployerOnRoatp = "EmployerOnRoatp";
+        public const string EmployerNotOnRoatp = "EmployerNotOnRoatp";
+        public const string SupportingOnRoatp = "SupportingOnRoatp";
+        public const string SupportingNotOnRoatp = "SupportingNotOnRoatp";
+    }
     public static class RoatpClarificationUpload
     {
         public const string ClarificationFile = "ClarificationFile";
@@ -772,7 +796,7 @@
                 {
                     QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                     Value = JsonConvert.SerializeObject(table),
-                    PageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage,
+                    PageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees,
                     SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                     SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl
                 });
@@ -783,7 +807,7 @@
                 {
                     QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                     Value = string.Empty,
-                    PageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage,
+                    PageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees,
                     SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                     SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl
                 });
@@ -822,13 +846,13 @@
             questions.Add(new PreambleAnswer
             {
                 QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionCharityName,
-                Value = applicationDetails.CharitySummary?.CharityName
+                Value = applicationDetails.CharitySummary?.Name
             });
 
             var incorporationDate = string.Empty;
-            if (applicationDetails.CharitySummary != null && applicationDetails.CharitySummary.IncorporatedOn.HasValue)
+            if (applicationDetails.CharitySummary != null && applicationDetails.CharitySummary.RegistrationDate.HasValue)
             {
-                incorporationDate = applicationDetails.CharitySummary.IncorporatedOn.Value.ToString();
+                incorporationDate = applicationDetails.CharitySummary.RegistrationDate.Value.ToString();
             }
             questions.Add(new PreambleAnswer
             {
@@ -853,9 +877,9 @@
         {
             questions.Add(new PreambleAnswer
             {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionDetailsConfirmed,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrusteesConfirmed,
                 Value = string.Empty,
-                PageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionConfirmTrustees,
+                PageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees,
                 SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                 SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl
             });
@@ -863,11 +887,13 @@
 
         private static void CreateRoatpQuestionAnswers(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
         {
+            const string onRoatpRegisterTrue = "TRUE";
+
             var onRoatpRegister = string.Empty;
             if (applicationDetails.RoatpRegisterStatus != null &&
                 applicationDetails.RoatpRegisterStatus.UkprnOnRegister)
             {
-                onRoatpRegister = "TRUE";
+                onRoatpRegister = onRoatpRegisterTrue;
             }
             questions.Add(new PreambleAnswer
             {
@@ -876,9 +902,34 @@
             });
 
             string registerStatus = string.Empty;
-            if (onRoatpRegister == "TRUE")
+            if (onRoatpRegister == onRoatpRegisterTrue)
             {
                 registerStatus = applicationDetails.RoatpRegisterStatus.StatusId.ToString();
+            }
+
+            var applicationRoute = applicationDetails.ApplicationRoute?.Id;
+            var routeAndOnRoatp = string.Empty;
+
+            switch (applicationRoute)
+            {
+                case ApplicationRoute.MainProviderApplicationRoute:
+                    routeAndOnRoatp = onRoatpRegister == onRoatpRegisterTrue ? RouteAndOnRoatpTags.MainOnRoatp : RouteAndOnRoatpTags.MainNotOnRoatp;
+                    break;
+                case ApplicationRoute.EmployerProviderApplicationRoute:
+                    routeAndOnRoatp = onRoatpRegister == onRoatpRegisterTrue ? RouteAndOnRoatpTags.EmployerOnRoatp : RouteAndOnRoatpTags.EmployerNotOnRoatp;
+                    break;
+                case ApplicationRoute.SupportingProviderApplicationRoute:
+                    routeAndOnRoatp = onRoatpRegister == onRoatpRegisterTrue ? RouteAndOnRoatpTags.SupportingOnRoatp : RouteAndOnRoatpTags.SupportingNotOnRoatp;    
+                    break;
+            }
+
+            if (routeAndOnRoatp != string.Empty)
+            {
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.RouteAndOnRoatp,
+                    Value = routeAndOnRoatp
+                });
             }
 
             questions.Add(new PreambleAnswer

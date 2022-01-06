@@ -8,7 +8,6 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Start;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
@@ -28,6 +27,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
+using SFA.DAS.ApplyService.Domain.Apply.AllowedProviders;
 using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
 using SFA.DAS.ApplyService.Types;
 using SFA.DAS.ApplyService.Web.Orchestrators;
@@ -37,13 +37,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     [TestFixture]
     public class RoatpApplicationControllerTests
     {
+        private const string USER_GIVEN_NAME = "Test";
+        private const string USER_FAMILY_NAME = "User";
+        private const string USER_EMAIL_ADDRESS = "Test.User@test.com";
+        private readonly Guid USER_USERID = Guid.NewGuid();
+        private readonly Guid USER_SIGNINID = Guid.NewGuid();
+
         private RoatpApplicationController _controller;
         private Mock<IApplicationApiClient> _apiClient;
         private Mock<ILogger<RoatpApplicationController>> _logger;
         private Mock<IUsersApiClient> _usersApiClient;
         private Mock<ISessionService> _sessionService;
-        private Mock<IConfigurationService> _configService;
-        private Mock<IUserService> _userService;
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IQuestionPropertyTokeniser> _questionPropertyTokeniser;
         private Mock<IPageNavigationTrackingService> _pageNavigationTrackingService;
@@ -58,25 +62,28 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IRoatpOrganisationVerificationService> _roatpOrganisationVerificationService;
         private Mock<ITaskListOrchestrator> _taskListOrchestrator;
         private Mock<IUkrlpApiClient> _ukrlpApiClient;
-        private Mock<IApplicationApiClient> _applicationApiClient;
+        private Mock<IReapplicationCheckService> _reapplicationCheckService;
 
         [SetUp]
         public void Before_each_test()
         {
+            var signInId = Guid.NewGuid();
+            var givenNames = "Test";
+            var familyName = "User";
+
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
-                new Claim(ClaimTypes.Name, "example name"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("Email", "test@test.com"),
-                new Claim("custom-claim", "example claim value"),
+                new Claim(ClaimTypes.Name, $"{USER_GIVEN_NAME} {USER_FAMILY_NAME}"),
+                new Claim("sub", USER_SIGNINID.ToString()),
+                new Claim("given_name", USER_GIVEN_NAME),
+                new Claim("family_name", USER_FAMILY_NAME),
+                new Claim("Email", USER_EMAIL_ADDRESS),
             }, "mock"));
 
             _apiClient = new Mock<IApplicationApiClient>();
             _logger = new Mock<ILogger<RoatpApplicationController>>();
             _usersApiClient = new Mock<IUsersApiClient>();
             _sessionService = new Mock<ISessionService>();
-            _configService = new Mock<IConfigurationService>();
-            _userService = new Mock<IUserService>();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _pagesWithSectionsFlowService = new Mock<IPagesWithSectionsFlowService>();
 
@@ -92,16 +99,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _roatpOrganisationVerificationService = new Mock<IRoatpOrganisationVerificationService>();
             _taskListOrchestrator = new Mock<ITaskListOrchestrator>();
             _ukrlpApiClient = new Mock<IUkrlpApiClient>();
+            _reapplicationCheckService = new Mock<IReapplicationCheckService>();
 
-            _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
-                                                         _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, 
+            _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object,
+                                                         _usersApiClient.Object, _qnaApiClient.Object, 
                                                           _pagesWithSectionsFlowService.Object,
                                                          _questionPropertyTokeniser.Object, _pageOverrideConfiguration.Object,
                                                          _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
                                                          _roatpApiClient.Object,
                                                          _submitApplicationEmailService.Object, _tabularDataRepository.Object,
                                                          _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object, _taskListOrchestrator.Object,
-                                                         _ukrlpApiClient.Object)
+                                                         _ukrlpApiClient.Object, _reapplicationCheckService.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -109,14 +117,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 }
             };
 
-            _userService.Setup(x => x.ValidateUser(It.IsAny<string>())).ReturnsAsync(true);
             var contact = new Contact
             {
-                Id = Guid.NewGuid(),
-                GivenNames = "Test",
-                FamilyName = "User"
+                Id = USER_USERID,
+                SigninId = USER_SIGNINID,
+                GivenNames = USER_GIVEN_NAME,
+                FamilyName = USER_FAMILY_NAME,
+                Email = USER_EMAIL_ADDRESS
             };
-            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(contact);
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<Guid>())).ReturnsAsync(contact);
         }
 
         [Test]
@@ -244,188 +253,169 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _apiClient.VerifyAll();
         }
 
-        [Test]
-        public async Task Applications_shows_task_list_if_an_application_in_progress()
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Rejected)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Fail)]
+
+        public async Task Applications_shows_process_application_status_if_only_reapplication_requested_applications_and_reapplication_allowed_for_that_user(string applicationStatus, string gatewayReviewStatus)
         {
-            var inProgressApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.InProgress
-            };
             var applications = new List<Domain.Entities.Apply>
             {
-                inProgressApp
+                new Apply
+                {
+                    ApplicationStatus = applicationStatus, GatewayReviewStatus = gatewayReviewStatus,
+                    ApplyData = new ApplyData
+                    {
+                        ApplyDetails = new ApplyDetails
+                        {
+                            RequestToReapplyMade = true
+                        }
+                    }
+                }
             };
 
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
 
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10002000,
+                UkrlpLookupDetails = new ProviderDetails
+                {
+                    ProviderName = "Provider name",
+                    ContactDetails = new List<ProviderContact>
+                    {
+                        new ProviderContact
+                        {
+                            ContactType = "L",
+                            ContactAddress = new ContactAddress
+                            {
+                                Address1 = "Address line 1",
+                                PostCode = "PS1 1ST"
+                            }
+                        }
+                    },
+                    VerificationDetails = new List<VerificationDetails>
+                    {
+                        new VerificationDetails
+                        {
+                            VerificationAuthority = VerificationAuthorities.SoleTraderPartnershipAuthority,
+                            PrimaryVerificationSource = true
+                        }
+                    }
+                },
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = 1
+                },
+                RoatpRegisterStatus = new OrganisationRegisterStatus
+                {
+                    ProviderTypeId = 1
+                }
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var applicationId = Guid.NewGuid();
+            var qnaResponse = new StartQnaApplicationResponse
+            {
+                ApplicationId = applicationId
+            };
+
+            _qnaApiClient.Setup(x => x.StartApplication(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(qnaResponse).Verifiable();
+
+            _apiClient.Setup(x => x.StartApplication(It.IsAny<StartApplicationRequest>())).ReturnsAsync(applicationId).Verifiable();
+            _reapplicationCheckService.Setup(x => x.ReapplicationAllowed(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .ReturnsAsync(true);
             var result = await _controller.Applications();
 
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("TaskList");
+            redirectResult.ActionName.Should().Be("ProcessApplicationStatus");
+            redirectResult.ControllerName.Should().Be("RoatpOverallOutcome");
         }
 
-        [Test]
-        public async Task Applications_shows_confirmation_page_if_application_submitted()
+        [TestCase(ApplicationStatus.Rejected, GatewayReviewStatus.Rejected)]
+        [TestCase(ApplicationStatus.AppealSuccessful, GatewayReviewStatus.Fail)]
+
+        public async Task Applications_shows_process_application_status_if_new_application_in_progress(string applicationStatus, string gatewayReviewStatus)
         {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.Submitted
-            };
             var applications = new List<Domain.Entities.Apply>
             {
-                submittedApp
+                new Apply
+                {
+                    ApplicationStatus = applicationStatus, GatewayReviewStatus = gatewayReviewStatus,
+                    ApplyData = new ApplyData
+                    {
+                        ApplyDetails = new ApplyDetails
+                        {
+                            RequestToReapplyMade = true
+                        }
+                    }
+                }
             };
 
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
 
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10002000,
+                UkrlpLookupDetails = new ProviderDetails
+                {
+                    ProviderName = "Provider name",
+                    ContactDetails = new List<ProviderContact>
+                    {
+                        new ProviderContact
+                        {
+                            ContactType = "L",
+                            ContactAddress = new ContactAddress
+                            {
+                                Address1 = "Address line 1",
+                                PostCode = "PS1 1ST"
+                            }
+                        }
+                    },
+                    VerificationDetails = new List<VerificationDetails>
+                    {
+                        new VerificationDetails
+                        {
+                            VerificationAuthority = VerificationAuthorities.SoleTraderPartnershipAuthority,
+                            PrimaryVerificationSource = true
+                        }
+                    }
+                },
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = 1
+                },
+                RoatpRegisterStatus = new OrganisationRegisterStatus
+                {
+                    ProviderTypeId = 1
+                }
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var applicationId = Guid.NewGuid();
+            var qnaResponse = new StartQnaApplicationResponse
+            {
+                ApplicationId = applicationId
+            };
+
+            _qnaApiClient.Setup(x => x.StartApplication(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(qnaResponse).Verifiable();
+
+            _apiClient.Setup(x => x.StartApplication(It.IsAny<StartApplicationRequest>())).ReturnsAsync(applicationId).Verifiable();
+            _reapplicationCheckService.Setup(x => x.ReapplicationAllowed(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .ReturnsAsync(false);
             var result = await _controller.Applications();
 
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
+            redirectResult.ActionName.Should().Be("ProcessApplicationStatus");
+            redirectResult.ControllerName.Should().Be("RoatpOverallOutcome");
         }
 
         [Test]
-        public async Task Applications_shows_confirmation_page_if_application_Gateway_Assessed()
+        public async Task
+            Applications_shows_process_application_status_if_applications_called()
         {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.GatewayAssessed
-            };
-            var applications = new List<Domain.Entities.Apply>
-            {
-                submittedApp
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
-        }
-
-
-        [Test]
-        public async Task Applications_shows_confirmation_page_if_application_new()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.New
-            };
-            var applications = new List<Domain.Entities.Apply>
-            {
-                submittedApp
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("TaskList");
-        }
-
-        [Test]
-        public async Task Applications_shows_confirmation_page_if_application_resubmitted()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.Resubmitted
-            };
-            var applications = new List<Domain.Entities.Apply>
-            {
-                submittedApp
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
-        }
-
-        [Test]
-        public async Task Applications_shows_withdrawn_page_if_application_withdrawn()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.Withdrawn
-            };
-            var applications = new List<Domain.Entities.Apply>
-            {
-                submittedApp
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationWithdrawn");
-        }
-
-        [Test]
-        public async Task Applications_shows_active_with_success_page_if_application_approved_and_oversight_review_status_already_active()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.Approved
-            };
-            var applications = new List<Apply>
-            {
-                submittedApp
-            };
-
-            var oversightReview = new GetOversightReviewResponse
-            {
-                Status = OversightReviewStatus.SuccessfulAlreadyActive
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-            _apiClient.Setup(x => x.GetOversightReview(It.IsAny<Guid>())).ReturnsAsync(oversightReview);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationApprovedAlreadyActive");
-        }
-
-        [Test]
-        public async Task Applications_shows_active_with_success_page_if_application_approved_and_oversight_review_status_not_set()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.Approved
-            };
-            var applications = new List<Apply>
-            {
-                submittedApp
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-       
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationApproved");
-        }
-
-        [Test]
-        public async Task Applications_shows_feedback_added_page_if_application_status_matches()
-        {
-            var submittedApp = new Apply
-            {
-                ApplicationStatus = ApplicationStatus.FeedbackAdded
-            };
+            var submittedApp = new Domain.Entities.Apply {ApplyData = new ApplyData()};
             var applications = new List<Apply>
             {
                 submittedApp
@@ -436,52 +426,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = await _controller.Applications();
 
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("FeedbackAdded");
-        }
-
-        [Test]
-        public async Task Applications_shows_rejected_page_if_application_rejected()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.GatewayAssessed,
-                GatewayReviewStatus = GatewayReviewStatus.Reject
-            };
-            var applications = new List<Domain.Entities.Apply>
-            {
-                submittedApp
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationRejected");
-        }
-
-        [Test]
-        public async Task Applications_shows_unsuccessful_page_if_application_unsuccessful()
-        {
-            var submittedApp = new Domain.Entities.Apply
-            {
-                ApplicationStatus = ApplicationStatus.Rejected,
-                GatewayReviewStatus = GatewayReviewStatus.Fail
-            };
-            var applications = new List<Domain.Entities.Apply>
-            {
-                submittedApp
-            };
-
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
-
-            var result = await _controller.Applications();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationUnsuccessful");
+            redirectResult.ActionName.Should().Be("ProcessApplicationStatus");
+            redirectResult.ControllerName.Should().Be("RoatpOverallOutcome");
         }
 
         [Test]
@@ -555,6 +501,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Submit_application_presents_confirmation_page_with_legal_name_and_emailaddress()
         {
+            var ukprn = "123456";
             var organisationNameAnswer = new Answer
             {
                 QuestionId = "ORG-1",
@@ -562,6 +509,21 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpLegalName, It.IsAny<string>())).ReturnsAsync(organisationNameAnswer);
+
+            var application = new Apply
+            {
+                ApplicationId = Guid.NewGuid(),
+                ApplicationStatus = ApplicationStatus.InProgress,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails {UKPRN = ukprn},
+                    Sequences = new List<ApplySequence>()
+                }
+            };
+
+            _apiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
+            _apiClient.Setup(x => x.GetAllowedProvider(ukprn))
+                .ReturnsAsync(new AllowedProvider {EndDateTime = DateTime.Today});
 
             var result = _controller.SubmitApplication(Guid.NewGuid()).GetAwaiter().GetResult();
 
@@ -571,6 +533,75 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             model.Should().NotBeNull();
             model.OrganisationName.Should().Be(organisationNameAnswer.Value);
             model.EmailAddress.Should().NotBeNull();
+        }
+
+
+        [Test]
+        public void Submit_application_presents_post_invitation_window_closed_as_date_passed()
+        {
+            var ukprn = "123456";
+            var organisationNameAnswer = new Answer
+            {
+                QuestionId = "ORG-1",
+                Value = "My organisation"
+            };
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpLegalName, It.IsAny<string>())).ReturnsAsync(organisationNameAnswer);
+
+            var application = new Apply
+            {
+                ApplicationId = Guid.NewGuid(),
+                ApplicationStatus = ApplicationStatus.InProgress,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails { UKPRN = ukprn },
+                    Sequences = new List<ApplySequence>()
+                }
+            };
+
+            _apiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
+            _apiClient.Setup(x => x.GetAllowedProvider(ukprn))
+                .ReturnsAsync(new AllowedProvider { EndDateTime = DateTime.Today.AddDays(-1) });
+
+            var result = _controller.SubmitApplication(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("InvitationWindowClosed.cshtml");
+        }
+
+        [Test]
+        public void Submit_application_presents_post_invitation_window_closed_as_no_entry_in_allowed_providers()
+        {
+            var ukprn = "123456";
+            var organisationNameAnswer = new Answer
+            {
+                QuestionId = "ORG-1",
+                Value = "My organisation"
+            };
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpLegalName, It.IsAny<string>())).ReturnsAsync(organisationNameAnswer);
+
+            var application = new Apply
+            {
+                ApplicationId = Guid.NewGuid(),
+                ApplicationStatus = ApplicationStatus.InProgress,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails { UKPRN = ukprn },
+                    Sequences = new List<ApplySequence>()
+                }
+            };
+
+            _apiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
+            _apiClient.Setup(x => x.GetAllowedProvider(ukprn))
+                .ReturnsAsync((AllowedProvider)null);
+
+            var result = _controller.SubmitApplication(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("InvitationWindowClosed.cshtml");
         }
 
         [Test]
@@ -645,7 +676,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
+            redirectResult.ActionName.Should().Be("ProcessApplicationStatus");
 
             _submitApplicationEmailService.VerifyAll();
         }
@@ -741,7 +772,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     && r.FinancialData.AverageNumberofFTEEmployees == 11
                     )));
         }
-
 
         [Test]
         public async Task Confirm_submit_application_submit_application_request_includes_null_financial_data_if_financial_page_is_not_active()
@@ -844,7 +874,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     )));
         }
 
-
         [Test]
         public async Task Confirm_submit_application_submit_application_request_includes_organisation_type()
         {
@@ -934,24 +963,20 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 x.SubmitApplication(It.Is<SubmitApplicationRequest>(r => r.OrganisationType == "test")));
         }
 
-
         [Test]
         public async Task TaskList_shows_tasklist_view_for_application()
         {
             var applicationId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
 
-            _userService.Setup(x => x.GetSignInId()).ReturnsAsync(() => userId);
-
-            var inProgressApp = new Domain.Entities.Apply
+            var inProgressApp = new Apply
             {
                 ApplicationStatus = ApplicationStatus.InProgress,
                 ApplyData = new ApplyData()
             };
 
-            _apiClient.Setup(x => x.GetApplicationByUserId(applicationId, userId)).ReturnsAsync(() => inProgressApp);
+            _apiClient.Setup(x => x.GetApplicationByUserId(applicationId, USER_SIGNINID)).ReturnsAsync(() => inProgressApp);
 
-            _taskListOrchestrator.Setup(x => x.GetTaskListViewModel(applicationId, userId))
+            _taskListOrchestrator.Setup(x => x.GetTaskListViewModel(applicationId, USER_USERID))
                 .ReturnsAsync(() => new TaskListViewModel());
 
             var result = await _controller.TaskList(applicationId);
@@ -959,7 +984,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             Assert.IsInstanceOf<ViewResult>(result);
             var viewResult = (ViewResult) result;
             Assert.AreEqual("~/Views/Roatp/TaskList.cshtml", viewResult.ViewName);
-
         }
     }
 }

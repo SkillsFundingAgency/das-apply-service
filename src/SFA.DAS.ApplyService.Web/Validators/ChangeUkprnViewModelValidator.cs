@@ -7,7 +7,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
     {
         public ChangeUkprnViewModelValidator()
         {
-            RuleFor(x => x.Confirmed).NotNull().WithMessage("Tell us if you're sure you want to change your organisation’s UKPRN");
+            RuleFor(x => x.Confirmed).NotNull().WithMessage("Tell us if you're sure you want to change your organisation's UKPRN");
         }
     }
 }

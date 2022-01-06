@@ -4,6 +4,7 @@ using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SFA.DAS.ApplyService.Application.Services.Assessor;
 
 namespace SFA.DAS.ApplyService.InternalApi.Mappers
 {

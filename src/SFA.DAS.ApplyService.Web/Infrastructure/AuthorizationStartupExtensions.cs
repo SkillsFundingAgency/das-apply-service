@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 })
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
-                    options.Cookie.Name = ".Assessors.Cookies";
+                    options.Cookie.Name = ".Apply.Cookies";
                     options.Cookie.HttpOnly = true;
 
                     if (!env.IsDevelopment())
@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 {
                     options.CorrelationCookie = new CookieBuilder()
                     {
-                        Name = ".Assessor.Correlation.", 
+                        Name = ".Apply.Correlation.", 
                         HttpOnly = true,
                         SameSite = SameSiteMode.None,
                         SecurePolicy = CookieSecurePolicy.SameAsRequest
@@ -83,18 +83,34 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
                         OnTokenValidated = async context =>
                         {
+                            var signInId = context.Principal.GetSignInId();
                             var client = context.HttpContext.RequestServices.GetRequiredService<IUsersApiClient>();
-                            var signInId = context.Principal.FindFirst("sub").Value;
                             var user = await client.GetUserBySignInId(signInId);
-                            if (user != null)
+
+                            if(user is null)
                             {
-                                if (user.Status == "Deleted")
-                                {
+                                var email = context.Principal.GetEmail();
+                                var givenName = context.Principal.GetGivenName();
+                                var familyName = context.Principal.GetFamilyName();
+                                
+                                await client.CreateUserFromAsLogin(signInId, email, givenName, familyName);
+                                user = await client.GetUserBySignInId(signInId);
+                            }
+
+                            if (user is null)
+                            {
+                                // Redirect to not setup page. 
+                                context.Response.Redirect("/Users/NotSetUp");
+                                context.HandleResponse();
+                            }
+                            else if (user.Status == "Deleted")
+                            {
                                     // Redirect to access denied page. 
                                     context.Response.Redirect("/Home/AccessDenied");
                                     context.HandleResponse();
-                                }
-                              
+                            }
+                            else
+                            {
                                 var primaryIdentity = context.Principal.Identities.FirstOrDefault();
                                 if (primaryIdentity != null && string.IsNullOrEmpty(primaryIdentity.Name))
                                 {
@@ -102,10 +118,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                                     // Note: In future, may want to consider populating the other Claims, such as Email
                                 }
 
-                                var identity = new ClaimsIdentity(new List<Claim>(){new Claim("UserId", user.Id.ToString())});                      
-                                context.Principal.AddIdentity(identity);   
+                                var identity = new ClaimsIdentity(new List<Claim>(){new Claim("UserId", user.Id.ToString())});
+                                context.Principal.AddIdentity(identity);
                             }
-                            
                         },
                         
                         // Sometimes the auth flow fails. The most commonly observed causes for this are

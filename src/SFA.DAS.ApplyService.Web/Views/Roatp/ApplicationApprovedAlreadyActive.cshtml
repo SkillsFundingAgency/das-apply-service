@@ -1,11 +1,20 @@
-﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
+﻿@using SFA.DAS.ApplyService.Web.ViewModels.Roatp
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
 
 @{
     ViewBag.Title = "Application successful";
     Layout = "_Layout";
+    var financialHealthViewModel = new FinancialHealthViewModel
+    {
+        FinancialGrade = Model.FinancialGrade,
+        FinancialExternalComments = Model.FinancialExternalComments
+    };
 }
 
-<partial name="~/Views/Roatp/ApplicationHeaderReadOnly.cshtml" />
+@section Navigation
+{
+    <partial name="~/Views/Application/Navigation/_ApplicationDetermined.cshtml" />
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -21,45 +30,27 @@
             <partial name="~/Views/Roatp/_ApplicationDetailsTable.cshtml" model="@Model" />
 
             <p class="govuk-body">
-                Your organisation has successfully passed the reapplication to be on the register for apprenticeship training providers (RoATP).
+                Your application to join the RoATP has been successful.
             </p>
-            <h1 class="govuk-heading-l">Financial health assessment</h1>
-            <p class="govuk-body">
-                The outcome of your financial health assessment is:
-                </p>
-            <p class="hint--no-color govuk-details__text">
-                    @Model.FinancialGrade
-    
-            </p>
+        </div>
+    </div>
 
+    <partial name="~/Views/Roatp/_FinancialHealthFeedback.cshtml" model="@financialHealthViewModel" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
             <h2 class="govuk-heading-m">What happens next</h2>
             <p class="govuk-body">
                 Your organisation will remain on the register.
             </p>
-           
+
             <p class="govuk-body">
                 If your organisation has any post-application (on-boarding) tasks to complete,
-                you’ll receive an email within 5 working days from the ‘Business Operations Provider Management’ team explaining how to do this.
-            </p>
-            <p class="govuk-body">
-                If you fail to complete any required post-application tasks, your organisation may be removed from the register.
-            </p>
-            <p class="govuk-body">
-                <a href="https://www.gov.uk/guidance/apprenticeship-funding-rules" target="_blank">Review the latest apprenticeship funding rules</a>
-            </p>
+                you'll receive an email within 5 working days from the 'Delivery Support team - Market Entry and Operation', explaining how to do this.
 
-            <h2 class="govuk-heading-m">What you agreed to</h2>
-            <p class="govuk-body">
-                In the application, you confirmed your organisation will follow the <a href="https://www.gov.uk/government/publications/conditions-of-acceptance-for-apprenticeship-training-providers" target="_blank">Conditions of Acceptance</a> for being on the register. If you do not follow them, you may be removed from the register.
             </p>
-            <h2 class="govuk-heading-m">How to contact us</h2>
-            <p class="govuk-body">
-                You can contact the Manage apprenticeships service helpdesk on:
-                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-9">
-                        <li>08000 150 600</li>
-                        <li><a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk">helpdesk@manage-apprenticeships.service.gov.uk</a></li>
-                        </ul>
-            </p>
+            <partial name="~/Views/Roatp/_FailureWarning.cshtml" />
+            <partial name="~/Views/Roatp/_ApplicationApprovedGuidelinesContactDetails.cshtml" />
         </div>
     </div>
 </main>

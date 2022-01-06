@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
@@ -19,34 +13,34 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Application.Services;
+using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Data.Repositories;
 using SFA.DAS.ApplyService.DfeSignIn;
-using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Session;
-using SFA.DAS.ApplyService.Web;
 using SFA.DAS.ApplyService.Web.Authorization;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Infrastructure.Services;
 using SFA.DAS.ApplyService.Web.Orchestrators;
-using StructureMap;
-using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
 {
-    using Controllers;
-    using SFA.DAS.ApplyService.Application.Apply;
     using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.EmailService.Infrastructure;
     using SFA.DAS.ApplyService.EmailService.Interfaces;
     using SFA.DAS.ApplyService.Web.Configuration;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
-    using SFA.DAS.ApplyService.Web.Services;
+    using Services;
     using SFA.DAS.ApplyService.Web.Validators;
     using SFA.DAS.Http;
     using SFA.DAS.Http.TokenGenerators;
     using SFA.DAS.Notifications.Api.Client;
+    using SFA.DAS.ApplyService.Web.StartupExtensions;
+    using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
 
     public class Startup
     {
@@ -77,6 +71,15 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddAuthorization(options =>
             {
+                options.AddPolicy("AccessAppeal", policy =>
+                {
+                    policy.Requirements.Add(new AccessApplicationRequirement());
+                });
+                options.AddPolicy("AccessAppealNotYetSubmitted", policy =>
+                {
+                    policy.Requirements.Add(new AccessApplicationRequirement());
+                    policy.Requirements.Add(new AppealNotYetSubmittedRequirement());
+                });
                 options.AddPolicy("AccessInProgressApplication", policy =>
                 {
                     policy.Requirements.Add(new AccessApplicationRequirement());
@@ -99,10 +102,14 @@ namespace SFA.DAS.ApplyService.Web
                 options.SupportedUICultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
-            
-            services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateAccountValidator>())
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddMvc(options =>
+            {
+                options.Filters.Add<FeatureToggleFilter>();
+            })
+            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ManagementHierarchyValidator>())
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            .AddSessionStateTempDataProvider();
 
             services.AddOptions();
 
@@ -111,37 +118,10 @@ namespace SFA.DAS.ApplyService.Web
             services.Configure<List<QnaLinksConfiguration>>(_configuration.GetSection("QnaLinks"));
             services.Configure<List<CustomValidationConfiguration>>(_configuration.GetSection("CustomValidations"));
             services.Configure<List<NotRequiredOverrideConfiguration>>(_configuration.GetSection("NotRequiredOverrides"));
+            services.Configure<List<OuterApiConfiguration>>(_configuration.GetSection("OuterApiConfiguration"));
 
-            if (_env.IsDevelopment())
-            {
-                services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
-                    .SetApplicationName("Apply");
-
-                services.AddDistributedMemoryCache();
-            }
-            else
-            {
-                try
-                {
-                    var redis = ConnectionMultiplexer.Connect(
-                        $"{_configService.SessionRedisConnectionString},DefaultDatabase=1");
-
-                    services.AddDataProtection()
-                        .PersistKeysToStackExchangeRedis(redis, "Apply-DataProtectionKeys")
-                        .SetApplicationName("Apply");
-                    services.AddDistributedRedisCache(options =>
-                    {
-                        options.Configuration = $"{_configService.SessionRedisConnectionString},DefaultDatabase=0";
-                    });
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e,
-                        $"Error setting redis for session.  Conn: {_configService.SessionRedisConnectionString}");
-                    throw;
-                }
-            }
+            services.AddCache(_configService, _env);
+            services.AddDataProtection(_configService, _env);
 
             services.AddSession(opt =>
             {
@@ -164,77 +144,80 @@ namespace SFA.DAS.ApplyService.Web
 
         private void ConfigHttpClients(IServiceCollection services)
         {
-            var acceptHeaderName = "Accept";
-            var acceptHeaderValue = "application/json";
             var handlerLifeTime = TimeSpan.FromMinutes(5);
 
             services.AddHttpClient<IApplicationApiClient, ApplicationApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IQnaApiClient, QnaApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.QnaApiAuthentication.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
-            services.AddHttpClient<ICharityCommissionApiClient, CharityCommissionApiClient>(config =>
+            services.AddHttpClient<IOuterApiClient, OuterApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+                config.BaseAddress = new Uri(_configService.OuterApiConfiguration.ApiBaseUrl);
+                config.DefaultRequestHeaders.Add("Accept", "application/json");
+                config.DefaultRequestHeaders.Add("X-Version", "1");
+                config.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _configService.OuterApiConfiguration.SubscriptionKey);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<ICompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IEmailTemplateClient, EmailTemplateClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IOrganisationApiClient, OrganisationApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IUkrlpApiClient, UkrlpApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IUsersApiClient, UsersApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
 
-            services.AddHttpClient<IWhitelistedProvidersApiClient, WhitelistedProvidersApiClient>(config =>
+            services.AddHttpClient<IAllowedProvidersApiClient, AllowedProvidersApiClient>(config =>
             {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IOutcomeApiClient, OutcomeApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IAppealsApiClient, AppealsApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.ApiBaseAddress);
             })
             .SetHandlerLifetime(handlerLifeTime);
         }
@@ -256,9 +239,14 @@ namespace SFA.DAS.ApplyService.Web
                 s.GetService<IHttpContextAccessor>(),
                 _configuration["EnvironmentName"]));
 
+            services.AddTransient<IFeatureToggles>(s =>
+            {
+                var configService = s.GetService<IConfigurationService>();
+                var config = configService.GetConfig().GetAwaiter().GetResult();
+                return config.FeatureToggles ?? new FeatureToggles();
+            });
+
             services.AddTransient<IDfeSignInService, DfeSignInService>();
-            services.AddTransient<CreateAccountValidator, CreateAccountValidator>();
-            services.AddTransient<IUserService, UserService>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
             services.AddTransient<IResetRouteQuestionsService, ResetRouteQuestionsService>();
@@ -268,7 +256,10 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();
             services.AddTransient<IAnswerFormService, AnswerFormService>();
             services.AddTransient<IEmailTokenService, EmailTokenService>();
+            services.AddTransient<IAssessorLookupService, AssessorLookupService>();
             services.AddTransient<IGetHelpWithQuestionEmailService, GetHelpWithQuestionEmailService>();
+            services.AddTransient<IReapplicationCheckService, ReapplicationCheckService>();
+            services.AddTransient<IRequestInvitationToReapplyEmailService, RequestInvitationToReapplyEmailService>();
             services.AddTransient<INotificationsApi>(x => {
                 var apiConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
                 {
@@ -292,11 +283,12 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<ISubmitApplicationConfirmationEmailService, SubmitApplicationConfirmationEmailService>();
             services.AddTransient<ITabularDataService, TabularDataService>();
             services.AddTransient<ITabularDataRepository, TabularDataRepository>();
-            services.AddTransient<IUkprnWhitelistValidator, UkprnWhitelistValidator>();
+            services.AddTransient<IAllowedUkprnValidator, AllowedUkprnValidator>();
             services.AddTransient<IRoatpTaskListWorkflowService, RoatpTaskListWorkflowService>();
             services.AddTransient<IRoatpOrganisationVerificationService, RoatpOrganisationVerificationService>();
             services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
             services.AddTransient<ITaskListOrchestrator, TaskListOrchestrator>();
+            services.AddTransient<IOverallOutcomeService, OverallOutcomeService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)
@@ -326,7 +318,7 @@ namespace SFA.DAS.ApplyService.Web
             app.UseSession();
             app.UseAuthentication();
             app.UseRequestLocalization();
-            app.UseStatusCodePagesWithReExecute("/Home/{0}");
+            app.UseStatusCodePagesWithReExecute("/Home/error/{0}");
             app.UseSecurityHeaders();
             app.UseHealthChecks("/health");
             app.UseMvc(routes =>

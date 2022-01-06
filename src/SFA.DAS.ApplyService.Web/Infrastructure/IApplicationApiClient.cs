@@ -1,16 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Apply.AllowedProviders;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Types;
-using SFA.DAS.ApplyService.InternalApi.Types.Responses.Oversight;
-using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -24,8 +21,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<bool> ChangeProviderRoute(ChangeProviderRouteRequest changeProviderRouteRequest);
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
+        Task<FinancialReviewDetails> GetFinancialReviewDetails(Guid applicationId);
         Task<List<Domain.Entities.Apply>> GetApplications(Guid signinId, bool createdBy);
         Task<Apply> GetApplicationByUserId(Guid applicationId, Guid signinId);
+        Task<List<Domain.Entities.Apply>> GetApplicationsByUkprn(string ukprn);
 
         Task<IEnumerable<RoatpSequences>> GetRoatpSequences();
 
@@ -54,6 +53,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus, string userId);
 
-        Task<GetOversightReviewResponse> GetOversightReview(Guid applicationId);
+        Task<AllowedProvider> GetAllowedProvider(string ukprn);
+
+        Task<Contact> GetContactBySignInId(Guid contactId);
+
+
     }
 }

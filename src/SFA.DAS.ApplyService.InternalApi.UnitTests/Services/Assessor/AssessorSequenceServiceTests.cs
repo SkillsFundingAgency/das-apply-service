@@ -8,6 +8,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
@@ -113,6 +114,110 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
 
             Assert.That(actualSequences, Is.Not.Null);
             Assert.That(actualSequences.Select(seq => seq.SequenceNumber), Is.EquivalentTo(expectedSequenceNumbers));
+        }
+
+        [Test]
+        public async Task ShouldInjectFinancialInformationPage_when_FinancialEvidence_Sequence_NotRequired_returns_false()
+        {
+            var application = new Apply
+            {
+                ApplicationId = _applicationId,
+                ApplyData = new ApplyData
+                {
+                    Sequences = new List<ApplySequence>
+                    {
+                        new ApplySequence { SequenceNo = RoatpWorkflowSequenceIds.FinancialEvidence, NotRequired = true }
+                    }
+                }
+            };
+
+            _mediator.Setup(x => x.Send(It.Is<GetApplicationRequest>(y => y.ApplicationId == _applicationId), It.IsAny<CancellationToken>())).ReturnsAsync(application);
+
+            var shouldInjectPage = await _sequenceService.ShouldInjectFinancialInformationPage(_applicationId);
+
+            Assert.That(shouldInjectPage, Is.False);
+        }
+
+        [Test]
+        public async Task ShouldInjectFinancialInformationPage_when_FinancialEvidence_Section_NotRequired_returns_false()
+        {
+            var application = new Apply
+            {
+                ApplicationId = _applicationId,
+                ApplyData = new ApplyData
+                {
+                    Sequences = new List<ApplySequence>
+                    {
+                        new ApplySequence
+                        {
+                            SequenceNo = RoatpWorkflowSequenceIds.FinancialEvidence,
+                            NotRequired = false,
+                            Sections = new List<ApplySection>
+                            {
+                                new ApplySection { SectionNo = RoatpWorkflowSectionIds.FinancialEvidence.YourOrganisationsFinancialEvidence, NotRequired = true  }
+                            }
+                        }
+                    }
+                }
+            };
+
+            _mediator.Setup(x => x.Send(It.Is<GetApplicationRequest>(y => y.ApplicationId == _applicationId), It.IsAny<CancellationToken>())).ReturnsAsync(application);
+
+            var shouldInjectPage = await _sequenceService.ShouldInjectFinancialInformationPage(_applicationId);
+
+            Assert.That(shouldInjectPage, Is.False);
+        }
+
+        [TestCase(RoatpWorkflowPageIds.YourOrganisationsFinancialEvidence.FinancialEvidence_Other)]
+        [TestCase(RoatpWorkflowPageIds.YourOrganisationsFinancialEvidence.FinancialEvidence_CompanyOrCharity)]
+        [TestCase(RoatpWorkflowPageIds.YourOrganisationsFinancialEvidence.FinancialEvidence_SoleTraderOrPartnership)]
+        public async Task ShouldInjectFinancialInformationPage_when_FinancialEvidence_Section_Required_and_Question_Answered_returns_true(string pageId)
+        {
+            var application = new Apply
+            {
+                ApplicationId = _applicationId,
+                ApplyData = new ApplyData
+                {
+                    Sequences = new List<ApplySequence>
+                    {
+                        new ApplySequence
+                        {
+                            SequenceNo = RoatpWorkflowSequenceIds.FinancialEvidence,
+                            NotRequired = false,
+                            Sections = new List<ApplySection>
+                            {
+                                new ApplySection { SectionNo = RoatpWorkflowSectionIds.FinancialEvidence.YourOrganisationsFinancialEvidence, NotRequired = false  }
+                            }
+                        }
+                    }
+                }
+            };
+
+            _mediator.Setup(x => x.Send(It.Is<GetApplicationRequest>(y => y.ApplicationId == _applicationId), It.IsAny<CancellationToken>())).ReturnsAsync(application);
+
+            var qnaFinancialEvidenceSection = new ApplicationSection
+            {
+                ApplicationId = _applicationId,
+                QnAData = new QnAData
+                {
+                    Pages = new List<Domain.Apply.Page>
+                    {
+                        new Domain.Apply.Page
+                        {
+                            PageId = pageId,
+                            Active = true,
+                            Complete = true
+                        }
+                    }
+                }
+            };
+
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId, RoatpWorkflowSequenceIds.FinancialEvidence, RoatpWorkflowSectionIds.FinancialEvidence.YourOrganisationsFinancialEvidence))
+                         .ReturnsAsync(qnaFinancialEvidenceSection);
+
+            var shouldInjectPage = await _sequenceService.ShouldInjectFinancialInformationPage(_applicationId);
+
+            Assert.That(shouldInjectPage, Is.True);
         }
     }
 }

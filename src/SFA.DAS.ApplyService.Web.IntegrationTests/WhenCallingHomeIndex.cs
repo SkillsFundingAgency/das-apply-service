@@ -64,7 +64,7 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests
 
             var parser = new HtmlParser();
             var document = await parser.ParseAsync(await response.Content.ReadAsStringAsync());
-            document.Title.Should().Be("Create an EPAO account");
+            document.Title.Should().Be("Register of apprenticeship training providers service");
         }
     }
 }

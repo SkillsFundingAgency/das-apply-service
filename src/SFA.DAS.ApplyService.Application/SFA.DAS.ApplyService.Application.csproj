@@ -36,7 +36,4 @@
       <ProjectReference Include="..\SFA.DAS.ApplyService.InternalApi.Types\SFA.DAS.ApplyService.InternalApi.Types.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Apply\Oversight\Commands\CreateAppeal\" />
-    </ItemGroup>
 </Project>

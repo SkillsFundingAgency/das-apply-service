@@ -21,9 +21,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
         {
             var newGatewayStatuses = new List<string> { GatewayReviewStatus.New };
             var inProgressGatewayStatuses = new List<string> { GatewayReviewStatus.InProgress, GatewayReviewStatus.ClarificationSent };
-            var closedGatewayStatuses = new List<string> { GatewayReviewStatus.Fail, GatewayReviewStatus.Pass, GatewayReviewStatus.Reject };
+            var closedGatewayStatuses = new List<string> { GatewayReviewStatus.Fail, GatewayReviewStatus.Pass, GatewayReviewStatus.Rejected };
 
-            var counts = (await _repository.GetGatewayApplicationStatusCounts()).ToList();
+            var counts = (await _repository.GetGatewayApplicationStatusCounts(request.SearchTerm)).ToList();
 
             var response = new GetGatewayApplicationCountsResponse
             {
@@ -37,6 +37,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.Applications
 
                 ClosedApplicationsCount = counts.Where(x => x.ApplicationStatus == ApplicationStatus.Withdrawn ||
                                                     x.ApplicationStatus == ApplicationStatus.Removed ||
+                                                    x.ApplicationStatus == ApplicationStatus.AppealSuccessful ||
+                                                    x.ApplicationStatus == ApplicationStatus.InProgressAppeal ||
                                                     closedGatewayStatuses.Contains(x.GatewayReviewStatus))
                                         .Sum(x => x.Count)
             };
