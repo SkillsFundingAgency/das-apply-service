@@ -11,7 +11,6 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
-using SFA.DAS.Validation.Mvc.Filters;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
@@ -148,7 +147,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpGet]
         [Route("first-time-apprenticeship-service")]
-        [RestoreModelStateFilter]
         public IActionResult ExistingAccount()
         {
             return View(new ExistingAccountViewModel());
@@ -156,12 +154,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpPost]
         [Route("first-time-apprenticeship-service")]
-        [PreserveModelStateFilter]
         public IActionResult ConfirmExistingAccount(ExistingAccountViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("ExistingAccount");
+                return View("~/Views/Users/ExistingAccount.cshtml", model);
             }
 
             if (model.FirstTimeSignin == true)
