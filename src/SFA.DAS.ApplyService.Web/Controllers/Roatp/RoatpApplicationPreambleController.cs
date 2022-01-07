@@ -143,10 +143,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 model.UKPRN = ukprn;
             }
-            else
-            {
-                model.UKPRN = TempData[_ukprn] as string;
-            }
+           
+           var ukprnTempData = TempData[_ukprn] as string;
+
+           if (!string.IsNullOrEmpty(ukprnTempData))
+           {
+               model.UKPRN = ukprnTempData;
+           }
 
             var validationMessage = TempData[_ukprnValidationMessage] as string;
 
