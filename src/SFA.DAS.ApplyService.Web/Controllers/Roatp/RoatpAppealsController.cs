@@ -110,15 +110,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
             }
 
-            var appealFileList = await _appealsApiClient.GetAppealFileList(applicationId);
-
-            var model = new GroundsOfAppealViewModel
-            {
-                ApplicationId = applicationId,
-                AppealOnPolicyOrProcesses = appealOnPolicyOrProcesses,
-                AppealOnEvidenceSubmitted = appealOnEvidenceSubmitted,
-                AppealFiles = appealFileList?.AppealFiles
-            };
+            var model = await BuildModelGroundsOfAppealViewModel(applicationId, appealOnPolicyOrProcesses, appealOnEvidenceSubmitted);
 
             RestoreUserInputFromTempData(model);
 
@@ -133,6 +125,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { model.ApplicationId });
             }
+
+            model = await BuildModelGroundsOfAppealViewModel(model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted);
 
             if (!ModelState.IsValid)
             {
@@ -353,6 +347,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var appealRequiredByDate = await _outcomeApiClient.GetWorkingDaysAheadDate(oversight?.ApplicationDeterminedDate, numberOfWorkingDays);
 
             return appealRequiredByDate.HasValue && appealRequiredByDate >= DateTime.Today;
+        }
+
+        private async Task<GroundsOfAppealViewModel> BuildModelGroundsOfAppealViewModel(Guid applicationId, bool appealOnPolicyOrProcesses, bool appealOnEvidenceSubmitted)
+        {
+            var appealFileList = await _appealsApiClient.GetAppealFileList(applicationId);
+
+            var model = new GroundsOfAppealViewModel
+            {
+                ApplicationId = applicationId,
+                AppealOnPolicyOrProcesses = appealOnPolicyOrProcesses,
+                AppealOnEvidenceSubmitted = appealOnEvidenceSubmitted,
+                AppealFiles = appealFileList?.AppealFiles
+            };
+            return model;
         }
     }
 }
