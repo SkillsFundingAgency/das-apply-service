@@ -126,8 +126,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { model.ApplicationId });
             }
 
-            model = await BuildModelGroundsOfAppealViewModel(model.ApplicationId, model.AppealOnPolicyOrProcesses, model.AppealOnEvidenceSubmitted);
-
             if (!ModelState.IsValid)
             {
                 return View("~/Views/Appeals/GroundsOfAppeal.cshtml", model);
