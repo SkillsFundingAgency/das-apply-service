@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using SFA.DAS.ApplyService.Web.Services;
+﻿using SFA.DAS.ApplyService.Web.Services;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -42,6 +41,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IAllowedUkprnValidator _allowedUkprnValidator;
         private readonly IResetRouteQuestionsService _resetRouteQuestionsService;
         private readonly IReapplicationCheckService _reapplicationCheckService;
+        private readonly string _ukprnValidationMessage = "UkprnValidationMessage";
+        private readonly string _ukprn = "Ukprn";
 
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient,
                                                   IUkrlpApiClient ukrlpApiClient, ISessionService sessionService,
@@ -142,6 +143,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 model.UKPRN = ukprn;
             }
+            else
+            {
+                model.UKPRN = TempData[_ukprn] as string;
+            }
+
+            var validationMessage = TempData[_ukprnValidationMessage] as string;
+
+            if (!string.IsNullOrEmpty(validationMessage))
+            {
+                model.ErrorMessages = new List<ValidationErrorDetail>
+                {
+                    new ValidationErrorDetail { Field = "UKPRN", ErrorMessage = validationMessage }
+                };
+            }
 
             PopulateGetHelpWithQuestion(model);
 
@@ -153,6 +168,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> SearchByUkprn(SearchByUkprnViewModel model)
         {
             int ukprn = 0;
+          
             string validationMessage = string.Empty;
 
             if (string.IsNullOrWhiteSpace(model.UKPRN))
@@ -174,12 +190,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             if (!string.IsNullOrEmpty(validationMessage))
             {
-                model.ErrorMessages = new List<ValidationErrorDetail>
-                {
-                    new ValidationErrorDetail { Field = "UKPRN", ErrorMessage = validationMessage }
-                };
-
-                return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
+                TempData[_ukprnValidationMessage] = validationMessage;
+                TempData[_ukprn] = model.UKPRN;
+                return RedirectToAction("EnterApplicationUkprn");
             }
 
             var ukprnInReapplication = await _reapplicationCheckService.ReapplicationUkprnForUser(User.GetSignInId());
@@ -232,7 +245,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public IActionResult ConfirmOrganisation()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
+            
             var viewModel = new UkprnSearchResultsViewModel
             {
                 ProviderDetails = applicationDetails.UkrlpLookupDetails,
