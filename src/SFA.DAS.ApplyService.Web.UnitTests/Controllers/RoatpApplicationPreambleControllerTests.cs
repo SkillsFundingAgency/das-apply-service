@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
+using SFA.DAS.ApplyService.Web.Resources;
 using SFA.DAS.ApplyService.Web.Services;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
@@ -59,7 +60,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Contact _user;
         private ApplicationDetails _applicationDetails;
         private CreateOrganisationRequest _expectedRequest;
-
+        private readonly string _ukprnValidationMessage = "UkprnValidationMessage";
+        private readonly string _ukprn = "Ukprn";
+        private const string _validationTypeMissing = "missing";
+        private const string _validationTypeInvalid = "invalid";
 
         [SetUp]
         public void Before_each_test()
@@ -274,12 +278,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             Mapper.AssertConfigurationIsValid();
         }
 
-        [TestCase("")]
-        [TestCase(null)]
-        [TestCase("1234567")]
-        [TestCase("123456789")]
-        [TestCase("1234567A")]
-        public void Validation_error_is_triggered_if_UKPRN_not_in_correct_format(string ukprn)
+        [TestCase("", _validationTypeMissing)]
+        [TestCase(null, _validationTypeMissing)]
+        [TestCase("1234567",_validationTypeInvalid)]
+        [TestCase("123456789", _validationTypeInvalid)]
+        [TestCase("1234567A", _validationTypeInvalid)]
+        public void Validation_error_is_triggered_if_UKPRN_not_in_correct_format(string ukprn, string validationMessageType)
         {
             _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(It.IsAny<int>())).ReturnsAsync(true);
 
@@ -293,14 +297,23 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _controller.TempData = new TempDataDictionary(httpContext, tempDataProvider.Object);
             var result = _controller.SearchByUkprn(model).GetAwaiter().GetResult();
 
-            result.Should().BeOfType<ViewResult>();
+            result.Should().BeOfType<RedirectToActionResult>();
 
-            var viewResult = result as ViewResult;
-            viewResult.ViewName.Should().Contain("EnterApplicationUkprn");
-            var viewModel = viewResult.Model as SearchByUkprnViewModel;
-            viewModel.ErrorMessages.Count.Should().Be(1);
-
+            var redirectionResult = result as RedirectToActionResult;
+            redirectionResult.ActionName.Should().Contain("EnterApplicationUkprn");
+            var ukprnInTempData = _controller.TempData[_ukprn];
+            ukprnInTempData.Should().Be(ukprn);
+            var errorMessageInTempData = _controller.TempData[_ukprnValidationMessage];
+            if (validationMessageType == _validationTypeMissing)
+            {
+                errorMessageInTempData.Should().Be(UkprnValidationMessages.MissingUkprn);
+            }
+            if (validationMessageType == _validationTypeInvalid)
+            {
+                errorMessageInTempData.Should().Be(UkprnValidationMessages.InvalidUkprn);
+            }
         }
+    
 
         [TestCase(12345678, true)]
         [TestCase(87654321, true)]
@@ -334,13 +347,51 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             }
             else
             {
-                result.Should().BeOfType<ViewResult>();
+                result.Should().BeOfType<RedirectToActionResult>();
 
-                var viewResult = result as ViewResult;
-                viewResult.ViewName.Should().Contain("EnterApplicationUkprn");
-                var viewModel = viewResult.Model as SearchByUkprnViewModel;
-                viewModel.ErrorMessages.Count.Should().Be(1);
+                var redirectionResult = result as RedirectToActionResult;
+                redirectionResult.ActionName.Should().Contain("EnterApplicationUkprn");
+                var ukprnInTempData = _controller.TempData[_ukprn];
+                ukprnInTempData.Should().Be(ukprn.ToString());
+                var errorMessageInTempData = _controller.TempData[_ukprnValidationMessage];
+                errorMessageInTempData.Should().Be(UkprnValidationMessages.NotWhitelistedUkprn);
             }
+        }
+
+        [Test]
+        public void EnterApplicationUkprn_directs_to_expected_page()
+        {
+            _controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
+            var result = _controller.EnterApplicationUkprn(null);
+            result.Should().BeOfType<ViewResult>();
+            var viewResult = result as ViewResult;
+            viewResult.ViewName.Contains("EnterApplicationUkprn.cshtml");
+            var model = viewResult.Model as SearchByUkprnViewModel;
+            model.UKPRN.Should().BeNull();
+            model.ErrorMessages.Should().BeNull();
+        }
+
+        [Test]
+        public void EnterApplicationUkprn_directs_to_expected_page_with_error_and_ukprn_setup()
+        {
+            var ukprn = "12345678";
+            var errorMessage = "validation message";
+            var httpContext = new DefaultHttpContext();
+            var tempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>())
+            {
+                [_ukprn] = ukprn,
+                [_ukprnValidationMessage] = errorMessage
+            };
+            _controller.TempData = tempData;
+
+            var result = _controller.EnterApplicationUkprn(null);
+            result.Should().BeOfType<ViewResult>();
+            var viewResult = result as ViewResult;
+            viewResult.ViewName.Contains("EnterApplicationUkprn.cshtml");
+            var model = viewResult.Model as SearchByUkprnViewModel;
+            model.UKPRN.Should().Be(ukprn);
+            model.ErrorMessages.Count.Should().Be(1);
+            model.ErrorMessages[0].ErrorMessage.Should().Be(errorMessage);
         }
 
         [Test]
