@@ -143,14 +143,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 model.UKPRN = ukprn;
             }
-           
-           var ukprnTempData = TempData[_ukprn] as string;
-
-           if (!string.IsNullOrEmpty(ukprnTempData))
-           {
-               model.UKPRN = ukprnTempData;
-           }
-
+            
             var validationMessage = TempData[_ukprnValidationMessage] as string;
 
             if (!string.IsNullOrEmpty(validationMessage))
@@ -194,8 +187,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             if (!string.IsNullOrEmpty(validationMessage))
             {
                 TempData[_ukprnValidationMessage] = validationMessage;
-                TempData[_ukprn] = model.UKPRN;
-                return RedirectToAction("EnterApplicationUkprn");
+                return RedirectToAction("EnterApplicationUkprn", new {ukprn=model.UKPRN});
             }
 
             var ukprnInReapplication = await _reapplicationCheckService.ReapplicationUkprnForUser(User.GetSignInId());

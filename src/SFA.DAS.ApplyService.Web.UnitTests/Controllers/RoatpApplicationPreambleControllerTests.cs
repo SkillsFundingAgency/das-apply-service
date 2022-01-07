@@ -283,7 +283,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase("1234567",_validationTypeInvalid)]
         [TestCase("123456789", _validationTypeInvalid)]
         [TestCase("1234567A", _validationTypeInvalid)]
-        public void Validation_error_is_triggered_if_UKPRN_not_in_correct_format(string ukprn, string validationMessageType)
+        public void SearchByUkprn_InvalidInput_RedirectsToEnterUkrpnWithRespectiveValidationMessage(string ukprn, string validationMessageType)
         {
             _allowedUkprnValidator.Setup(x => x.CanUkprnStartApplication(It.IsAny<int>())).ReturnsAsync(true);
 
@@ -301,8 +301,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectionResult = result as RedirectToActionResult;
             redirectionResult.ActionName.Should().Contain("EnterApplicationUkprn");
-            var ukprnInTempData = _controller.TempData[_ukprn];
-            ukprnInTempData.Should().Be(ukprn);
+            var ukprnParameter = redirectionResult.RouteValues["ukprn"];
+
+            ukprnParameter.Should().Be(ukprn);
+
             var errorMessageInTempData = _controller.TempData[_ukprnValidationMessage];
             if (validationMessageType == _validationTypeMissing)
             {
@@ -351,8 +353,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
                 var redirectionResult = result as RedirectToActionResult;
                 redirectionResult.ActionName.Should().Contain("EnterApplicationUkprn");
-                var ukprnInTempData = _controller.TempData[_ukprn];
-                ukprnInTempData.Should().Be(ukprn.ToString());
+                var ukprnParameter = redirectionResult.RouteValues["ukprn"];
+                ukprnParameter.Should().Be(ukprn.ToString());
                 var errorMessageInTempData = _controller.TempData[_ukprnValidationMessage];
                 errorMessageInTempData.Should().Be(UkprnValidationMessages.NotWhitelistedUkprn);
             }
@@ -384,7 +386,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
             _controller.TempData = tempData;
 
-            var result = _controller.EnterApplicationUkprn(null);
+            var result = _controller.EnterApplicationUkprn(ukprn);
             result.Should().BeOfType<ViewResult>();
             var viewResult = result as ViewResult;
             viewResult.ViewName.Contains("EnterApplicationUkprn.cshtml");
