@@ -11,6 +11,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -97,13 +98,55 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         public async Task EditManagementHierarchy_with_personTableData()
         {
             var index = 0;
-            var personTableData = new TabularData();
+            var personTableData = new TabularData
+            {
+                HeadingTitles = new List<string> 
+                { "First Name", "Last Name","Job role", "TimeInRoleMonths", "TimeInRoleYears", "isPartOfOtherOrg", "otherOrgName", "dobMonth","dobYear","email","contactNumber"},
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "T1", "T1","Test","1","1","","","1", "1900","t1@t1.com","1234567890" }
+                    },
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "T2", "T2","Test","1","1","","","1", "1900","t2@t2.com","1234567890" }
+                    }
+                }
+            };
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddManagementHierarchy)).ReturnsAsync(personTableData);
             var result = await _controller.EditManagementHierarchy(_applicationId, index);
             
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("EditManagementHierarchy.cshtml");
+        }
+
+        [Test]
+        public async Task EditManagementHierarchy_with_personTableData2()
+        {
+            var index = 1;
+            var personTableData = new TabularData
+            {
+                HeadingTitles = new List<string>
+                { "First Name", "Last Name","Job role", "TimeInRoleMonths", "TimeInRoleYears", "isPartOfOtherOrg", "otherOrgName", "dobMonth","dobYear","email","contactNumber"},
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "T1", "T1","Test","1","1","","","1", "1900","t1@t1.com","1234567890" }
+                    },
+                }
+            };
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddManagementHierarchy)).ReturnsAsync(personTableData);
+            var result = await _controller.EditManagementHierarchy(_applicationId, index);
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Be("ConfirmManagementHierarchy");
         }
 
         [Test]
