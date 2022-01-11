@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using SFA.DAS.ApplyService.Web.Services;
+﻿using SFA.DAS.ApplyService.Web.Services;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
