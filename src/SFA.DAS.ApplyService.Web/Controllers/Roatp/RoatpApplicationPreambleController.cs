@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SFA.DAS.ApplyService.Web.Services;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
@@ -42,6 +43,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IAllowedUkprnValidator _allowedUkprnValidator;
         private readonly IResetRouteQuestionsService _resetRouteQuestionsService;
         private readonly IReapplicationCheckService _reapplicationCheckService;
+        private const string _employerProviderValidationMessage = "EmployerProviderValidationMessage";
 
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient,
                                                   IUkrlpApiClient ukrlpApiClient, ISessionService sessionService,
@@ -687,6 +689,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [Route("already-on-roatp")]
+        [HttpGet]
         public async Task<IActionResult> ProviderAlreadyOnRegister()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
@@ -698,8 +701,22 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var model = new ChangeProviderRouteViewModel
             {
                 UKPRN = applicationDetails.UKPRN.ToString(),
-                CurrentProviderType = existingProviderRoute
+                CurrentProviderType = existingProviderRoute,
+                ErrorMessages = new List<ValidationErrorDetail>()
             };
+
+            var errorMessage = TempData[_employerProviderValidationMessage] as string;
+            if (!string.IsNullOrEmpty(errorMessage))
+            {
+                model.ErrorMessages = new List<ValidationErrorDetail>
+                {
+                    new ValidationErrorDetail
+                    {
+                        Field = "ChangeApplicationRoute",
+                        ErrorMessage = errorMessage
+                    }
+                };
+            }
 
             PopulateGetHelpWithQuestion(model);
 
@@ -712,28 +729,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             if (!ModelState.IsValid)
             {
-                var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault();
 
-                var existingProviderRoute = providerRoutes.FirstOrDefault(x => x.Id == applicationDetails.RoatpRegisterStatus.ProviderTypeId);
-
-                model = new ChangeProviderRouteViewModel
+                if (modelErrors?.ErrorMessage!=null)
                 {
-                    UKPRN = applicationDetails.UKPRN.ToString(),
-                    CurrentProviderType = existingProviderRoute,
-                    ErrorMessages = new List<ValidationErrorDetail>()
-                };
-
-                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var modelError in modelErrors)
-                {
-                    model.ErrorMessages.Add(new ValidationErrorDetail
-                    {
-                        Field = "ChangeApplicationRoute",
-                        ErrorMessage = modelError.ErrorMessage
-                    });
+                    TempData[_employerProviderValidationMessage] = modelErrors.ErrorMessage;
                 }
 
-                return View("~/Views/Roatp/ProviderAlreadyOnRegister.cshtml", model);
+                return RedirectToAction("ProviderAlreadyOnRegister");
             }
 
             if (model.ChangeApplicationRoute != "Y")

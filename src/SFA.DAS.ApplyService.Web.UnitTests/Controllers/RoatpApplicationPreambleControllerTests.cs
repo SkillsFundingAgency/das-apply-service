@@ -1298,6 +1298,205 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
         }
 
+        [Test]
+        public void ProviderAlreadyOnRegister_directs_to_expected_page()
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = "12345678"
+                    },
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CharityCommissionAuthority,
+                        VerificationId = "0123456"
+                    }
+                }
+            };
+            
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                UkrlpLookupDetails = providerDetails,
+                RoatpRegisterStatus = new OrganisationRegisterStatus { ProviderTypeId = 1}
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+            
+            var applicationRoutes = new List<ApplicationRoute>
+            {
+                new ApplicationRoute { Id = ApplicationRoute.MainProviderApplicationRoute, RouteName = "Main provider" },
+                new ApplicationRoute { Id = ApplicationRoute.EmployerProviderApplicationRoute, RouteName = "Employer provider" },
+                new ApplicationRoute { Id = ApplicationRoute.SupportingProviderApplicationRoute, RouteName = "Supporting provider" }
+            };
+
+            _roatpApiClient.Setup(x => x.GetApplicationRoutes()).ReturnsAsync(applicationRoutes);
+
+            _controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
+            var result = _controller.ProviderAlreadyOnRegister().GetAwaiter().GetResult();
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ProviderAlreadyOnRegister");
+            var model = viewResult.Model as ChangeProviderRouteViewModel;
+            model.ErrorMessages.Count.Should().Be(0);
+        }
+
+        [Test]
+        public void ChangeProviderRoute__no_change_required_directs_to_conditions_of_acceptance()
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = "12345678"
+                    },
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CharityCommissionAuthority,
+                        VerificationId = "0123456"
+                    }
+                }
+            };
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                UkrlpLookupDetails = providerDetails,
+                RoatpRegisterStatus = new OrganisationRegisterStatus { ProviderTypeId = 1 },
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+            var model = new ChangeProviderRouteViewModel{ChangeApplicationRoute = "N"};
+
+            _controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
+            var result =  _controller.ChangeProviderRoute(model).GetAwaiter().GetResult();
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Contains("ConditionsOfAcceptance");
+        }
+
+        [Test]
+        public void ChangeProviderRoute_change_required_directs_to_select_application_route()
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = "12345678"
+                    },
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CharityCommissionAuthority,
+                        VerificationId = "0123456"
+                    }
+                }
+            };
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                UkrlpLookupDetails = providerDetails,
+                RoatpRegisterStatus = new OrganisationRegisterStatus { ProviderTypeId = 1 },
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+            var model = new ChangeProviderRouteViewModel { ChangeApplicationRoute = "Y" };
+
+            _controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
+            var result = _controller.ChangeProviderRoute(model).GetAwaiter().GetResult();
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Contains("SelectApplicationRoute");
+        }
+
+        [Test]
+        public void ChangeProviderRoute_with_validation_errors_directs_to_provider_already_on_register()
+        {
+            var _employerProviderValidationMessage = "EmployerProviderValidationMessage";
+            var errorMessage = "error message";
+           
+            var model = new ChangeProviderRouteViewModel { ChangeApplicationRoute = "Y" };
+
+            _controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
+            _controller.ModelState.AddModelError("entry required", errorMessage);
+
+            var result = _controller.ChangeProviderRoute(model).GetAwaiter().GetResult();
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Contains("ProviderAlreadyOnRegister");
+            var errorMessageInTempData = _controller.TempData[_employerProviderValidationMessage];
+            errorMessageInTempData.Should().Be(errorMessage);
+        }
+
+        [Test]
+        public void ProviderAlreadyOnRegister_with_errors_directs_to_expected_page_with_error_message()
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = "12345678"
+                    },
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CharityCommissionAuthority,
+                        VerificationId = "0123456"
+                    }
+                }
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                UkrlpLookupDetails = providerDetails,
+                RoatpRegisterStatus = new OrganisationRegisterStatus { ProviderTypeId = 1 }
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var applicationRoutes = new List<ApplicationRoute>
+            {
+                new ApplicationRoute { Id = ApplicationRoute.MainProviderApplicationRoute, RouteName = "Main provider" },
+                new ApplicationRoute { Id = ApplicationRoute.EmployerProviderApplicationRoute, RouteName = "Employer provider" },
+                new ApplicationRoute { Id = ApplicationRoute.SupportingProviderApplicationRoute, RouteName = "Supporting provider" }
+            };
+
+            _roatpApiClient.Setup(x => x.GetApplicationRoutes()).ReturnsAsync(applicationRoutes);
+
+            var _employerProviderValidationMessage = "EmployerProviderValidationMessage";
+            var errorMessage = "error message";
+            var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>())
+            {
+                [_employerProviderValidationMessage] = errorMessage
+            };
+
+            _controller.TempData = tempData;
+            var result = _controller.ProviderAlreadyOnRegister().GetAwaiter().GetResult();
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ProviderAlreadyOnRegister");
+            var model = viewResult.Model as ChangeProviderRouteViewModel;
+            model.ErrorMessages.Count.Should().Be(1);
+            model.ErrorMessages[0].ErrorMessage.Should().Be(errorMessage);
+        }
+
         [TestCase(OrganisationStatus.Removed)]
         public void UKPRN_is_already_on_register_but_was_removed(int statusId)
         {
