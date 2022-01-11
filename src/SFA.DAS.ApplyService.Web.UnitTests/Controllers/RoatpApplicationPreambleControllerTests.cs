@@ -1299,7 +1299,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void ProviderAlreadyOnRegister_directs_to_expected_page()
+        public async Task call_to_provider_already_on_register_directs_to_provider_on_register_page()
         {
             var providerDetails = new ProviderDetails
             {
@@ -1338,7 +1338,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _roatpApiClient.Setup(x => x.GetApplicationRoutes()).ReturnsAsync(applicationRoutes);
 
             _controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
-            var result = _controller.ProviderAlreadyOnRegister().GetAwaiter().GetResult();
+            var result = await _controller.ProviderAlreadyOnRegister();
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ProviderAlreadyOnRegister");
