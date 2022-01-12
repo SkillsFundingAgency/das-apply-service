@@ -6,14 +6,14 @@
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
             <th class="govuk-table__header" scope="col">Uploaded files</th>
-            <th class="govuk-table__header" scope="col"></th>
+            <th class="govuk-table__header" scope="col"><span class="govuk-visually-hidden">Action</span></th>
         </tr>
     </thead>
     <tbody class="govuk-table__body">
         @if (Model.AppealFiles == null || Model.AppealFiles.Count == 0)
         {
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell govuk-table__cell--break-word" scope="row">
+                <td class="govuk-table__cell" colspan="2">
                     No files added
                 </td>
             </tr>
@@ -23,7 +23,7 @@
             @foreach (var file in Model.AppealFiles)
             {
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell govuk-table__cell--break-word" scope="row">
+                    <td class="govuk-table__cell govuk-table__cell--break-word">
                         <a class="govuk-link" asp-action="DownloadAppealFile" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId" asp-route-fileName="@file.FileName">
                             @file.FileName
                         </a>
