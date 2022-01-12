@@ -290,7 +290,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitLevyStatus(EmployerLevyStatusViewModel model)
+        public IActionResult SubmitLevyStatus(EmployerLevyStatusViewModel model)
         {
             if (!ModelState.IsValid)
             {
