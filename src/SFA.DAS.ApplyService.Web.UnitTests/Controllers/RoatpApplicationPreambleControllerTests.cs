@@ -1223,9 +1223,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
 
-            var viewResult = result as ViewResult;
-            viewResult.ViewName.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ConditionsOfAcceptance");
+            var redirectToActionResult = result as RedirectToActionResult;
+            redirectToActionResult.Should().NotBeNull();
+            redirectToActionResult.ActionName.Should().Contain("ConditionsOfAcceptance");
         }
 
         [Test]
@@ -1789,7 +1789,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Provider_changing_route_to_employer_is_directed_to_conditions_of_acceptance_with_route_changed_if_levy_paying()
+        public void Provider_changing_route_to_employer_is_directed_to_UpdateApplicationProviderRoute_conditions_of_acceptance_with_route_changed_if_levy_paying()
         {
             var model = new EmployerLevyStatusViewModel
             {
@@ -1810,10 +1810,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ConditionsOfAcceptance");
-            redirectResult.ControllerName.Should().BeNull();
-
-            _qnaApiClient.VerifyAll();
+            redirectResult.ActionName.Should().Be("UpdateApplicationProviderRoute");
         }
 
         [Test]

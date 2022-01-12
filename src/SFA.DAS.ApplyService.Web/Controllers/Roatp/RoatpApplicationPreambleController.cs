@@ -71,6 +71,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [Route("conditions-of-acceptance")]
+        [HttpGet]
         public async Task<IActionResult> ConditionsOfAcceptance(SelectApplicationRouteViewModel routeViewModel)
         {
             if (!ModelState.IsValid)
@@ -324,11 +325,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                 if (selectApplicationRouteModel.ApplicationId == Guid.Empty)
                 {
-                    return await ConditionsOfAcceptance(new SelectApplicationRouteViewModel { ApplicationRouteId = model.ApplicationRouteId });
+                    return RedirectToAction("ConditionsOfAcceptance", model);
                 }
                 else
                 {
-                    return await UpdateApplicationProviderRoute(selectApplicationRouteModel);
+                    return RedirectToAction("UpdateApplicationProviderRoute", selectApplicationRouteModel);
                 }
             }
 
@@ -379,10 +380,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [Route("choose-provider-route")]
+        [HttpGet]
         public async Task<IActionResult> SelectApplicationRoute()
         {
-            
-
             var model = new SelectApplicationRouteViewModel();
 
             var applicationRoutes = await GetApplicationRoutes();
@@ -399,8 +399,25 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
         }
 
+        [HttpPost]
         public async Task<IActionResult> ProcessRoute(SelectApplicationRouteViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                model.ApplicationRoutes = await GetApplicationRoutes();
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "ApplicationRouteId",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
+                return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
+            }
+
             if (model.ApplicationRouteId == ApplicationRoute.EmployerProviderApplicationRoute)
             {
                 var applicationRoutes = await GetApplicationRoutes();
@@ -412,7 +429,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
             else
             {
-                return await ConditionsOfAcceptance(new SelectApplicationRouteViewModel { ApplicationRouteId = model.ApplicationRouteId });
+                return RedirectToAction("ConditionsOfAcceptance", model);
             }
         }
 
@@ -599,7 +616,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
         }
 
-        [HttpPost]
         [Authorize(Policy = "AccessInProgressApplication")]
         public async Task<IActionResult> UpdateApplicationProviderRoute(SelectApplicationRouteViewModel model)
         {
