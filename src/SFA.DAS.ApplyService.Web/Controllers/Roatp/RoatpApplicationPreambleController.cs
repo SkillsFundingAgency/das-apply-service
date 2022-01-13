@@ -26,6 +26,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     using System.Collections.Generic;
     using SFA.DAS.ApplyService.Domain.Entities;
     using SFA.DAS.ApplyService.Application.Apply.Roatp;
+    using SFA.DAS.ApplyService.Application.Apply;
 
     [Authorize]
     public class RoatpApplicationPreambleController : RoatpApplyControllerBase
@@ -638,6 +639,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 });
             }
 
+            var result = await UpdatePageAnswersbyTag(model);
+
+            if (result.ValidationPassed)
+            {
+                await UpdatePageAnswersBySectionNo(model);
+            }
+
+            if (result.ValidationPassed)
+            {
+                await ChangeProviderRouteResetRouteQuestions(model);
+            }
+
+            return RedirectToAction("ConditionsOfAcceptance", new { applicationId = model.ApplicationId, applicationRouteId = model.ApplicationRouteId });
+        }
+
+        private async Task<SetPageAnswersResponse> UpdatePageAnswersbyTag(SelectApplicationRouteViewModel model)
+        {
             var providerRouteAnswer = new List<Answer>
             {
                 new Answer
@@ -649,66 +667,66 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.ProviderRoute, providerRouteAnswer);
 
-            if (result.ValidationPassed)
-            {
+            return result;
+        }
 
-                var preambleDetails = await _qnaApiClient.GetPageBySectionNo(model.ApplicationId,
+        private async Task UpdatePageAnswersBySectionNo(SelectApplicationRouteViewModel model)
+        {
+            var preambleDetails = await _qnaApiClient.GetPageBySectionNo(model.ApplicationId,
                     RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble);
 
-                var preambleAnswers = preambleDetails?.PageOfAnswers[0]?.Answers;
+            var preambleAnswers = preambleDetails?.PageOfAnswers[0]?.Answers;
 
-                var onRoatp =
-                    await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.OnRoatp);
-                var onRoatpRegisterTrue = onRoatp?.Value == "TRUE";
-                var routeAndOnRoatp = string.Empty;
-                switch (model.ApplicationRouteId)
-                {
-                    case ApplicationRoute.MainProviderApplicationRoute:
-                        routeAndOnRoatp = onRoatpRegisterTrue
-                            ? RouteAndOnRoatpTags.MainOnRoatp
-                            : RouteAndOnRoatpTags.MainNotOnRoatp;
-                        break;
-                    case ApplicationRoute.EmployerProviderApplicationRoute:
-                        routeAndOnRoatp = onRoatpRegisterTrue
-                            ? RouteAndOnRoatpTags.EmployerOnRoatp
-                            : RouteAndOnRoatpTags.EmployerNotOnRoatp;
-                        break;
-                    case ApplicationRoute.SupportingProviderApplicationRoute:
-                        routeAndOnRoatp = onRoatpRegisterTrue
-                            ? RouteAndOnRoatpTags.SupportingOnRoatp
-                            : RouteAndOnRoatpTags.SupportingNotOnRoatp;
-                        break;
-                }
-
-                if (preambleAnswers != null)
-                {
-                    foreach (var answer in preambleAnswers.Where(ans => ans.QuestionId == RoatpPreambleQuestionIdConstants.RouteAndOnRoatp))
-                    {
-                        answer.Value = routeAndOnRoatp;
-                    }
-
-                    await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.Preamble,
-                        RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, preambleAnswers);
-                }
+            var onRoatp =
+                await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.OnRoatp);
+            var onRoatpRegisterTrue = onRoatp?.Value == "TRUE";
+            var routeAndOnRoatp = string.Empty;
+            switch (model.ApplicationRouteId)
+            {
+                case ApplicationRoute.MainProviderApplicationRoute:
+                    routeAndOnRoatp = onRoatpRegisterTrue
+                        ? RouteAndOnRoatpTags.MainOnRoatp
+                        : RouteAndOnRoatpTags.MainNotOnRoatp;
+                    break;
+                case ApplicationRoute.EmployerProviderApplicationRoute:
+                    routeAndOnRoatp = onRoatpRegisterTrue
+                        ? RouteAndOnRoatpTags.EmployerOnRoatp
+                        : RouteAndOnRoatpTags.EmployerNotOnRoatp;
+                    break;
+                case ApplicationRoute.SupportingProviderApplicationRoute:
+                    routeAndOnRoatp = onRoatpRegisterTrue
+                        ? RouteAndOnRoatpTags.SupportingOnRoatp
+                        : RouteAndOnRoatpTags.SupportingNotOnRoatp;
+                    break;
             }
 
+            if (preambleAnswers != null)
+            {
+                foreach (var answer in preambleAnswers.Where(ans => ans.QuestionId == RoatpPreambleQuestionIdConstants.RouteAndOnRoatp))
+                {
+                    answer.Value = routeAndOnRoatp;
+                }
+
+                await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.Preamble,
+                    RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, preambleAnswers);
+            }
+        }
+
+        private async Task ChangeProviderRouteResetRouteQuestions(SelectApplicationRouteViewModel model)
+        {
             var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
             var selectedProviderRoute = providerRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId);
 
-            if (result.ValidationPassed)
+            await _applicationApiClient.ChangeProviderRoute(new ChangeProviderRouteRequest
             {
-                await _applicationApiClient.ChangeProviderRoute(new ChangeProviderRouteRequest
-                {
-                    ApplicationId = model.ApplicationId,
-                    ProviderRoute = model.ApplicationRouteId,
-                    ProviderRouteName = selectedProviderRoute?.RouteName
-                });
+                ApplicationId = model.ApplicationId,
+                ProviderRoute = model.ApplicationRouteId,
+                ProviderRouteName = selectedProviderRoute?.RouteName
+            });
 
-                await _resetRouteQuestionsService.ResetRouteQuestions(model.ApplicationId, model.ApplicationRouteId);
-            }
-            return RedirectToAction("ConditionsOfAcceptance", new { applicationId = model.ApplicationId, applicationRouteId = model.ApplicationRouteId });
+            await _resetRouteQuestionsService.ResetRouteQuestions(model.ApplicationId, model.ApplicationRouteId);
         }
-        
+
         [Route("already-on-roatp")]
         public async Task<IActionResult> ProviderAlreadyOnRegister()
         {
