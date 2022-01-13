@@ -57,7 +57,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public  void AddManagementHierarchy_shows_AddManagementHierarchy_page()
+        public  void AddManagementHierarchy_Get_shows_AddManagementHierarchy_page()
         {
             var result =  _controller.AddManagementHierarchy(_applicationId);
 
@@ -67,7 +67,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task AddManagementHierarchyDetails_shows_same_page_when_it_had_errors()
+        public async Task AddManagementHierarchyDetails_HasValidationErrors_ReturnsView()
         {
             var model = new AddEditManagementHierarchyViewModel { ApplicationId = _applicationId };
             _controller.ModelState.AddModelError("Testing", "test message");
@@ -81,7 +81,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task EditManagementHierarchy_no_personTableData()
+        public async Task EditManagementHierarchy_Get_ReturnsConfirmManagementHierarchy()
         {
             var index = 0;
             TabularData personTableData = null;
@@ -95,7 +95,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task EditManagementHierarchy_with_personTableData()
+        public async Task EditManagementHierarchy_With_Index_Is_Lessthan_PersonTableDataCount_ReturnsEditManagementHierarchy_View()
         {
             var index = 0;
             var personTableData = new TabularData
@@ -125,7 +125,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task EditManagementHierarchy_with_personTableData2()
+        public async Task EditManagementHierarchy_With_Index_Is_NotLessthan_PersonTableDataCount_ReturnsEditManagementHierarchy_View()
         {
             var index = 1;
             var personTableData = new TabularData
@@ -150,7 +150,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task UpdateManagementHierarchyDetails_shows_same_page_when_it_had_errors()
+        public async Task UpdateManagementHierarchyDetails_HasValidationErrors_ReturnsEditManagementHierarchy()
         {
             var model = new AddEditManagementHierarchyViewModel { ApplicationId = _applicationId };
             _controller.ModelState.AddModelError("Testing", "test message");
@@ -164,7 +164,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task RemoveManagementHierarchy_shows_same_page_when_it_had_errors()
+        public async Task RemoveManagementHierarchy_HasValidationErrors_ReturnsConfirmManagementHierarchyRemoval()
         {
             var model = new ConfirmRemoveManagementHierarchyViewModel { ApplicationId = _applicationId };
             _controller.ModelState.AddModelError("Testing", "test message");
@@ -178,7 +178,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task RemoveManagementHierarchy_Confirmation_No_RedirectTo_ConfirmManagementHierarchy()
+        public async Task RemoveManagementHierarchy_Post_ReturnsConfirmManagementHierarchy()
         {
             var model = new ConfirmRemoveManagementHierarchyViewModel { ApplicationId = _applicationId , Confirmation="No"};
 
