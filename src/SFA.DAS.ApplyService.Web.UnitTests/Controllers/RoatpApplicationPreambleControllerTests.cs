@@ -1187,7 +1187,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
-            var result = _controller.SubmitLevyStatusAsync(model).GetAwaiter().GetResult(); 
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult(); 
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -1221,7 +1221,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
-            var result = _controller.SubmitLevyStatusAsync(model).GetAwaiter().GetResult(); 
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult(); 
 
             var redirectToActionResult = result as RedirectToActionResult;
             redirectToActionResult.Should().NotBeNull();
@@ -1781,7 +1781,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 LevyPayingEmployer = "N"
             };
 
-            var result = _controller.SubmitLevyStatusAsync(model).GetAwaiter().GetResult(); ;
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult(); ;
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -1806,7 +1806,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                    ValidationPassed = true
                                }).Verifiable();
             
-            var result = _controller.SubmitLevyStatusAsync(model).GetAwaiter().GetResult();
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
