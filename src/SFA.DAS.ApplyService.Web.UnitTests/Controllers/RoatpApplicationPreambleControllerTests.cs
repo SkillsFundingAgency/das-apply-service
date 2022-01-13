@@ -1187,7 +1187,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
-            var result = _controller.SubmitLevyStatus(model);
+            var result = _controller.SubmitLevyStatusAsync(model).GetAwaiter().GetResult(); 
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -1221,7 +1221,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
-            var result = _controller.SubmitLevyStatus(model);
+            var result = _controller.SubmitLevyStatusAsync(model).GetAwaiter().GetResult(); 
 
             var redirectToActionResult = result as RedirectToActionResult;
             redirectToActionResult.Should().NotBeNull();
@@ -1781,7 +1781,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 LevyPayingEmployer = "N"
             };
 
-            var result = _controller.SubmitLevyStatus(model);
+            var result = _controller.SubmitLevyStatusAsync(model).GetAwaiter().GetResult(); ;
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -1789,7 +1789,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Provider_changing_route_to_employer_is_directed_to_UpdateApplicationProviderRoute_conditions_of_acceptance_with_route_changed_if_levy_paying()
+        public void Provider_changing_route_to_employer_is_directed_to_conditions_of_acceptance_with_route_changed_if_levy_paying()
         {
             var model = new EmployerLevyStatusViewModel
             {
@@ -1806,11 +1806,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                    ValidationPassed = true
                                }).Verifiable();
             
-            var result = _controller.SubmitLevyStatus(model);
+            var result = _controller.SubmitLevyStatusAsync(model).GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("UpdateApplicationProviderRoute");
+            redirectResult.ActionName.Should().Be("ConditionsOfAcceptance");
+            redirectResult.ControllerName.Should().BeNull();
+
+            _qnaApiClient.VerifyAll();
         }
 
         [Test]

@@ -270,11 +270,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
             else
             {
-                return await UpdateApplicationProviderRoute(model);
+                return await UpdateProviderRoute(model);
             }
         }
 
         [Route("organisation-levy-paying-employer")]
+        [HttpGet]
         public IActionResult ConfirmLevyStatus(Guid applicationId, string ukprn, int applicationRouteId)
         {
             var viewModel = new EmployerLevyStatusViewModel
@@ -290,7 +291,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
-        public IActionResult SubmitLevyStatus(EmployerLevyStatusViewModel model)
+        public async Task<IActionResult> SubmitLevyStatusAsync(EmployerLevyStatusViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -329,7 +330,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
                 else
                 {
-                    return RedirectToAction("UpdateApplicationProviderRoute", selectApplicationRouteModel);
+                    return await UpdateProviderRoute(selectApplicationRouteModel);
                 }
             }
 
@@ -617,7 +618,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [Authorize(Policy = "AccessInProgressApplication")]
+        [HttpPost]
         public async Task<IActionResult> UpdateApplicationProviderRoute(SelectApplicationRouteViewModel model)
+        {
+            return await UpdateProviderRoute(model);
+        }
+        
+        private async Task<IActionResult> UpdateProviderRoute(SelectApplicationRouteViewModel model)
         {
             if (model.ApplicationRouteId == ApplicationRoute.EmployerProviderApplicationRoute && model.LevyPayingEmployer != "Y")
             {
@@ -696,12 +703,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     ProviderRoute = model.ApplicationRouteId,
                     ProviderRouteName = selectedProviderRoute?.RouteName
                 });
-                
+
                 await _resetRouteQuestionsService.ResetRouteQuestions(model.ApplicationId, model.ApplicationRouteId);
             }
             return RedirectToAction("ConditionsOfAcceptance", new { applicationId = model.ApplicationId, applicationRouteId = model.ApplicationRouteId });
         }
-
+        
         [Route("already-on-roatp")]
         public async Task<IActionResult> ProviderAlreadyOnRegister()
         {
