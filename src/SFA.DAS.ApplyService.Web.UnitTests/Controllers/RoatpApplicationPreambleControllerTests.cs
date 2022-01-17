@@ -1188,7 +1188,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
-            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult(); 
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -1222,11 +1222,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
-            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult(); 
 
-            var viewResult = result as ViewResult;
-            viewResult.ViewName.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ConditionsOfAcceptance");
+            var redirectToActionResult = result as RedirectToActionResult;
+            redirectToActionResult.Should().NotBeNull();
+            redirectToActionResult.ActionName.Should().Contain("ConditionsOfAcceptance");
         }
 
         [Test]
@@ -1782,7 +1782,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 LevyPayingEmployer = "N"
             };
 
-            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult(); ;
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
