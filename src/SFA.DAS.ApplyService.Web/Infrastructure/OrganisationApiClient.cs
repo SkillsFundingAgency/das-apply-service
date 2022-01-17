@@ -80,5 +80,19 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             return await Put<UpdateOrganisationDirectorsAndPscsRequest, bool>($"/Organisations/DirectorsAndPscs", request);
         }
+
+        public async Task<bool> UpdateTrustees(string ukprn, List<InternalApi.Types.CharityCommission.Trustee> trustees, Guid userId)
+        {
+            var request = new UpdateOrganisationTrusteesRequest
+            {
+                Ukprn = ukprn,
+                UpdatedBy = userId,
+                Trustees = trustees
+            };
+
+            return await Put<UpdateOrganisationTrusteesRequest, bool>($"/Organisations/Trustees", request);
+        }
+
+        
     }
 }

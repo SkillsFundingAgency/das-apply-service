@@ -69,6 +69,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok(result);
         }
 
+        [HttpPut("Trustees")]
+        [PerformValidation]
+        public async Task<ActionResult<bool>> UpdateOrganisationTrustees([FromBody] UpdateOrganisationTrusteesRequest request)
+        {
+            var result = await _mediator.Send(request);
+
+            if (result is false)
+            {
+                return BadRequest();
+            }
+
+            return Ok(result);
+        }
+
         [HttpGet("name/{name}")]
         public async Task<ActionResult<Organisation>> GetOrganisationByName(string name)
         {
