@@ -13,7 +13,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
     public interface IQnaApiClient
     {
-        // TODO: Move over to use Nuget Package: SFA.DAS.QnA.Api.Types
         Task<StartQnaApplicationResponse> StartApplication(string userReference, string workflowType, string applicationData);
 
         Task<JObject> GetApplicationData(Guid applicationId);
@@ -35,7 +34,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, int sequenceNo, int sectionNo, string pageId, List<Answer> answers);
         Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null);
         Task<UploadPageAnswersResult> Upload(Guid applicationId, Guid sectionId, string pageId, IFormFileCollection files);
-        
+
         Task<bool> CanUpdatePage(Guid applicationId, Guid sectionId, string pageId);
         Task<bool> CanUpdatePageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId);
 
@@ -52,6 +51,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<SkipPageResponse> SkipPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId);
         Task<HttpResponseMessage> DownloadFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string filename);
         Task DeleteFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string filename);
-       
+
     }
 }

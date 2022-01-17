@@ -22,11 +22,11 @@ using SFA.DAS.ApplyService.Web.ViewModels;
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
     using Configuration;
+    using EmailService.Interfaces;
+    using Infrastructure.Validations;
     using Microsoft.Extensions.Options;
     using MoreLinq;
-    using EmailService.Interfaces;
     using Roatp;
-    using Infrastructure.Validations;
     using Services;
     using Validators;
     using ViewModels.Roatp;
@@ -61,13 +61,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ISessionService sessionService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient,
             IPagesWithSectionsFlowService pagesWithSectionsFlowService,
-            IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
-            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, 
-            ICustomValidatorFactory customValidatorFactory,  
+            IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration,
+            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks,
+            ICustomValidatorFactory customValidatorFactory,
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
             IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator, IUkrlpApiClient ukrlpApiClient, IReapplicationCheckService reapplicationCheckService)
-            :base(sessionService)
+            : base(sessionService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -137,7 +137,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
             }
 
-            return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new {application.ApplicationId });
+            return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { application.ApplicationId });
         }
 
 
@@ -286,9 +286,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
             if (!canUpdate)
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new {applicationId}, $"Sequence_{sequenceId}");
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, $"Sequence_{sequenceId}");
             }
-            
+
             var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
             if (section?.DisplayType == SectionDisplayType.PagesWithSections)
@@ -343,10 +343,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             else
             {
                 var page = selectedSection.GetPage(pageId);
-                
+
                 if (page == null || page.Questions == null)
                 {
-                    return RedirectToAction("TaskList","RoatpApplication", new { applicationId },$"Sequence_{sequenceId}");
+                    return RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, $"Sequence_{sequenceId}");
                 }
 
                 page = await GetDataFedOptions(applicationId, page);
@@ -427,7 +427,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var selectedSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
-            // TODO: Do we have anything in the viewmodel that'll trigger this?
             if (!ModelState.IsValid)
             {
                 // when the model state has errors the page will be displayed with the values which failed validation
@@ -464,10 +463,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             // when the model state has no errors the page will be displayed with the last valid values which were saved
             var page = selectedSection.GetPage(pageId);
-            
+
             if (page == null)
             {
-                RedirectToAction("TaskList", "RoatpApplication", new {applicationId}, $"Sequence_{sequenceId}");
+                RedirectToAction("TaskList", "RoatpApplication", new { applicationId }, $"Sequence_{sequenceId}");
             }
 
             return await SaveAnswersGiven(applicationId, selectedSection.Id, selectedSection.SectionId, selectedSection.SequenceId, pageId, page, redirectAction, formAction);
@@ -509,10 +508,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (!model.Confirmed.Value)
             {
-                return RedirectToAction("TaskList", new {model.ApplicationId});
+                return RedirectToAction("TaskList", new { model.ApplicationId });
             }
 
-            return RedirectToAction("EnterNewUkprn", new {model.ApplicationId});
+            return RedirectToAction("EnterNewUkprn", new { model.ApplicationId });
         }
 
         [Route("change-ukprn/enter-new-ukprn")]
@@ -521,7 +520,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> EnterNewUkprn(Guid applicationId)
         {
             var applicationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
-            var model = new EnterNewUkprnViewModel{CurrentUkprn = applicationDetails.OrganisationDetails.UKRLPDetails.UKPRN};
+            var model = new EnterNewUkprnViewModel { CurrentUkprn = applicationDetails.OrganisationDetails.UKRLPDetails.UKPRN };
             PopulateGetHelpWithQuestion(model);
             return View("~/Views/Roatp/EnterNewUkprn.cshtml", model);
         }
@@ -552,7 +551,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     UkrlpLookupDetails = ukrlpLookupResults.Results.FirstOrDefault()
                 };
 
-                var userId  = User.GetUserId().ToString();
+                var userId = User.GetUserId().ToString();
                 await _apiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled, userId);
                 _sessionService.Remove(ApplicationDetailsKey);
 
@@ -670,7 +669,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             ApplyFormattingToAnswers(answers, page);
 
-            if(formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
+            if (formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
             {
                 ValidateFileHasBeenSelectedForMultipleFileUpload(page, answers);
             }
@@ -684,7 +683,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("Page", new { applicationId, sequenceId = sequenceNo, sectionId = sectionNo, pageId, redirectAction });
             }
 
-            //todo: Should we convert this to a custom validation?
             var checkBoxListQuestions = GetCheckBoxListQuestionsFromPage(page);
             if (checkBoxListQuestions.Any())
             {
@@ -727,7 +725,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 // Any answer that is saved will affect the NotRequiredOverrides
                 await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
 
-                if(formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
+                if (formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
                 {
                     return RedirectToAction("Page", new
                     {
@@ -979,7 +977,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return answers;
         }
 
-        
+
         private async Task UpdateQuestionsWithinQnA(Guid applicationId, List<PreambleAnswer> questions)
         {
             if (questions != null)
@@ -1012,91 +1010,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var application = await _apiClient.GetApplication(applicationId);
             var ukprn = application?.ApplyData?.ApplyDetails?.UKPRN;
             var allowedProviderDetails = await _apiClient.GetAllowedProvider(ukprn);
-            if (allowedProviderDetails == null || allowedProviderDetails.EndDateTime< DateTime.Today)
+            if (allowedProviderDetails == null || allowedProviderDetails.EndDateTime < DateTime.Today)
                 return View("~/Views/Home/InvitationWindowClosed.cshtml");
 
 
-           var model = new SubmitApplicationViewModel { ApplicationId = applicationId };
+            var model = new SubmitApplicationViewModel { ApplicationId = applicationId };
 
             var organisationName = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName);
             model.OrganisationName = organisationName.Value;
             model.EmailAddress = User.GetEmail();
 
             return View("~/Views/Roatp/SubmitApplication.cshtml", model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Submit(Guid applicationId)
-        {
-            var canUpdate = await CanUpdateApplication(applicationId);
-            if (!canUpdate)
-            {
-                return RedirectToAction("TaskList", new { applicationId });
-            }
-
-            var activeSequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-            var errors = ValidateSubmit(activeSequence);
-            if (errors.Any())
-            {
-                var sequenceVm = new SequenceViewModel(activeSequence, applicationId, errors);
-
-                if (activeSequence.Status == ApplicationSequenceStatus.FeedbackAdded)
-                {
-                    return View("~/Views/Application/Feedback.cshtml", sequenceVm);
-                }
-                else
-                {
-                    return View("~/Views/Application/Sequence.cshtml", sequenceVm);
-                }
-            }
-
-            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
-
-            var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
-            {
-                ApplicationId = applicationId,
-                ProviderRoute = Convert.ToInt32(providerRoute.Value),
-                SubmittingContactId = User.GetUserId()
-            };
-
-            if (await _apiClient.SubmitApplication(submitApplicationRequest))
-            {
-                return RedirectToAction("Submitted", new { applicationId });
-            }
-            else
-            {
-                // unable to submit
-                return RedirectToAction("NotSubmitted", new { applicationId });
-            }
-        }
-
-        private List<ValidationErrorDetail> ValidateSubmit(ApplicationSequence sequence)
-        {
-            var validationErrors = new List<ValidationErrorDetail>();
-
-            if (sequence?.Sections is null)
-            {
-                var validationError = new ValidationErrorDetail(string.Empty, $"Cannot submit empty sequence");
-                validationErrors.Add(validationError);
-            }
-            else if (sequence.Sections.Where(sec => sec.PagesComplete != sec.PagesActive).Any())
-            {
-                foreach (var sectionQuestionsNotYetCompleted in sequence.Sections.Where(sec => sec.PagesComplete != sec.PagesActive))
-                {
-                    var validationError = new ValidationErrorDetail(sectionQuestionsNotYetCompleted.Id.ToString(), $"You need to complete the '{sectionQuestionsNotYetCompleted.LinkTitle}' section");
-                    validationErrors.Add(validationError);
-                }
-            }
-            else if (sequence.Sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)).Any())
-            {
-                foreach (var sectionFeedbackNotYetCompleted in sequence.Sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)))
-                {
-                    var validationError = new ValidationErrorDetail(sectionFeedbackNotYetCompleted.Id.ToString(), $"You need to complete the '{sectionFeedbackNotYetCompleted.LinkTitle}' section");
-                    validationErrors.Add(validationError);
-                }
-            }
-
-            return validationErrors;
         }
 
         [HttpGet]
@@ -1114,7 +1038,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var canUpdate = await CanUpdateApplication(model.ApplicationId);
             if (!canUpdate)
             {
-                return RedirectToAction("TaskList", new { applicationId = model.ApplicationId});
+                return RedirectToAction("TaskList", new { applicationId = model.ApplicationId });
             }
 
             if (!ModelState.IsValid)
@@ -1213,7 +1137,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 };
 
                 await _submitApplicationEmailService.SendSubmitConfirmationEmail(applicationSubmitConfirmation);
-                return RedirectToAction("ProcessApplicationStatus","RoatpOverallOutcome", new { model.ApplicationId });
+                return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { model.ApplicationId });
             }
             else
             {
@@ -1277,7 +1201,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private void RunCustomValidations(Page page, List<Answer> answers)
         {
             var pagecustomValidators = _customValidatorFactory.GetCustomValidationsForPage(page, HttpContext.Request.Form.Files);
-            
+
             foreach (var pageCustomValidation in pagecustomValidators)
             {
                 var result = pageCustomValidation.Validate();
@@ -1344,7 +1268,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return result;
         }
 
-        private bool SequenceNotRequired(Guid applicationId, ApplicationSequence sequence, 
+        private bool SequenceNotRequired(Guid applicationId, ApplicationSequence sequence,
                                                 IEnumerable<ApplicationSequence> applicationSequences,
                                                 OrganisationVerificationStatus organisationVerificationStatus)
         {
@@ -1353,7 +1277,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             foreach (var section in sequence.Sections)
             {
-                if (_roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.NotRequired) 
+                if (_roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.NotRequired)
                 {
                     notRequiredCount++;
                 }
@@ -1444,7 +1368,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 _logger.LogError(ex, $"Unable to extract finanical data for application: {applicationId}");
                 return new FinancialData { ApplicationId = applicationId };
-            }            
+            }
         }
 
 

@@ -471,9 +471,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var result = _controller.SearchByUkprn(model).GetAwaiter().GetResult();
 
-            var viewResult = result as ViewResult;
-            viewResult.ViewName.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ApplicationInProgress");
+            result.Should().BeOfType<RedirectToActionResult>();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ApplicationInProgress");
         }
 
         [Test]

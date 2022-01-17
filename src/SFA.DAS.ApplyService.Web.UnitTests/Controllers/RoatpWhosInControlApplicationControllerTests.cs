@@ -173,9 +173,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             
             var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
 
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ConfirmDirectorsPscs");
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmDirectorsPscs");
         }
 
         [Test]
@@ -194,9 +194,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
 
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ConfirmDirectorsPscs");
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmDirectorsPscs");
         }
 
         [Test]
@@ -252,9 +252,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
 
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ConfirmTrustees");
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmTrustees");
         }
 
         [Test]
@@ -274,7 +274,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("AddPeopleInControl");
+            redirectResult.ActionName.Should().Be("ConfirmTrustees");
         }
 
 
@@ -292,9 +292,29 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
 
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("SoleTraderOrPartnership");
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("SoleTraderOrPartnership");
+        }
+
+        [Test]
+        public void Start_page_routes_to_ConfirmPeopleInControl()
+        {
+            var _qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCompany] = "",
+                [RoatpWorkflowQuestionTags.UkrlpVerificationCharity] = "",
+                [RoatpWorkflowQuestionTags.UkrlpVerificationSoleTraderPartnership] = "FALSE",
+                [RoatpWorkflowQuestionTags.AddPeopleInControl] = "Test"
+            };
+
+            _qnaClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>())).ReturnsAsync(_qnaApplicationData);
+
+            var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmPeopleInControl");
         }
 
         [Test]
@@ -311,9 +331,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
 
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("AddPeopleInControl");
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("AddPeopleInControl");
         }
 
         [Test]
