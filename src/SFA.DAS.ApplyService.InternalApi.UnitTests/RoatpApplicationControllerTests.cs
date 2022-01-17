@@ -5,32 +5,38 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using AutoMapper;
     using FluentAssertions;
     using Infrastructure;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Models.Roatp;
     using Moq;
     using NUnit.Framework;
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Controllers;
 
-    [TestFixture, Ignore("Require rework following migration to .net core DI")]
+    [TestFixture]
     public class RoatpApplicationControllerTests
     {
         private Mock<ILogger<RoatpApplicationController>> _logger;
         private Mock<IRoatpApiClient> _apiClient;
+        private Mock<IOptions<List<RoatpSequences>>> _sequencesMock;
 
         private RoatpApplicationController _controller;
+        private readonly RoatpSequences _sequence = new RoatpSequences {Id = 1};
 
         [SetUp]
         public void Before_each_test()
         {
             _logger = new Mock<ILogger<RoatpApplicationController>>();
             _apiClient = new Mock<IRoatpApiClient>();
+            _sequencesMock = new Mock<IOptions<List<RoatpSequences>>>();
+            _sequencesMock.Setup(s => s.Value).Returns(new List<RoatpSequences>() { _sequence });
 
-            //_controller = new RoatpApplicationController(_logger.Object, _apiClient.Object);
+            _controller = new RoatpApplicationController(_logger.Object, _apiClient.Object, _sequencesMock.Object);
 
             Mapper.Reset();
 
@@ -38,12 +44,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             {
                 cfg.AddProfile<RoatpProfile>();
             });
-
-            Mapper.AssertConfigurationIsValid();
         }
 
         [Test]
-        public void Get_application_routes_returns_mapped_provider_types()
+        public async Task Get_application_routes_returns_mapped_provider_types()
         {
             var providerTypes = new List<ProviderType>
             {
@@ -54,7 +58,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _apiClient.Setup(x => x.GetProviderTypes()).ReturnsAsync(providerTypes);
 
-            var result = _controller.GetApplicationRoutes().GetAwaiter().GetResult();
+            var result = await _controller.GetApplicationRoutes();
 
             result.Should().BeOfType<OkObjectResult>();
 
@@ -73,7 +77,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public void Get_organisation_register_status_performs_roatp_lookup()
+        public async Task Get_organisation_register_status_performs_roatp_lookup()
         {
             var registerStatus = new OrganisationRegisterStatus
             {
@@ -84,7 +88,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _apiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<string>())).ReturnsAsync(registerStatus).Verifiable();
 
-            var result = _controller.UkprnOnRegister(10002000).GetAwaiter().GetResult();
+            var result = await _controller.UkprnOnRegister(10002000);
 
             result.Should().BeOfType<OkObjectResult>();
 
@@ -97,6 +101,17 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             registerStatusResult.ProviderTypeId.Should().Be(registerStatus.ProviderTypeId);
 
             _apiClient.Verify(x => x.GetOrganisationRegisterStatus(It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public void Get_RoatpSequences_ReturnsSequencesFromConfiguration()
+        {
+            var response = _controller.RoatpSequences();
+            response.Should().NotBeNull();
+            var result = (response as OkObjectResult).Value as List<RoatpSequences>;
+            result.Should().NotBeNull();
+            result.Count.Should().Be(1);
+            result.FirstOrDefault().Id.Should().Be(_sequence.Id);
         }
     }
 }

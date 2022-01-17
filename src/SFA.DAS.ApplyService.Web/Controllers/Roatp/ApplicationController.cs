@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,17 +6,14 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
-
     [Authorize]
     public class ApplicationController: Controller
     {
         private readonly IQnaApiClient _qnaApiClient;
-        private readonly IApplicationApiClient _apiClient;
 
-        public ApplicationController(IQnaApiClient qnaApiClient, IApplicationApiClient apiClient)
+        public ApplicationController(IQnaApiClient qnaApiClient)
         {
             _qnaApiClient = qnaApiClient;
-            _apiClient = apiClient;
         }
 
         [Authorize(Policy = "AccessApplication")]

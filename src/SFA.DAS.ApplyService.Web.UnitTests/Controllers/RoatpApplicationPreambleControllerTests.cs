@@ -1,37 +1,38 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using AutoMapper;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.CharityCommission;
+using SFA.DAS.ApplyService.Domain.CompaniesHouse;
+using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.Domain.Ukrlp;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
+using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
+using SFA.DAS.ApplyService.Session;
+using SFA.DAS.ApplyService.Web.AutoMapper;
+using SFA.DAS.ApplyService.Web.Controllers.Roatp;
+using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Services;
+using SFA.DAS.ApplyService.Web.Validators;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+using Trustee = SFA.DAS.ApplyService.InternalApi.Types.CharityCommission.Trustee;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
-    using System;
-    using Domain.Roatp;
-    using Microsoft.Extensions.Logging;
-    using Moq;
-    using NUnit.Framework;
-    using Session;
-    using SFA.DAS.ApplyService.Web.Controllers.Roatp;
-    using SFA.DAS.ApplyService.Web.Infrastructure;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Security.Claims;
-    using FluentAssertions;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using ViewModels.Roatp;
-    using Microsoft.AspNetCore.Mvc.ViewFeatures;
-    using Domain.Ukrlp;
-    using System.Threading.Tasks;
-    using Domain.CharityCommission;
-    using Domain.Entities;
-    using InternalApi.Types;
-    using InternalApi.Types.CharityCommission;
-    using Domain.CompaniesHouse;
-    using AutoMapper;
-    using Trustee = InternalApi.Types.CharityCommission.Trustee;
-    using Application.Apply.Roatp;
-    using Domain.Apply;
-    using SFA.DAS.ApplyService.Web.Validators;
 
 
     [TestFixture]
@@ -54,7 +55,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private RoatpApplicationPreambleController _controller;
 
         private CompaniesHouseSummary _activeCompany;
-        private ApiResponse<Charity> _activeCharity;
+        private Charity _activeCharity;
 
         private Contact _user;
         private ApplicationDetails _applicationDetails;
@@ -117,24 +118,20 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 Status = "active"
             };
 
-            _activeCharity = new ApiResponse<Charity>
+            _activeCharity = new Charity
             {
-                Success = true,
-                Response = new Charity
+                Status = "registered",
+                CharityNumber = "12345678",
+                Trustees = new List<Trustee>
                 {
-                    Status = "registered",
-                    CharityNumber = "12345678",
-                    Trustees = new List<Trustee>
+                    new Trustee
                     {
-                        new Trustee
-                        {
-                            Id = 1,
-                            Name = "MR A TRUSTEE"
-                        }
-                    },
-                    RegistrationDate  = new DateTime(2019, 1, 1),
-                    RemovalDate = null
-                }
+                        Id = 1,
+                        Name = "MR A TRUSTEE"
+                    }
+                },
+                RegistrationDate  = new DateTime(2019, 1, 1),
+                RemovalDate = null
             };
             
             _applicationDetails = new ApplicationDetails
@@ -575,7 +572,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>())).Verifiable();
 
-            _activeCharity.Response.CharityNumber = charityNumber;
+            _activeCharity.CharityNumber = charityNumber;
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
                 .Returns(Task.FromResult(_activeCompany)).Verifiable();
@@ -786,14 +783,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
 
-            var inactiveCharity = new ApiResponse<Charity>()
+            var inactiveCharity = new Charity
             {
-                Success = true,
-                Response = new Charity
-                {
-                    Status = "removed",
-                    RemovalDate = new DateTime(2010, 1, 1)
-                }
+                Status = "removed",
+                RemovalDate = new DateTime(2010, 1, 1)
             };
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Verifiable();

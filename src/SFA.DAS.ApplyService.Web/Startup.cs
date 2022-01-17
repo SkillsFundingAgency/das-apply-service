@@ -13,35 +13,32 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Configuration;
-using SFA.DAS.ApplyService.Data.Repositories;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.EmailService;
+using SFA.DAS.ApplyService.EmailService.Infrastructure;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Authorization;
+using SFA.DAS.ApplyService.Web.Configuration;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Infrastructure.Services;
+using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
 using SFA.DAS.ApplyService.Web.Orchestrators;
+using SFA.DAS.ApplyService.Web.Services;
+using SFA.DAS.ApplyService.Web.StartupExtensions;
+using SFA.DAS.ApplyService.Web.Validators;
+using SFA.DAS.Http;
+using SFA.DAS.Http.TokenGenerators;
+using SFA.DAS.Notifications.Api.Client;
 
 namespace SFA.DAS.ApplyService.Web
 {
-    using SFA.DAS.ApplyService.EmailService;
-    using SFA.DAS.ApplyService.EmailService.Infrastructure;
-    using SFA.DAS.ApplyService.EmailService.Interfaces;
-    using SFA.DAS.ApplyService.Web.Configuration;
-    using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
-    using Services;
-    using SFA.DAS.ApplyService.Web.Validators;
-    using SFA.DAS.Http;
-    using SFA.DAS.Http.TokenGenerators;
-    using SFA.DAS.Notifications.Api.Client;
-    using SFA.DAS.ApplyService.Web.StartupExtensions;
-    using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
-
     public class Startup
     {
         private readonly IConfiguration _configuration;

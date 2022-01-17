@@ -5,9 +5,11 @@ using SFA.DAS.ApplyService.Domain.CharityCommission;
 using SFA.DAS.ApplyService.Domain.CompaniesHouse;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Ukrlp;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services
@@ -20,9 +22,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly ILogger<GatewayApiChecksService> _logger;
 
-        public GatewayApiChecksService(CompaniesHouseApiClient companiesHouseApiClient, IOuterApiClient outerApiClient,
-                                       IRoatpApiClient roatpApiClient, IInternalQnaApiClient qnaApiClient,
-                                       ILogger<GatewayApiChecksService> logger)
+        public GatewayApiChecksService(
+            CompaniesHouseApiClient companiesHouseApiClient, 
+            IOuterApiClient outerApiClient,
+            IRoatpApiClient roatpApiClient, 
+            IInternalQnaApiClient qnaApiClient,
+            ILogger<GatewayApiChecksService> logger)
         {
             _companiesHouseApiClient = companiesHouseApiClient;
             _outerApiClient = outerApiClient;
@@ -89,16 +94,22 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
 
         private async Task LookupCharityCommissionDetails(ApplyGatewayDetails applyGatewayDetails, string charityNumberFromUkrlp)
         {
-            if (int.TryParse(charityNumberFromUkrlp, out var charityNumber))
+            if (!int.TryParse(charityNumberFromUkrlp, out var charityNumber))
+            { 
+                _logger.LogError("Unable to parse charity registration number from charity number in ukrlp `{charityNumber}`", charityNumberFromUkrlp);
+                return;
+            }
+
+            try
             {
-                var charityDetails = await _outerApiClient.GetCharity(charityNumber);
-                if (charityDetails == null)
-                {
-                    var message = $"Unable to retrieve Charity Commission details for charity number {charityNumber}";
-                    _logger.LogError(message);
-                    throw new ServiceUnavailableException(message);
-                }
+                var charityDetails = await _outerApiClient.GetCharityDetails(charityNumber);
                 applyGatewayDetails.CharityCommissionDetails = Mapper.Map<CharityCommissionSummary>(charityDetails);
+            }
+            catch (HttpRequestException ex)
+            {
+                var message = $"Unable to retrieve Charity Commission details for charity number {charityNumber}";
+                _logger.LogError(ex, message);
+                throw new ServiceUnavailableException(message);
             }
         }
     }

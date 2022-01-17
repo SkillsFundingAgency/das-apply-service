@@ -55,7 +55,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<AllowedProvider> GetAllowedProvider(string ukprn);
 
-        Task<Contact> GetContactBySignInId(Guid contactId);
+        Task<Contact> GetContactBySignInId(Guid signInId);
 
 
     }
