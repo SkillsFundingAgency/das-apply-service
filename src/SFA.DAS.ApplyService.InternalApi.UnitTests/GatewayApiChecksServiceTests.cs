@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.AutoMapper;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Models.Ukrlp;
@@ -14,6 +15,7 @@ using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
 using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
@@ -160,7 +162,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Name = "Test Name"                
             };
 
-            _outerApiClient.Setup(x => x.GetCharity(charityNumber)).ReturnsAsync(charityDetails);
+            _outerApiClient.Setup(x => x.GetCharityDetails(charityNumber)).ReturnsAsync(charityDetails);
 
             var result = await _service.GetExternalApiCheckDetails(_applicationId);
 
@@ -212,7 +214,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public void Service_throws_exception_if_no_charity_commission_details_returned()
+        public async Task Service_throws_exception_if_no_charity_commission_details_returned()
         {
             int charityNumber = 112233;
 
@@ -228,9 +230,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _roatpApiClient.Setup(x => x.GetUkrlpDetails(_ukprn)).ReturnsAsync(_ukrlpDetails);
 
             Charity charityDetails = null;
-            _outerApiClient.Setup(x => x.GetCharity(charityNumber)).ReturnsAsync(charityDetails);
+            _outerApiClient.Setup(x => x.GetCharityDetails(charityNumber)).Throws<HttpRequestException>();
 
-            Action serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId).GetAwaiter().GetResult();
+            Func<Task> serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId);
             serviceCall.Should().Throw<ServiceUnavailableException>();
         }
     }

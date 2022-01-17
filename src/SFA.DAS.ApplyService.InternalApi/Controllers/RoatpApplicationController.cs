@@ -1,20 +1,18 @@
-﻿namespace SFA.DAS.ApplyService.InternalApi.Controllers
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using global::AutoMapper;
-    using Infrastructure;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using SFA.DAS.ApplyService.Domain.Roatp;
-    using Polly;
-    using Polly.Retry;
-    using Microsoft.AspNetCore.Authorization;
-    using MediatR;
-    using Microsoft.Extensions.Options;
-    using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using global::AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Polly;
+using Polly.Retry;
+using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 
+namespace SFA.DAS.ApplyService.InternalApi.Controllers
+{
     [Authorize]
     public class RoatpApplicationController : Controller
     {
@@ -24,16 +22,13 @@
         
         private AsyncRetryPolicy _retryPolicy;
 
-        private readonly IMediator _mediator;
-
         private readonly List<RoatpSequences> _roatpSequences;
 
-        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, IRoatpApiClient apiClient, IMediator mediator, IOptions<List<RoatpSequences>> roatpSequences)
+        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, IRoatpApiClient apiClient, IOptions<List<RoatpSequences>> roatpSequences)
         {
             _logger = logger;
             _apiClient = apiClient;
             _retryPolicy = GetRetryPolicy();
-            _mediator = mediator;
             _roatpSequences = roatpSequences.Value;
         }
 

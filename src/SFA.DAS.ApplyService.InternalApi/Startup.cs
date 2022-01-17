@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -9,11 +10,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Azure;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SFA.DAS.ApplyService.Application.Behaviours;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Services;
+using SFA.DAS.ApplyService.Application.Services.Assessor;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
@@ -23,8 +26,25 @@ using SFA.DAS.ApplyService.Data.Repositories.UnitOfWorkRepositories;
 using SFA.DAS.ApplyService.Data.UnitOfWork;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.EmailService;
+using SFA.DAS.ApplyService.EmailService.Infrastructure;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
+using SFA.DAS.ApplyService.Infrastructure.Database;
+using SFA.DAS.ApplyService.InternalApi.Authentication;
+using SFA.DAS.ApplyService.InternalApi.Authorization;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
+using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Services.Files;
 using SFA.DAS.ApplyService.InternalApi.Services.Moderator;
+using SFA.DAS.ApplyService.InternalApi.StartupExtensions;
+using SFA.DAS.Http;
+using SFA.DAS.Http.TokenGenerators;
+using SFA.DAS.Notifications.Api.Client;
+using Swashbuckle.AspNetCore.Swagger;
 using CompaniesHouseApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CompaniesHouseApiClient;
 using IQnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.IQnaTokenService;
 using IRoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.IRoatpApiClient;
@@ -34,26 +54,6 @@ using SecurityHeadersExtensions = SFA.DAS.ApplyService.InternalApi.Infrastructur
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
-    using Microsoft.AspNetCore.Mvc.Authorization;
-    using SFA.DAS.ApplyService.Application.Behaviours;
-    using SFA.DAS.ApplyService.Application.Services.Assessor;
-    using SFA.DAS.ApplyService.Domain.Roatp;
-    using SFA.DAS.ApplyService.EmailService;
-    using SFA.DAS.ApplyService.EmailService.Infrastructure;
-    using SFA.DAS.ApplyService.EmailService.Interfaces;
-    using SFA.DAS.ApplyService.Infrastructure.Database;
-    using SFA.DAS.ApplyService.InternalApi.Authentication;
-    using SFA.DAS.ApplyService.InternalApi.Authorization;
-    using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
-    using SFA.DAS.ApplyService.InternalApi.Services;
-    using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
-    using SFA.DAS.ApplyService.InternalApi.Services.Files;
-    using SFA.DAS.ApplyService.InternalApi.StartupExtensions;
-    using SFA.DAS.Http;
-    using SFA.DAS.Http.TokenGenerators;
-    using SFA.DAS.Notifications.Api.Client;
-    using Swashbuckle.AspNetCore.Swagger;
-    using System.IO;
 
     public class Startup
     {
