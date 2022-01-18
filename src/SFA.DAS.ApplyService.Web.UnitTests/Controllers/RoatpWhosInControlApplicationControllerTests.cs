@@ -22,6 +22,7 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Domain.CompaniesHouse;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
 using SFA.DAS.ApplyService.Web.AutoMapper;
 using Trustee = SFA.DAS.ApplyService.InternalApi.Types.CharityCommission.Trustee;
@@ -1809,19 +1810,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 Trustees = listOfTrustees,
                 Status = "registered"
             };
-           
-            var charityResponse =  new ApiResponse<Charity>
-            {
-                Success = true,
-                Response = charity
-            };
-
+            
             _qnaClient.Setup(x => x.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UKPRN)).ReturnsAsync(ukprn);
             _qnaClient.Setup(x => x.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UKRLPVerificationCharityRegNumber)).ReturnsAsync(charityNumber.ToString());
 
             _organisationApiClient.Setup(x => x.UpdateTrustees(ukprn, listOfTrustees, It.IsAny<Guid>())).ReturnsAsync(true);
 
-            _outerApiClient.Setup(x=>x.GetCharityDetails(charityNumber)).ReturnsAsync(charityResponse).Verifiable();
+            _outerApiClient.Setup(x=>x.GetCharityDetails(charityNumber)).ReturnsAsync(charity).Verifiable();
 
             var result = _controller.RefreshTrustees(applicationId).GetAwaiter().GetResult();
 
@@ -1836,15 +1831,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
 
-        [TestCase(null, "12345678",true, "registered",false, false, "CharityNotFound")]
-        [TestCase("", "12345678", true, "registered", false, false, "CharityNotFound")]
-        [TestCase("87654321","", true, "registered", false, false, "CharityNotFound")]
-        [TestCase("87654321", null, true, "registered", false, false,"CharityNotFound")]
-        [TestCase("87654321", "12345678", false, "registered", false, false,"CharityCommissionNotAvailable")]
-        [TestCase("87654321", "12345678", true, "not registered",false, false, "CharityNotFound")]
-        [TestCase("87654321", "12345678", true, "registered", false,  true,"CharityNotFound")]
+        [TestCase(null, "12345678", "registered",false, false, "CharityNotFound")]
+        [TestCase("", "12345678",  "registered", false, false, "CharityNotFound")]
+        [TestCase("87654321","",  "registered", false, false, "CharityNotFound")]
+        [TestCase("87654321", null, "registered", false, false,"CharityNotFound")]
+        [TestCase("87654321", "12345678",  "not registered",false, false, "CharityNotFound")]
+        [TestCase("87654321", "12345678",  "registered", false,  true,"CharityNotFound")]
 
-        public void refresh_trustees_and_redirect_if_details_not_available(string ukprn, string charityNumber, bool apiSuccess, string charityStatus, bool setCharityDetailsToNull, bool setTrusteesToEmpty, string pageRedirectedTo)
+        public void refresh_trustees_and_redirect_if_details_not_available(string ukprn, string charityNumber,  string charityStatus, bool setCharityDetailsToNull, bool setTrusteesToEmpty, string pageRedirectedTo)
         {
             var applicationId = Guid.NewGuid();
             int.TryParse(charityNumber, out var charityNumberValue);
@@ -1878,18 +1872,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     charity.Trustees = new List<Trustee>();
                 }
             }
-            var charityResponse = new ApiResponse<Charity>
-            {
-                Success = apiSuccess,
-                Response = charity
-            };
 
             _qnaClient.Setup(x => x.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UKPRN)).ReturnsAsync(ukprn);
             _qnaClient.Setup(x => x.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UKRLPVerificationCharityRegNumber)).ReturnsAsync(charityNumber);
 
             _organisationApiClient.Setup(x => x.UpdateTrustees(ukprn, listOfTrustees, It.IsAny<Guid>())).ReturnsAsync(true);
 
-            _outerApiClient.Setup(x => x.GetCharityDetails(charityNumberValue)).ReturnsAsync(charityResponse).Verifiable();
+            _outerApiClient.Setup(x => x.GetCharityDetails(charityNumberValue)).ReturnsAsync(charity).Verifiable();
 
             var result = _controller.RefreshTrustees(applicationId).GetAwaiter().GetResult();
 

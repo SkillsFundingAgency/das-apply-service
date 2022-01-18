@@ -20,6 +20,7 @@ using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using AutoMapper;
 using SFA.DAS.ApplyService.Domain.CharityCommission;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -179,14 +180,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     $"RefreshTrustees: Retrieving charity details applicationId {applicationId} | Charity Number : {charityNumber}");
                 var timer = new Stopwatch();
                 timer.Start();
-                var charityApiResponse = await _outerApiClient.GetCharityDetails(charityNumberValue);
+                var charityDetails = await _outerApiClient.GetCharityDetails(charityNumberValue);
                 var timeToCallCharityDetails = $"{timer.ElapsedMilliseconds} ms";
-
-                if (!charityApiResponse.Success)
-                {
-                    return RedirectToAction("CharityCommissionNotAvailable", "RoatpShutterPages");
-                }
-                var charityDetails = charityApiResponse.Response;
 
                 if (charityDetails == null || !charityDetails.IsActivelyTrading || charityDetails.Trustees == null || !charityDetails.Trustees.Any())
                 {
