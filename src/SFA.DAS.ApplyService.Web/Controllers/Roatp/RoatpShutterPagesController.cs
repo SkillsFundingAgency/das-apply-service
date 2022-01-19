@@ -62,7 +62,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ProviderDetails = applicationDetails.UkrlpLookupDetails
             };
 
-            return View("~/Views/Roatp/ShutterPages/CharityNotFound.cshtml", viewModel);
+            return View("~/Views/Roatp/ShutterPages/CharityDetailsNotFound.cshtml", viewModel);
+        }
+
+        [Route("charity-not-found-refresh")]
+        public IActionResult CharityNotFoundRefresh(string charityNumber)
+        {
+            
+            var viewModel = new   CharityNotFoundTrusteesRefreshViewModel 
+            {
+            CharityNumber = charityNumber
+            };
+
+            return View("~/Views/Roatp/ShutterPages/CharityNotFoundTrusteesRefresh.cshtml", viewModel);
         }
 
         [Route("chosen-not-apply-roatp")]

@@ -21,6 +21,7 @@ using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using AutoMapper;
 using SFA.DAS.ApplyService.Domain.CharityCommission;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
+using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -33,13 +34,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IAnswerFormService _answerFormService;
         private readonly ITabularDataRepository _tabularDataRepository;
         private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
-        private readonly IOuterApiClient _outerApiClient;
+        private readonly IRefreshTrusteesService _refreshTrusteesService;
         private readonly ILogger<RoatpWhosInControlApplicationController> _logger;
 
         public RoatpWhosInControlApplicationController(IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient,
                                                        IAnswerFormService answerFormService, ITabularDataRepository tabularDataRepository,
                                                        ISessionService sessionService, ICompaniesHouseApiClient companiesHouseApiClient,
-                                                       IOrganisationApiClient organisationApiClient, ILogger<RoatpWhosInControlApplicationController> logger, IOuterApiClient outerApiClient)
+                                                       IRefreshTrusteesService refreshTrusteesService,
+                                                       IOrganisationApiClient organisationApiClient, ILogger<RoatpWhosInControlApplicationController> logger)
             : base(sessionService)
         {
             _qnaApiClient = qnaApiClient;
@@ -49,7 +51,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _companiesHouseApiClient = companiesHouseApiClient;
             _organisationApiClient = organisationApiClient;
             _logger = logger;
-            _outerApiClient = outerApiClient;
+            _refreshTrusteesService = refreshTrusteesService;
         }
 
         [Route("confirm-who-control")]
@@ -157,70 +159,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [HttpGet("refresh-trustees")]
         public async Task<IActionResult> RefreshTrustees(Guid applicationId)
         {
-            try
+            var userId = User.GetUserId();
+            var trusteeResult = await _refreshTrusteesService.RefreshTrustees(applicationId, userId);
+            if (trusteeResult.CharityDetailsNotFound)
             {
-                var ukprn = await _qnaApiClient.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UKPRN);
-                if(string.IsNullOrEmpty(ukprn))
-                {
-                    _logger.LogInformation(
-                        $"RefreshTrustees: No ukprn found for applicationId {applicationId}");
-                    return RedirectToAction("CharityNotFound", "RoatpShutterPages");
-                }
-
-                var charityNumber = await _qnaApiClient.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UKRLPVerificationCharityRegNumber);
-                if(string.IsNullOrEmpty(charityNumber) || !int.TryParse(charityNumber, out var charityNumberValue))
-                {
-                    _logger.LogInformation(
-                        $"RefreshTrustees: chaerity number [{charityNumber}] could not be resolved for applicationId {applicationId}");
-                    return RedirectToAction("CharityNotFound", "RoatpShutterPages");
-
-                }
-
-                _logger.LogInformation(
-                    $"RefreshTrustees: Retrieving charity details applicationId {applicationId} | Charity Number : {charityNumber}");
-                var timer = new Stopwatch();
-                timer.Start();
-                var charityDetails = await _outerApiClient.GetCharityDetails(charityNumberValue);
-                var timeToCallCharityDetails = $"{timer.ElapsedMilliseconds} ms";
-
-                if (charityDetails == null || !charityDetails.IsActivelyTrading || charityDetails.Trustees == null || !charityDetails.Trustees.Any())
-                {
-                    return RedirectToAction("CharityNotFound", "RoatpShutterPages");
-                }
-
-                _logger.LogInformation($"RefreshTrustees: updating organisation trustees applicationId {applicationId}");
-
-                var success = await _organisationApiClient.UpdateTrustees(ukprn, charityDetails.Trustees?.ToList(), User.GetUserId());
-                if (!success)
-                {
-                    _logger.LogInformation($"Organisation trustees update failed - applicationId {applicationId}");
-                    return RedirectToAction("CharityCommissionNotAvailable", "RoatpShutterPages");
-
-                }
-
-                var applicationDetails = new Domain.Roatp.ApplicationDetails { CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails) };
-                var trusteesAnswers = RoatpPreambleQuestionBuilder.CreateCharityCommissionWhosInControlQuestions(applicationDetails);
-
-                _logger.LogInformation($"RefreshTrustees: resetting page answers for charities, applicationId {applicationId}");
-                var resetSection1_3_80 = _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees);
-                var resetSection1_3_86 = _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrusteesDob); 
-                var resetSection3_4 = _qnaApiClient.ResetPageAnswersBySection(applicationId, RoatpWorkflowSequenceIds.CriminalComplianceChecks, RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl);
-                await Task.WhenAll(resetSection1_3_80, resetSection1_3_86, resetSection3_4);
-
-                _logger.LogInformation($"RefreshTrustees: updating page answers for charities, applicationId {applicationId}");
-                await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees, trusteesAnswers.ToList<Answer>());
-
-                var timeToDoEntireCall = $"{timer.ElapsedMilliseconds} ms";
-                timer.Stop();
-                _logger.LogInformation($"RefreshTrustees: all updates completed for {applicationId} - entire call timespan: {timeToDoEntireCall}, Charity call timespan: {timeToCallCharityDetails}");
-
-                return RedirectToAction("ConfirmTrustees", "RoatpWhosInControlApplication", new { applicationId });
+                return RedirectToAction("CharityNotFoundRefresh", "RoatpShutterPages", new {trusteeResult.CharityNumber});
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error when processing charity trustees - applicationId {applicationId}");
-                return RedirectToAction("CharityCommissionNotAvailable", "RoatpShutterPages");
-            }
+
+            return RedirectToAction("ConfirmTrustees", "RoatpWhosInControlApplication", new { applicationId });
         }
 
         [Route("confirm-directors-pscs")]

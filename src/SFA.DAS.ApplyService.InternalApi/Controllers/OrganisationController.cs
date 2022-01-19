@@ -136,6 +136,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok(org);
         }
 
+        [HttpGet("applicationId/{applicationId}")]
+        public async Task<ActionResult<Organisation>> GetOrganisationByApplicationId(Guid applicationId)
+        {
+            var org = await _mediator.Send(new GetOrganisationByApplicationIdRequest(applicationId));
+
+            if (org is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(org);
+        }
+
         [HttpGet("ukprn/{ukprn}")]
         public async Task<ActionResult<Organisation>> GetOrganisationByUkprn(string ukprn)
         {

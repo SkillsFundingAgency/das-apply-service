@@ -248,6 +248,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
             services.AddTransient<IResetRouteQuestionsService, ResetRouteQuestionsService>();
             services.AddTransient<IPagesWithSectionsFlowService, PagesWithSectionsFlowService>();
+            services.AddTransient<IRefreshTrusteesService, RefreshTrusteesService>();
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
             services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
             services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();

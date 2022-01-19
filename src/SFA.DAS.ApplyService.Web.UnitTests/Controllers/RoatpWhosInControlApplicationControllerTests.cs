@@ -13,7 +13,9 @@ using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
@@ -25,6 +27,7 @@ using SFA.DAS.ApplyService.Domain.CompaniesHouse;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
 using SFA.DAS.ApplyService.Web.AutoMapper;
+using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using Trustee = SFA.DAS.ApplyService.InternalApi.Types.CharityCommission.Trustee;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
@@ -39,8 +42,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<ISessionService> _sessionService;
         private Mock<IOrganisationApiClient> _organisationApiClient;
         private Mock<ICompaniesHouseApiClient> _companiesHouseApiClient;
-        private Mock<IOuterApiClient> _outerApiClient;
         private Mock<ILogger<RoatpWhosInControlApplicationController>> _logger;
+        private Mock<IRefreshTrusteesService> _refreshTrusteesService;
         private RoatpWhosInControlApplicationController _controller;
 
         private TabularData _directors;
@@ -56,7 +59,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService = new Mock<ISessionService>();
             _organisationApiClient = new Mock<IOrganisationApiClient>();
             _companiesHouseApiClient = new Mock<ICompaniesHouseApiClient>();
-            _outerApiClient = new Mock<IOuterApiClient>();
+            _refreshTrusteesService = new Mock<IRefreshTrusteesService>();
             _logger = new Mock<ILogger<RoatpWhosInControlApplicationController>>();
 
             var signInId = Guid.NewGuid();
@@ -83,9 +86,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                                       _tabularDataRepository.Object,
                                                                       _sessionService.Object,
                                                                       _companiesHouseApiClient.Object,
+                                                                      _refreshTrusteesService.Object,
                                                                       _organisationApiClient.Object,
-                                                                      _logger.Object,
-                                                                      _outerApiClient.Object)
+                                                                      _logger.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -1784,114 +1787,33 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void refresh_trustees_and_check_calls_to_organisation_and_qna_occur()
+        public async Task refresh_trustees_and_redirect_if_details_not_available()
         {
+            var charityNumber = "12345678";
             var applicationId = Guid.NewGuid();
-            var charityNumber = 12345678;
-            var listOfTrustees = new List<Trustee>
-            {
-                new Trustee
-                {
-                    Id = 1234,
-                    Name = "Mr A Trustee"
-                },
-                new Trustee
-                {
-                    Id = 1235,
-                    Name = "Mr B Trustee"
-                }
-            };
-            
-            var ukprn = "43214321";
+            _refreshTrusteesService.Setup(x => x.RefreshTrustees(applicationId, It.IsAny<Guid>())).ReturnsAsync(new RefreshTrusteeResult {CharityDetailsNotFound = true, CharityNumber = charityNumber});
 
-            var charity = new Charity
-            {
-                CharityNumber = charityNumber.ToString(),
-                Trustees = listOfTrustees,
-                Status = "registered"
-            };
-            
-            _qnaClient.Setup(x => x.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UKPRN)).ReturnsAsync(ukprn);
-            _qnaClient.Setup(x => x.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UKRLPVerificationCharityRegNumber)).ReturnsAsync(charityNumber.ToString());
+            var result = await _controller.RefreshTrustees(applicationId);
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("CharityNotFoundRefresh");
 
-            _organisationApiClient.Setup(x => x.UpdateTrustees(ukprn, listOfTrustees, It.IsAny<Guid>())).ReturnsAsync(true);
+            var routeValue = redirectResult.RouteValues.FirstOrDefault(x => x.Key == "CharityNumber");
+            routeValue.Value.Should().Be(charityNumber);
+        }
 
-            _outerApiClient.Setup(x=>x.GetCharityDetails(charityNumber)).ReturnsAsync(charity).Verifiable();
+        [Test]
+        public async Task refresh_trustees_and_redirect_if_details_updated()
+        {
+            var charityNumber = "12345678";
+            var applicationId = Guid.NewGuid();
+            _refreshTrusteesService.Setup(x => x.RefreshTrustees(applicationId, It.IsAny<Guid>())).ReturnsAsync(new RefreshTrusteeResult { CharityDetailsNotFound = false, CharityNumber = charityNumber });
 
-            var result = _controller.RefreshTrustees(applicationId).GetAwaiter().GetResult();
-
+            var result = await _controller.RefreshTrustees(applicationId);
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be("ConfirmTrustees");
 
-            _organisationApiClient.Verify(x => x.UpdateTrustees(ukprn, listOfTrustees, It.IsAny<Guid>()), Times.Once);
-            _qnaClient.Verify(x => x.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees, It.IsAny<List<Answer>>()), Times.Once);
-            _qnaClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees), Times.Once);
-            _qnaClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrusteesDob), Times.Once);
-            _qnaClient.Verify(x => x.ResetPageAnswersBySection(applicationId, RoatpWorkflowSequenceIds.CriminalComplianceChecks, RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl), Times.Once);
+            var routeValue = redirectResult.RouteValues.FirstOrDefault(x => x.Key == "applicationId");
+            routeValue.Value.Should().Be(applicationId);
         }
-
-
-        [TestCase(null, "12345678", "registered",false, false, "CharityNotFound")]
-        [TestCase("", "12345678",  "registered", false, false, "CharityNotFound")]
-        [TestCase("87654321","",  "registered", false, false, "CharityNotFound")]
-        [TestCase("87654321", null, "registered", false, false,"CharityNotFound")]
-        [TestCase("87654321", "12345678",  "not registered",false, false, "CharityNotFound")]
-        [TestCase("87654321", "12345678",  "registered", false,  true,"CharityNotFound")]
-
-        public void refresh_trustees_and_redirect_if_details_not_available(string ukprn, string charityNumber,  string charityStatus, bool setCharityDetailsToNull, bool setTrusteesToEmpty, string pageRedirectedTo)
-        {
-            var applicationId = Guid.NewGuid();
-            int.TryParse(charityNumber, out var charityNumberValue);
-            var listOfTrustees = new List<Trustee>
-            {
-                new Trustee
-                {
-                    Id = 1234,
-                    Name = "Mr A Trustee"
-                },
-                new Trustee
-                {
-                    Id = 1235,
-                    Name = "Mr B Trustee"
-                }
-            };
-
-            var charity = new Charity
-            {
-                CharityNumber = charityNumber,
-                Trustees = listOfTrustees,
-                Status = charityStatus
-            };
-
-            if (setCharityDetailsToNull)
-                charity = null;
-            else
-            {
-                if (setTrusteesToEmpty)
-                {
-                    charity.Trustees = new List<Trustee>();
-                }
-            }
-
-            _qnaClient.Setup(x => x.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UKPRN)).ReturnsAsync(ukprn);
-            _qnaClient.Setup(x => x.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UKRLPVerificationCharityRegNumber)).ReturnsAsync(charityNumber);
-
-            _organisationApiClient.Setup(x => x.UpdateTrustees(ukprn, listOfTrustees, It.IsAny<Guid>())).ReturnsAsync(true);
-
-            _outerApiClient.Setup(x => x.GetCharityDetails(charityNumberValue)).ReturnsAsync(charity).Verifiable();
-
-            var result = _controller.RefreshTrustees(applicationId).GetAwaiter().GetResult();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be(pageRedirectedTo);
-
-            _organisationApiClient.Verify(x => x.UpdateTrustees(ukprn, listOfTrustees, It.IsAny<Guid>()), Times.Never);
-            _qnaClient.Verify(x => x.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees, It.IsAny<List<Answer>>()), Times.Never);
-            _qnaClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees), Times.Never);
-            _qnaClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrusteesDob), Times.Never);
-            _qnaClient.Verify(x => x.ResetPageAnswersBySection(applicationId, RoatpWorkflowSequenceIds.CriminalComplianceChecks, RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl), Times.Never);
-        }
-
-
     }
 }

@@ -13,7 +13,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
        Task<Organisation> Create(OrganisationSearchResult organisation, Guid userId);
        Task<Organisation> Create(CreateOrganisationRequest request, Guid userId);
        Task<Organisation> GetByUser(Guid userId);
-       Task<bool> UpdateDirectorsAndPscs(string ukprn, List<DirectorInformation> directors, List<PersonSignificantControlInformation> personsWithSignificantControl, Guid userId);
+       Task<Organisation> GetByApplicationId(Guid applicationId);
+        Task<bool> UpdateDirectorsAndPscs(string ukprn, List<DirectorInformation> directors, List<PersonSignificantControlInformation> personsWithSignificantControl, Guid userId);
        Task<bool> UpdateTrustees(string ukprn, List<Trustee> trustees, Guid userId);
    }
 }
