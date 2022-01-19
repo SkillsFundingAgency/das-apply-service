@@ -87,6 +87,7 @@
     <Build Include="Tables\FinancialReviewClarificationFile.sql" />
     <Build Include="Tables\BankHoliday.sql" />
     <None Include="Scripts\Seed\EmailTemplates.sql" />
+    <Build Include="Tables\OrganisationManagement.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment.sql" />
