@@ -17,7 +17,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string ProviderRouteNameOnRegister { get; set; }
         public string OrganisationType { get; set; }
         public string CompanyNumber { get; set; }
-        public string Address { get; set; }
+        public string LegalAddress { get; set; }
         public string GatewayOutcome { get; set; }
         public string AssessorOutcome { get; set; }
         public string FHCOutcome { get; set; }
