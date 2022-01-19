@@ -87,6 +87,12 @@
     <Build Include="Tables\FinancialReviewClarificationFile.sql" />
     <Build Include="Tables\BankHoliday.sql" />
     <None Include="Scripts\Seed\EmailTemplates.sql" />
+    <Build Include="Tables\OrganisationAddresses.sql" />
+    <Build Include="Tables\OrganisationPersonnel.sql" />
+    <Build Include="Tables\OrganisationManagement.sql" />
+    <Build Include="Tables\OrganisationSectors.sql" />
+    <Build Include="Tables\OrganisationSectorExperts.sql" />
+    <Build Include="Tables\OrganisationSectorExpertDeliveredTrainingTypes.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment.sql" />
@@ -98,5 +104,8 @@
     <None Include="AdhocScipts\DataMart\LookupPageTitles.sql" />
     <None Include="AdhocScipts\DataMart\LookupQuestionTitles.sql" />
     <None Include="SFA.DAS.ApplyService.Database.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="SFA.DAS.ApplyService.Database.refactorlog" />
   </ItemGroup>
 </Project>

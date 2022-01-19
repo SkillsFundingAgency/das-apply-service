@@ -2,8 +2,11 @@
 CREATE TABLE [dbo].[Organisations](
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
    [Name]	[nvarchar](400)	NOT NULL,	-- Name of the Organisation (as result of Search)
+   [TradingName] [nvarchar](400) NULL,
    [OrganisationType]	[nvarchar](100)	NOT NULL,	 -- Type of the Organisation (as result of Search / input)
    [OrganisationUKPRN] [int] NULL, -- This is an 8 digit number starting with 1
+   [CompanyRegistrationNumber] [nvarchar](20) NULL,
+   [CharityRegistrationNumber] [nvarchar](20) NULL,
    [OrganisationDetails]	[nvarchar](max)	NULL,	 -- JSON, includes Contact and Address Details (as result of Search),  
    -- Financial health check state, good-until-date
    -- "OrganisationReferenceType":How the Organisation reference was found - "RoATP"
