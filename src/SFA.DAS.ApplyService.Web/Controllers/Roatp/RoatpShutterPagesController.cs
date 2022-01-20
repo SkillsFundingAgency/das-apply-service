@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.Domain.Ukrlp;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
@@ -51,6 +53,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/ShutterPages/CompanyNotFound.cshtml", viewModel);
         }
 
+        [Route("company-not-found-refresh")]
+        public IActionResult CompanyNotFoundRefresh(string companyNumber)
+        {
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                ProviderDetails = new ProviderDetails
+                {
+                    VerificationDetails = new List<VerificationDetails>
+                    {
+                          new VerificationDetails {VerificationAuthority = "Companies House", VerificationId = companyNumber}
+                    }
+                }
+            };
+
+            return View("~/Views/Roatp/ShutterPages/CompanyNotFound.cshtml", viewModel);
+        }
+
         [Route("charity-not-found")]
         public IActionResult CharityNotFound()
         {
@@ -62,19 +82,25 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ProviderDetails = applicationDetails.UkrlpLookupDetails
             };
 
-            return View("~/Views/Roatp/ShutterPages/CharityDetailsNotFound.cshtml", viewModel);
+            return View("~/Views/Roatp/ShutterPages/CharityNotFound.cshtml", viewModel);
         }
 
         [Route("charity-not-found-refresh")]
         public IActionResult CharityNotFoundRefresh(string charityNumber)
         {
             
-            var viewModel = new   CharityNotFoundTrusteesRefreshViewModel 
-            {
-            CharityNumber = charityNumber
+            var viewModel = new UkprnSearchResultsViewModel
+            { 
+                ProviderDetails = new ProviderDetails
+                {
+                    VerificationDetails = new List<VerificationDetails>
+                    {
+                        new VerificationDetails {VerificationAuthority = "Charity Commission", VerificationId = charityNumber}
+                    }
+                }
             };
 
-            return View("~/Views/Roatp/ShutterPages/CharityNotFoundTrusteesRefresh.cshtml", viewModel);
+            return View("~/Views/Roatp/ShutterPages/CharityNotFound.cshtml", viewModel);
         }
 
         [Route("chosen-not-apply-roatp")]

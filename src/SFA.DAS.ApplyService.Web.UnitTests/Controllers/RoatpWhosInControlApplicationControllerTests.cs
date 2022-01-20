@@ -61,14 +61,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var signInId = Guid.NewGuid();
 
-            //MFCMFC
-            // Mapper.Reset();
-            //
-            // Mapper.Initialize(cfg =>
-            // {
-            //     cfg.AddProfile<CharityCommissionProfile>();
-            // });
-
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.Name, $"Test user"),
@@ -1755,8 +1747,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [TestCase(CompaniesHouseSummary.ServiceUnavailable, "CompaniesHouseNotAvailable")]
-        [TestCase(CompaniesHouseSummary.CompanyStatusNotFound, "CompanyNotFound")]
-        [TestCase("not_the_word_active", "CompanyNotFound")]
+        [TestCase(CompaniesHouseSummary.CompanyStatusNotFound, "CompanyNotFoundRefresh")]
+        [TestCase("not_the_word_active", "CompanyNotFoundRefresh")]
         public void refresh_directors_pcs_and_send_to_page_if_companies_house_not_active(string companiesHouseStatus, string pageRedirectedTo)
         {
             var companyNumber = "12345678";
