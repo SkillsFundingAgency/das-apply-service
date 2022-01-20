@@ -24,11 +24,8 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Domain.CompaniesHouse;
-using SFA.DAS.ApplyService.Infrastructure.ApiClients;
-using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
 using SFA.DAS.ApplyService.Web.AutoMapper;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
-using Trustee = SFA.DAS.ApplyService.InternalApi.Types.CharityCommission.Trustee;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -64,12 +61,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var signInId = Guid.NewGuid();
 
-            Mapper.Reset();
-
-            Mapper.Initialize(cfg =>
-            {
-                cfg.AddProfile<CharityCommissionProfile>();
-            });
+            //MFCMFC
+            // Mapper.Reset();
+            //
+            // Mapper.Initialize(cfg =>
+            // {
+            //     cfg.AddProfile<CharityCommissionProfile>();
+            // });
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -1791,7 +1789,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var charityNumber = "12345678";
             var applicationId = Guid.NewGuid();
-            _refreshTrusteesService.Setup(x => x.RefreshTrustees(applicationId, It.IsAny<Guid>())).ReturnsAsync(new RefreshTrusteeResult {CharityDetailsNotFound = true, CharityNumber = charityNumber});
+            _refreshTrusteesService.Setup(x => x.RefreshTrustees(applicationId, It.IsAny<Guid>())).ReturnsAsync(new RefreshTrusteesResult {CharityDetailsNotFound = true, CharityNumber = charityNumber});
 
             var result = await _controller.RefreshTrustees(applicationId);
             var redirectResult = result as RedirectToActionResult;
@@ -1806,7 +1804,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var charityNumber = "12345678";
             var applicationId = Guid.NewGuid();
-            _refreshTrusteesService.Setup(x => x.RefreshTrustees(applicationId, It.IsAny<Guid>())).ReturnsAsync(new RefreshTrusteeResult { CharityDetailsNotFound = false, CharityNumber = charityNumber });
+            _refreshTrusteesService.Setup(x => x.RefreshTrustees(applicationId, It.IsAny<Guid>())).ReturnsAsync(new RefreshTrusteesResult { CharityDetailsNotFound = false, CharityNumber = charityNumber });
 
             var result = await _controller.RefreshTrustees(applicationId);
             var redirectResult = result as RedirectToActionResult;

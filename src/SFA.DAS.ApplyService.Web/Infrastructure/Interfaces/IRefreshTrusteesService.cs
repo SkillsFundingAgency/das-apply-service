@@ -6,6 +6,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Interfaces
 {
     public interface IRefreshTrusteesService
     {
-        Task<RefreshTrusteeResult> RefreshTrustees(Guid applicationId, Guid userId);
+        Task<RefreshTrusteesResult> RefreshTrustees(Guid applicationId, Guid userId);
     }
 }

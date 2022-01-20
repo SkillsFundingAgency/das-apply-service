@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
             _retryPolicy = GetRetryPolicy();
         }
 
-        public async Task<RefreshTrusteeResult> RefreshTrustees(Guid applicationId, Guid userId)
+        public async Task<RefreshTrusteesResult> RefreshTrustees(Guid applicationId, Guid userId)
         {
             var organisation = await _organisationApiClient.GetByApplicationId(applicationId);
             var ukprn = organisation?.OrganisationUkprn?.ToString();
@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
             {
                 _logger.LogInformation($"RefreshTrusteesService: Refresh failure for applicationId {applicationId}, ukprn: [{ukprn}], Charity number: [{charityNumber}]");
                 
-                return new RefreshTrusteeResult { CharityDetailsNotFound = true, CharityNumber = charityNumber };
+                return new RefreshTrusteesResult { CharityDetailsNotFound = true, CharityNumber = charityNumber };
             }
 
             var currentStatusesForUkrpn = await _applicationApiClient.GetExistingApplicationStatus(ukprn);
@@ -52,7 +52,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
             if (!isStatusInProgress)
             {
                 _logger.LogInformation($"RefreshTrusteesService: Refresh failure for applicationId {applicationId} as status '{ApplicationStatus.InProgress}' expected.");
-                return new RefreshTrusteeResult { CharityDetailsNotFound = true, CharityNumber = charityNumber };
+                return new RefreshTrusteesResult { CharityDetailsNotFound = true, CharityNumber = charityNumber };
             }
 
             var charityDetails = await _outerApiClient.GetCharityDetails(charityNumberValue);
@@ -60,7 +60,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
             if (charityDetails == null || !charityDetails.IsActivelyTrading || charityDetails.Trustees == null || !charityDetails.Trustees.Any())
             {
                 _logger.LogInformation($"RefreshTrusteesService:  Failure for applicationId {applicationId}  to retrieve trustee details from charity '{charityNumberValue}'");
-                return new RefreshTrusteeResult { CharityDetailsNotFound = true, CharityNumber = charityNumber };
+                return new RefreshTrusteesResult { CharityDetailsNotFound = true, CharityNumber = charityNumber };
             }
 
             _logger.LogInformation($"RefreshTrusteesService: updating organisation trustees applicationId {applicationId}");
@@ -111,9 +111,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
                 throw new InvalidOperationException($"RefreshTrusteesService for Application {applicationId} update qna page answers failed: [{ex.Message}]");
             }
 
-            return new RefreshTrusteeResult
+            return new RefreshTrusteesResult
             {
-                CharityNumber = "1223232",
+                CharityNumber = charityNumber,
                 CharityDetailsNotFound = false
             };
         }
