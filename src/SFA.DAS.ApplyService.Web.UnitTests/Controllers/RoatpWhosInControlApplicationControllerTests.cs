@@ -13,10 +13,7 @@ using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
@@ -24,8 +21,6 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Domain.CompaniesHouse;
-using SFA.DAS.ApplyService.Web.AutoMapper;
-using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -40,7 +35,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IOrganisationApiClient> _organisationApiClient;
         private Mock<ICompaniesHouseApiClient> _companiesHouseApiClient;
         private Mock<ILogger<RoatpWhosInControlApplicationController>> _logger;
-        private Mock<IRefreshTrusteesService> _refreshTrusteesService;
         private RoatpWhosInControlApplicationController _controller;
 
         private TabularData _directors;
@@ -56,7 +50,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService = new Mock<ISessionService>();
             _organisationApiClient = new Mock<IOrganisationApiClient>();
             _companiesHouseApiClient = new Mock<ICompaniesHouseApiClient>();
-            _refreshTrusteesService = new Mock<IRefreshTrusteesService>();
             _logger = new Mock<ILogger<RoatpWhosInControlApplicationController>>();
 
             var signInId = Guid.NewGuid();
@@ -76,7 +69,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                                       _tabularDataRepository.Object,
                                                                       _sessionService.Object,
                                                                       _companiesHouseApiClient.Object,
-                                                                      _refreshTrusteesService.Object,
                                                                       _organisationApiClient.Object,
                                                                       _logger.Object)
             {
@@ -1774,36 +1766,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _organisationApiClient.Verify(x => x.UpdateDirectorsAndPscs(ukprn, It.IsAny<List<DirectorInformation>>(), It.IsAny<List<PersonSignificantControlInformation>>(), It.IsAny<Guid>()), Times.Never);
             _qnaClient.Verify(x => x.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, It.IsAny<List<Answer>>()), Times.Never);
             _qnaClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage), Times.Never);
-        }
-
-        [Test]
-        public async Task refresh_trustees_and_redirect_if_details_not_available()
-        {
-            var charityNumber = "12345678";
-            var applicationId = Guid.NewGuid();
-            _refreshTrusteesService.Setup(x => x.RefreshTrustees(applicationId, It.IsAny<Guid>())).ReturnsAsync(new RefreshTrusteesResult {CharityDetailsNotFound = true, CharityNumber = charityNumber});
-
-            var result = await _controller.RefreshTrustees(applicationId);
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("CharityNotFoundRefresh");
-
-            var routeValue = redirectResult.RouteValues.FirstOrDefault(x => x.Key == "CharityNumber");
-            routeValue.Value.Should().Be(charityNumber);
-        }
-
-        [Test]
-        public async Task refresh_trustees_and_redirect_if_details_updated()
-        {
-            var charityNumber = "12345678";
-            var applicationId = Guid.NewGuid();
-            _refreshTrusteesService.Setup(x => x.RefreshTrustees(applicationId, It.IsAny<Guid>())).ReturnsAsync(new RefreshTrusteesResult { CharityDetailsNotFound = false, CharityNumber = charityNumber });
-
-            var result = await _controller.RefreshTrustees(applicationId);
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("ConfirmTrustees");
-
-            var routeValue = redirectResult.RouteValues.FirstOrDefault(x => x.Key == "applicationId");
-            routeValue.Value.Should().Be(applicationId);
         }
     }
 }

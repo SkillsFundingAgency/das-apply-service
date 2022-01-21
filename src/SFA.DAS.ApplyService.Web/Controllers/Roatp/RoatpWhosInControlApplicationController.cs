@@ -18,7 +18,6 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
-using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -31,13 +30,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IAnswerFormService _answerFormService;
         private readonly ITabularDataRepository _tabularDataRepository;
         private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
-        private readonly IRefreshTrusteesService _refreshTrusteesService;
         private readonly ILogger<RoatpWhosInControlApplicationController> _logger;
 
         public RoatpWhosInControlApplicationController(IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient,
                                                        IAnswerFormService answerFormService, ITabularDataRepository tabularDataRepository,
                                                        ISessionService sessionService, ICompaniesHouseApiClient companiesHouseApiClient,
-                                                       IRefreshTrusteesService refreshTrusteesService,
                                                        IOrganisationApiClient organisationApiClient, ILogger<RoatpWhosInControlApplicationController> logger)
             : base(sessionService)
         {
@@ -48,7 +45,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _companiesHouseApiClient = companiesHouseApiClient;
             _organisationApiClient = organisationApiClient;
             _logger = logger;
-            _refreshTrusteesService = refreshTrusteesService;
         }
 
         [Route("confirm-who-control")]
@@ -153,18 +149,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
 
-        [HttpGet("refresh-trustees")]
-        public async Task<IActionResult> RefreshTrustees(Guid applicationId)
-        {
-            var userId = User.GetUserId();
-            var trusteeResult = await _refreshTrusteesService.RefreshTrustees(applicationId, userId);
-            if (trusteeResult.CharityDetailsNotFound)
-            {
-                return RedirectToAction("CharityNotFoundRefresh", "RoatpShutterPages", new {trusteeResult.CharityNumber});
-            }
-
-            return RedirectToAction("ConfirmTrustees", "RoatpWhosInControlApplication", new { applicationId });
-        }
+       
 
         [Route("confirm-directors-pscs")]
         public async Task<IActionResult> ConfirmDirectorsPscs(Guid applicationId, string ukprn, string companyNumber)
