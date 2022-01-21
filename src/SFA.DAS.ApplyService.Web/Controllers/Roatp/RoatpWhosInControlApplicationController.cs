@@ -18,9 +18,6 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
-using AutoMapper;
-using SFA.DAS.ApplyService.Domain.CharityCommission;
-using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp

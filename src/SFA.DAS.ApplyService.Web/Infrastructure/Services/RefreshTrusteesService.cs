@@ -75,7 +75,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
 
                 if (!success)
                 {
-                    throw new Exception($"RefreshTrusteesService for Application {applicationId} update trustees failed");
+                    throw new InvalidOperationException($"RefreshTrusteesService for Application {applicationId} update trustees failed");
                 }
             }
             catch (Exception ex)
@@ -103,7 +103,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
 
                 if (!response.ValidationPassed)
                 {
-                    throw new Exception($"RefreshTrusteesService for Application {applicationId} update qna page answers failed");
+                    throw new InvalidOperationException($"RefreshTrusteesService for Application {applicationId} update qna page answers failed");
                 }
             }
             catch (Exception ex)
