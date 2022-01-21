@@ -1,10 +1,8 @@
 ﻿using Dapper;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Interfaces;
@@ -27,11 +25,13 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var organisationId = await connection.QuerySingleAsync<Guid>(
-                    "INSERT INTO [Organisations] ([Id],[Name],[OrganisationType],[OrganisationUKPRN], " +
-                    "[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoATPApproved]) " +
+                    "INSERT INTO [Organisations] ([Id],[Name],[TradingName],[OrganisationType],[OrganisationUKPRN], " +
+                    "[CompanyRegistrationNumber],[CharityRegistrationNumber],[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoATPApproved]) " +
                     "OUTPUT INSERTED.[Id] " +
-                    "VALUES (NEWID(), @Name, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @OrganisationDetails, 'New', GETUTCDATE(), @CreatedBy, @RoATPApproved)",
-                    new { organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.CreatedBy, organisation.RoATPApproved });
+                    "VALUES (NEWID(), @Name, @TradingName, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @CompanyNumber, @CharityNumber, @OrganisationDetails, 'New', GETUTCDATE(), @CreatedBy, @RoATPApproved)",
+                    new { organisation.Name, organisation.OrganisationDetails.TradingName, organisation.OrganisationType, organisation.OrganisationUkprn, 
+                        organisation.OrganisationDetails.CompanyNumber, organisation.OrganisationDetails.CharityNumber,
+                        organisation.OrganisationDetails, organisation.CreatedBy, organisation.RoATPApproved });
 
                     connection.Execute(
                                 "UPDATE [Contacts] " +
@@ -47,11 +47,13 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 var organisationId = await connection.QuerySingleAsync<Guid>(
-                    "INSERT INTO [Organisations] ([Id],[Name],[OrganisationType],[OrganisationUKPRN], " +
-                    "[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoATPApproved]) " +
+                    "INSERT INTO [Organisations] ([Id],[Name],[TradingName],[OrganisationType],[OrganisationUKPRN], " +
+                    "[CompanyRegistrationNumber],[CharityRegistrationNumber],[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoATPApproved]) " +
                     "OUTPUT INSERTED.[Id] " +
-                    "VALUES (NEWID(), @Name, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @OrganisationDetails, 'New', GETUTCDATE(), @CreatedBy, @RoATPApproved)",
-                    new { organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.CreatedBy, organisation.RoATPApproved });
+                    "VALUES (NEWID(), @Name, @TradingName, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @CompanyNumber, @CharityNumber, @OrganisationDetails, 'New', GETUTCDATE(), @CreatedBy, @RoATPApproved)",
+                    new { organisation.Name, organisation.OrganisationDetails.TradingName, organisation.OrganisationType, organisation.OrganisationUkprn,
+                        organisation.OrganisationDetails.CompanyNumber,organisation.OrganisationDetails.CharityNumber,
+                        organisation.OrganisationDetails, organisation.CreatedBy, organisation.RoATPApproved });
                 
                 return organisationId;
             }
@@ -87,11 +89,14 @@ namespace SFA.DAS.ApplyService.Data
         {
             return connection.ExecuteAsync(
                 "UPDATE [Organisations] " +
-                "SET [UpdatedAt] = GETUTCDATE(), [UpdatedBy] = @UpdatedBy, [Name] = @Name, " +
+                "SET [UpdatedAt] = GETUTCDATE(), [UpdatedBy] = @UpdatedBy, [Name] = @Name, " + "[TradingName] = @TradingName" +
                 "[OrganisationType] = @OrganisationType, [OrganisationUKPRN] = @OrganisationUkprn, " +
+                "[CompanyRegistrationNumber]= @CompanyNumber ,[CharityRegistrationNumber] =  @CharityNumber" +
                 "[OrganisationDetails] = @OrganisationDetails, [RoATPApproved] = @RoATPApproved " +
                 "WHERE [Id] = @Id",
-                new {organisation.Id, organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.UpdatedBy, organisation.RoATPApproved});
+                new {organisation.Id, organisation.Name, organisation.OrganisationDetails.TradingName, organisation.OrganisationType, organisation.OrganisationUkprn,
+                    organisation.OrganisationDetails.CompanyNumber,organisation.OrganisationDetails.CharityNumber,
+                    organisation.OrganisationDetails, organisation.UpdatedBy, organisation.RoATPApproved});
         }
 
         public async Task UpdateOrganisation(Organisation organisation, Guid userId)
