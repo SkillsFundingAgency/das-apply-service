@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -29,7 +28,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _refreshTrusteesService = new Mock<IRefreshTrusteesService>();
 
              var signInId = Guid.NewGuid();
-
+            
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.Name, $"Test user"),
@@ -40,14 +39,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             }, "mock"));
 
             _controller = new RoatpWhosInControlRefreshController(_refreshTrusteesService.Object,
-                                                                      _sessionService.Object
-                                                                     )
+                _sessionService.Object
+            )
             {
                 ControllerContext = new ControllerContext()
                 {
                     HttpContext = new DefaultHttpContext() { User = user },
-                },
-                TempData = Mock.Of<ITempDataDictionary>()
+                }
             };
         }
 
