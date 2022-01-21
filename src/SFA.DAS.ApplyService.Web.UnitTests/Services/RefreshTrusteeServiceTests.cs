@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NLog.Web.LayoutRenderers;
-using NPOI.OpenXmlFormats.Dml;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
@@ -34,7 +31,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         private RefreshTrusteesService _service;
         private Guid _applicationId;
         private Guid _userId;
-        private int ukprn = 12345768;
 
         [SetUp]
         public void Before_each_test()
