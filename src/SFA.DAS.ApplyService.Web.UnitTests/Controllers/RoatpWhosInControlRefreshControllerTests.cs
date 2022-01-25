@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private RoatpWhosInControlRefreshController _controller;
         
         [SetUp]
-        public void Before_each_test()
+        public void Setup()
         {
             _sessionService = new Mock<ISessionService>();
             _refreshTrusteesService = new Mock<IRefreshTrusteesService>();
@@ -50,7 +50,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task refresh_trustees_and_redirect_if_details_not_available()
+        public async Task RefreshTrustees_DetailsNotAvailable_RedirectedToCharityNotFound()
         {
             var charityNumber = "12345678";
             var applicationId = Guid.NewGuid();
@@ -65,7 +65,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task refresh_trustees_and_redirect_if_details_updated()
+        public async Task RefreshTrustees_Successful_RedirectedToConfirmTrustees()
         {
             var charityNumber = "12345678";
             var applicationId = Guid.NewGuid();
