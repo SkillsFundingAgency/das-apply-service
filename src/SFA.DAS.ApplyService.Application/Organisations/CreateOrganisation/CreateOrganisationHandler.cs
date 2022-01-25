@@ -10,10 +10,12 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
     public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationRequest, Organisation>
     {
         private readonly IOrganisationRepository _organisationRepository;
-        
-        public CreateOrganisationHandler(IOrganisationRepository organisationRepository)
+        private readonly IOrganisationAddressesRepository _organisationAddressesRepository;
+
+        public CreateOrganisationHandler(IOrganisationRepository organisationRepository, IOrganisationAddressesRepository organisationAddressesRepository)
         {
             _organisationRepository = organisationRepository;
+            _organisationAddressesRepository = organisationAddressesRepository;
         }
 
         public async Task<Organisation> Handle(CreateOrganisationRequest request, CancellationToken cancellationToken)
@@ -27,10 +29,14 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
 
             if (result != null)
             {
+                _ = await UpdateOrganisationAddressesIfExists(result) ?? await CreateOrganisationAddresses(result);
+            }
+
+            if (result != null)
+            {
                 //await _emailService.SendEmail(EmailTemplateName.APPLY_EPAO_UPDATE, request.PrimaryContactEmail, 
                 //    new { contactname = request.Name });
             }
-
             return result;
         }
 
@@ -69,6 +75,43 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
                 return existingOrganisation;
             }
 
+            return null;
+        }
+
+        private async Task<OrganisationAddresses> CreateOrganisationAddresses(Organisation request)
+        {
+            var organisationAddresses = new OrganisationAddresses
+            {
+                OrganisationId = request.Id,
+                AddressType = (int)OrganisationAddressType.LegalAddress,
+                AddressLine1 = request.OrganisationDetails.Address1,
+                AddressLine2 = request.OrganisationDetails.Address2,
+                AddressLine3 = request.OrganisationDetails.Address3,
+                City = request.OrganisationDetails.City,
+                Postcode = request.OrganisationDetails.Postcode
+            };
+
+            organisationAddresses.Id = await _organisationAddressesRepository.CreateOrganisationAddresses(organisationAddresses);
+            return organisationAddresses;
+        }
+
+        private async Task<OrganisationAddresses> UpdateOrganisationAddressesIfExists(Organisation request)
+        {
+            var existingOrganisationAddresses = await _organisationAddressesRepository.GetOrganisationAddressesByOrganisationId(request.Id);
+
+            if (existingOrganisationAddresses != null)
+            {
+                existingOrganisationAddresses.AddressType = (int)OrganisationAddressType.LegalAddress;
+                existingOrganisationAddresses.AddressLine1 = request.OrganisationDetails.Address1;
+                existingOrganisationAddresses.AddressLine2 = request.OrganisationDetails.Address2;
+                existingOrganisationAddresses.AddressLine3 = request.OrganisationDetails.Address3;
+                existingOrganisationAddresses.City = request.OrganisationDetails.City;
+                existingOrganisationAddresses.Postcode = request.OrganisationDetails.Postcode;
+
+                await _organisationAddressesRepository.UpdateOrganisationAddresses(existingOrganisationAddresses);
+
+                return existingOrganisationAddresses;
+            }
             return null;
         }
 

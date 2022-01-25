@@ -59,8 +59,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-
-
         public async Task<Organisation> GetOrganisationByApplicationId(Guid applicationId)
         {
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
@@ -89,9 +87,9 @@ namespace SFA.DAS.ApplyService.Data
         {
             return connection.ExecuteAsync(
                 "UPDATE [Organisations] " +
-                "SET [UpdatedAt] = GETUTCDATE(), [UpdatedBy] = @UpdatedBy, [Name] = @Name, " + "[TradingName] = @TradingName" +
+                "SET [UpdatedAt] = GETUTCDATE(), [UpdatedBy] = @UpdatedBy, [Name] = @Name, " + "[TradingName] = @TradingName," +
                 "[OrganisationType] = @OrganisationType, [OrganisationUKPRN] = @OrganisationUkprn, " +
-                "[CompanyRegistrationNumber]= @CompanyNumber ,[CharityRegistrationNumber] =  @CharityNumber" +
+                "[CompanyRegistrationNumber]= @CompanyNumber, [CharityRegistrationNumber] =  @CharityNumber," +
                 "[OrganisationDetails] = @OrganisationDetails, [RoATPApproved] = @RoATPApproved " +
                 "WHERE [Id] = @Id",
                 new {organisation.Id, organisation.Name, organisation.OrganisationDetails.TradingName, organisation.OrganisationType, organisation.OrganisationUkprn,
