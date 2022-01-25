@@ -57,7 +57,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public  void AddManagementHierarchy_Get_shows_AddManagementHierarchy_page()
+        public  void AddManagementHierarchy_ReturnsAddManagementHierarchyPage()
         {
             var result =  _controller.AddManagementHierarchy(_applicationId);
 
@@ -95,7 +95,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task EditManagementHierarchy_With_Index_Is_Lessthan_PersonTableDataCount_ReturnsEditManagementHierarchy_View()
+        public async Task EditManagementHierarchy_InvalidIndex_ReturnsEditPage()
         {
             var index = 0;
             var personTableData = new TabularData
@@ -125,7 +125,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task EditManagementHierarchy_With_Index_Is_NotLessthan_PersonTableDataCount_ReturnsEditManagementHierarchy_View()
+        public async Task EditManagementHierarchy_ValidIndex_ReturnsConfirmPage()
         {
             var index = 1;
             var personTableData = new TabularData
