@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
@@ -11,10 +10,10 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 
-namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
+namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers.OrganisationControllerTests
 {
     [TestFixture]
-    public class OrganisationControllerTests
+    public class UpdateOrganisationTrusteeTests
     {
         private OrganisationController _controller;
         private Mock<IMediator> _mediator;
@@ -30,7 +29,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         }
 
         [Test]
-        public async Task Update_organisation_trustees_successful_returns_ok()
+        public async Task UpdateOrganisationTrustees_OnSuccessfulUpdate_ReturnsOkResponse()
         {
             var request = AutoFixture.Create<UpdateOrganisationTrusteesRequest>();
             _mediator.Setup(x => x.Send(It.IsAny<UpdateOrganisationTrusteesRequest>(), It.IsAny<CancellationToken>()))
@@ -43,7 +42,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         }
 
         [Test]
-        public async Task Update_organisation_trustees_unsuccessful_returns_bad_request()
+        public async Task UpdateOrganisationTrustees_OnFailingToUpdate_ReturnsBadRequestResponse()
         {
             var request = AutoFixture.Create<UpdateOrganisationTrusteesRequest>();
             _mediator.Setup(x => x.Send(It.IsAny<UpdateOrganisationTrusteesRequest>(), It.IsAny<CancellationToken>()))

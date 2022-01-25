@@ -63,7 +63,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         [TestCase(87654321, "12345678", "registered", "Not In Progress", false, false)]
         [TestCase(87654321, "12345678", "registered", "In Progress", true, false)]
         [TestCase(87654321, "12345678", "registered", "In Progress", false, true)]
-        public async Task refresh_trustees_and_return_unsuccessful_with_breaking_details(int? ukprn, string charityNumber, string charityStatus, string applicationStatus, bool setCharityDetailsToNull, bool setTrusteesToEmpty)
+        public async Task RefreshTrustees_InvalidScenarios_ReturnsUnsuccessfulResponse(int? ukprn, string charityNumber, string charityStatus, string applicationStatus, bool setCharityDetailsToNull, bool setTrusteesToEmpty)
         { 
             var organisation = new Organisation { OrganisationUkprn = ukprn };
 
@@ -108,11 +108,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _qnaApiClient.Setup(x => x.GetQuestionTag(_applicationId, RoatpWorkflowQuestionTags.UKPRN)).ReturnsAsync(ukprn.ToString());
             _qnaApiClient.Setup(x => x.GetQuestionTag(_applicationId, RoatpWorkflowQuestionTags.UKRLPVerificationCharityRegNumber)).ReturnsAsync(charityNumber);
 
-            _organisationApiClient.Setup(x => x.UpdateTrustees(ukprn.ToString(), listOfTrustees, It.IsAny<Guid>())).ReturnsAsync(true); 
-
-            var currentStatuses = new List<RoatpApplicationStatus>();
-            currentStatuses.Add(new RoatpApplicationStatus {ApplicationId = _applicationId, Status = applicationStatus});
-            _applicationApiClient.Setup(x => x.GetExistingApplicationStatus(ukprn.ToString())).ReturnsAsync(currentStatuses);
+            _organisationApiClient.Setup(x => x.UpdateTrustees(ukprn.ToString(), listOfTrustees, It.IsAny<Guid>())).ReturnsAsync(true);
+            _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(new Apply { ApplicationStatus = applicationStatus });
             _outerApiClient.Setup(x => x.GetCharityDetails(charityNumberValue)).ReturnsAsync(charity).Verifiable();
 
             var updateResponse = new SetPageAnswersResponse {ValidationPassed = true};  
@@ -132,7 +129,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         }
         
         [Test]
-        public async Task refresh_trustees_and_send_successful_details()
+        public async Task RefreshTrustees_OnSuccess_ReturnsCharityNumber()
         {
             const int ukprn = 12345678;
             const string charityNumber = "87654321";
@@ -172,9 +169,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             _organisationApiClient.Setup(x => x.UpdateTrustees(ukprn.ToString(), listOfTrustees, It.IsAny<Guid>())).ReturnsAsync(true);
 
-            var currentStatuses = new List<RoatpApplicationStatus>();
-            currentStatuses.Add(new RoatpApplicationStatus { ApplicationId = _applicationId, Status = ApplicationStatus.InProgress });
-            _applicationApiClient.Setup(x => x.GetExistingApplicationStatus(ukprn.ToString())).ReturnsAsync(currentStatuses);
+            _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(new Apply { ApplicationStatus = ApplicationStatus.InProgress});
             _outerApiClient.Setup(x => x.GetCharityDetails(charityNumberValue)).ReturnsAsync(charity).Verifiable();
 
             var updateResponse = new SetPageAnswersResponse { ValidationPassed = true };
@@ -194,7 +189,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         }
 
         [Test]
-        public void refresh_trustees_and_update_trustees_fails_exception_thrown()
+        public void RefreshTrustees_UpdateTrusteesReturnsFalse_ExceptionThrown()
+
         {
             const int ukprn = 12345678;
             const string charityNumber = "87654321";
@@ -234,9 +230,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             _organisationApiClient.Setup(x => x.UpdateTrustees(ukprn.ToString(), listOfTrustees, It.IsAny<Guid>())).ReturnsAsync(false);
 
-            var currentStatuses = new List<RoatpApplicationStatus>();
-            currentStatuses.Add(new RoatpApplicationStatus { ApplicationId = _applicationId, Status = ApplicationStatus.InProgress });
-            _applicationApiClient.Setup(x => x.GetExistingApplicationStatus(ukprn.ToString())).ReturnsAsync(currentStatuses);
+
+            _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(new Apply { ApplicationStatus = ApplicationStatus.InProgress });
+
             _outerApiClient.Setup(x => x.GetCharityDetails(charityNumberValue)).ReturnsAsync(charity).Verifiable();
 
             var updateResponse = new SetPageAnswersResponse { ValidationPassed = true };
@@ -246,7 +242,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         }
 
         [Test]
-        public void refresh_trustees_and_update_page_answers_fails_exception_thrown()
+        public void RefreshTrustees_UpdatePageAnswersReturnsValidationFailed_ExceptionThrown()
         {
             const int ukprn = 12345678;
             const string charityNumber = "87654321";
@@ -285,10 +281,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _qnaApiClient.Setup(x => x.GetQuestionTag(_applicationId, RoatpWorkflowQuestionTags.UKRLPVerificationCharityRegNumber)).ReturnsAsync(charityNumber);
 
             _organisationApiClient.Setup(x => x.UpdateTrustees(ukprn.ToString(), listOfTrustees, It.IsAny<Guid>())).ReturnsAsync(true);
+            _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(new Apply { ApplicationStatus = ApplicationStatus.InProgress });
 
-            var currentStatuses = new List<RoatpApplicationStatus>();
-            currentStatuses.Add(new RoatpApplicationStatus { ApplicationId = _applicationId, Status = ApplicationStatus.InProgress });
-            _applicationApiClient.Setup(x => x.GetExistingApplicationStatus(ukprn.ToString())).ReturnsAsync(currentStatuses);
             _outerApiClient.Setup(x => x.GetCharityDetails(charityNumberValue)).ReturnsAsync(charity).Verifiable();
 
             var updateResponse = new SetPageAnswersResponse { ValidationPassed = false };

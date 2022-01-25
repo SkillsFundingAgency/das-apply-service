@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Organisations.GetOrganisation;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetOrganisationHandlerTests
+namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OrganisationHandlerTests
 {
 
     [TestFixture]
-    public class GetOrganisationHandlerTests
+    public class OrganisationHandlerTests
     {
         private GetOrganisationByApplicationIdHandler _handler;
         private Mock<IOrganisationRepository> _repository;
@@ -30,7 +26,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetOrganisationHan
         }
 
         [Test]
-        public async Task GetOrganisationDetailsByApplicationIdHandler_returns_organisation_details()
+        public async Task Handle_ValidRequest_ReturnsOrganisation()
         {
             var ukprn = 12334455;
             var organisation = new Organisation {OrganisationUkprn = ukprn};

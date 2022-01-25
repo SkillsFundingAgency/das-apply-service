@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
         private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
         private readonly ILogger<RefreshTrusteesService> _logger;
-        private readonly RetryPolicy _retryPolicy;
+
 
         public RefreshTrusteesService(IQnaApiClient qnaApiClient,IOuterApiClient outerApiClient, IOrganisationApiClient organisationApiClient, IApplicationApiClient applicationApiClient, ILogger<RefreshTrusteesService> logger)
         {
@@ -30,7 +30,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
             _applicationApiClient = applicationApiClient;
             _logger = logger;
             _qnaApiClient = qnaApiClient;
-            _retryPolicy = GetRetryPolicy();
         }
 
         public async Task<RefreshTrusteesResult> RefreshTrustees(Guid applicationId, Guid userId)
@@ -46,10 +45,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
                 return new RefreshTrusteesResult { CharityDetailsNotFound = true, CharityNumber = charityNumber };
             }
 
-            var currentStatusesForUkrpn = await _applicationApiClient.GetExistingApplicationStatus(ukprn);
-            var isStatusInProgress = currentStatusesForUkrpn.Any(x => x.Status==ApplicationStatus.InProgress);
+            var application = await _applicationApiClient.GetApplication(applicationId);
 
-            if (!isStatusInProgress)
+            if (application.ApplicationStatus!=ApplicationStatus.InProgress)
             {
                 _logger.LogInformation($"RefreshTrusteesService: Refresh failure for applicationId {applicationId} as status '{ApplicationStatus.InProgress}' expected.");
                 return new RefreshTrusteesResult { CharityDetailsNotFound = true, CharityNumber = charityNumber };
@@ -65,13 +63,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
 
             _logger.LogInformation($"RefreshTrusteesService: updating organisation trustees applicationId {applicationId}");
 
-            organisation.OrganisationDetails.CharityCommissionDetails.Trustees = charityDetails.Trustees.Select(trusteeValue => new Trustee { Name = trusteeValue.Name, Id = trusteeValue.Id.ToString() }).ToList();
-            organisation.UpdatedBy = userId.ToString();
-
             try
             {
-                var success = await _retryPolicy.ExecuteAsync(
-                    context => _organisationApiClient.UpdateTrustees(ukprn, charityDetails.Trustees?.ToList(), userId), new Context());
+                var success = await _organisationApiClient.UpdateTrustees(ukprn, charityDetails.Trustees?.ToList(), userId);
 
                 if (!success)
                 {
@@ -88,18 +82,25 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
             var trusteesAnswers = RoatpPreambleQuestionBuilder.CreateCharityCommissionWhosInControlQuestions(applicationDetails);
 
             _logger.LogInformation($"RefreshTrusteesService: resetting page answers for charities for page 80, 86 and section 3.4, applicationId {applicationId}");
-            var resetSection1_3_80 = _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees);
-            var resetSection1_3_86 = _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrusteesDob);
-            var resetSection3_4 = _qnaApiClient.ResetPageAnswersBySection(applicationId, RoatpWorkflowSequenceIds.CriminalComplianceChecks, RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl);
-            await Task.WhenAll(resetSection1_3_80, resetSection1_3_86, resetSection3_4);
-
-            _logger.LogInformation($"RefreshTrusteesService: updating page answers for charities, applicationId {applicationId}");
-
-            
             try
-            { 
-                var response = await _retryPolicy.ExecuteAsync(
-                    context => _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees, trusteesAnswers.ToList<Answer>()), new Context());
+            {
+                var resetSection1_3_80 = _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees);
+                var resetSection1_3_86 = _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrusteesDob);
+                var resetSection3_4 = _qnaApiClient.ResetPageAnswersBySection(applicationId, RoatpWorkflowSequenceIds.CriminalComplianceChecks, RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl);
+                await Task.WhenAll(resetSection1_3_80, resetSection1_3_86, resetSection3_4);
+
+                _logger.LogInformation($"RefreshTrusteesService: updating page answers for charities, applicationId {applicationId}");
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"RefreshTrusteesService for Application {applicationId} reset qna page answers failed: [{ex.Message}]");
+            }
+
+            try
+            {
+                var response = await _qnaApiClient.UpdatePageAnswers(applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                    RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrustees, trusteesAnswers.ToList<Answer>());
 
                 if (!response.ValidationPassed)
                 {
@@ -116,23 +117,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
                 CharityNumber = charityNumber,
                 CharityDetailsNotFound = false
             };
-        }
-
-        private RetryPolicy GetRetryPolicy()
-        {
-            return Policy
-                .Handle<Exception>()
-                .WaitAndRetryAsync(new[]
-                    {
-                        TimeSpan.FromSeconds(1),
-                        TimeSpan.FromSeconds(2),
-                        TimeSpan.FromSeconds(4)
-                    },
-                    (exception, timeSpan, retryCount, context) =>
-                    {
-                        _logger.LogWarning(
-                            $"Error retrieving response from API. Reason: {exception.Message}. Retrying in {timeSpan.Seconds} secs...attempt: {retryCount}");
-                    });
         }
     }
 }

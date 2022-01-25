@@ -30,7 +30,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateOrganisation
         }
 
         [Test]
-        public async Task Update_organisation_trustees_and_return_success()
+        public async Task Handle_ValidRequest_ReturnsTrue()
         {
             var request = new UpdateOrganisationTrusteesRequest
             {
@@ -56,7 +56,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateOrganisation
         }
 
         [Test]
-        public async Task Update_organisation_trustees_failed_when_on_matching_organisation()
+        public async Task Handle_OrganisationNotFound_ReturnsFalse()
         {
             var request = new UpdateOrganisationTrusteesRequest
             {
