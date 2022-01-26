@@ -93,22 +93,23 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
         {
             var existingOrganisationAddresses = await _organisationAddressesRepository.GetOrganisationAddressesByOrganisationId(request.Id);
 
-            if (existingOrganisationAddresses != null && existingOrganisationAddresses.Count > 0)
+            if (existingOrganisationAddresses == null || existingOrganisationAddresses.Count <= 0)
             {
-                var organisationAddressToUpdate = existingOrganisationAddresses.Find(a => a.AddressType == (int)OrganisationAddressType.LegalAddress);
-                if(organisationAddressToUpdate != null)
-                {
-                    organisationAddressToUpdate.AddressType = (int)OrganisationAddressType.LegalAddress;
-                    organisationAddressToUpdate.AddressLine1 = request.OrganisationDetails.Address1;
-                    organisationAddressToUpdate.AddressLine2 = request.OrganisationDetails.Address2;
-                    organisationAddressToUpdate.AddressLine3 = request.OrganisationDetails.Address3;
-                    organisationAddressToUpdate.City = request.OrganisationDetails.City;
-                    organisationAddressToUpdate.Postcode = request.OrganisationDetails.Postcode;
+                return null;
+            }
+            var organisationAddressToUpdate = existingOrganisationAddresses.Find(a => a.AddressType == (int)OrganisationAddressType.LegalAddress);
+            if (organisationAddressToUpdate != null)
+            {
+                organisationAddressToUpdate.AddressType = (int)OrganisationAddressType.LegalAddress;
+                organisationAddressToUpdate.AddressLine1 = request.OrganisationDetails.Address1;
+                organisationAddressToUpdate.AddressLine2 = request.OrganisationDetails.Address2;
+                organisationAddressToUpdate.AddressLine3 = request.OrganisationDetails.Address3;
+                organisationAddressToUpdate.City = request.OrganisationDetails.City;
+                organisationAddressToUpdate.Postcode = request.OrganisationDetails.Postcode;
 
-                    await _organisationAddressesRepository.UpdateOrganisationAddresses(organisationAddressToUpdate);
+                await _organisationAddressesRepository.UpdateOrganisationAddresses(organisationAddressToUpdate);
 
-                    return organisationAddressToUpdate;
-                }
+                return organisationAddressToUpdate;
             }
             return null;
         }

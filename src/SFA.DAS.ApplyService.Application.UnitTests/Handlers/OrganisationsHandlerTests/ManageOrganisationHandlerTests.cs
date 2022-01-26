@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OrganisationsHandlerTests
 {
     [TestFixture]
-    public class CreateOrganisationHandlerTests
+    public class ManageOrganisationHandlerTests
     {
         private Mock<IOrganisationRepository> _organisationRepository;
         private Mock<IOrganisationAddressesRepository> _organisationAddressesRepository;
@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OrganisationsHandl
         }
 
         [Test]
-        public async Task CreateOrganisationHandler_creates_new_Organization_if_it_not_exists()
+        public async Task ManageOrganisationHandler_creates_new_Organization_if_it_not_exists()
         {
             var userId = Guid.NewGuid();
             var request = new ManageOrganisationRequest
@@ -58,7 +58,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OrganisationsHandl
         }
 
         [Test]
-        public async Task CreateOrganisationHandler_Updates_Organization_if_it_already_exists()
+        public async Task ManageOrganisationHandler_Updates_Organization_if_it_already_exists()
         {
             var userId = Guid.NewGuid();
             var request = new ManageOrganisationRequest
