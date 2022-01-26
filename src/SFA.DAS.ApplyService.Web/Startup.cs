@@ -312,12 +312,12 @@ namespace SFA.DAS.ApplyService.Web
                 app.UseHttpsRedirection();
             }
             
-            app.UseStaticFiles();
             app.UseSession();
-            app.UseAuthentication();
             app.UseRequestLocalization();
             app.UseStatusCodePagesWithReExecute("/Home/error/{0}");
             app.UseSecurityHeaders();
+            app.UseStaticFiles();
+            app.UseAuthentication();
             app.UseHealthChecks("/health");
             app.UseMvc(routes =>
             {
