@@ -7,18 +7,18 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
 {
-    public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationRequest, Organisation>
+    public class ManageOrganisationHandler : IRequestHandler<ManageOrganisationRequest, Organisation>
     {
         private readonly IOrganisationRepository _organisationRepository;
         private readonly IOrganisationAddressesRepository _organisationAddressesRepository;
 
-        public CreateOrganisationHandler(IOrganisationRepository organisationRepository, IOrganisationAddressesRepository organisationAddressesRepository)
+        public ManageOrganisationHandler(IOrganisationRepository organisationRepository, IOrganisationAddressesRepository organisationAddressesRepository)
         {
             _organisationRepository = organisationRepository;
             _organisationAddressesRepository = organisationAddressesRepository;
         }
 
-        public async Task<Organisation> Handle(CreateOrganisationRequest request, CancellationToken cancellationToken)
+        public async Task<Organisation> Handle(ManageOrganisationRequest request, CancellationToken cancellationToken)
         {
             if(request.OrganisationDetails?.FHADetails != null && IsOrganationTypeFinancialExempt(request.OrganisationType))
             {
@@ -40,7 +40,7 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
             return result;
         }
 
-        private async Task<Organisation> CreateNewOrganisation(CreateOrganisationRequest request)
+        private async Task<Organisation> CreateNewOrganisation(ManageOrganisationRequest request)
         {
             var organisation = new Organisation
             {
@@ -57,7 +57,7 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
             return organisation;
         }
 
-        private async Task<Organisation> UpdateOrganisationIfExists(CreateOrganisationRequest request)
+        private async Task<Organisation> UpdateOrganisationIfExists(ManageOrganisationRequest request)
         {
             var existingOrganisation = await _organisationRepository.GetOrganisationByName(request.Name);
 

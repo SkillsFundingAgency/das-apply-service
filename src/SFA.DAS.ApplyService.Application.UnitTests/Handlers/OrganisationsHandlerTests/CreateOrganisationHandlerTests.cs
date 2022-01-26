@@ -15,21 +15,21 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OrganisationsHandl
     {
         private Mock<IOrganisationRepository> _organisationRepository;
         private Mock<IOrganisationAddressesRepository> _organisationAddressesRepository;
-        private CreateOrganisationHandler _handler;
+        private ManageOrganisationHandler _handler;
 
         [SetUp]
         public void TestSetup()
         {
             _organisationRepository = new Mock<IOrganisationRepository>();
             _organisationAddressesRepository = new Mock<IOrganisationAddressesRepository>();
-            _handler = new CreateOrganisationHandler(_organisationRepository.Object, _organisationAddressesRepository.Object);
+            _handler = new ManageOrganisationHandler(_organisationRepository.Object, _organisationAddressesRepository.Object);
         }
 
         [Test]
         public async Task CreateOrganisationHandler_creates_new_Organization_if_it_not_exists()
         {
             var userId = Guid.NewGuid();
-            var request = new CreateOrganisationRequest
+            var request = new ManageOrganisationRequest
             {
                 Name = "Test",
                 OrganisationType = "Test",
@@ -61,7 +61,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OrganisationsHandl
         public async Task CreateOrganisationHandler_Updates_Organization_if_it_already_exists()
         {
             var userId = Guid.NewGuid();
-            var request = new CreateOrganisationRequest
+            var request = new ManageOrganisationRequest
             {
                 Name = "Test",
                 OrganisationType = "Test",

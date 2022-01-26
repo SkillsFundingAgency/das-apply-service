@@ -28,7 +28,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         [HttpPost()]
         [PerformValidation]
-        public async Task<ActionResult<Organisation>> CreateOrganisation([FromBody]CreateOrganisationRequest request)
+        public async Task<ActionResult<Organisation>> CreateOrganisation([FromBody]ManageOrganisationRequest request)
         {
             var org = await _mediator.Send(request);
 
@@ -39,21 +39,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return Ok(org);
         }
-
-        [HttpPut()]
-        [PerformValidation]
-        public async Task<ActionResult<Organisation>> UpdateOrganisation([FromBody]UpdateOrganisationRequest request)
-        {
-            var org = await _mediator.Send(request);
-
-            if (org is null)
-            {
-                return BadRequest();
-            }
-
-            return Ok(org);
-        }
-
 
         [HttpPut("DirectorsAndPscs")]
         [PerformValidation]
