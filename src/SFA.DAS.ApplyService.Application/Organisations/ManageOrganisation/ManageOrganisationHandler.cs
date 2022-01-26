@@ -31,12 +31,6 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
             {
                 _ = await UpdateOrganisationAddressesIfExists(result) ?? await CreateOrganisationAddresses(result);
             }
-
-            if (result != null)
-            {
-                //await _emailService.SendEmail(EmailTemplateName.APPLY_EPAO_UPDATE, request.PrimaryContactEmail, 
-                //    new { contactname = request.Name });
-            }
             return result;
         }
 
