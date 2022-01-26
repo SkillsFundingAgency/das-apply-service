@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
+﻿namespace SFA.DAS.ApplyService.Application.Organisations.ManageOrganisation
 {
     using MediatR;
     using SFA.DAS.ApplyService.Domain.Entities;

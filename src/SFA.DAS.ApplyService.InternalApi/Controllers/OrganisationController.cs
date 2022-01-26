@@ -3,13 +3,13 @@ using System.Net;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation;
 using SFA.DAS.ApplyService.Application.Organisations.GetOrganisation;
 using SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.ApplyService.Application.Organisations.ManageOrganisation;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {

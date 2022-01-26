@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation;
+using SFA.DAS.ApplyService.Application.Organisations.ManageOrganisation;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using System;

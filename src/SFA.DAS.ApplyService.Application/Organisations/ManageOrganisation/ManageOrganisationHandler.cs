@@ -3,9 +3,10 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
-namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
+namespace SFA.DAS.ApplyService.Application.Organisations.ManageOrganisation
 {
     public class ManageOrganisationHandler : IRequestHandler<ManageOrganisationRequest, Organisation>
     {
@@ -97,7 +98,7 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
             {
                 return null;
             }
-            var organisationAddressToUpdate = existingOrganisationAddresses.Find(a => a.AddressType == (int)OrganisationAddressType.LegalAddress);
+            var organisationAddressToUpdate = existingOrganisationAddresses.FirstOrDefault(a => a.AddressType == (int)OrganisationAddressType.LegalAddress);
             if (organisationAddressToUpdate != null)
             {
                 organisationAddressToUpdate.AddressType = (int)OrganisationAddressType.LegalAddress;
