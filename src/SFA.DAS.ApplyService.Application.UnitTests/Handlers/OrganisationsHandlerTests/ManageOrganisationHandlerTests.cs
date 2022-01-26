@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OrganisationsHandl
         }
 
         [Test]
-        public async Task ManageOrganisationHandler_creates_new_Organization_if_it_not_exists()
+        public async Task ManageOrganisationHandler_OrganisationNotExists_CreateOrganisaton()
         {
             var userId = Guid.NewGuid();
             var request = new ManageOrganisationRequest
@@ -58,7 +58,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OrganisationsHandl
         }
 
         [Test]
-        public async Task ManageOrganisationHandler_Updates_Organization_if_it_already_exists()
+        public async Task ManageOrganisationHandler_OrganisationExists_UpdateOrganisaton()
         {
             var userId = Guid.NewGuid();
             var request = new ManageOrganisationRequest
