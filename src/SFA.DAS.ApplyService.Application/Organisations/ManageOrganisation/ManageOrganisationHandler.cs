@@ -95,16 +95,17 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
 
             if (existingOrganisationAddresses != null)
             {
-                existingOrganisationAddresses.AddressType = (int)OrganisationAddressType.LegalAddress;
-                existingOrganisationAddresses.AddressLine1 = request.OrganisationDetails.Address1;
-                existingOrganisationAddresses.AddressLine2 = request.OrganisationDetails.Address2;
-                existingOrganisationAddresses.AddressLine3 = request.OrganisationDetails.Address3;
-                existingOrganisationAddresses.City = request.OrganisationDetails.City;
-                existingOrganisationAddresses.Postcode = request.OrganisationDetails.Postcode;
+                var organisationAddressToUpdate = existingOrganisationAddresses.Find(a => a.AddressType == (int)OrganisationAddressType.LegalAddress);
+                organisationAddressToUpdate.AddressType = (int)OrganisationAddressType.LegalAddress;
+                organisationAddressToUpdate.AddressLine1 = request.OrganisationDetails.Address1;
+                organisationAddressToUpdate.AddressLine2 = request.OrganisationDetails.Address2;
+                organisationAddressToUpdate.AddressLine3 = request.OrganisationDetails.Address3;
+                organisationAddressToUpdate.City = request.OrganisationDetails.City;
+                organisationAddressToUpdate.Postcode = request.OrganisationDetails.Postcode;
 
-                await _organisationAddressesRepository.UpdateOrganisationAddresses(existingOrganisationAddresses);
+                await _organisationAddressesRepository.UpdateOrganisationAddresses(organisationAddressToUpdate);
 
-                return existingOrganisationAddresses;
+                return organisationAddressToUpdate;
             }
             return null;
         }

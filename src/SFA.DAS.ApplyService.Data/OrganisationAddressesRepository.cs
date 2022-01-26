@@ -3,6 +3,8 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.Infrastructure.Database;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Data
@@ -39,7 +41,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<OrganisationAddresses> GetOrganisationAddressesByOrganisationId(Guid organisationId)
+        public async Task<List<OrganisationAddresses>> GetOrganisationAddressesByOrganisationId(Guid organisationId)
         {
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
@@ -48,7 +50,7 @@ namespace SFA.DAS.ApplyService.Data
                     FROM OrganisationAddresses 
                     WHERE OrganisationId = @OrganisationId";
 
-                var orgAddresses = await connection.QueryFirstOrDefaultAsync<OrganisationAddresses>(sql, new { organisationId });
+                var orgAddresses = (await connection.QueryAsync<OrganisationAddresses>(sql, new { organisationId })).ToList();
 
                 return orgAddresses;
             }

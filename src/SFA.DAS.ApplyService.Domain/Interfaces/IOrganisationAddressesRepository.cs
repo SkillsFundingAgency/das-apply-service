@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.ApplyService.Domain.Entities;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Domain.Interfaces
@@ -8,6 +9,6 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
     {
         Task<int> CreateOrganisationAddresses(OrganisationAddresses organisationAddresses);
         Task UpdateOrganisationAddresses(OrganisationAddresses organisationAddresses);
-        Task<OrganisationAddresses> GetOrganisationAddressesByOrganisationId(Guid organisationId);
+        Task<List<OrganisationAddresses>> GetOrganisationAddressesByOrganisationId(Guid organisationId);
     }
 }
