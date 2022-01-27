@@ -61,7 +61,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
-        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public IActionResult AddManagementHierarchy(Guid applicationId)
         {
             var model = new AddEditManagementHierarchyViewModel 
@@ -77,12 +76,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
-        [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> AddManagementHierarchyDetails(AddEditManagementHierarchyViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("AddManagementHierarchy", new {model.ApplicationId});
+                return View("~/Views/Roatp/ManagementHierarchy/AddManagementHierarchy.cshtml", model);
             }
 
             var managementHierarchySection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining, RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
@@ -141,7 +139,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
-        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> EditManagementHierarchy(Guid applicationId, int index)
         {
             var personTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
@@ -196,12 +193,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
-        [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> UpdateManagementHierarchyDetails(AddEditManagementHierarchyViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("EditManagementHierarchy", model);
+                return View($"~/Views/Roatp/ManagementHierarchy/EditManagementHierarchy.cshtml", model);
             }
 
             var peopleTableData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
@@ -241,7 +237,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
-        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> RemoveManagementHierarchy(Guid applicationId, int index)
         {
             var personTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
@@ -265,12 +260,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
-        [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> RemoveManagementHierarchy(ConfirmRemoveManagementHierarchyViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("RemoveManagementHierarchy", new { model.ApplicationId, model.Index });
+                return View("~/Views/Roatp/ManagementHierarchy/ConfirmManagementHierarchyRemoval.cshtml", model);
             }
 
             if (model.Confirmation == "Yes" && model.Index >= 0)
