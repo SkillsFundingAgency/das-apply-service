@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -8,7 +6,6 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
@@ -150,7 +147,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpGet]
         [Route("first-time-apprenticeship-service")]
-        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public IActionResult ExistingAccount()
         {
             return View(new ExistingAccountViewModel());
@@ -158,12 +154,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpPost]
         [Route("first-time-apprenticeship-service")]
-        [ModelStatePersist(ModelStatePersist.Store)]
         public IActionResult ConfirmExistingAccount(ExistingAccountViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("ExistingAccount");
+                return View("~/Views/Users/ExistingAccount.cshtml", model);
             }
 
             if (model.FirstTimeSignin == true)

@@ -85,9 +85,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var result = _userController.ConfirmExistingAccount(model);
 
-            var viewResult = result as RedirectToActionResult;
+            var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            viewResult.ActionName.Should().Be("ExistingAccount");
+            viewResult.ViewName.Should().Contain("ExistingAccount.cshtml");
+            viewResult.Model.Should().BeEquivalentTo(model);
         }
 
         [Test]
