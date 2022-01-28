@@ -10,7 +10,6 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
 using SFA.DAS.ApplyService.Web.AutoMapper;
@@ -19,7 +18,6 @@ using SFA.DAS.ApplyService.Web.Infrastructure.Services;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 {
-
     [TestFixture]
     public class RefreshTrusteeServiceTests
     {
@@ -54,7 +52,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 _logger.Object
             );
         }
-
 
         [TestCase(null, "12345678", "registered", "In Progress",false, false)] 
         [TestCase(87654321, null, "registered", "In Progress", false, false)]
@@ -190,7 +187,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
         [Test]
         public void RefreshTrustees_UpdateTrusteesReturnsFalse_ExceptionThrown()
-
         {
             const int ukprn = 12345678;
             const string charityNumber = "87654321";

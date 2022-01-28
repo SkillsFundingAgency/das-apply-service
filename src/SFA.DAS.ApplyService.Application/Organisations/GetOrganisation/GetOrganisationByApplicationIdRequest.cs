@@ -11,7 +11,5 @@ namespace SFA.DAS.ApplyService.Application.Organisations.GetOrganisation
         {
             ApplicationId = applicationId;
         }
-
-        
     }
 }

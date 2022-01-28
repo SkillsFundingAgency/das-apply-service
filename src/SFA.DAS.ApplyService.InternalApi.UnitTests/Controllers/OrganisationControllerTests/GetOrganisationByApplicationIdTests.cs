@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoFixture;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -11,14 +8,11 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Organisations.GetOrganisation;
-using SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers.OrganisationControllerTests
 {
-
-
     [TestFixture]
     public class GetOrganisationByApplicationIdTests
     {
