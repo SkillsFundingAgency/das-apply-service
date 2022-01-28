@@ -60,10 +60,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
             {
                 charityDetails = await _outerApiClient.GetCharityDetails(charityNumberValue);
             }
-            catch 
+            catch(Exception ex) 
             {
-                throw new InvalidOperationException($"RefreshTrusteesService for Application {applicationId} update trustees failed to get charity details for charity number: [{charityNumberValue}]");
-
+                throw new InvalidOperationException($"RefreshTrusteesService for Application {applicationId} update trustees failed to get charity details for charity number: [{charityNumberValue}]",ex);
             }
 
             if (charityDetails == null || !charityDetails.IsActivelyTrading || charityDetails.Trustees == null || !charityDetails.Trustees.Any())
