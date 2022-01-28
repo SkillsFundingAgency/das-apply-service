@@ -65,7 +65,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
             {
                 var message =
                     $"RefreshTrusteesService: Exception for Application {applicationId}, failed to get charity details for charity number: [{charityNumberValue}]";
-                _logger.LogError(message,ex.Message);
+                _logger.LogError(ex,message);
                 throw new InvalidOperationException(message,ex);
             }
 
