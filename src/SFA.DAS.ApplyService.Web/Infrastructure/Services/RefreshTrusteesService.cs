@@ -11,6 +11,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using Polly.Retry;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
 {
@@ -53,7 +54,17 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
                 return new RefreshTrusteesResult { CharityDetailsNotFound = true, CharityNumber = charityNumber };
             }
 
-            var charityDetails = await _outerApiClient.GetCharityDetails(charityNumberValue);
+            Charity charityDetails;
+
+            try
+            {
+                charityDetails = await _outerApiClient.GetCharityDetails(charityNumberValue);
+            }
+            catch 
+            {
+                throw new InvalidOperationException($"RefreshTrusteesService for Application {applicationId} update trustees failed to get charity details for charity number: [{charityNumberValue}]");
+
+            }
 
             if (charityDetails == null || !charityDetails.IsActivelyTrading || charityDetails.Trustees == null || !charityDetails.Trustees.Any())
             {
