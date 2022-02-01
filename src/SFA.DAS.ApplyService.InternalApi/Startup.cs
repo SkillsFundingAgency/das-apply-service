@@ -219,6 +219,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IGatewayRepository, GatewayRepository>();
             services.AddTransient<IAssessorRepository, AssessorRepository>();
             services.AddTransient<IOrganisationRepository, OrganisationRepository>();
+            services.AddTransient<IOrganisationAddressesRepository, OrganisationAddressesRepository>();
             services.AddTransient<IModeratorRepository, ModeratorRepository>();
             services.AddTransient<IClarificationRepository, ClarificationRepository>();
             services.AddTransient<IDfeSignInService, DfeSignInService>();
