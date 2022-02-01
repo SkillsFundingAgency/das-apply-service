@@ -104,13 +104,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     case CompaniesHouseSummary.CompanyStatusNotFound:
                         _logger.LogInformation(
                             $"Issue refreshing directors/pscs - applicationId {applicationId} | Company Number : {companyNumber} | Status : Company Status Not Found");
-                        return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
+                        return RedirectToAction("CompanyNotFoundRefresh", "RoatpShutterPages", new { companyNumber });
                 }
 
                 if (!CompaniesHouseValidator.CompaniesHouseStatusValid(companyDetails.CompanyNumber, companyDetails.Status))
                 {
                     _logger.LogInformation($"Issue refreshing directors/pscs - applicationId {applicationId} | Company Number : {companyDetails.CompanyNumber} | Status : Companies House status not valid: {companyDetails.Status}");
-                    return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
+                    return RedirectToAction("CompanyNotFoundRefresh", "RoatpShutterPages", new { companyNumber });
                 }
 
                 var applicationDetails = new Domain.Roatp.ApplicationDetails { CompanySummary = companyDetails };
@@ -147,6 +147,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             return RedirectToAction("StartPage", "RoatpWhosInControlApplication", new { applicationId });
         }
+
+
+       
 
         [Route("confirm-directors-pscs")]
         public async Task<IActionResult> ConfirmDirectorsPscs(Guid applicationId, string ukprn, string companyNumber)

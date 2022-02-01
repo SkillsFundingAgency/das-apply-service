@@ -66,8 +66,8 @@ namespace SFA.DAS.ApplyService.Data
                 var sql =
                     @"SELECT Organisations.*
                     FROM Organisations 
-                    INNER JOIN Applications ON Applications.ApplyingOrganisationId = Organisations.Id
-                    WHERE Applications.Id = @applicationId";
+                    INNER JOIN Apply ON Apply.OrganisationId = Organisations.Id
+                    WHERE Apply.ApplicationId = @applicationId";
 
                 var org = await connection.QuerySingleAsync<Organisation>(sql, new { applicationId });
                 

@@ -68,6 +68,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await Get<Organisation>($"Organisations/UserId/{userId}");
         }
 
+        public async Task<Organisation> GetByApplicationId(Guid applicationId)
+        {
+            return await Get<Organisation>($"Organisations/ApplicationId/{applicationId}");
+        }
+
         public async Task<bool> UpdateDirectorsAndPscs(string ukprn, List<DirectorInformation> directors, List<PersonSignificantControlInformation> personsWithSignificantControl, Guid userId)
         {
             var request = new UpdateOrganisationDirectorsAndPscsRequest
@@ -79,6 +84,18 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             };
 
             return await Put<UpdateOrganisationDirectorsAndPscsRequest, bool>($"/Organisations/DirectorsAndPscs", request);
+        }
+
+        public async Task<bool> UpdateTrustees(string ukprn, List<InternalApi.Types.CharityCommission.Trustee> trustees, Guid userId)
+        {
+            var request = new UpdateOrganisationTrusteesRequest
+            {
+                Ukprn = ukprn,
+                UpdatedBy = userId,
+                Trustees = trustees
+            };
+
+            return await Put<UpdateOrganisationTrusteesRequest, bool>($"/Organisations/Trustees", request);
         }
     }
 }

@@ -14,7 +14,6 @@ using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
@@ -22,8 +21,6 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Domain.CompaniesHouse;
-using CompaniesHouseDetails = SFA.DAS.ApplyService.Domain.Entities.CompaniesHouseDetails;
-using OrganisationDetails = SFA.DAS.ApplyService.Domain.Entities.OrganisationDetails;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -56,7 +53,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _logger = new Mock<ILogger<RoatpWhosInControlApplicationController>>();
 
             var signInId = Guid.NewGuid();
-            
+
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.Name, $"Test user"),
@@ -1742,13 +1739,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [TestCase(CompaniesHouseSummary.ServiceUnavailable, "CompaniesHouseNotAvailable")]
-        [TestCase(CompaniesHouseSummary.CompanyStatusNotFound, "CompanyNotFound")]
-        [TestCase("not_the_word_active", "CompanyNotFound")]
+        [TestCase(CompaniesHouseSummary.CompanyStatusNotFound, "CompanyNotFoundRefresh")]
+        [TestCase("not_the_word_active", "CompanyNotFoundRefresh")]
         public void refresh_directors_pcs_and_send_to_page_if_companies_house_not_active(string companiesHouseStatus, string pageRedirectedTo)
         {
             var companyNumber = "12345678";
             var ukprn = "43214321";
-            
+
             var applicationId = Guid.NewGuid();
             var activeCompany = new CompaniesHouseSummary
             {
@@ -1757,11 +1754,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 IncorporationDate = new DateTime(1960, 12, 12),
                 Status = companiesHouseStatus
             };
-      
+
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(companyNumber))
                 .ReturnsAsync(activeCompany).Verifiable();
 
-            var result = _controller.RefreshDirectorsPscs(applicationId, ukprn,companyNumber).GetAwaiter().GetResult();
+            var result = _controller.RefreshDirectorsPscs(applicationId, ukprn, companyNumber).GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be(pageRedirectedTo);

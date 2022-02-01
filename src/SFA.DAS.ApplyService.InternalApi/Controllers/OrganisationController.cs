@@ -54,6 +54,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok(result);
         }
 
+        [HttpPut("Trustees")]
+        [PerformValidation]
+        public async Task<ActionResult<bool>> UpdateOrganisationTrustees([FromBody] UpdateOrganisationTrusteesRequest request)
+        {
+            var result = await _mediator.Send(request);
+
+            if (result is false)
+            {
+                return BadRequest();
+            }
+
+            return Ok(result);
+        }
+
         [HttpGet("name/{name}")]
         public async Task<ActionResult<Organisation>> GetOrganisationByName(string name)
         {
@@ -98,6 +112,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<Organisation>> GetOrganisationById(Guid organisationId)
         {
             var org = await _mediator.Send(new GetOrganisationByIdRequest(organisationId));
+
+            if (org is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(org);
+        }
+
+        [HttpGet("applicationId/{applicationId}")]
+        public async Task<ActionResult<Organisation>> GetOrganisationByApplicationId(Guid applicationId)
+        {
+            var org = await _mediator.Send(new GetOrganisationByApplicationIdRequest(applicationId));
 
             if (org is null)
             {
