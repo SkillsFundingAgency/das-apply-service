@@ -38,7 +38,7 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
             destMember.Address1 = source.UkrlpLookupDetails?.PrimaryContactDetails?.ContactAddress.Address1;
             destMember.Address2 = source.UkrlpLookupDetails?.PrimaryContactDetails?.ContactAddress.Address2;
             destMember.Address3 = source.UkrlpLookupDetails?.PrimaryContactDetails?.ContactAddress.Address3;
-            destMember.CharityNumber = source.CharitySummary?.CharityNumber;
+            destMember.CharityNumber = source.CharitySummary?.RegistrationNumber;
             if (source.CharitySummary != null)
             {
                 destMember.CharityCommissionDetails = new CharityCommissionDetails
