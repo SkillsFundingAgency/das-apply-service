@@ -687,7 +687,7 @@ namespace SFA.DAS.ApplyService.Data
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteNameOnRegister'),' provider','') AS ProviderRouteNameOnRegister,
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.OrganisationType') AS OrganisationType,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.CompaniesHouseDetails.CompanyNumber') AS CompanyNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.Address') AS Address,
+                            CONCAT(orgAddresses.AddressLine1 , ',' , orgAddresses.AddressLine2 , ',' , orgAddresses.AddressLine3 , ',' , orgAddresses.City , ',' ,orgAddresses.Postcode) AS LegalAddress,
                             apply.ApplicationStatus,
 							apply.ApplicationDeterminedDate,
                             apply.GatewayReviewStatus as GatewayOutcome,
@@ -696,6 +696,7 @@ namespace SFA.DAS.ApplyService.Data
                             CASE WHEN apply.GatewayReviewStatus = @gatewayReviewStatusPass AND apply.AssessorReviewStatus = @assessorReviewStatusApproved AND fr.SelectedGrade <> @financialGradeInadequate THEN 'Pass' ELSE 'Fail' END as OverallOutcome
                             FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+                            INNER JOIN OrganisationAddresses orgAddresses ON orgAddresses.OrganisationId = org.Id
                             LEFT JOIN OversightReview r on r.ApplicationId = apply.ApplicationId
                             LEFT OUTER JOIN FinancialReview fr on fr.ApplicationId = apply.ApplicationId
 	                      WHERE apply.DeletedAt IS NULL
