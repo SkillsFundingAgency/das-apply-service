@@ -1,7 +1,15 @@
+@using SFA.DAS.ApplyService.Domain.Apply
 @model SFA.DAS.ApplyService.Web.ViewModels.CreateAccountViewModel
 @{
-    var isError = !ViewData.ModelState.IsValid;
-    ViewBag.Title = (isError ? "Error: " : "") + "Get set up as a user";
+
+    var errors = Model.ErrorMessages;
+
+    var showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
+    var givenNameError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "GivenName") != null ? "govuk-input--error" : "";
+    var familyNameError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "FamilyName") != null ? "govuk-input--error" : "";
+    var emailError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "Email") != null ? "govuk-input--error" : "";
+    ViewBag.Title = (showErrors ? "Error: " : "") + "Get set up as a user";
+
 }
 
 @section Navigation
@@ -16,20 +24,37 @@
 
             <form id="account-setup" asp-action="CreateAccount" asp-controller="Users" method="post" novalidate>
                 
-                <partial name="_ValidationSummaryPartial" />
+                @if (showErrors)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                
+                                @foreach(var error in errors)
+                                {
+                                    <li><a href="#@error.Field"><span class="govuk-visually-hidden">Error: </span>@error.ErrorMessage</a></li>
+               
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
                                                                             
                 <h1 class="govuk-heading-xl">Create an account</h1>
 
-                <div class="govuk-form-group" sfa-validation-for="GivenName" sfa-validationerror-class="govuk-form-group--error">
+                <div class="govuk-form-group  @(!string.IsNullOrEmpty(givenNameError) ? "govuk-form-group--error" : "")" sfa-validation-for="GivenName" sfa-validationerror-class="govuk-form-group--error">
                     <label class="govuk-label govuk-label--m" for="GivenName">
                         First name
                     </label>
-                    @if (isError)
+                    @if (showErrors)
                     {
                         <span class="govuk-error-message" asp-validation-for="GivenName"></span>
                     }
                     <input 
-                        class="govuk-input govuk-!-width-two-thirds"
+                        class="govuk-input govuk-!-width-two-thirds @givenNameError"
                         id="GivenName"
                         name="GivenName"
                         type="text"
@@ -42,16 +67,16 @@
                     />
                 </div>
 
-                    <div class="govuk-form-group" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-form-group--error">
+                    <div class="govuk-form-group  @(!string.IsNullOrEmpty(familyNameError) ? "govuk-form-group--error" : "")" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label govuk-label--m" for="FamilyName">
                             Last name
                         </label>
-                        @if (isError)
+                        @if (showErrors)
                         {
                             <span class="govuk-error-message" asp-validation-for="FamilyName"></span>
                         }
                         <input
-                            class="govuk-input govuk-!-width-two-thirds"
+                            class="govuk-input govuk-!-width-two-thirds @familyNameError"
                             id="FamilyName"
                             name="FamilyName"
                             type="text"
@@ -64,7 +89,7 @@
                         />
                     </div>
 
-                    <div class="govuk-form-group" sfa-validation-for="Email" sfa-validationerror-class="govuk-form-group--error">
+                    <div class="govuk-form-group   @(!string.IsNullOrEmpty(emailError) ? "govuk-form-group--error" : "")" sfa-validation-for="Email" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label govuk-label--m" for="Email">
                             Email address
                         </label>
@@ -75,12 +100,12 @@
                                 <li>for all communication to do with your RoATP application</li>
                             </ul>
                         </span>
-                        @if (isError)
+                        @if (showErrors)
                         {
                             <span class="govuk-error-message" asp-validation-for="Email"></span>
                         }
                         <input
-                            class="govuk-input"
+                            class="govuk-input @emailError"
                             id="Email"
                             name="Email"
                             type="text"

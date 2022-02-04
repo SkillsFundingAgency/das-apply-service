@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using SFA.DAS.ApplyService.Domain.Apply;
+
 namespace SFA.DAS.ApplyService.Web.ViewModels
 {
     public class CreateAccountViewModel
@@ -6,6 +9,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         public string FamilyName { get; set; }
         public string Email { get; set; }
 
+        public List<ValidationErrorDetail> ErrorMessages { get; set; }
         public override string ToString()
         {
             return $"{GivenName} {FamilyName}, {Email}";
