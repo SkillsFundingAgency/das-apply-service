@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using NPOI.OpenXmlFormats.Spreadsheet;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels;
@@ -8,12 +9,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
     [TestFixture]
     public class CreateAccountViewModelValidatorTests
     {
-   
+
+        private CreateAccountViewModelValidator _validator;
         private CreateAccountViewModel _viewModel;
 
         [SetUp]
         public void Arrange()
         {
+            _validator = new CreateAccountViewModelValidator();
             _viewModel = new CreateAccountViewModel
             {
 
@@ -26,8 +29,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
         [Test]
         public void Validate_Returns_No_Error_Messages_When_Mandatory_Fields_Are_Present_And_Correct()
         {
-            var errors = CreateAccountViewModelValidator.Validate(_viewModel);
-            Assert.IsFalse(errors.Any());
+            var results = _validator.Validate(_viewModel);
+            Assert.IsTrue(results.IsValid);
         }
 
         [Test]
@@ -35,11 +38,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
         {
             _viewModel.GivenName = null;
 
-            var errors = CreateAccountViewModelValidator.Validate(_viewModel);
+            var results = _validator.Validate(_viewModel);
 
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual(nameof(_viewModel.GivenName), errors[0].Field);
-            Assert.AreEqual(ManagementHierarchyValidator.FirstNameMinLengthError, errors[0].ErrorMessage);
+            Assert.AreEqual(1, results.Errors.Count);
+            Assert.AreEqual(nameof(_viewModel.GivenName), results.Errors[0].PropertyName);
+            Assert.AreEqual(CreateAccountViewModelValidator.FirstNameMinLengthError, results.Errors[0].ErrorMessage);
         }
 
         [Test]
@@ -48,11 +51,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
             const int maxLength = 250;
             _viewModel.GivenName = string.Concat(Enumerable.Repeat("a", maxLength + 1));
         
-            var errors = CreateAccountViewModelValidator.Validate(_viewModel);
+            var results = _validator.Validate(_viewModel);
             
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual(nameof(_viewModel.GivenName), errors[0].Field);
-            Assert.AreEqual(CreateAccountViewModelValidator.FirstNameMaxLengthError, errors[0].ErrorMessage);
+            Assert.AreEqual(1, results.Errors.Count);
+            Assert.AreEqual(nameof(_viewModel.GivenName),  results.Errors[0].PropertyName);
+            Assert.AreEqual(CreateAccountViewModelValidator.FirstNameMaxLengthError, results.Errors[0].ErrorMessage);
         }
         
         [Test]
@@ -60,11 +63,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
         {
             _viewModel.FamilyName = null;
         
-            var errors = CreateAccountViewModelValidator.Validate(_viewModel);
+            var results = _validator.Validate(_viewModel);
 
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual(nameof(_viewModel.FamilyName), errors[0].Field);
-            Assert.AreEqual(CreateAccountViewModelValidator.LastNameMinLengthError, errors[0].ErrorMessage);
+            Assert.AreEqual(1, results.Errors.Count);
+            Assert.AreEqual(nameof(_viewModel.FamilyName), results.Errors[0].PropertyName);
+            Assert.AreEqual(CreateAccountViewModelValidator.LastNameMinLengthError, results.Errors[0].ErrorMessage);
         }
         
         [Test]
@@ -73,11 +76,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
             const int maxLength = 250;
             _viewModel.FamilyName = string.Concat(Enumerable.Repeat("a", maxLength + 1));
         
-            var errors = CreateAccountViewModelValidator.Validate(_viewModel);
+            var results = _validator.Validate(_viewModel);
             
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual(nameof(_viewModel.FamilyName), errors[0].Field);
-            Assert.AreEqual(CreateAccountViewModelValidator.LastNameMaxLengthError, errors[0].ErrorMessage);
+            Assert.AreEqual(1, results.Errors.Count);
+            Assert.AreEqual(nameof(_viewModel.FamilyName), results.Errors[0].PropertyName);
+            Assert.AreEqual(CreateAccountViewModelValidator.LastNameMaxLengthError, results.Errors[0].ErrorMessage);
         }
         
         [Test]
@@ -85,11 +88,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
         {
             _viewModel.Email = null;
         
-            var errors = CreateAccountViewModelValidator.Validate(_viewModel);
+            var results = _validator.Validate(_viewModel);
         
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual(nameof(_viewModel.Email), errors[0].Field);
-            Assert.AreEqual(CreateAccountViewModelValidator.EmailError, errors[0].ErrorMessage);
+            Assert.AreEqual(1, results.Errors.Count);
+            Assert.AreEqual(nameof(_viewModel.Email), results.Errors[0].PropertyName);
+            Assert.AreEqual(CreateAccountViewModelValidator.EmailError, results.Errors[0].ErrorMessage);
         }
         
         [Test]
@@ -98,11 +101,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
             const int maxLength = 256;
             _viewModel.Email = string.Concat(Enumerable.Repeat("a", maxLength)) + "@location.com";
         
-            var errors = CreateAccountViewModelValidator.Validate(_viewModel);
+            var results = _validator.Validate(_viewModel);
             
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual(nameof(_viewModel.Email), errors[0].Field);
-            Assert.AreEqual(CreateAccountViewModelValidator.EmailErrorTooLong, errors[0].ErrorMessage);
+            Assert.AreEqual(1, results.Errors.Count);
+            Assert.AreEqual(nameof(_viewModel.Email), results.Errors[0].PropertyName);
+            Assert.AreEqual(CreateAccountViewModelValidator.EmailErrorTooLong, results.Errors[0].ErrorMessage);
         }
 
         [TestCase("wrong-format")]
@@ -112,11 +115,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
         public void Validate_Returns_Appropriate_Error_When_Email_is_Wrong_Format(string incorrectEmail)
         {
             _viewModel.Email = incorrectEmail;
-            var errors = CreateAccountViewModelValidator.Validate(_viewModel);
+            var results = _validator.Validate(_viewModel);
 
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual(nameof(_viewModel.Email), errors[0].Field);
-            Assert.AreEqual(ManagementHierarchyValidator.EmailErrorWrongFormat, errors[0].ErrorMessage);
+            Assert.AreEqual(1, results.Errors.Count);
+            Assert.AreEqual(nameof(_viewModel.Email), results.Errors[0].PropertyName);
+            Assert.AreEqual(ManagementHierarchyValidator.EmailErrorWrongFormat, results.Errors[0].ErrorMessage);
         }
 
         [TestCase("test@test.uk")]
@@ -132,8 +135,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
         {
             _viewModel.Email = correctEmail;
         
-            var errors = CreateAccountViewModelValidator.Validate(_viewModel);
-            Assert.IsFalse(errors.Any());
+            var results = _validator.Validate(_viewModel);
+            Assert.IsTrue(results.IsValid);
         }
     }
 }

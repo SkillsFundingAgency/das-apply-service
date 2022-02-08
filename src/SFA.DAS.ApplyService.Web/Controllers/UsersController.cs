@@ -38,13 +38,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel vm)
         {
-            var errorMessages = CreateAccountViewModelValidator.Validate(vm);
-
-            if (errorMessages.Any())
-            {
-                vm.ErrorMessages = errorMessages;
+            if (!ModelState.IsValid)
+                {
                 return View(vm);
-            }
+                }
 
             var inviteSuccess = await _usersApiClient.InviteUser(vm);
 
