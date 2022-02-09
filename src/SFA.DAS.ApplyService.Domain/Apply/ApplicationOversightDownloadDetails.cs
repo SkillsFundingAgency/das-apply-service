@@ -16,6 +16,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public DateTime? ApplicationDeterminedDate { get; set; }
         public string ProviderRouteNameOnRegister { get; set; }
         public string OrganisationType { get; set; }
+        public string OrganisationStatus { get; set; }
         public string CompanyNumber { get; set; }
         public string LegalAddress { get; set; }
         public string GatewayOutcome { get; set; }

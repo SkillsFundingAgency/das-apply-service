@@ -686,6 +686,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
                             REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteNameOnRegister'),' provider','') AS ProviderRouteNameOnRegister,
 							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.OrganisationType') AS OrganisationType,
+                            org.Status As OrganisationStatus,
                             JSON_VALUE(apply.ApplyData, '$.GatewayReviewDetails.CompaniesHouseDetails.CompanyNumber') AS CompanyNumber,
                             CONCAT(orgAddresses.AddressLine1 , ',' , orgAddresses.AddressLine2 , ',' , orgAddresses.AddressLine3 , ',' , orgAddresses.City , ',' ,orgAddresses.Postcode) AS LegalAddress,
                             apply.ApplicationStatus,
