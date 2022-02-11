@@ -256,7 +256,7 @@
                                                                 case QuestionType.FileUpload:
                                                                     <p class="govuk-heading-s  govuk-!-margin-bottom-0"> @question.Label</p>
                                                                     <div class="das-multiline-text-bottom-margin">
-                                                                        <a class="govuk-link" href="@Url.Action("Download", "Application", new {Id = Model.ApplicationId, sequenceNo = sequence.SequenceNumber, sectionId = seqSection.SectionNumber, pageId = sectionPage.PageId, questionId = answer.QuestionId, filename = answer.Value})">
+                                                                        <a class="govuk-link" href="@Url.Action("DownloadClarificationFile", "RoatpOverallOutcome", new {Id = Model.ApplicationId, sequenceNo = sequence.SequenceNumber, sectionId = seqSection.SectionNumber, pageId = sectionPage.PageId, questionId = answer.QuestionId, filename = answer.Value})">
                                                                             @answer.Value
                                                                         </a>
                                                                     </div>

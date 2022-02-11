@@ -135,7 +135,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
         }
 
-        [HttpGet("ClarificationDownload/{applicationId}/Sequence/{sequenceNumber}/Section/{sectionNumber}/Page/{pageId}/Download/{fileName}")]
+        [HttpGet("application/{applicationId}/Sequence/{sequenceNumber}/Section/{sectionNumber}/Page/{pageId}/Download/{fileName}")]
         [Authorize(Policy = "AccessApplication")]
         public async Task<IActionResult> DownloadClarificationFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string fileName)
         {
