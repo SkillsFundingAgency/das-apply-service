@@ -37,9 +37,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel vm)
         {
             if (!ModelState.IsValid)
-                {
+            {
                 return View(vm);
-                }
+            }
 
             var inviteSuccess = await _usersApiClient.InviteUser(vm);
 
