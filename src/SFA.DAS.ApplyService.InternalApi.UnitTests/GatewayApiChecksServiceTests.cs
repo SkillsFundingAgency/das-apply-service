@@ -188,6 +188,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(_ukprn)).ReturnsAsync(_registerStatus);
             Action serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId).GetAwaiter().GetResult();
             serviceCall.Should().Throw<ServiceUnavailableException>();
+            
         }
 
         [Test]
