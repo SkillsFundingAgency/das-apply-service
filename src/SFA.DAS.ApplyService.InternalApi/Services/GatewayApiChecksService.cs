@@ -16,8 +16,6 @@ using Polly.Retry;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
 
-//MFCMFC using ProviderDetails = SFA.DAS.ApplyService.Domain.Ukrlp.ProviderDetails;
-
 namespace SFA.DAS.ApplyService.InternalApi.Services
 {
     public class GatewayApiChecksService : IGatewayApiChecksService
@@ -136,8 +134,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 _logger.LogError(ex, message);
                 throw new ServiceUnavailableException(message);
             }
-
-            
         }
 
         private AsyncRetryPolicy GetRetryPolicy()
