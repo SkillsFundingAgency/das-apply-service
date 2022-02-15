@@ -36,7 +36,7 @@ stages:
 
     - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
       parameters:
-        SonarCloud: true
+        SonarCloud: false
         SonarCloudProjectKey: SkillsFundingAgency_das-apply-service
 
     - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
