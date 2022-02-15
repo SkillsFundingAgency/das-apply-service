@@ -30,8 +30,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
     public static class SequenceId
     {
-        public static int Preamble = 0;
-        public static int Stage1 = 1;
-        public static int Stage2 = 2;
+        public static int Preamble { get; } = 0;
+        public static int Stage1 { get; } = 1;
+        public static int Stage2 { get; } = 2;
     }
 }
