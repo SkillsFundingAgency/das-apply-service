@@ -94,7 +94,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 companyDetails =
                     await _retryPolicy.ExecuteAsync(context => _companiesHouseApiClient.GetCompany(companyNumber),
                         new Context());
-
             }
             catch(Exception ex)
             {
