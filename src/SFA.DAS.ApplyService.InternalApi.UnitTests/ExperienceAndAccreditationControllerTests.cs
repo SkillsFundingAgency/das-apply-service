@@ -56,22 +56,21 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         {
             _qnaApiClient
                 .Setup(x => x.GetAnswerValue(_applicationId,
-                    RoatpWorkflowSequenceIds.YourOrganisation, 
-                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, 
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                     RoatpWorkflowPageIds.ExperienceAndAccreditations.OfficeForStudents,
                     RoatpYourOrganisationQuestionIdConstants.OfficeForStudents)).ReturnsAsync((string)null);
 
             var actualResult = _controller.GetOfficeForStudents(_applicationId).Result;
 
             Assert.AreEqual(null, actualResult);
-            _qnaApiClient.Verify(x => x.GetAnswerValue(_applicationId, 
-                RoatpWorkflowSequenceIds.YourOrganisation, 
-                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, 
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.OfficeForStudents,
-                RoatpYourOrganisationQuestionIdConstants.OfficeForStudents),
+            _qnaApiClient.Verify(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.OfficeForStudents,
+                    RoatpYourOrganisationQuestionIdConstants.OfficeForStudents),
                 Times.Once);
         }
-
 
         [Test]
         public void get_initial_teacher_training_returns_expected_value_when_present()
@@ -96,7 +95,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.IsTrue(actualResult.DoesOrganisationOfferInitialTeacherTraining);
             Assert.IsFalse(actualResult.IsPostGradOnlyApprenticeship);
         }
-
 
         [Test]
         public void get_initial_teacher_training_does_not_lookup_pgta_answer_if_itt_is_no()
@@ -125,6 +123,13 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                     RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                     RoatpWorkflowPageIds.ExperienceAndAccreditations.IsPostGradTrainingOnlyApprenticeship,
                     RoatpYourOrganisationQuestionIdConstants.IsPostGradTrainingOnlyApprenticeship), Times.Never);
+        }
+
+        [Test]
+        public void GetInitialTeacherTraining_QnaUnavailable_ThrowsException()
+        {
+            _controller = new ExperienceAndAccreditationController(null, _fileStorageService.Object);
+            Assert.ThrowsAsync<ServiceUnavailableException>(() => _controller.GetInitialTeacherTraining(_applicationId));
         }
 
         [Test]
