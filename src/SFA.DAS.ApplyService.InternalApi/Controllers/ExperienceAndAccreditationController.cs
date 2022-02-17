@@ -36,32 +36,52 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("/Accreditation/{applicationId}/InitialTeacherTraining")]
         public async Task<InitialTeacherTraining> GetInitialTeacherTraining(Guid applicationId)
         {
-            var initialTeacherTraining = await _qnaApiClient.GetAnswerValue(applicationId,
-                RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
-                RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining);
+            string initialTeacherTraining;
 
-            if (initialTeacherTraining?.ToUpper() == "YES")
+            try
             {
-                var isPostGradTrainingOnlyApprenticeship = await _qnaApiClient.GetAnswerValue(applicationId,
+                initialTeacherTraining = await _qnaApiClient.GetAnswerValue(applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
+                    RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining);
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceUnavailableException(
+                    $"Qna not available for application {applicationId} for initial teacher training", ex);
+            }
+
+            if (initialTeacherTraining?.ToUpper() != "YES")
+                return new InitialTeacherTraining
+                {
+                    DoesOrganisationOfferInitialTeacherTraining = false,
+                    IsPostGradOnlyApprenticeship = null
+                };
+            
+            string isPostGradTrainingOnlyApprenticeship;
+
+            try
+            {
+                isPostGradTrainingOnlyApprenticeship = await _qnaApiClient.GetAnswerValue(applicationId,
                     RoatpWorkflowSequenceIds.YourOrganisation,
                     RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                     RoatpWorkflowPageIds.ExperienceAndAccreditations.IsPostGradTrainingOnlyApprenticeship,
                     RoatpYourOrganisationQuestionIdConstants.IsPostGradTrainingOnlyApprenticeship);
-
-                return new InitialTeacherTraining
-                {
-                    DoesOrganisationOfferInitialTeacherTraining = true,
-                    IsPostGradOnlyApprenticeship = isPostGradTrainingOnlyApprenticeship.ToUpper() == "YES"
-                };
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceUnavailableException(
+                    $"Qna not available for application {applicationId} for is postgrad training only", ex);
             }
 
             return new InitialTeacherTraining
             {
-                DoesOrganisationOfferInitialTeacherTraining = false,
-                IsPostGradOnlyApprenticeship = null
+                DoesOrganisationOfferInitialTeacherTraining = true,
+                IsPostGradOnlyApprenticeship = isPostGradTrainingOnlyApprenticeship.ToUpper() == "YES"
             };
+            
+
         }
 
         [HttpGet("/Accreditation/{applicationId}/SubcontractDeclaration")]
