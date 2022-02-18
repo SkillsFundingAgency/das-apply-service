@@ -9,7 +9,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
         public int SequenceId { get; set; }
         public int SectionId { get; set; }
         public bool SectionCompleted { get; set; }
-        public string Reviewer;
+        public string Reviewer { get; set; }
 
         public AssessorEvaluateSectionRequest(Guid applicationId, int sequenceId, int sectionId, bool sectionCompleted, string reviewer)
         {
