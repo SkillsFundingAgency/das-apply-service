@@ -1,0 +1,33 @@
+﻿@if (!ViewData.ModelState.IsValid)
+{
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+
+                @{
+                    var explorer = ViewData.ModelExplorer;
+                    foreach (var property in explorer.Properties)
+                    {
+                        var propertyName = property.Metadata.PropertyName;
+                        var state = ViewData.ModelState[propertyName];
+                        var errors = state?.Errors ?? null;
+                        if (errors != null)
+                        {
+                            foreach (var error in errors)
+                            {
+                                <li>
+                                    <a href="#@propertyName">
+                                        <span class="govuk-visually-hidden">Error: </span>@error.ErrorMessage
+                                    </a>
+                                </li>
+                            }
+                        }
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+}

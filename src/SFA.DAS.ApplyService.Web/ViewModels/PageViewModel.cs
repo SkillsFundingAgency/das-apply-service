@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         public const string DefaultCTAButtonText = "Save and continue";
 
         private readonly List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;
-        public List<QnaLinksConfiguration> LinksConfiguration;
+        public List<QnaLinksConfiguration> LinksConfiguration { get; set; }
 
         public PageViewModel() { }
 
