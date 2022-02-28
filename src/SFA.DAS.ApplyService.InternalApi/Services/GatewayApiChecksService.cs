@@ -115,13 +115,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 throw new ServiceUnavailableException(message);
             }
 
-            Charity charityDetails = null;
             try
             {
-                charityDetails = await _outerApiClient.GetCharityDetails(charityNumber);
+                var charityDetails = await _outerApiClient.GetCharityDetails(charityNumber);
                 applyGatewayDetails.CharityCommissionDetails = Mapper.Map<CharityCommissionSummary>(charityDetails);
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
                 var message = $"Unable to retrieve Charity Commission details for charity number {charityNumber} based on charity number from uklrp: {charityNumberFromUkrlp}";
                 _logger.LogError(ex, message);
