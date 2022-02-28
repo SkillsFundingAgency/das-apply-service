@@ -25,7 +25,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly ILogger<GatewayApiChecksService> _logger;
-        private readonly AsyncRetryPolicy _retryPolicy;
 
         public GatewayApiChecksService(
             CompaniesHouseApiClient companiesHouseApiClient, 
@@ -39,7 +38,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             _roatpApiClient = roatpApiClient;
             _qnaApiClient = qnaApiClient;
             _logger = logger;
-            _retryPolicy = GetRetryPolicy();
         }
 
         public async Task<ApplyGatewayDetails> GetExternalApiCheckDetails(Guid applicationId)
@@ -90,10 +88,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         {
             ApiResponse<Types.CompaniesHouse.Company> companyDetails = null;
             try
-            { 
-                companyDetails =
-                    await _retryPolicy.ExecuteAsync(context => _companiesHouseApiClient.GetCompany(companyNumber),
-                        new Context());
+            {
+                companyDetails = await _companiesHouseApiClient.GetCompany(companyNumber);
             }
             catch(Exception ex)
             {
@@ -124,7 +120,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             Charity charityDetails = null;
             try
             {
-                charityDetails = await _retryPolicy.ExecuteAsync(context => _outerApiClient.GetCharityDetails(charityNumber), new Context());
+                charityDetails = await _outerApiClient.GetCharityDetails(charityNumber);
                 applyGatewayDetails.CharityCommissionDetails = Mapper.Map<CharityCommissionSummary>(charityDetails);
             }
             catch (HttpRequestException ex)
@@ -133,21 +129,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 _logger.LogError(ex, message);
                 throw new ServiceUnavailableException(message);
             }
-        }
-
-        private AsyncRetryPolicy GetRetryPolicy()
-        {
-            return Policy
-                .Handle<Exception>()
-                .WaitAndRetryAsync(new[]
-                {
-                    TimeSpan.FromSeconds(1),
-                    TimeSpan.FromSeconds(2),
-                    TimeSpan.FromSeconds(4)
-                }, (exception, timeSpan, retryCount, context) =>
-                {
-                    _logger.LogWarning($"Error retrieving response from companies house or charity commission. Reason: {exception.Message}. Retrying in {timeSpan.Seconds} secs...attempt: {retryCount}");
-                });
         }
     }
 }
