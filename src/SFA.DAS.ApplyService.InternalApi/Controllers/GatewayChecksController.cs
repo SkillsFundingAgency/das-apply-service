@@ -31,11 +31,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("/Gateway/{applicationId}/TradingName")]
         public async Task<string> GetTradingName(Guid applicationId)
         {
-            return await _qnaApiClient.GetAnswerValue(applicationId,
-                RoatpWorkflowSequenceIds.Preamble,
-                RoatpWorkflowSectionIds.Preamble,
-                RoatpWorkflowPageIds.Preamble,
-                RoatpPreambleQuestionIdConstants.UkrlpTradingName);
+            try
+            {
+                return await _qnaApiClient.GetAnswerValue(applicationId,
+                    RoatpWorkflowSequenceIds.Preamble,
+                    RoatpWorkflowSectionIds.Preamble,
+                    RoatpWorkflowPageIds.Preamble,
+                    RoatpPreambleQuestionIdConstants.UkrlpTradingName);
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceUnavailableException(
+                    $"Qna not available for application {applicationId} for trading name", ex);
+            }
         }
 
         [HttpGet("/Gateway/{applicationId}/WebsiteAddressSourcedFromUkrlp")]
@@ -62,19 +70,38 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<string> GetOrganisationWebsiteAddress(Guid applicationId)
         {
             var organisationWebsite = string.Empty;
-            var ukrlpWebsite = await _qnaApiClient.GetAnswerValue(applicationId,
-                RoatpWorkflowSequenceIds.Preamble,
-                RoatpWorkflowSectionIds.Preamble,
-                RoatpWorkflowPageIds.Preamble,
-                RoatpPreambleQuestionIdConstants.UkrlpWebsite);
+            string ukrlpWebsite;
+
+            try
+            {
+                ukrlpWebsite = await _qnaApiClient.GetAnswerValue(applicationId,
+                    RoatpWorkflowSequenceIds.Preamble,
+                    RoatpWorkflowSectionIds.Preamble,
+                    RoatpWorkflowPageIds.Preamble,
+                    RoatpPreambleQuestionIdConstants.UkrlpWebsite);
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceUnavailableException(
+                    $"Qna not available for application {applicationId} for OrganisationWebsiteAddress", ex);
+            }
+
             var applyWebsite = string.Empty;
             if (string.IsNullOrEmpty(ukrlpWebsite))
             {
-                applyWebsite = await _qnaApiClient.GetAnswerValue(applicationId,
-                    RoatpWorkflowSequenceIds.YourOrganisation,
-                    RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
-                    RoatpWorkflowPageIds.WebsiteManuallyEntered,
-                    RoatpYourOrganisationQuestionIdConstants.WebsiteManuallyEntered);
+                try
+                {
+                    applyWebsite = await _qnaApiClient.GetAnswerValue(applicationId,
+                        RoatpWorkflowSequenceIds.YourOrganisation,
+                        RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
+                        RoatpWorkflowPageIds.WebsiteManuallyEntered,
+                        RoatpYourOrganisationQuestionIdConstants.WebsiteManuallyEntered);
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceUnavailableException(
+                        $"Qna not available for application {applicationId} for OrganisationWebsiteAddress manually entered", ex);
+                }
                 if (!string.IsNullOrEmpty(applyWebsite))
                 {
                     organisationWebsite = applyWebsite;

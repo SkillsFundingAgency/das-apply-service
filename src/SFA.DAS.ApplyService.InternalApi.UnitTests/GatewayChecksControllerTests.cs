@@ -64,6 +64,12 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.IsNull(actualResult);
         }
 
+        [Test]
+        public void GetTradingName_QnaUnavailable_ThrowsException()
+        {
+            _controller = new GatewayChecksController(null, _logger.Object, _lookupService.Object);
+            Assert.ThrowsAsync<ServiceUnavailableException>(() => _controller.GetTradingName(_applicationId));
+        }
 
         [Test]
         public void get_website_address_from_ukrlp_returns_expected_value_when_present()
@@ -78,7 +84,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             Assert.AreEqual(ValueOfQuestion, actualResult);
         }
-
 
         [Test]
         public void get_website_address_from_ukrlp_returns_no_value_when_not_present()
@@ -95,7 +100,12 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.IsNull(actualResult);
         }
 
-
+        [Test]
+        public void GetWebsiteAddress_QnaUnavailable_ThrowsException()
+        {
+            _controller = new GatewayChecksController(null, _logger.Object, _lookupService.Object);
+            Assert.ThrowsAsync<ServiceUnavailableException>(() => _controller.GetOrganisationWebsiteAddress(_applicationId));
+        }
 
         [Test]
         public void get_website_address_manually_entered_returns_expected_value_when_present()
@@ -110,7 +120,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             Assert.AreEqual(ValueOfQuestion, actualResult);
         }
-
 
         [Test]
         public void get_website_address_manually_entered_returns_no_value_when_not_present()
@@ -172,6 +181,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var actualResult = _controller.GetOrganisationWebsiteAddress(_applicationId).Result;
             Assert.AreEqual(applyWebsite, actualResult);
         }
+
         [Test]
         public void Get_organisation_website_address_NoWbsiteReturned()
         {
@@ -256,6 +266,5 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             Assert.AreEqual(expectedIcoNumber, responseIcoNumber.Value);
         }
-
     }
 }

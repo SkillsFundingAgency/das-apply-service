@@ -36,31 +36,49 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("/Accreditation/{applicationId}/InitialTeacherTraining")]
         public async Task<InitialTeacherTraining> GetInitialTeacherTraining(Guid applicationId)
         {
-            var initialTeacherTraining = await _qnaApiClient.GetAnswerValue(applicationId,
-                RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
-                RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining);
+            string initialTeacherTraining;
 
-            if (initialTeacherTraining?.ToUpper() == "YES")
+            try
             {
-                var isPostGradTrainingOnlyApprenticeship = await _qnaApiClient.GetAnswerValue(applicationId,
+                initialTeacherTraining = await _qnaApiClient.GetAnswerValue(applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
+                    RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining);
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceUnavailableException(
+                    $"Qna not available for application {applicationId} for initial teacher training", ex);
+            }
+
+            if (initialTeacherTraining?.ToUpper() != "YES")
+                return new InitialTeacherTraining
+                {
+                    DoesOrganisationOfferInitialTeacherTraining = false,
+                    IsPostGradOnlyApprenticeship = null
+                };
+
+            string isPostGradTrainingOnlyApprenticeship;
+
+            try
+            {
+                isPostGradTrainingOnlyApprenticeship = await _qnaApiClient.GetAnswerValue(applicationId,
                     RoatpWorkflowSequenceIds.YourOrganisation,
                     RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                     RoatpWorkflowPageIds.ExperienceAndAccreditations.IsPostGradTrainingOnlyApprenticeship,
                     RoatpYourOrganisationQuestionIdConstants.IsPostGradTrainingOnlyApprenticeship);
-
-                return new InitialTeacherTraining
-                {
-                    DoesOrganisationOfferInitialTeacherTraining = true,
-                    IsPostGradOnlyApprenticeship = isPostGradTrainingOnlyApprenticeship.ToUpper() == "YES"
-                };
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceUnavailableException(
+                    $"Qna not available for application {applicationId} for is postgrad training only", ex);
             }
 
             return new InitialTeacherTraining
             {
-                DoesOrganisationOfferInitialTeacherTraining = false,
-                IsPostGradOnlyApprenticeship = null
+                DoesOrganisationOfferInitialTeacherTraining = true,
+                IsPostGradOnlyApprenticeship = isPostGradTrainingOnlyApprenticeship.ToUpper() == "YES"
             };
         }
 
@@ -105,7 +123,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("/Accreditation/{applicationId}/SubcontractDeclaration/ContractFileClarification/{fileName}")]
         public async Task<IActionResult> GetSubcontractorDeclarationContractFileClarification(Guid applicationId, string fileName)
         {
-            var file= await _fileStorageService.DownloadFile(applicationId,
+            var file = await _fileStorageService.DownloadFile(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                 RoatpClarificationUpload.SubcontractorDeclarationClarificationFile, fileName,
@@ -125,55 +143,55 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations);
 
             var hasHadFullInspection = YesNoValueForPageQuestion(section,
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.HasHadFullInspection, 
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.HasHadFullInspection,
                 RoatpYourOrganisationQuestionIdConstants.HasHadFullInspection);
 
-            var hasReceivedFullInspectionGradeForApprenticeships = YesNoValueForPageQuestion(section, 
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.ReceivedFullInspectionGradeForApprenticeships, 
+            var hasReceivedFullInspectionGradeForApprenticeships = YesNoValueForPageQuestion(section,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.ReceivedFullInspectionGradeForApprenticeships,
                 RoatpYourOrganisationQuestionIdConstants.ReceivedFullInspectionGradeForApprenticeships);
 
-            var fullInspectionOverallEffectivenessGrade = ValueForPageQuestion(section, 
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionOverallEffectivenessGrade, 
+            var fullInspectionOverallEffectivenessGrade = ValueForPageQuestion(section,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionOverallEffectivenessGrade,
                 RoatpYourOrganisationQuestionIdConstants.FullInspectionOverallEffectivenessGrade);
 
-            var hasHadMonitoringVisit = YesNoValueForPageQuestion(section, 
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.HasHadMonitoringVisit, 
+            var hasHadMonitoringVisit = YesNoValueForPageQuestion(section,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.HasHadMonitoringVisit,
                 RoatpYourOrganisationQuestionIdConstants.HasHadMonitoringVisit);
 
-            var has2MonitoringVisitsGradedInadequate= YesNoValueForPageQuestion(section, 
+            var has2MonitoringVisitsGradedInadequate = YesNoValueForPageQuestion(section,
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.Has2MonitoringVisitsGradedInadequate, RoatpYourOrganisationQuestionIdConstants.Has2MonitoringVisitsGradedInadequate);
 
-            var hasMonitoringVisitGradedInadequateInLast18Months = YesNoValueForPageQuestion(section, 
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMonitoringVisitGradedInadequateInLast18Months, 
+            var hasMonitoringVisitGradedInadequateInLast18Months = YesNoValueForPageQuestion(section,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMonitoringVisitGradedInadequateInLast18Months,
                 RoatpYourOrganisationQuestionIdConstants.HasMonitoringVisitGradedInadequateInLast18Months);
 
-            var hasMaintainedFundingSinceInspection = YesNoValueForPageQuestion(section, 
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMaintainedFundingSinceInspection, 
+            var hasMaintainedFundingSinceInspection = YesNoValueForPageQuestion(section,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMaintainedFundingSinceInspection,
                 RoatpYourOrganisationQuestionIdConstants.HasMaintainedFundingSinceInspection);
 
-            var hasHadShortInspectionWithinLast3Years = YesNoValueForPageQuestion(section, 
+            var hasHadShortInspectionWithinLast3Years = YesNoValueForPageQuestion(section,
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.HasHadShortInspectionWithinLast3Years,
                 RoatpYourOrganisationQuestionIdConstants.HasHadShortInspectionWithinLast3Years);
 
-            var hasMaintainedFullGradeInShortInspection = YesNoValueForPageQuestion(section, 
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMaintainedFullGradeInShortInspection, 
+            var hasMaintainedFullGradeInShortInspection = YesNoValueForPageQuestion(section,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMaintainedFullGradeInShortInspection,
                 RoatpYourOrganisationQuestionIdConstants.HasMaintainedFullGradeInShortInspection);
 
-            var fullInspectionApprenticeshipGradeOfsFunded = ValueForPageQuestion(section, 
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionApprenticeshipGradeNonOfsFunded, 
+            var fullInspectionApprenticeshipGradeOfsFunded = ValueForPageQuestion(section,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionApprenticeshipGradeNonOfsFunded,
                 RoatpYourOrganisationQuestionIdConstants.FullInspectionApprenticeshipGradeOfsFunded);
-            var fullInspectionApprenticeshipGradeNonOfsFunded = ValueForPageQuestion(section, 
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionApprenticeshipGradeOfsFunded, 
+            var fullInspectionApprenticeshipGradeNonOfsFunded = ValueForPageQuestion(section,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionApprenticeshipGradeOfsFunded,
                 RoatpYourOrganisationQuestionIdConstants.FullInspectionApprenticeshipGradeNonOfsFunded);
 
             var fullInspectionApprenticeshipGrade = fullInspectionApprenticeshipGradeNonOfsFunded ?? fullInspectionApprenticeshipGradeOfsFunded;
 
-            var hasGradeWithinLast3YearsOfsFunded = YesNoValueForPageQuestion(section, 
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.GradeWithinLast3YearsOfsFunded, 
+            var hasGradeWithinLast3YearsOfsFunded = YesNoValueForPageQuestion(section,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.GradeWithinLast3YearsOfsFunded,
                 RoatpYourOrganisationQuestionIdConstants.GradeWithinLast3YearsOfsFunded);
-           
-            var hasGradeWithinLast3YearsNonOfsFunded = YesNoValueForPageQuestion(section, 
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.GradeWithinLast3YearsNonOfsFunded, 
+
+            var hasGradeWithinLast3YearsNonOfsFunded = YesNoValueForPageQuestion(section,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.GradeWithinLast3YearsNonOfsFunded,
                 RoatpYourOrganisationQuestionIdConstants.GradeWithinLast3YearsNonOfsFunded);
 
             var hasGradeWithinLast3Years = hasGradeWithinLast3YearsOfsFunded ?? hasGradeWithinLast3YearsNonOfsFunded;
@@ -200,7 +218,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return value != null
                 ? value.ToUpper() == "YES"
                 : (
-                    bool?) null;
+                    bool?)null;
         }
 
         private static string ValueForPageQuestion(ApplicationSection section, string pageId, string questionId)
@@ -209,8 +227,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 p.Active && p.PageId == pageId);
             var pageOfAnswers = page?.PageOfAnswers;
 
-            return pageOfAnswers == null 
-                ? null 
+            return pageOfAnswers == null
+                ? null
                 : (from answers in pageOfAnswers from answer in answers.Answers where answer.QuestionId == questionId select answer.Value).FirstOrDefault();
         }
     }
