@@ -11,6 +11,8 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services
 {
@@ -82,8 +84,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
 
         private async Task LookupCompaniesHouseDetails(ApplyGatewayDetails applyGatewayDetails, string companyNumber)
         {
-            var companyDetails = await _companiesHouseApiClient.GetCompany(companyNumber);
-            if (companyDetails == null)
+            ApiResponse<Types.CompaniesHouse.Company> companyDetails = null;
+            try
+            {
+                companyDetails = await _companiesHouseApiClient.GetCompany(companyNumber);
+            }
+            catch(Exception ex)
+            {
+                var message = $"Unable to retrieve results from companies house for company number {companyNumber}";
+                _logger.LogError(message, ex);
+                throw new ServiceUnavailableException(message);
+            }
+
+            if (string.IsNullOrEmpty(companyDetails?.Response?.CompanyName))
             {
                 var message = $"Unable to retrieve Companies House details for company number {companyNumber}";
                 _logger.LogError(message);
@@ -95,9 +108,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         private async Task LookupCharityCommissionDetails(ApplyGatewayDetails applyGatewayDetails, string charityNumberFromUkrlp)
         {
             if (!int.TryParse(charityNumberFromUkrlp, out var charityNumber))
-            { 
-                _logger.LogError("Unable to parse charity registration number from charity number in ukrlp `{charityNumber}`", charityNumberFromUkrlp);
-                return;
+            {
+                var message =
+                    $"Unable to parse charity registration number from charity number in ukrlp: '{charityNumberFromUkrlp}'";
+                _logger.LogError(message);
+                throw new ServiceUnavailableException(message);
             }
 
             try
@@ -105,9 +120,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 var charityDetails = await _outerApiClient.GetCharityDetails(charityNumber);
                 applyGatewayDetails.CharityCommissionDetails = Mapper.Map<CharityCommissionSummary>(charityDetails);
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
-                var message = $"Unable to retrieve Charity Commission details for charity number {charityNumber}";
+                var message = $"Unable to retrieve Charity Commission details for charity number {charityNumber} based on charity number from uklrp: {charityNumberFromUkrlp}";
                 _logger.LogError(ex, message);
                 throw new ServiceUnavailableException(message);
             }
