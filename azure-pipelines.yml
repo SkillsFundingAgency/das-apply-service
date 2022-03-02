@@ -2,10 +2,7 @@ trigger:
   batch: true
   branches:
     include:
-      - "*"
-
-pr:
-  - master
+      - "master"
 
 variables:
   - group: "ESFA - SonarCloud"
@@ -19,7 +16,7 @@ resources:
   - repository: das-platform-building-blocks
     type: github
     name: SkillsFundingAgency/das-platform-building-blocks
-    ref: refs/tags/0.4.10
+    ref: refs/tags/0.4.37
     endpoint: SkillsFundingAgency
 
 stages:
@@ -36,7 +33,6 @@ stages:
 
     - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
       parameters:
-        SonarCloud: false
         SonarCloudProjectKey: SkillsFundingAgency_das-apply-service
 
     - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
