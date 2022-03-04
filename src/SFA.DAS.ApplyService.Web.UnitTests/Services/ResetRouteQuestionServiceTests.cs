@@ -31,9 +31,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var routeId = ApplicationRoute.MainProviderApplicationRoute;
             await _service.ResetRouteQuestions(_applicationId, routeId);
 
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySection(_applicationId, 1, 5),Times.Once);
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage), Times.Never);
-
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_NewSupporting));
@@ -50,6 +50,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var routeId = ApplicationRoute.SupportingProviderApplicationRoute;
             await _service.ResetRouteQuestions(_applicationId, routeId);
 
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySection(_applicationId, 1, 5), Times.Once);
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage), Times.Never);
 
@@ -69,9 +70,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var routeId = ApplicationRoute.EmployerProviderApplicationRoute;
             await _service.ResetRouteQuestions(_applicationId, routeId);
 
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySection(_applicationId, 1, 5), Times.Once);
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage), Times.Never);
-
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_NewSupporting));
