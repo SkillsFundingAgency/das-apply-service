@@ -9,10 +9,8 @@ using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using System;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.InternalApi.Types;
-using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services
 {

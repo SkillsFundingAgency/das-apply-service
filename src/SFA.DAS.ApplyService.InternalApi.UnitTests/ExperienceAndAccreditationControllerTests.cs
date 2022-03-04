@@ -127,6 +127,13 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                     RoatpYourOrganisationQuestionIdConstants.IsPostGradTrainingOnlyApprenticeship), Times.Never);
         }
 
+        [Test] 
+        public void GetInitialTeacherTraining_QnaUnavailable_ThrowsException()
+        {
+            _controller = new ExperienceAndAccreditationController(null, _fileStorageService.Object);
+            Assert.ThrowsAsync<ServiceUnavailableException>(() => _controller.GetInitialTeacherTraining(_applicationId));
+        }
+
         [Test]
         public void get_gateway_declaration_returns_expected_declaration_answers()
         {
