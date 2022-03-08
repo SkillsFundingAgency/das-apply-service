@@ -405,7 +405,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
-
+        public async Task ResetSectionPagesIncomplete(Guid applicationId, int sequenceNo, int sectionNo, List<string> pageIdsExcluded)
+        {
+            // APR-2877 
+             var response = await _httpClient.PostAsJsonAsync($"/applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/reset-complete",pageIdsExcluded);
+        }
 
         protected async Task<HttpResponseMessage> RequestToDownloadFile(HttpRequestMessage request, string message = null)
         {

@@ -52,5 +52,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<HttpResponseMessage> DownloadFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string filename);
         Task DeleteFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string filename);
 
+        // APR-2877 
+        Task ResetSectionPagesIncomplete(Guid applicationId, int sequenceNo, int sectionNo,  List<string> pageIdsExcluded);
+
+
+
+
     }
 }

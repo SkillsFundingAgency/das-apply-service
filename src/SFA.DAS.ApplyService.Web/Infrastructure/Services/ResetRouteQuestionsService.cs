@@ -24,7 +24,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
         {
             await ResetDescribeYourOrganisationSectionTags(applicationId, routeId);
             await ResetTypeOfApprenticeshipTrainingSectionTags(applicationId, routeId);
-            await ResetExperienceAndAccreditationSectionTags(applicationId, routeId);
         }
 
         private async Task ResetDescribeYourOrganisationSectionTags(Guid applicationId, int routeId)
@@ -42,13 +41,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, sequenceNo, sectionNo, RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage);
                     break;
             }
-        }
-
-        private async Task ResetExperienceAndAccreditationSectionTags(Guid applicationId, int routeId)
-        {
-            const int sequenceNo = RoatpWorkflowSequenceIds.YourOrganisation;
-            const int sectionNo = RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations;
-            await _qnaApiClient.ResetPageAnswersBySection(applicationId, sequenceNo, sectionNo);
         }
 
         private async Task ResetTypeOfApprenticeshipTrainingSectionTags(Guid applicationId, int routeId)

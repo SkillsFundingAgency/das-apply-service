@@ -725,6 +725,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 // Any answer that is saved will affect the NotRequiredOverrides
                 await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
 
+
+                // APR-2877 -------------------------------------------------------------------
+                // we may want to wrap this in a service for reuse, passing in the sequence number, section number and pageId
+                // all magic numbers should be converted to named variables, coverage added etc
+                if (sequenceNo == 1 && sectionNo == 5)
+                {
+                    var pageIdsToExcludeFromCompleteReset = new List<string>
+                    {
+                        "235",
+                        "240",
+                        "350"
+                    };
+                    if (pageIdsToExcludeFromCompleteReset.Contains(pageId))
+                        await _qnaApiClient.ResetSectionPagesIncomplete(applicationId, 1, 5, pageIdsToExcludeFromCompleteReset);
+                }
+                // APR-2877 end ------------------------------------------------------
+
                 if (formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
                 {
                     return RedirectToAction("Page", new
