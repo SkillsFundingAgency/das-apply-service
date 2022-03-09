@@ -60,7 +60,7 @@ namespace SFA.DAS.ApplyService.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            IdentityModelEventSource.ShowPII = true;
+            IdentityModelEventSource.ShowPII = false;
         
             ConfigureAuth(services);
 
