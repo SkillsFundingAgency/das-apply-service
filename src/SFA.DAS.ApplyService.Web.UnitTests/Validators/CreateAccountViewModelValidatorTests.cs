@@ -131,6 +131,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
         [TestCase("test-test@test.com")]
         [TestCase("test.test@test.co.uk")]
         [TestCase("test-test@test.co.uk")]
+        [TestCase("joe.joe@20-20test.com")]
         public void Validate_Returns_Valid_When_Email_is_Correct_Format(string correctEmail)
         {
             _viewModel.Email = correctEmail;
