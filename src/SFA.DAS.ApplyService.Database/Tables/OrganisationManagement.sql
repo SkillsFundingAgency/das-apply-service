@@ -10,7 +10,7 @@
 	[OtherOrganisationNames] NVARCHAR(1000) NULL,
 	[DateOfBirthMonth] TiNYINT NOT NULL,
 	[DateOfBirthYear] INT NOT NULL,
-	[ContactNumber] NVARCHAR(20) NOT NULL,
+	[ContactNumber] NVARCHAR(50) NOT NULL,
 	[Email] NVARCHAR(350) NOT NULL,
 
 	CONSTRAINT PK_OrganisationManagement PRIMARY KEY (Id),
