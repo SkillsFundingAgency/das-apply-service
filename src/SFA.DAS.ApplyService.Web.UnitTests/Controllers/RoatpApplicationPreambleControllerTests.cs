@@ -1594,7 +1594,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             //var redirectResult = result as RedirectToActionResult;
             //redirectResult.ActionName.Should().Be("EnterApplicationUkprn");
 
-            //_applicationApiClient.Verify(x => x.UpdateApplicationStatus(It.IsAny<Guid>(), It.IsAny<string>()), Times.Once);
+            //_applicationApiClient.Verify(x => x.UpdateApplicationStatus(It.IsAny<Guid>(), It.IsAny<string>()), TimesCalled.Once);
             //_qnaApiClient.VerifyAll();
             //_sessionService.VerifyAll();
         }
