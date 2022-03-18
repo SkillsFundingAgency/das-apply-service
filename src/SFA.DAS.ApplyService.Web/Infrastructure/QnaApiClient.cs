@@ -405,9 +405,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
-        public async Task ResetSectionPagesIncomplete(Guid applicationId, int sequenceNo, int sectionNo, List<string> pageIdsExcluded)
+        public async Task ResetCompleteFlag(Guid applicationId, int sequenceNo, int sectionNo, List<string> pageIdsExcluded)
         {
-            await _httpClient.PostAsJsonAsync($"/applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/reset-complete", pageIdsExcluded);
+            await _httpClient.PostAsJsonAsync($"/applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/reset-completeflag", pageIdsExcluded);
         }
 
 

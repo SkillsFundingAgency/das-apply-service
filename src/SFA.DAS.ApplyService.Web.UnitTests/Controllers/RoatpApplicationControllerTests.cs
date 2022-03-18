@@ -65,7 +65,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<ITaskListOrchestrator> _taskListOrchestrator;
         private Mock<IUkrlpApiClient> _ukrlpApiClient;
         private Mock<IReapplicationCheckService> _reapplicationCheckService;
-        private Mock<IResetQnaDetailsService> _resetQnaDetailsService;
+        private Mock<IResetCompleteFlagService> _resetQnaDetailsService;
 
         [SetUp]
         public void Before_each_test()
@@ -105,7 +105,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _taskListOrchestrator = new Mock<ITaskListOrchestrator>();
             _ukrlpApiClient = new Mock<IUkrlpApiClient>();
             _reapplicationCheckService = new Mock<IReapplicationCheckService>();
-            _resetQnaDetailsService = new Mock<IResetQnaDetailsService>();
+            _resetQnaDetailsService = new Mock<IResetCompleteFlagService>();
 
             _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object,
                                                          _usersApiClient.Object, _qnaApiClient.Object, 
@@ -1030,7 +1030,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = await  _controller.SaveAnswers(viewModel, formAction);
             var redirectToActionResult = result as RedirectToActionResult;
 
-            _resetQnaDetailsService.Verify(x => x.ResetPagesComplete(_applicationId, _sequenceNo, _sectionNo, _pageId), Times.Once);
+            _resetQnaDetailsService.Verify(x => x.ResetPagesComplete(_applicationId,  _pageId), Times.Once);
             _roatpTaskListWorkflowService.Verify(x=>x.RefreshNotRequiredOverrides(_applicationId),Times.Once);
             Assert.AreEqual("TaskList",redirectToActionResult.ActionName);
         }
@@ -1071,7 +1071,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var redirectToActionResult = result as RedirectToActionResult;
 
             Assert.AreEqual("TaskList", redirectToActionResult.ActionName);
-            _resetQnaDetailsService.Verify(x => x.ResetPagesComplete(_applicationId, _sequenceNo, _sectionNo, _pageId), Times.Never);
+            _resetQnaDetailsService.Verify(x => x.ResetPagesComplete(_applicationId, _pageId), Times.Never);
             _roatpTaskListWorkflowService.Verify(x => x.RefreshNotRequiredOverrides(_applicationId), Times.Never);
         }
 
@@ -1118,7 +1118,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = await _controller.SaveAnswers(viewModel, formAction);
             var viewResult = result as ViewResult;
 
-            _resetQnaDetailsService.Verify(x => x.ResetPagesComplete(_applicationId, _sequenceNo, _sectionNo, _pageId), Times.Never);
+            _resetQnaDetailsService.Verify(x => x.ResetPagesComplete(_applicationId,  _pageId), Times.Never);
             _roatpTaskListWorkflowService.Verify(x => x.RefreshNotRequiredOverrides(_applicationId), Times.Never);
             Assert.IsTrue(viewResult.ViewName.Contains("Index.cshtml"));
         }
@@ -1175,7 +1175,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = await _controller.SaveAnswers(viewModel, formAction);
             var redirectToActionResult = result as RedirectToActionResult;
 
-            _resetQnaDetailsService.Verify(x => x.ResetPagesComplete(_applicationId, _sequenceNo, _sectionNo, _pageId), Times.Never);
+            _resetQnaDetailsService.Verify(x => x.ResetPagesComplete(_applicationId, _pageId), Times.Never);
             _roatpTaskListWorkflowService.Verify(x => x.RefreshNotRequiredOverrides(_applicationId), Times.Never);
             Assert.AreEqual("Page", redirectToActionResult.ActionName);
         }

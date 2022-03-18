@@ -52,7 +52,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly ITaskListOrchestrator _taskListOrchestrator;
         private readonly IUkrlpApiClient _ukrlpApiClient;
         private readonly IReapplicationCheckService _reapplicationCheckService;
-        private readonly IResetQnaDetailsService _resetQnaDetailsService;
+        private readonly IResetCompleteFlagService _resetCompleteFlagService;
 
         private const string InputClassUpperCase = "app-uppercase";
         private const string NotApplicableAnswerText = "None of the above";
@@ -67,7 +67,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ICustomValidatorFactory customValidatorFactory,
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
-            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator, IUkrlpApiClient ukrlpApiClient, IReapplicationCheckService reapplicationCheckService, IResetQnaDetailsService resetQnaDetailsService)
+            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator, IUkrlpApiClient ukrlpApiClient, IReapplicationCheckService reapplicationCheckService, IResetCompleteFlagService resetCompleteFlagService)
             : base(sessionService)
         {
             _apiClient = apiClient;
@@ -89,7 +89,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _taskListOrchestrator = taskListOrchestrator;
             _ukrlpApiClient = ukrlpApiClient;
             _reapplicationCheckService = reapplicationCheckService;
-            _resetQnaDetailsService = resetQnaDetailsService;
+            _resetCompleteFlagService = resetCompleteFlagService;
         }
 
         [HttpGet]
@@ -727,7 +727,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 // Any answer that is saved will affect the NotRequiredOverrides
                 await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
 
-                await _resetQnaDetailsService.ResetPagesComplete(applicationId, sequenceNo, sectionNo,pageId);
+                await _resetCompleteFlagService.ResetPagesComplete(applicationId, pageId);
 
                 if (formAction == "Upload" && page.DisplayType == PageDisplayType.MultipleFileUpload)
                 {
