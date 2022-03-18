@@ -25,7 +25,9 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Apply.AllowedProviders;
@@ -91,7 +93,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _questionPropertyTokeniser = new Mock<IQuestionPropertyTokeniser>();
             _pageNavigationTrackingService = new Mock<IPageNavigationTrackingService>();
             _pageOverrideConfiguration = new Mock<IOptions<List<QnaPageOverrideConfiguration>>>();
+            _pageOverrideConfiguration.Setup(x => x.Value).Returns(new List<QnaPageOverrideConfiguration>());
             _qnaLinks = new Mock<IOptions<List<QnaLinksConfiguration>>>();
+            _qnaLinks.Setup(x => x.Value).Returns(new List<QnaLinksConfiguration>());
             _customValidatorFactory = new Mock<ICustomValidatorFactory>();
             _roatpApiClient = new Mock<IRoatpApiClient>();
             _submitApplicationEmailService = new Mock<ISubmitApplicationConfirmationEmailService>();
@@ -989,7 +993,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task SaveAnswers_OnSuccessfulUpdateAndRedirect_CallsResetQnaDetailsServiceOnce()
+        public async Task SaveAnswers_OnSuccessfulUpdateAndRedirect_CallsServicesOnce()
         {
             var _applicationId = Guid.NewGuid();
             var _sectionId = Guid.NewGuid();
@@ -1025,9 +1029,155 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var result = await  _controller.SaveAnswers(viewModel, formAction);
             var redirectToActionResult = result as RedirectToActionResult;
-            
-            Assert.AreEqual("TaskList",redirectToActionResult.ActionName);
+
             _resetQnaDetailsService.Verify(x => x.ResetPagesComplete(_applicationId, _sequenceNo, _sectionNo, _pageId), Times.Once);
+            _roatpTaskListWorkflowService.Verify(x=>x.RefreshNotRequiredOverrides(_applicationId),Times.Once);
+            Assert.AreEqual("TaskList",redirectToActionResult.ActionName);
+        }
+
+        [Test]
+        public async Task SaveAnswers_OnUnsuccessfulUpdate_CallsServicesNever()
+        {
+            var _applicationId = Guid.NewGuid();
+            var _sectionId = Guid.NewGuid();
+            var _sequenceNo = 1;
+            var _sectionNo = 5;
+            var _pageId = "235";
+            var viewModel = new PageViewModel();
+            viewModel.ApplicationId = _applicationId;
+            viewModel.SequenceId = _sequenceNo;
+            viewModel.SectionId = _sectionNo;
+            viewModel.PageId = _pageId;
+            viewModel.RedirectAction = "RedirectActionText";
+            var section = new ApplySection { SectionNo = _sectionNo, SectionId = _sectionId };
+       
+            var formAction = "test";
+            var application = new Apply
+            {
+                ApplicationId = _applicationId,
+                ApplyData = new ApplyData { Sequences = new List<ApplySequence>() { new ApplySequence { SequenceNo = _sequenceNo, Sections = new List<ApplySection> { section } } } },
+                ApplicationStatus = ApplicationStatus.InProgress
+            };
+
+            _apiClient.Setup(x => x.GetApplicationByUserId(viewModel.ApplicationId, It.IsAny<Guid>())).ReturnsAsync(application);
+            _qnaApiClient.Setup(x => x.CanUpdatePage(_applicationId, _sectionId, _pageId)).ReturnsAsync(false);
+            _qnaApiClient
+                .Setup(x => x.UpdatePageAnswers(_applicationId, It.IsAny<Guid>(), _pageId, It.IsAny<List<Answer>>()))
+                .ReturnsAsync(new SetPageAnswersResponse { ValidationPassed = true });
+
+            _controller.HttpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>());
+
+            var result = await _controller.SaveAnswers(viewModel, formAction);
+            var redirectToActionResult = result as RedirectToActionResult;
+
+            Assert.AreEqual("TaskList", redirectToActionResult.ActionName);
+            _resetQnaDetailsService.Verify(x => x.ResetPagesComplete(_applicationId, _sequenceNo, _sectionNo, _pageId), Times.Never);
+            _roatpTaskListWorkflowService.Verify(x => x.RefreshNotRequiredOverrides(_applicationId), Times.Never);
+        }
+
+        [Test]
+        public async Task SaveAnswers_OnModelStateInvalid_CallsServicesNever()
+        {
+            var _applicationId = Guid.NewGuid();
+            var _sectionId = Guid.NewGuid();
+            var _sequenceNo = 1;
+            var _sectionNo = 5;
+            var _pageId = "235";
+            var viewModel = new PageViewModel();
+            viewModel.ApplicationId = _applicationId;
+            viewModel.SequenceId = _sequenceNo;
+            viewModel.SectionId = _sectionNo;
+            viewModel.PageId = _pageId;
+            viewModel.RedirectAction = "RedirectActionText";
+            var _section = new ApplySection { SectionNo = _sectionNo, SectionId = _sectionId };
+            var _page = new Page { PageId = _pageId, Questions = new List<Question> { new Question { Input = new Input { Type = "Text" } } } };
+            var _applicationSection = new ApplicationSection { QnAData = new QnAData { Pages = new List<Page> { _page } }, SequenceId = _sequenceNo, SectionId = _sectionNo };
+
+            var formAction = "test";
+            var application = new Apply
+            {
+                ApplicationId = _applicationId,
+                ApplyData = new ApplyData { Sequences = new List<ApplySequence>() { new ApplySequence { SequenceNo = _sequenceNo, Sections = new List<ApplySection> { _section } } } },
+                ApplicationStatus = ApplicationStatus.InProgress
+            };
+
+            _apiClient.Setup(x => x.GetApplicationByUserId(viewModel.ApplicationId, It.IsAny<Guid>())).ReturnsAsync(application);
+            _qnaApiClient.Setup(x => x.CanUpdatePage(_applicationId, _sectionId, _pageId)).ReturnsAsync(true);
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId, _sequenceNo, _sectionNo)).ReturnsAsync(_applicationSection);
+            _qnaApiClient
+                .Setup(x => x.UpdatePageAnswers(_applicationId, It.IsAny<Guid>(), _pageId, It.IsAny<List<Answer>>()))
+                .ReturnsAsync(new SetPageAnswersResponse { ValidationPassed = true });
+
+            _controller.HttpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>());
+            _controller.ModelState.AddModelError("key", "error message");
+            var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>())
+                 {
+                     ["InvalidPageOfAnswers"] = JsonConvert.SerializeObject(new List<PageOfAnswers>())
+                 };
+            _controller.TempData =tempData;
+            var result = await _controller.SaveAnswers(viewModel, formAction);
+            var viewResult = result as ViewResult;
+
+            _resetQnaDetailsService.Verify(x => x.ResetPagesComplete(_applicationId, _sequenceNo, _sectionNo, _pageId), Times.Never);
+            _roatpTaskListWorkflowService.Verify(x => x.RefreshNotRequiredOverrides(_applicationId), Times.Never);
+            Assert.IsTrue(viewResult.ViewName.Contains("Index.cshtml"));
+        }
+
+        [Test]
+        public async Task SaveAnswers_PageUpateValidationFailed_CallsServicesNever()
+        {
+            var _applicationId = Guid.NewGuid();
+            var _sectionId = Guid.NewGuid();
+            var _sequenceNo = 1;
+            var _sectionNo = 5;
+            var _pageId = "235";
+            var viewModel = new PageViewModel();
+            viewModel.ApplicationId = _applicationId;
+            viewModel.SequenceId = _sequenceNo;
+            viewModel.SectionId = _sectionNo;
+            viewModel.PageId = _pageId;
+            viewModel.RedirectAction = "RedirectActionText";
+            var _section = new ApplySection { SectionNo = _sectionNo, SectionId = _sectionId };
+            var _page = new Page { PageId = _pageId, Questions = new List<Question> { new Question { Input = new Input { Type = "Text" } } } };
+            var _applicationSection = new ApplicationSection { QnAData = new QnAData { Pages = new List<Page> { _page } }, SequenceId = _sequenceNo, SectionId = _sectionNo };
+
+            var formAction = "test";
+            var application = new Apply
+            {
+                ApplicationId = _applicationId,
+                ApplyData = new ApplyData { Sequences = new List<ApplySequence>() { new ApplySequence { SequenceNo = _sequenceNo, Sections = new List<ApplySection> { _section } } } },
+                ApplicationStatus = ApplicationStatus.InProgress
+            };
+
+            _apiClient.Setup(x => x.GetApplicationByUserId(viewModel.ApplicationId, It.IsAny<Guid>())).ReturnsAsync(application);
+            _qnaApiClient.Setup(x => x.CanUpdatePage(_applicationId, _sectionId, _pageId)).ReturnsAsync(true);
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId, _sequenceNo, _sectionNo)).ReturnsAsync(_applicationSection);
+            _qnaApiClient
+                .Setup(x => x.UpdatePageAnswers(_applicationId, It.IsAny<Guid>(), _pageId, It.IsAny<List<Answer>>()))
+                .ReturnsAsync(new SetPageAnswersResponse { ValidationPassed = false });
+            _qnaApiClient.Setup(x => x.GetPage(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>()))
+                .ReturnsAsync(() => new Page
+                {
+                    PageOfAnswers = new List<PageOfAnswers>
+                    {
+                        new PageOfAnswers{Answers = new List<Answer>()}
+                    },
+                    Questions = new List<Question>()
+                });
+
+            _controller.HttpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>());
+            var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>())
+            {
+                ["InvalidPageOfAnswers"] = JsonConvert.SerializeObject(new List<PageOfAnswers>())
+            };
+            _controller.TempData = tempData;
+
+            var result = await _controller.SaveAnswers(viewModel, formAction);
+            var redirectToActionResult = result as RedirectToActionResult;
+
+            _resetQnaDetailsService.Verify(x => x.ResetPagesComplete(_applicationId, _sequenceNo, _sectionNo, _pageId), Times.Never);
+            _roatpTaskListWorkflowService.Verify(x => x.RefreshNotRequiredOverrides(_applicationId), Times.Never);
+            Assert.AreEqual("Page", redirectToActionResult.ActionName);
         }
     }
 }
