@@ -25,11 +25,15 @@ namespace SFA.DAS.ApplyService.Web.Services
             if (sequenceNo == RoatpWorkflowSequenceIds.YourOrganisation &&
                 sectionNo == RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations)
             {
+                const string entryPageForMainRoute = RoatpWorkflowPageIds.ExperienceAndAccreditations.OfficeForStudents;
+                const string entryPageForEmployerRoute = RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining;
+                const string entryPageForSupportingRoute = RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorDeclaration;
+
                 var pageIdsToExcludeFromCompleteReset = new List<string>
                 {
-                    RoatpWorkflowPageIds.ExperienceAndAccreditations.OfficeForStudents,
-                    RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
-                    RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorDeclaration
+                    entryPageForMainRoute,
+                    entryPageForEmployerRoute,
+                    entryPageForSupportingRoute
                 };
 
                 if (pageIdsToExcludeFromCompleteReset.Contains(pageId))
