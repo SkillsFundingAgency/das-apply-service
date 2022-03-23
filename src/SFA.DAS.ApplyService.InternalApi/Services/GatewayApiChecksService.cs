@@ -108,7 +108,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             if (!int.TryParse(charityNumberFromUkrlp, out var charityNumber))
             {
                 var message =
-                    $"Unable to parse charity registration number from charity number in ukrlp: '{charityNumberFromUkrlp}'";
+                    $"Charity registration number cannot be parsed into a number, skipping getting details from charity commission for '{ charityNumberFromUkrlp}'";
+                
                 _logger.LogInformation(message);
                 return;
             }
