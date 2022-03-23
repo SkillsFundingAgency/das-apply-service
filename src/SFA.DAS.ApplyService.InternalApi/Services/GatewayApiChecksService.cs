@@ -109,7 +109,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             {
                 var message =
                     $"Unable to parse charity registration number from charity number in ukrlp: '{charityNumberFromUkrlp}'";
-                _logger.LogError(message);
+                _logger.LogInformation(message);
                 return;
             }
 
