@@ -405,6 +405,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
+        public async Task ResetCompleteFlag(Guid applicationId, int sequenceNo, int sectionNo, List<string> pageIdsExcluded)
+        {
+            await _httpClient.PostAsJsonAsync($"/applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/reset-completeflag", pageIdsExcluded);
+        }
 
 
         protected async Task<HttpResponseMessage> RequestToDownloadFile(HttpRequestMessage request, string message = null)
