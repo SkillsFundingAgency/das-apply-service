@@ -484,7 +484,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 {
                     return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
                 }
-                else if (!CompaniesHouseValidator.CompaniesHouseStatusValid(providerDetails.UKPRN, companyDetails.Status))
+                else if (!CompaniesHouseValidator.CompaniesHouseStatusValid(providerDetails.UKPRN, companyDetails.Status, _logger))
                 {
                     return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
                 }
