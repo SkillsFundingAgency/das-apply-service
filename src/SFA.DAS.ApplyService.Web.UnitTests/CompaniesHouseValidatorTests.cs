@@ -39,9 +39,9 @@
         [TestCase("SR345678", "converted-closed", false)]
         [TestCase("NR345678", "converted-closed", false)]
         [TestCase("NO345678", "converted-closed", false)]
-        public void Validator_returns_expected_validity_for_company_number_and_status(string companyNumber, string companyStatus, bool expectedValidity)
+        public void Validator_returns_expected_validity_for_company_number_and_status(string ukprn, string companyStatus, bool expectedValidity)
         {
-            bool isValid = CompaniesHouseValidator.CompaniesHouseStatusValid(companyNumber, companyStatus);
+            bool isValid = CompaniesHouseValidator.CompaniesHouseStatusValid(ukprn, companyStatus);
 
             isValid.Should().Be(expectedValidity);
         }
