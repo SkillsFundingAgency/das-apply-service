@@ -107,9 +107,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         return RedirectToAction("CompanyNotFoundRefresh", "RoatpShutterPages", new { companyNumber });
                 }
 
-                if (!CompaniesHouseValidator.CompaniesHouseStatusValid(companyDetails.CompanyNumber, companyDetails.Status))
+                if (!CompaniesHouseValidator.CompaniesHouseStatusValid(ukprn, companyDetails.Status, _logger))
                 {
-                    _logger.LogInformation($"Issue refreshing directors/pscs - applicationId {applicationId} | Company Number : {companyDetails.CompanyNumber} | Status : Companies House status not valid: {companyDetails.Status}");
+                    _logger.LogInformation($"Issue refreshing directors/pscs - applicationId {applicationId} | UKPRN : {ukprn} | Status : Companies House status not valid: {companyDetails.Status}");
                     return RedirectToAction("CompanyNotFoundRefresh", "RoatpShutterPages", new { companyNumber });
                 }
 
