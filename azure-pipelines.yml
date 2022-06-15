@@ -35,8 +35,6 @@ stages:
       parameters:
         SonarCloudProjectKey: SkillsFundingAgency_das-apply-service
 
-    - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
-
     - task: DotNetCoreCLI@2
       displayName: 'dotnet pack'
       inputs:
