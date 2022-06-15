@@ -16,7 +16,7 @@ resources:
   - repository: das-platform-building-blocks
     type: github
     name: SkillsFundingAgency/das-platform-building-blocks
-    ref: refs/tags/0.4.37
+    ref: refs/tags/0.4.60
     endpoint: SkillsFundingAgency
 
 stages:
@@ -34,8 +34,6 @@ stages:
     - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
       parameters:
         SonarCloudProjectKey: SkillsFundingAgency_das-apply-service
-
-    - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
 
     - task: DotNetCoreCLI@2
       displayName: 'dotnet pack'
