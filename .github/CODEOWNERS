@@ -1,4 +1,7 @@
-# CODEOWNERS file for das-apply-service.
-# The following users will be automatically added as Reviewers to all PRs.
-
-* @MarkFCain @dannygb @chrisfoster76 @MAli99 @DevenKShah @raviudari01
+#Requires review when making changes to the following files/folders
+* @MarkFCain @chrisfoster76 @DevenKShah @raviudari01
+.github/CODEOWNERS      @SkillsFundingAgency/das-platform-engineering
+/azure/                 @SkillsFundingAgency/das-platform-engineering
+azure-pipelines.yml     @SkillsFundingAgency/das-platform-engineering
+/pipeline-templates/    @SkillsFundingAgency/das-platform-engineering
+GitVersion.yml          @SkillsFundingAgency/das-platform-engineering
