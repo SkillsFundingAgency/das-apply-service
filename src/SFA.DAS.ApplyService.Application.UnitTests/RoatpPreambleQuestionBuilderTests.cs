@@ -477,12 +477,27 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
             question.Value.Should().Be(expectedValue);
         }
 
-        [Test]
-        public void Preamble_questions_contains_roatp_removed_reason()
+        [TestCase(RemovedReason.Breach)]
+        [TestCase(RemovedReason.ChangeOfTradingStatus)]
+        [TestCase(RemovedReason.HighRiskPolicy)]
+        [TestCase(RemovedReason.InadequateFinancialHealth)]
+        [TestCase(RemovedReason.InadequateOfstedGrade)]
+        [TestCase(RemovedReason.InternalError)]
+        [TestCase(RemovedReason.Merger)]
+        [TestCase(RemovedReason.MinimumStandardsNotMet)]
+        [TestCase(RemovedReason.NonDirectDeliveryInTwelveMonthPeriod)]
+        [TestCase(RemovedReason.ProviderError)]
+        [TestCase(RemovedReason.ProviderRequest)]
+        [TestCase(RemovedReason.Other)]
+        [TestCase(RemovedReason.NoDeliveryInA6MonthPeriod)]
+        [TestCase(RemovedReason.TwoInsufficientProgressOfstedMonitoring)]
+        [TestCase(RemovedReason.FailedRoATPrefreshApplication)]
+        [TestCase(RemovedReason.DidNotReApplyWhenRequested)]
+        public void Preamble_questions_contains_roatp_removed_reason(int removedReason)
         {
             _applicationDetails.RoatpRegisterStatus = new OrganisationRegisterStatus
             {
-                UkprnOnRegister = true, StatusId = OrganisationStatus.Removed, RemovedReasonId = RemovedReason.ChangeOfTradingStatus 
+                UkprnOnRegister = true, StatusId = OrganisationStatus.Removed, RemovedReasonId = removedReason
             };
 
             var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
@@ -491,7 +506,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
 
             var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.RoatpRemovedReason);
             question.Should().NotBeNull();
-            question.Value.Should().Be(RemovedReason.ChangeOfTradingStatus.ToString());
+            question.Value.Should().Be(removedReason.ToString());
         }
 
         [Test]
