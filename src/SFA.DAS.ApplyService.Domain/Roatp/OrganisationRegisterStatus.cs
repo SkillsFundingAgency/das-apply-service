@@ -34,5 +34,9 @@
         public const int ProviderError = 10;
         public const int ProviderRequest = 11;
         public const int Other = 12;
+        public const int NoDeliveryInA6MonthPeriod = 13;
+        public const int TwoInsufficientProgressOfstedMonitoring = 14;
+        public const int FailedRoATPrefreshApplication = 15;
+        public const int DidNotReApplyWhenRequested = 16;
     }
 }
