@@ -1,25 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
       <ProjectGuid>{D176EE9C-46E0-4619-8428-3B56152C644B}</ProjectGuid>
-      <TargetFramework>netstandard2.0</TargetFramework>
+      <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Authentication">
-        <Version>2.1.2</Version>
-      </PackageReference>
-      <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions">
-        <Version>2.1.1</Version>
-      </PackageReference>
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions">
-        <Version>2.1.1</Version>
-      </PackageReference>
-      <PackageReference Include="Microsoft.Extensions.Options">
-        <Version>2.1.1</Version>
-      </PackageReference>
-      <PackageReference Include="System.Text.Encodings.Web">
-        <Version>4.5.1</Version>
-      </PackageReference>
+      <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.2.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
+      <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
     </ItemGroup>
 </Project>
