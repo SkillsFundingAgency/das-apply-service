@@ -111,18 +111,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task UpdateOrganisation(Guid organisationId, Guid userId)
-        {
-            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
-            {
-                connection.Execute(
-                    "UPDATE [Organisations] " +
-                    "SET CreatedBy = @userId " +
-                    "WHERE [Id] = @organisationId",
-                    new { userId, organisationId });
-            }
-        }
-
         public async Task<Organisation> GetOrganisation(Guid organisationId)
         {
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
