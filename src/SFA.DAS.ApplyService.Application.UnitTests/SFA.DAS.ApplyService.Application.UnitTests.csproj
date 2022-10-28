@@ -2,7 +2,7 @@
 
     <PropertyGroup>
       <ProjectGuid>{1CE19FAB-AE68-4192-AAB4-3C2060B02932}</ProjectGuid>
-        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,26 +12,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoFixture" Version="4.14.0" />
+      <PackageReference Include="AutoFixture" Version="4.17.0" />
       <PackageReference Include="CompareNETObjects" Version="4.72.0" />
-      <PackageReference Include="FluentAssertions">
-        <Version>5.4.2</Version>
-      </PackageReference>
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions">
-        <Version>2.1.1</Version>
-      </PackageReference>
-      <PackageReference Include="Microsoft.NET.Test.Sdk">
-        <Version>15.9.0</Version>
-      </PackageReference>
-      <PackageReference Include="Moq">
-        <Version>4.10.0</Version>
-      </PackageReference>
-      <PackageReference Include="NUnit">
-        <Version>3.11.0</Version>
-      </PackageReference>
-      <PackageReference Include="NUnit3TestAdapter">
-        <Version>3.10.0</Version>
-      </PackageReference>
+      <PackageReference Include="FluentAssertions" Version="6.8.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+      <PackageReference Include="Moq" Version="4.18.2" />
+      <PackageReference Include="NUnit" Version="3.13.3" />
+      <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
     </ItemGroup>
 
     <ItemGroup>
