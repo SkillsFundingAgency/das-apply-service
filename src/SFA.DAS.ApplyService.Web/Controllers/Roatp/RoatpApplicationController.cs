@@ -25,7 +25,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     using EmailService.Interfaces;
     using Infrastructure.Validations;
     using Microsoft.Extensions.Options;
-    using MoreLinq;
     using Roatp;
     using Services;
     using Validators;

@@ -105,7 +105,6 @@ namespace SFA.DAS.ApplyService.Web
                 options.Filters.Add<FeatureToggleFilter>();
             })
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ManagementHierarchyValidator>())
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
             .AddSessionStateTempDataProvider();
 
             services.AddOptions();

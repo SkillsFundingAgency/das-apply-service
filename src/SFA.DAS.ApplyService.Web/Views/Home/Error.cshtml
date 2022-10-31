@@ -1,7 +1,5 @@
-@using Microsoft.AspNetCore.Hosting
-@using Microsoft.AspNetCore.Hosting.Internal
+
 @model SFA.DAS.ApplyService.Web.ViewModels.ErrorViewModel
-@inject HostingEnvironment HostingEnvironment
 @{
     ViewBag.Title = "Error";
     Layout = "_Layout";
@@ -10,32 +8,9 @@
 <main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            @if (HostingEnvironment.IsDevelopment())
-            {
-                <h1 class="govuk-heading-xl">Error</h1>
-                <h2 class="govuk-heading-l">An error occurred while processing your request.</h2>
-
-                if (Model.ShowRequestId)
-                {
-                    <p class="govuk-body">
-                        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-                    </p>
-                }
-
-                <h3 class="govuk-heading-m">Development Mode</h3>
-                <p class="govuk-body">
-                    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-                </p>
-                <p class="govuk-body">
-                    <strong>Development environment should not be enabled in deployed applications</strong>, as it can result in sensitive information from exceptions being displayed to end users. For local debugging, development environment can be enabled by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>, and restarting the application.
-                </p>
-            }
-            else
-            {
-                <h1 class="govuk-heading-xl">Sorry, there is a problem with this service</h1>
-                <p class="govuk-body">Try again later or email <a class="govuk-link" href="mailto:helpdesk@manage-apprenticeships.service.gov.uk">helpdesk@manage-apprenticeships.service.gov.uk</a>.</p>
-                <p class="govuk-body"><a href="https://www.gov.uk/" class="govuk-link">Back to GOV.UK</a></p>
-            }
+            <h1 class="govuk-heading-xl">Sorry, there is a problem with this service</h1>
+            <p class="govuk-body">Try again later or email <a class="govuk-link" href="mailto:helpdesk@manage-apprenticeships.service.gov.uk">helpdesk@manage-apprenticeships.service.gov.uk</a>.</p>
+            <p class="govuk-body"><a href="https://www.gov.uk/" class="govuk-link">Back to GOV.UK</a></p>
         </div>
     </div>
 </main>
