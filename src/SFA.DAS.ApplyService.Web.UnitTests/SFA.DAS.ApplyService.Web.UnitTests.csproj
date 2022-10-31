@@ -16,7 +16,7 @@
         <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
         <PackageReference Include="nunit" Version="3.11.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.11.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
         <PackageReference Include="FluentAssertions" Version="5.4.2" />
         <PackageReference Include="Moq" Version="4.10.0" />
         <PackageReference Include="SFA.DAS.QnA.Api.Views" Version="0.2.291" />

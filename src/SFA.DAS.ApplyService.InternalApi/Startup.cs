@@ -153,6 +153,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             app.UseRequestLocalization();
             SecurityHeadersExtensions.UseSecurityHeaders(app);
 
+            app.UseRouting();
             app.UseAuthentication();
             app.UseHealthChecks("/health");
             app.UseEndpoints(routes =>

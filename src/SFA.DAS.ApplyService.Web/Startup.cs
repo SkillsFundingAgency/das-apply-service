@@ -311,7 +311,8 @@ namespace SFA.DAS.ApplyService.Web
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }
-            
+
+            app.UseRouting();
             app.UseSession();
             app.UseRequestLocalization();
             app.UseStatusCodePagesWithReExecute("/Home/error/{0}");

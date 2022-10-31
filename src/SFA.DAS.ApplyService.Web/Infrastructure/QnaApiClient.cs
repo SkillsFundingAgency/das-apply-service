@@ -2,22 +2,21 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using Polly;
 using Polly.Extensions.Http;
-using Polly.Retry;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.Infrastructure.Firewall;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
@@ -25,7 +24,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     public class QnaApiClient : ApiClientBase<QnaApiClient>, IQnaApiClient
     {
         private readonly IQnaTokenService _tokenService;
-        private readonly RetryPolicy<HttpResponseMessage> _retryPolicy;
+        private readonly IAsyncPolicy<HttpResponseMessage> _retryPolicy;
 
         public QnaApiClient(HttpClient httpClient, ILogger<QnaApiClient> logger, IQnaTokenService tokenService) : base(httpClient, logger)
         {
