@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using SFA.DAS.ApplyService.Application.Behaviours;
 using SFA.DAS.ApplyService.Application.Interfaces;
@@ -58,14 +59,14 @@ namespace SFA.DAS.ApplyService.InternalApi
 
     public class Startup
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IConfiguration _configuration;
         private const string _serviceName = "SFA.DAS.ApplyService";
         private const string _version = "1.0";
 
         private readonly IApplyConfig _applyConfig;
 
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
             _configuration = configuration;
@@ -99,8 +100,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             }).AddFluentValidation(fv =>
             {
                 fv.RegisterValidatorsFromAssemblyContaining<Startup>();
-            })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            });
 
             services.AddOptions();
 
@@ -128,7 +128,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             ConfigureDependencyInjection(services);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             MappingStartup.AddMappings();
 
@@ -155,11 +155,11 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             app.UseAuthentication();
             app.UseHealthChecks("/health");
-            app.UseMvc(routes =>
+            app.UseEndpoints(routes =>
             {
-                routes.MapRoute(
+                routes.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
 
@@ -206,7 +206,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
-                 sp.GetService<IHostingEnvironment>(),
+                 sp.GetService<IWebHostEnvironment>(),
                  _configuration["EnvironmentName"],
                  _configuration["ConfigurationStorageConnectionString"],
                  _version,

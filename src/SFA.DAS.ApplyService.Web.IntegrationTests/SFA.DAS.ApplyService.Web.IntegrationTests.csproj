@@ -6,7 +6,6 @@
 
     <ItemGroup>
         <PackageReference Include="AngleSharp" Version="0.9.10" />
-        <PackageReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="FluentAssertions" Version="5.4.2" />
         <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.2.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />

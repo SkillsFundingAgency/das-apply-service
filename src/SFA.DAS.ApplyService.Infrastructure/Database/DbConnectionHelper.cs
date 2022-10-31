@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Extensions.Hosting;
 using SFA.DAS.ApplyService.Configuration;
 using System.Data;
 using System.Threading.Tasks;
@@ -9,9 +10,9 @@ namespace SFA.DAS.ApplyService.Infrastructure.Database
     public class DbConnectionHelper : IDbConnectionHelper
     {
         private readonly IApplyConfig _configuration;
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public DbConnectionHelper(IConfigurationService configurationService, IHostingEnvironment hostingEnvironment)
+        public DbConnectionHelper(IConfigurationService configurationService, IWebHostEnvironment hostingEnvironment)
         {
             _configuration = configurationService.GetConfig().GetAwaiter().GetResult();
             _hostingEnvironment = hostingEnvironment;

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
@@ -12,13 +13,13 @@ namespace SFA.DAS.ApplyService.Configuration
 {
     public class ConfigurationService : IConfigurationService
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly string _environment;
         private readonly string _storageConnectionString;
         private readonly string _version;
         private readonly string _serviceName;
 
-        public ConfigurationService(IHostingEnvironment hostingEnvironment, string environment,
+        public ConfigurationService(IWebHostEnvironment hostingEnvironment, string environment,
             string storageConnectionString, string version, string serviceName)
         {
             _hostingEnvironment = hostingEnvironment;
