@@ -319,6 +319,7 @@ namespace SFA.DAS.ApplyService.Web
             app.UseSecurityHeaders();
             app.UseStaticFiles();
             app.UseAuthentication();
+            app.UseAuthorization();
             app.UseHealthChecks("/health");
             app.UseEndpoints(routes =>
             {

@@ -155,6 +155,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             app.UseRouting();
             app.UseAuthentication();
+            app.UseAuthorization();
             app.UseHealthChecks("/health");
             app.UseEndpoints(routes =>
             {
