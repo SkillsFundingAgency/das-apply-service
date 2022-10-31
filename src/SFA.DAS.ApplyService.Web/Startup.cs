@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using FluentValidation.AspNetCore;
+﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,6 +33,9 @@ using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace SFA.DAS.ApplyService.Web
 {
