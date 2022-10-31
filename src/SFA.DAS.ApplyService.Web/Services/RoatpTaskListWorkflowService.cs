@@ -193,7 +193,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 {
                     pagesWithAnswers++;
                     var pageofAnswers = page.PageOfAnswers.FirstOrDefault();
-                    foreach (var answer in pageofAnswers.Answers)
+                    foreach (var answer in pageofAnswers?.Answers)
                     {
                         if (answer.Value == ConfirmedAnswer)
                         {
