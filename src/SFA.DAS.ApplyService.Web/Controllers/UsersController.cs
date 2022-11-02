@@ -46,7 +46,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             _sessionService.Set("NewAccount", vm);
 
-            return inviteSuccess ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home", new { statusCode = 0});
+            return inviteSuccess ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home", new { statusCode = 555});
         }
 
         [HttpGet]
