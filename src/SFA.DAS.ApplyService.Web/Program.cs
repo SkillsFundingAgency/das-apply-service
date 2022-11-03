@@ -28,7 +28,6 @@ namespace SFA.DAS.ApplyService.Web
                 .UseStartup<Startup>()
                 .UseApplicationInsights()
                 .UseUrls("https://localhost:6016", "http://localhost:6015")
-                .UseKestrel()
                 .UseNLog();
     }
 }
