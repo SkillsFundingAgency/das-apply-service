@@ -47,7 +47,6 @@ namespace SFA.DAS.ApplyService.Web
         private readonly IConfiguration _configuration;
         private readonly ILogger<Startup> _logger;
         private readonly IWebHostEnvironment _hostingEnvironment;
-        private readonly IWebHostEnvironment _env;
         private readonly IApplyConfig _configService;
         private const string ServiceName = "SFA.DAS.ApplyService";
         private const string Version = "1.0";
@@ -57,7 +56,6 @@ namespace SFA.DAS.ApplyService.Web
             _configuration = configuration;
             _logger = logger;
             _hostingEnvironment = hostingEnvironment;
-            _env = env;
             _configService =  new ConfigurationService(env, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], Version, ServiceName).GetConfig().GetAwaiter().GetResult();
         }
 
@@ -122,8 +120,8 @@ namespace SFA.DAS.ApplyService.Web
             services.Configure<List<NotRequiredOverrideConfiguration>>(_configuration.GetSection("NotRequiredOverrides"));
             services.Configure<List<OuterApiConfiguration>>(_configuration.GetSection("OuterApiConfiguration"));
 
-            services.AddCache(_configService, _env);
-            services.AddDataProtection(_configService, _env);
+            services.AddCache(_configService, _hostingEnvironment);
+            services.AddDataProtection(_configService, _hostingEnvironment);
 
             services.AddSession(opt =>
             {
