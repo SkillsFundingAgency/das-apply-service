@@ -101,6 +101,7 @@ namespace SFA.DAS.ApplyService.InternalApi
                 fv.RegisterValidatorsFromAssemblyContaining<Startup>();
             });
 
+            services.AddApplicationInsightsTelemetry();
             services.AddOptions();
 
             services.Configure<List<RoatpSequences>>(_configuration.GetSection("RoatpSequences"));

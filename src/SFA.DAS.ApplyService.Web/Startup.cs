@@ -109,6 +109,7 @@ namespace SFA.DAS.ApplyService.Web
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ManagementHierarchyValidator>())
             .AddSessionStateTempDataProvider();
 
+            services.AddApplicationInsightsTelemetry();
             services.AddOptions();
 
             services.Configure<List<TaskListConfiguration>>(_configuration.GetSection("TaskListSequences"));
