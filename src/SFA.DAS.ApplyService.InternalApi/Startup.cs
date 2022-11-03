@@ -116,12 +116,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SFA.DAS.ApplyService.InternalApi", Version = "v1" });
                 c.CustomSchemaIds(x => x.FullName); // Fixes issue when the same type name appears twice
-                if (_hostingEnvironment.IsDevelopment())
-                {
-                    var basePath = AppContext.BaseDirectory;
-                    var xmlPath = Path.Combine(basePath, "SFA.DAS.ApplyService.InternalApi.xml");
-                    c.IncludeXmlComments(xmlPath);
-                }
             });
 
             ConfigureDependencyInjection(services);
@@ -143,11 +137,12 @@ namespace SFA.DAS.ApplyService.InternalApi
             }
 
             app.UseSwagger()
-                    .UseSwaggerUI(c =>
-                    {
-                        c.SwaggerEndpoint("/swagger/v1/swagger.json", "SFA.DAS.ApplyService.InternalApi v1");
-                    })
-                    .UseAuthentication();
+                .UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "SFA.DAS.ApplyService.InternalApi v1");
+                    c.RoutePrefix = string.Empty;
+                })
+                .UseAuthentication();
 
             app.UseRequestLocalization();
             SecurityHeadersExtensions.UseSecurityHeaders(app);

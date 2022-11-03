@@ -3,8 +3,6 @@
     <PropertyGroup>
       <ProjectGuid>{42FEF463-18F2-4A9E-BED0-EB35069DEA40}</ProjectGuid>
       <TargetFramework>net6.0</TargetFramework>
-      <GenerateDocumentationFile>True</GenerateDocumentationFile>
-      <DocumentationFile>bin\Debug\net6.0\SFA.DAS.ApplyService.InternalApi.xml</DocumentationFile>
     </PropertyGroup>
 
   <ItemGroup>
