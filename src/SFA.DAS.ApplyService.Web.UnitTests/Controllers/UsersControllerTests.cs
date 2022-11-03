@@ -154,7 +154,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void PostSignIn_reapplication_requested_and_pending_go_to_request_new_invitation()
         {
-            var ukprn = "12345678";
             var applicationId = Guid.NewGuid();
             var contact = new Contact { ApplyOrganisationId = Guid.NewGuid() };
             _usersApiClient.Setup(x => x.GetUserBySignInId(_userSignInId)).ReturnsAsync(contact);
@@ -174,8 +173,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void PostSignIn_reapplication_requested_and_pending_no_application_go_to_applications()
         {
-            var ukprn = "12345678";
-            var applicationId = Guid.NewGuid();
             var contact = new Contact { ApplyOrganisationId = Guid.NewGuid() };
             _usersApiClient.Setup(x => x.GetUserBySignInId(_userSignInId)).ReturnsAsync(contact);
 
@@ -194,7 +191,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void PostSignIn_reapplication_not_allowed_go_to_applications()
         {
-            var ukprn = "12345678";
             var contact = new Contact { ApplyOrganisationId = Guid.NewGuid() };
             _usersApiClient.Setup(x => x.GetUserBySignInId(_userSignInId)).ReturnsAsync(contact);
             _reapplicationCheckService.Setup(x => x.ReapplicationAllowed(_userSignInId, It.IsAny<Guid>())).ReturnsAsync(false);

@@ -273,7 +273,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             var howHaveTheyDeliveredDescription = "other delivery mechanism";
             var experienceOfDelivering = "experience of delivering";
             var typicalDuration = "typical duration";
-            var otherHowHaveTheyDelivered = "delivery mechanism other";
 
             _assessorLookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_fourthPageId)).Returns(_sectorQuestionIds);
 
