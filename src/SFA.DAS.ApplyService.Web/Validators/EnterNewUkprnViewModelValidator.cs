@@ -9,7 +9,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
         public EnterNewUkprnViewModelValidator(IAllowedUkprnValidator ukprnWhitelistValidator)
         {
             RuleFor(x => x.Ukprn)
-                .Cascade(CascadeMode.StopOnFirstFailure)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                     .WithMessage(UkprnValidationMessages.MissingUkprn)
                 .Must(x => UkprnValidator.IsValidUkprn(x, out _))

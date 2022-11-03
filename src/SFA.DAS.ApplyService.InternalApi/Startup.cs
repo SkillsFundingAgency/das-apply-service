@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -96,12 +97,12 @@ namespace SFA.DAS.ApplyService.InternalApi
                 {
                     setup.Filters.Add(new AuthorizeFilter("Default"));
                 }
-            }).AddFluentValidation(fv =>
-            {
-                fv.RegisterValidatorsFromAssemblyContaining<Startup>();
             });
 
+            services.AddFluentValidationAutoValidation().AddValidatorsFromAssemblyContaining<Startup>();
+
             services.AddApplicationInsightsTelemetry();
+
             services.AddOptions();
 
             services.Configure<List<RoatpSequences>>(_configuration.GetSection("RoatpSequences"));

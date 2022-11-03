@@ -1,21 +1,16 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using FluentAssertions;
-using MediatR;
-using Microsoft.AspNetCore.Hosting;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application;
 using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
 {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Web.Resources;
@@ -24,7 +25,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
         }
 
         [Test]
-        public void Validate_Returns_Valid_When_Ukprn_Is_Valid_And_Whitelisted()
+        public async Task Validate_Returns_Valid_When_Ukprn_Is_Valid_And_Whitelisted()
         {
             var viewModel = new EnterNewUkprnViewModel
             {
@@ -32,7 +33,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
                 Ukprn = "10037482"
             };
 
-            var result = _validator.Validate(viewModel);
+            var result = await _validator.ValidateAsync(viewModel);
 
             Assert.IsTrue(result.IsValid);
         }
@@ -57,7 +58,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
         }
 
         [Test]
-        public void Validate_Returns_Appropriate_Error_When_Ukprn_Is_Not_Whitelisted()
+        public async Task Validate_Returns_Appropriate_Error_When_Ukprn_Is_Not_Whitelisted()
         {
             var viewModel = new EnterNewUkprnViewModel
             {
@@ -65,7 +66,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
                 Ukprn = "10002000"
             };
 
-            var result = _validator.Validate(viewModel);
+            var result = await _validator.ValidateAsync(viewModel);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

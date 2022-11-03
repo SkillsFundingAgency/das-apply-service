@@ -1,4 +1,5 @@
-﻿using FluentValidation.AspNetCore;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -106,10 +107,12 @@ namespace SFA.DAS.ApplyService.Web
             {
                 options.Filters.Add<FeatureToggleFilter>();
             })
-            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ManagementHierarchyValidator>())
             .AddSessionStateTempDataProvider();
 
+            services.AddFluentValidationAutoValidation().AddValidatorsFromAssemblyContaining<ManagementHierarchyValidator>();
+
             services.AddApplicationInsightsTelemetry();
+
             services.AddOptions();
 
             services.Configure<List<TaskListConfiguration>>(_configuration.GetSection("TaskListSequences"));
