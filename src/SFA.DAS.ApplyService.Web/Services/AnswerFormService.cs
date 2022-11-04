@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 }
 
                 answerValues[answerKey[0]].Add(
-                    answerKey.Count() == 1 ? string.Empty : answerKey[1],
+                    answerKey.Length == 1 ? string.Empty : answerKey[1],
                     formVariable.Value.ToString());
             }
 

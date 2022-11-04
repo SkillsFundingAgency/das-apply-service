@@ -184,7 +184,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             var finishSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpWorkflowSequenceIds.Finish, sectionId);
 
-            var sectionPages = finishSection.QnAData.Pages.Count();
+            var sectionPages = finishSection.QnAData.Pages.Count;
             var completedCount = 0;
             var pagesWithAnswers = 0;
             foreach (var page in finishSection.QnAData.Pages)

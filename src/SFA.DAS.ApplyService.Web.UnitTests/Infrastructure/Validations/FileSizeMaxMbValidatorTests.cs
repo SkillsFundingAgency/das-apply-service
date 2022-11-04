@@ -64,7 +64,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Infrastructure.Validations
             result.ErrorMessage.Should().Be(errorMessage);
         }
 
-        private IFormFile CreateFile(string questionId, long sizeBytes)
+        private static IFormFile CreateFile(string questionId, long sizeBytes)
         {
             var file = new Mock<IFormFile>();
             file.Setup(f => f.Name).Returns(questionId);

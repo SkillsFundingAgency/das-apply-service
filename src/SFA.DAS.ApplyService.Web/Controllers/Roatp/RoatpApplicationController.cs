@@ -222,7 +222,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return new Apply { ApplicationId = applicationId, ApplicationStatus = ApplicationStatus.InProgress };
         }
 
-        private string GetRouteName(int? routeId)
+        private static string GetRouteName(int? routeId)
         {
             switch (routeId)
             {

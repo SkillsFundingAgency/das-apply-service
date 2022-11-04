@@ -83,7 +83,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        private Task UpdateOrganisation(Organisation organisation, IDbConnection connection)
+        private static Task UpdateOrganisation(Organisation organisation, IDbConnection connection)
         {
             return connection.ExecuteAsync(
                 "UPDATE [Organisations] " +

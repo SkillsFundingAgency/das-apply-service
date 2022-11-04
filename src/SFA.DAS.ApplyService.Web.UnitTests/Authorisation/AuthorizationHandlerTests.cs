@@ -152,7 +152,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Authorisation
         }
 
 
-        private AuthorizationHandlerContext CreateHandlerContext(IAuthorizationRequirement requirement)
+        private static AuthorizationHandlerContext CreateHandlerContext(IAuthorizationRequirement requirement)
         {
             var handlerContext = new AuthorizationHandlerContext(new[]{ requirement }, new ClaimsPrincipal(), "");
             return handlerContext;
