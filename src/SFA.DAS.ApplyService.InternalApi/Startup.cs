@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO;
 using System.Reflection;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using SFA.DAS.ApplyService.Application.Behaviours;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Services;
@@ -44,7 +46,6 @@ using SFA.DAS.ApplyService.InternalApi.StartupExtensions;
 using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
-using Swashbuckle.AspNetCore.Swagger;
 using CompaniesHouseApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CompaniesHouseApiClient;
 using IQnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.IQnaTokenService;
 using IRoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.IRoatpApiClient;
@@ -54,17 +55,17 @@ using SecurityHeadersExtensions = SFA.DAS.ApplyService.InternalApi.Infrastructur
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
-
+    [ExcludeFromCodeCoverage]
     public class Startup
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IConfiguration _configuration;
         private const string _serviceName = "SFA.DAS.ApplyService";
         private const string _version = "1.0";
 
         private readonly IApplyConfig _applyConfig;
 
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
             _configuration = configuration;
@@ -95,11 +96,11 @@ namespace SFA.DAS.ApplyService.InternalApi
                 {
                     setup.Filters.Add(new AuthorizeFilter("Default"));
                 }
-            }).AddFluentValidation(fv =>
-            {
-                fv.RegisterValidatorsFromAssemblyContaining<Startup>();
-            })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            });
+
+            services.AddFluentValidationAutoValidation().AddValidatorsFromAssemblyContaining<Startup>();
+
+            services.AddApplicationInsightsTelemetry();
 
             services.AddOptions();
 
@@ -114,20 +115,14 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.ApplyService.InternalApi", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SFA.DAS.ApplyService.InternalApi", Version = "v1" });
                 c.CustomSchemaIds(x => x.FullName); // Fixes issue when the same type name appears twice
-                if (_hostingEnvironment.IsDevelopment())
-                {
-                    var basePath = AppContext.BaseDirectory;
-                    var xmlPath = Path.Combine(basePath, "SFA.DAS.ApplyService.InternalApi.xml");
-                    c.IncludeXmlComments(xmlPath);
-                }
             });
 
             ConfigureDependencyInjection(services);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             MappingStartup.AddMappings();
 
@@ -143,22 +138,25 @@ namespace SFA.DAS.ApplyService.InternalApi
             }
 
             app.UseSwagger()
-                    .UseSwaggerUI(c =>
-                    {
-                        c.SwaggerEndpoint("/swagger/v1/swagger.json", "SFA.DAS.ApplyService.InternalApi v1");
-                    })
-                    .UseAuthentication();
+                .UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "SFA.DAS.ApplyService.InternalApi v1");
+                    c.RoutePrefix = string.Empty;
+                })
+                .UseAuthentication();
 
             app.UseRequestLocalization();
             SecurityHeadersExtensions.UseSecurityHeaders(app);
 
+            app.UseRouting();
             app.UseAuthentication();
+            app.UseAuthorization();
             app.UseHealthChecks("/health");
-            app.UseMvc(routes =>
+            app.UseEndpoints(routes =>
             {
-                routes.MapRoute(
+                routes.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
 
@@ -205,7 +203,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
-                 sp.GetService<IHostingEnvironment>(),
+                 sp.GetService<IWebHostEnvironment>(),
                  _configuration["EnvironmentName"],
                  _configuration["ConfigurationStorageConnectionString"],
                  _version,

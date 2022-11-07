@@ -1,24 +1,23 @@
-using System;
-using System.ComponentModel;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
-using SFA.DAS.ApplyService.Session;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Configuration
 {
     public class ConfigurationService : IConfigurationService
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly string _environment;
         private readonly string _storageConnectionString;
         private readonly string _version;
         private readonly string _serviceName;
 
-        public ConfigurationService(IHostingEnvironment hostingEnvironment, string environment,
+        public ConfigurationService(IWebHostEnvironment hostingEnvironment, string environment,
             string storageConnectionString, string version, string serviceName)
         {
             _hostingEnvironment = hostingEnvironment;
@@ -32,7 +31,7 @@ namespace SFA.DAS.ApplyService.Configuration
 
         public async Task<IApplyConfig> GetConfig()
         {
-            //var applyConfig = _sessionService.Get<ApplyConfig>("ApplyConfig");
+            //This class is registered as singleton, so it is possible that the _applyConfig is already populated
             if (_applyConfig != null) return _applyConfig;
             
             if (_environment == null || _storageConnectionString == null)
@@ -57,7 +56,7 @@ namespace SFA.DAS.ApplyService.Configuration
                 }`");
                 }
 
-                throw new Exception(
+                throw new InvalidOperationException(
                     "Cannot find settings 'EnvironmentName' and 'ConfigurationStorageConnectionString'");
             }
 
@@ -79,7 +78,7 @@ namespace SFA.DAS.ApplyService.Configuration
                         "Could not connect to Storage to retrieve settings.  Please ensure you have a Azure Storage server (azure or local emulator) configured with a `Configuration` table and the correct row.  See README.MD for details.");
                 }
 
-                throw new Exception("Could not connect to Storage to retrieve settings.", e);
+                throw new InvalidOperationException("Could not connect to Storage to retrieve settings.", e);
             }
 
             var dynResult = result.Result as DynamicTableEntity;
@@ -91,7 +90,7 @@ namespace SFA.DAS.ApplyService.Configuration
                         "Cannot open Configuration table. Please ensure you have a Azure Storage server (azure or local emulator) configured with a `Configuration` table and the correct row.  See README.MD for details.");
                 }
 
-                throw new Exception("Cannot open Configuration table.");
+                throw new InvalidOperationException("Cannot open Configuration table.");
             }
 
             var data = dynResult.Properties["Data"].StringValue;

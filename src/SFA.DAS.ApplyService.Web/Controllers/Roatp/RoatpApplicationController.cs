@@ -25,7 +25,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     using EmailService.Interfaces;
     using Infrastructure.Validations;
     using Microsoft.Extensions.Options;
-    using MoreLinq;
     using Roatp;
     using Services;
     using Validators;
@@ -223,7 +222,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return new Apply { ApplicationId = applicationId, ApplicationStatus = ApplicationStatus.InProgress };
         }
 
-        private string GetRouteName(int? routeId)
+        private static string GetRouteName(int? routeId)
         {
             switch (routeId)
             {

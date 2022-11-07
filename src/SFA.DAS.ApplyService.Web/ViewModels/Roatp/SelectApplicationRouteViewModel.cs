@@ -34,15 +34,13 @@
         { 
             get 
             {
-                if (ApplicationId != null && ApplicationId != Guid.Empty)
+                if (ApplicationId != Guid.Empty)
                 {
                     return "ChangeApplicationProviderRoute";
                 }   
                 return "SelectApplicationRoute"; 
-            } 
-            set 
-            { 
-            } 
+            }
+            set { }
         }
 
         public string LevyPayingEmployer { get; set; }

@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
@@ -36,25 +34,28 @@ using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace SFA.DAS.ApplyService.Web
 {
+    [ExcludeFromCodeCoverage]
     public class Startup
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<Startup> _logger;
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IApplyConfig _configService;
         private const string ServiceName = "SFA.DAS.ApplyService";
         private const string Version = "1.0";
 
-        public Startup(IConfiguration configuration, ILogger<Startup> logger, IHostingEnvironment hostingEnvironment, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger, IWebHostEnvironment hostingEnvironment, IWebHostEnvironment env)
         {
             _configuration = configuration;
             _logger = logger;
             _hostingEnvironment = hostingEnvironment;
-            _env = env;
             _configService =  new ConfigurationService(env, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], Version, ServiceName).GetConfig().GetAwaiter().GetResult();
         }
 
@@ -104,9 +105,11 @@ namespace SFA.DAS.ApplyService.Web
             {
                 options.Filters.Add<FeatureToggleFilter>();
             })
-            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ManagementHierarchyValidator>())
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
             .AddSessionStateTempDataProvider();
+
+            services.AddFluentValidationAutoValidation().AddValidatorsFromAssemblyContaining<ManagementHierarchyValidator>();
+
+            services.AddApplicationInsightsTelemetry();
 
             services.AddOptions();
 
@@ -117,8 +120,8 @@ namespace SFA.DAS.ApplyService.Web
             services.Configure<List<NotRequiredOverrideConfiguration>>(_configuration.GetSection("NotRequiredOverrides"));
             services.Configure<List<OuterApiConfiguration>>(_configuration.GetSection("OuterApiConfiguration"));
 
-            services.AddCache(_configService, _env);
-            services.AddDataProtection(_configService, _env);
+            services.AddCache(_configService, _hostingEnvironment);
+            services.AddDataProtection(_configService, _hostingEnvironment);
 
             services.AddSession(opt =>
             {
@@ -226,7 +229,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
-                sp.GetService<IHostingEnvironment>(),
+                sp.GetService<IWebHostEnvironment>(),
                 _configuration["EnvironmentName"],
                 _configuration["ConfigurationStorageConnectionString"],
                 "1.0",
@@ -298,7 +301,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddDfeSignInAuthorization(configService.GetConfig().Result, _logger, _hostingEnvironment);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             MappingStartup.AddMappings();
 
@@ -308,23 +311,25 @@ namespace SFA.DAS.ApplyService.Web
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Error/{0}");
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }
-            
+
+            app.UseRouting();
             app.UseSession();
             app.UseRequestLocalization();
             app.UseStatusCodePagesWithReExecute("/Home/error/{0}");
             app.UseSecurityHeaders();
             app.UseStaticFiles();
             app.UseAuthentication();
+            app.UseAuthorization();
             app.UseHealthChecks("/health");
-            app.UseMvc(routes =>
+            app.UseEndpoints(routes =>
             {
-                routes.MapRoute(
+                routes.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

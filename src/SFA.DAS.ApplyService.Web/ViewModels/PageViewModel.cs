@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -132,7 +131,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
                 Options = q.Input.Options,
                 Validations = q.Input.Validations,
                 Value = answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
-                JsonValue = GetJsonValue(answers, q),
+                JsonValue = PageViewModel.GetJsonValue(answers, q),
                 ErrorMessages = errorMessages?.Where(f => f.Field.Split("_Key_")[0] == q.QuestionId).ToList(),
                 SequenceId = SequenceId,
                 SectionId = SectionId,
@@ -179,7 +178,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
             CTAButtonText = ctaButtonText;
         }
 
-        private string GetMultipleValue(List<Answer> answers, Question question, List<ValidationErrorDetail> errorMessages)
+        private static string GetMultipleValue(List<Answer> answers, Question question, List<ValidationErrorDetail> errorMessages)
         {
             if (errorMessages != null && errorMessages.Any())
             {
@@ -189,7 +188,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
             return null;
         }
 
-        private dynamic GetJsonValue(List<Answer> answers, Question question)
+        private static dynamic GetJsonValue(List<Answer> answers, Question question)
         {
             var json = answers?.SingleOrDefault(a => a?.QuestionId == question.QuestionId)?.Value;
             try

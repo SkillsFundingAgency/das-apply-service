@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Extensions.Hosting;
 using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public class QnaTokenService : IQnaTokenService
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IConfigurationService _configurationService;
 
-        public QnaTokenService(IConfigurationService configurationService, IHostingEnvironment hostingEnvironment)
+        public QnaTokenService(IConfigurationService configurationService, IWebHostEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
             _configurationService = configurationService;

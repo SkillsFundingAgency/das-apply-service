@@ -5,7 +5,7 @@ using NLog.Web;
 
 namespace SFA.DAS.ApplyService.Web
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -26,9 +26,7 @@ namespace SFA.DAS.ApplyService.Web
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseApplicationInsights()
                 .UseUrls("https://localhost:6016", "http://localhost:6015")
-                .UseKestrel()
                 .UseNLog();
     }
 }

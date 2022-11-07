@@ -28,9 +28,9 @@ GO
 
 CREATE UNIQUE INDEX [IXU_Contacts] ON [Contacts] ([Email])
 GO
-CREATE INDEX [IX_Contacts_UKPRN] ON [Contacts] ([ApplyOrganisationId])
+CREATE INDEX [IX_Contacts_UKPRN] ON [Contacts] ([ApplyOrganisationID])
 GO
-CREATE INDEX [IX_Contacts_SignInId] ON [Contacts] ([SignInId])
+CREATE INDEX [IX_Contacts_SignInId] ON [Contacts] ([SigninId])
 GO
-CREATE INDEX [IX_Contacts_SignInType] ON [Contacts] ([SignInType])
+CREATE INDEX [IX_Contacts_SignInType] ON [Contacts] ([SigninType])
 GO

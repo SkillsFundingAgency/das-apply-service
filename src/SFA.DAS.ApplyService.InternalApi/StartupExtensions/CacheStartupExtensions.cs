@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.InternalApi.StartupExtensions
 {
     public static class CacheStartupExtensions
     {
-        public static IServiceCollection AddCache(this IServiceCollection services, IApplyConfig configuration, IHostingEnvironment environment)
+        public static IServiceCollection AddCache(this IServiceCollection services, IApplyConfig configuration, IWebHostEnvironment environment)
         {
             if (environment.IsDevelopment())
             {

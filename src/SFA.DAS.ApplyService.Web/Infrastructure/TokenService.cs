@@ -1,15 +1,16 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Extensions.Hosting;
 using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public class TokenService : ITokenService
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IConfigurationService _configurationService;
 
-        public TokenService(IHostingEnvironment hostingEnvironment, IConfigurationService configurationService)
+        public TokenService(IWebHostEnvironment hostingEnvironment, IConfigurationService configurationService)
         {
             _hostingEnvironment = hostingEnvironment;
             _configurationService = configurationService;

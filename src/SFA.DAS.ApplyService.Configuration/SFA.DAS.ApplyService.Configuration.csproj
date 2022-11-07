@@ -1,22 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
       <ProjectGuid>{2B3A5F1C-D63B-4A0F-888A-CEFBF919907D}</ProjectGuid>
-      <TargetFramework>netstandard2.0</TargetFramework>
+      <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions">
-        <Version>2.1.1</Version>
-      </PackageReference>
-      <PackageReference Include="WindowsAzure.Storage">
-        <Version>9.3.2</Version>
-      </PackageReference>
+      <PackageReference Include="Microsoft.AspNetCore.App" />
+      <PackageReference Include="WindowsAzure.Storage" Version="9.3.2" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\SFA.DAS.ApplyService.Session\SFA.DAS.ApplyService.Session.csproj" />
     </ItemGroup>
-
-
 </Project>

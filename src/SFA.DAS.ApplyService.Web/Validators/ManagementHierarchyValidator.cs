@@ -44,14 +44,12 @@ namespace SFA.DAS.ApplyService.Web.Validators
                 .NotEmpty().WithMessage(JobRoleMinLengthError)
                 .MaximumLength(255).WithMessage(JobRoleMaxLengthError);
 
-            RuleFor(x => x.TimeInRoleMonths)
-                .Transform(value => long.TryParse(value, out long val) ? (long?)val : null)
+            Transform(x => x.TimeInRoleMonths, value => long.TryParse(value, out long val) ? (long?)val : null)
                 .NotEmpty().WithMessage(TimeInRoleError)
                 .LessThanOrEqualTo(11).WithMessage(TimeInRoleMonthsTooBigError)
                 .DependentRules(() =>
                 {
-                    RuleFor(x => x.TimeInRoleYears)
-                        .Transform(value => long.TryParse(value, out long val) ? (long?)val : null)
+                    Transform(x => x.TimeInRoleYears, value => long.TryParse(value, out long val) ? (long?)val : null)
                         .NotEmpty().WithMessage(TimeInRoleError)
                         .LessThanOrEqualTo(99).WithMessage(TimeInRoleYearsTooBigError);
                 });

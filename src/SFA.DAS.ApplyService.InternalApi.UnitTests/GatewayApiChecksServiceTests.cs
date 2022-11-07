@@ -229,11 +229,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             };
             _roatpApiClient.Setup(x => x.GetUkrlpDetails(_ukprn)).ReturnsAsync(_ukrlpDetails);
 
-            Charity charityDetails = null;
             _outerApiClient.Setup(x => x.GetCharityDetails(charityNumber)).Throws<HttpRequestException>();
 
             Func<Task> serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId);
-            serviceCall.Should().Throw<ServiceUnavailableException>();
+            await serviceCall.Should().ThrowAsync<ServiceUnavailableException>();
         }
     }
 }

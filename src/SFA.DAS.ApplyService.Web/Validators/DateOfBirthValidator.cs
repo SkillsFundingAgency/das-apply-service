@@ -1,7 +1,6 @@
 ﻿using SFA.DAS.ApplyService.Domain.Apply;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace SFA.DAS.ApplyService.Web.Validators
 {
@@ -125,12 +124,8 @@ namespace SFA.DAS.ApplyService.Web.Validators
                         errorMessages.Add(errorMessage);
                     }
                 }
-
             }
-
             return errorMessages;
-
         }
-
     }
 }

@@ -232,7 +232,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 FormAction = GroundsOfAppealViewModel.SUBMIT_APPEAL_FORMACTION
             };
 
-            var result = await _controller.GroundsOfAppeal(model);
+            await _controller.GroundsOfAppeal(model);
 
             _appealsApiClient.Verify(x => x.MakeAppeal(_applicationId, howFailedOnPolicyOrProcesses, howFailedOnEvidenceSubmitted, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
@@ -272,7 +272,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 AppealFileToUpload = appealFile
             };
 
-            var result = await _controller.GroundsOfAppeal(model);
+            await _controller.GroundsOfAppeal(model);
 
             _appealsApiClient.Verify(x => x.UploadFile(_applicationId, appealFile, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
@@ -310,7 +310,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 FormAction = $"{GroundsOfAppealViewModel.DELETE_APPEALFILE_FORMACTION}{GroundsOfAppealViewModel.FORMACTION_SEPERATOR}{fileName}",
             };
 
-            var result = await _controller.GroundsOfAppeal(model);
+            await _controller.GroundsOfAppeal(model);
 
             _appealsApiClient.Verify(x => x.DeleteFile(_applicationId, fileName, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
@@ -369,7 +369,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public async Task CancelAppeal_verify_CancelAppeal_api_call()
         {
-            var result = await _controller.CancelAppeal(_applicationId);
+            await _controller.CancelAppeal(_applicationId);
 
             _appealsApiClient.Verify(x => x.CancelAppeal(_applicationId, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
@@ -558,11 +558,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var applicationId = Guid.NewGuid();
 
-            var viewModel = new ApplicationSummaryViewModel
-            {
-                ApplicationId = applicationId
-            };
-
             var result = await _controller.RequestNewInvitation(applicationId);
 
             var viewResult = result as RedirectToActionResult;
@@ -573,7 +568,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task Application_new_invitation_refresh_requested()
+        public void Application_new_invitation_refresh_requested()
         {
             var applicationId = Guid.NewGuid();
 
@@ -582,7 +577,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationId = applicationId
             };
 
-            var result = await _controller.RequestNewInvitationRefresh(applicationId);
+            var result = _controller.RequestNewInvitationRefresh(applicationId);
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();

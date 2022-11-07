@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MoreLinq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
@@ -185,7 +184,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             var finishSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpWorkflowSequenceIds.Finish, sectionId);
 
-            var sectionPages = finishSection.QnAData.Pages.Count();
+            var sectionPages = finishSection.QnAData.Pages.Count;
             var completedCount = 0;
             var pagesWithAnswers = 0;
             foreach (var page in finishSection.QnAData.Pages)
@@ -194,7 +193,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 {
                     pagesWithAnswers++;
                     var pageofAnswers = page.PageOfAnswers.FirstOrDefault();
-                    foreach (var answer in pageofAnswers.Answers)
+                    foreach (var answer in pageofAnswers?.Answers)
                     {
                         if (answer.Value == ConfirmedAnswer)
                         {

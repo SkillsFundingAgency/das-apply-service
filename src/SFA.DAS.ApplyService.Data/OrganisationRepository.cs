@@ -83,7 +83,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        private Task UpdateOrganisation(Organisation organisation, IDbConnection connection)
+        private static Task UpdateOrganisation(Organisation organisation, IDbConnection connection)
         {
             return connection.ExecuteAsync(
                 "UPDATE [Organisations] " +
@@ -108,18 +108,6 @@ namespace SFA.DAS.ApplyService.Data
                                 "SET ApplyOrganisationID = @Id " +
                                 "WHERE Id = @userId",
                                 new { organisation.Id, userId });
-            }
-        }
-
-        public async Task UpdateOrganisation(Guid organisationId, Guid userId)
-        {
-            using (var connection = _dbConnectionHelper.GetDatabaseConnection())
-            {
-                connection.Execute(
-                    "UPDATE [Organisations] " +
-                    "SET CreatedBy = @userId " +
-                    "WHERE [Id] = @organisationId",
-                    new { userId, organisationId });
             }
         }
 

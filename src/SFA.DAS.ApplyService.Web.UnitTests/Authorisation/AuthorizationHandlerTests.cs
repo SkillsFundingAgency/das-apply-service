@@ -5,7 +5,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Moq;
@@ -153,7 +152,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Authorisation
         }
 
 
-        private AuthorizationHandlerContext CreateHandlerContext(IAuthorizationRequirement requirement)
+        private static AuthorizationHandlerContext CreateHandlerContext(IAuthorizationRequirement requirement)
         {
             var handlerContext = new AuthorizationHandlerContext(new[]{ requirement }, new ClaimsPrincipal(), "");
             return handlerContext;

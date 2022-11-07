@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -71,7 +70,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Infrastructure.Validations
             result.ErrorMessage.Should().Be(config.ErrorMessage);
         }
 
-        private IFormFile CreateFile(string questionId, long sizeBytes)
+        private static IFormFile CreateFile(string questionId, long sizeBytes)
         {
             var file = new Mock<IFormFile>();
             file.Setup(f => f.Name).Returns(questionId);

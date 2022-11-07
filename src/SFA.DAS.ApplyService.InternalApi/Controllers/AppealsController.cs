@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Appeals.Commands.DeleteAppealFile;
@@ -19,7 +18,7 @@ using SFA.DAS.ApplyService.InternalApi.Extensions;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppealFileList;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.CancelAppeal;
-using SFA.DAS.ApplyService.Application.Apply.Oversight;
+using Microsoft.AspNetCore.Http;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
