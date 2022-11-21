@@ -5,7 +5,8 @@ trigger:
       - "master"
 
 variables:
-  - group: "ESFA - SonarCloud"
+  - group: BUILD Management Resources
+  - group: ESFA - SonarCloud
   - name: buildConfiguration
     value: 'release'
   - name: buildPlatform
