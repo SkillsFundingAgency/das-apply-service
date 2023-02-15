@@ -525,7 +525,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [TestCase("National College", 3, ProviderTypeMain)]
         [TestCase("Sixth Form College", 4, ProviderTypeMain)]
         [TestCase("Further Education Institute", 5, ProviderTypeMain)]
-        [TestCase("Higher Education Institute", 6, ProviderTypeMain)]
+        [TestCase("Higher Education Institute or university", 6, ProviderTypeMain)]
         [TestCase("Academy", 7, ProviderTypeMain)]
         [TestCase("Multi-Academy Trust", 8, ProviderTypeMain)]
         [TestCase("School", 1, ProviderTypeSupporting)]
@@ -534,6 +534,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [TestCase("Sixth Form College", 4, ProviderTypeSupporting)]
         [TestCase("Further Education Institute", 5, ProviderTypeSupporting)]
         [TestCase("Higher Education Institute or university", 6, ProviderTypeSupporting)]
+        [TestCase("Academy", 7, ProviderTypeSupporting)]
+        [TestCase("Multi-Academy Trust", 8, ProviderTypeSupporting)]
+        [TestCase("Rail franchise", 21, ProviderTypeMain)]
         public void Registration_details_maps_organisation_type_for_educational_institute_main_supporting_provider(string organisationType, int organisationTypeId, int providerTypeId)
         {
             var applicationId = Guid.NewGuid();
