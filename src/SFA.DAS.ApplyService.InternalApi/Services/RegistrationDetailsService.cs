@@ -164,12 +164,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             var organisationDetailsAnswers = educationOrganisationTypePage.PageOfAnswers.FirstOrDefault();
             var organisationTypeAnswer = organisationDetailsAnswers.Answers.FirstOrDefault(x => x.QuestionId == educationOrganisationTypeQuestionId);
 
-            if (organisationTypeAnswer.Value != null)
-            {
-                if (organisationTypeAnswer.Value == "Higher Education Institute or university")
-                    organisationTypeAnswer.Value = "Higher Education Institute";
-            }
-
             var matchingOrganisationType = organisationTypes.FirstOrDefault(x => x.Type.Equals(organisationTypeAnswer.Value.ToString()));
 
             if (matchingOrganisationType != null)

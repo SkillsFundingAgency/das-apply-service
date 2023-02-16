@@ -82,7 +82,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 new OrganisationType
                 {
                     Id = 6,
-                    Type = "Higher Education Institute"
+                    Type = "Higher Education Institute or university"
                 },
                 new OrganisationType
                 {
@@ -605,7 +605,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [TestCase("National College", 3)]
         [TestCase("Sixth Form College", 4)]
         [TestCase("Further Education Institute", 5)]
-        [TestCase("Higher Education Institute", 6)]
+        [TestCase("Higher Education Institute or university", 6)]
         [TestCase("Academy", 7)]
         [TestCase("Multi-Academy Trust", 8)]
         [TestCase("Rail franchise", 21)]
