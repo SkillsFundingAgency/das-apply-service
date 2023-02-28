@@ -82,7 +82,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 new OrganisationType
                 {
                     Id = 6,
-                    Type = "Higher Education Institute"
+                    Type = "Higher Education Institute or university"
                 },
                 new OrganisationType
                 {
@@ -525,7 +525,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [TestCase("National College", 3, ProviderTypeMain)]
         [TestCase("Sixth Form College", 4, ProviderTypeMain)]
         [TestCase("Further Education Institute", 5, ProviderTypeMain)]
-        [TestCase("Higher Education Institute", 6, ProviderTypeMain)]
+        [TestCase("Higher Education Institute or university", 6, ProviderTypeMain)]
         [TestCase("Academy", 7, ProviderTypeMain)]
         [TestCase("Multi-Academy Trust", 8, ProviderTypeMain)]
         [TestCase("School", 1, ProviderTypeSupporting)]
@@ -533,7 +533,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [TestCase("National College", 3, ProviderTypeSupporting)]
         [TestCase("Sixth Form College", 4, ProviderTypeSupporting)]
         [TestCase("Further Education Institute", 5, ProviderTypeSupporting)]
-        [TestCase("Higher Education Institute", 6, ProviderTypeSupporting)]
+        [TestCase("Higher Education Institute or university", 6, ProviderTypeSupporting)]
         [TestCase("Academy", 7, ProviderTypeSupporting)]
         [TestCase("Multi-Academy Trust", 8, ProviderTypeSupporting)]
         [TestCase("Rail franchise", 21, ProviderTypeMain)]
@@ -605,7 +605,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [TestCase("National College", 3)]
         [TestCase("Sixth Form College", 4)]
         [TestCase("Further Education Institute", 5)]
-        [TestCase("Higher Education Institute", 6)]
+        [TestCase("Higher Education Institute or university", 6)]
         [TestCase("Academy", 7)]
         [TestCase("Multi-Academy Trust", 8)]
         [TestCase("Rail franchise", 21)]
