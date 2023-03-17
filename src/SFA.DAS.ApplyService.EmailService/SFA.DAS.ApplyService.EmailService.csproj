@@ -13,7 +13,6 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.2" />
-      <PackageReference Include="Sendgrid" Version="9.28.1" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
       <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.1.12" />
     </ItemGroup>
