@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
+using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Controllers;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
+using SFA.DAS.ApplyService.Web.ViewModels;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
@@ -22,6 +25,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<ISessionService> _sessionService;
         private UsersController _userController;
         private Mock<IReapplicationCheckService> _reapplicationCheckService;
+        private Mock<IConfigurationService> _configurationService;
         private Guid _userSignInId;
 
         [SetUp]
@@ -44,9 +48,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _usersApiClient = new Mock<IUsersApiClient>();
             _sessionService = new Mock<ISessionService>();
             _reapplicationCheckService = new Mock<IReapplicationCheckService>();
+            _configurationService = new Mock<IConfigurationService>();
 
             _userController = new UsersController(_usersApiClient.Object, _sessionService.Object,
-                _reapplicationCheckService.Object)
+                _reapplicationCheckService.Object, _configurationService.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -77,6 +82,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.ActionName.Should().Be("SignIn");
         }
 
+        public ApplyConfig GetResult()
+        {
+            return new ApplyConfig { UseGovSignIn = false };
+        }
+
         [Test]
         public void ExistingAccountViewModel_When_Invalid_FirstTimeSignin_RedirectsTo_ExistingAccount()
         {
@@ -89,6 +99,31 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("ExistingAccount.cshtml");
             viewResult.Model.Should().BeEquivalentTo(model);
+        }
+
+        [Test]
+        public void ExistingAccountViewModel_When_GovSignIn_False_Returns_ExistingAccount()
+        {
+            _configurationService.Setup(x => x.GetConfig()).Returns(Task.FromResult((IApplyConfig)new ApplyConfig { UseGovSignIn = false }));
+
+            var result = _userController.ExistingAccount();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.Model.Should().NotBeNull();
+            viewResult.Model.Should().BeOfType<ExistingAccountViewModel>();
+        }
+
+        [Test]
+        public void ExistingAccountViewModel_When_GovSignIn_RedirectsTo_AddUserDetails()
+        {
+            _configurationService.Setup(x => x.GetConfig()).Returns(Task.FromResult((IApplyConfig)new ApplyConfig { UseGovSignIn = true }));
+
+            var result = _userController.ExistingAccount();
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Contain("AddUserDetails");
         }
 
         [Test]
@@ -200,6 +235,130 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var viewResult = result as RedirectToActionResult;
             viewResult.Should().NotBeNull();
             viewResult.ActionName.Should().Be("Applications");
+        }
+
+        [Test]
+        public void AddUserDetails_When_GovSignIn_False_Return_To_Index()
+        {
+            _configurationService.Setup(x => x.GetConfig()).Returns(Task.FromResult((IApplyConfig)new ApplyConfig { UseGovSignIn = false }));
+
+            var result = _userController.AddUserDetails();
+
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Contain("Index");
+        }
+
+        [Test]
+        public void AddUserDetails_When_GovSignIn_True_Return_AddUserDetailsViewModel()
+        {
+            _configurationService.Setup(x => x.GetConfig()).Returns(Task.FromResult((IApplyConfig)new ApplyConfig { UseGovSignIn = true }));
+
+            var result = _userController.AddUserDetails();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.Model.Should().NotBeNull();
+            viewResult.Model.Should().BeOfType<AddUserDetailsViewModel>();
+        }
+
+        [Test]
+        public async Task Post_AddUserDetails_When_InValid_ModelState_Return_AddUserDetailsViewModel()
+        {
+            // arrange
+            _userController.ModelState.AddModelError("FirstName", "First Name is Required");
+            _userController.ModelState.AddModelError("LastName", "Last Name is Required");
+            
+            // sut
+            var result = await _userController.AddUserDetails(new AddUserDetailsViewModel());
+            var modelState = _userController.ModelState;
+
+            // assert
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.Model.Should().NotBeNull();
+            modelState.Should().NotBeNull();
+            modelState.Should().HaveCount(2);
+        }
+
+        [Test]
+        public async Task Post_AddUserDetails_When_ContactFound_Redirect_PostSignIn()
+        {
+            // arrange
+            var contact = new Contact { SigninId = Guid.NewGuid() };
+            _usersApiClient.Setup(x => x.GetUserByEmail(It.IsAny<string>())).ReturnsAsync(contact);
+
+            // sut
+            var result = await _userController.AddUserDetails(new AddUserDetailsViewModel
+            {
+                FirstName = It.IsAny<string>(),
+                LastName = It.IsAny<string>(),
+            });
+
+            // assert
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Contain("PostSignIn");
+
+            _usersApiClient.Verify(args => args.GetUserByEmail(It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Post_AddUserDetails_When_ContactNotFound_Redirect_PostSignIn()
+        {
+            // arrange
+            _usersApiClient.Setup(x => x.GetUserByEmail(It.IsAny<string>())).ReturnsAsync((Contact)null);
+            _usersApiClient.Setup(x => x.CreateUserFromAsLogin(
+                It.IsAny<Guid>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>())).ReturnsAsync(true);
+
+            // sut
+            var result = await _userController.AddUserDetails(new AddUserDetailsViewModel
+            {
+                FirstName = It.IsAny<string>(),
+                LastName = It.IsAny<string>(),
+            });
+
+            // assert
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Contain("PostSignIn");
+
+            _usersApiClient.Verify(args => args.CreateUserFromAsLogin(It.IsAny<Guid>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Post_AddUserDetails_When_ContactNotFound_And_CreateUser_Fail_Redirect_ErrorPage()
+        {
+            // arrange
+            _usersApiClient.Setup(x => x.GetUserByEmail(It.IsAny<string>())).ReturnsAsync((Contact)null);
+            _usersApiClient.Setup(x => x.CreateUserFromAsLogin(
+                It.IsAny<Guid>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>())).ReturnsAsync(false);
+
+            // sut
+            var result = await _userController.AddUserDetails(new AddUserDetailsViewModel
+            {
+                FirstName = It.IsAny<string>(),
+                LastName = It.IsAny<string>(),
+            });
+
+            // assert
+            var viewResult = result as RedirectToActionResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ActionName.Should().Contain("Error");
+
+            _usersApiClient.Verify(args => args.CreateUserFromAsLogin(It.IsAny<Guid>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>()), Times.Once);
         }
     }
 }

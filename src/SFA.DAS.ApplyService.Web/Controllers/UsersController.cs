@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -19,12 +20,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly IReapplicationCheckService _reapplicationCheckService;
+        private readonly IConfigurationService _configurationService;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService, IConfigurationService configurationService)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _reapplicationCheckService = reapplicationCheckService;
+            _configurationService = configurationService;
         }
 
         [HttpGet]
@@ -118,7 +121,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
                 }
-             }
+            }
 
             var reapplicationRequestedAndPending =
                 await _reapplicationCheckService.ReapplicationRequestedAndPending(signInId, user.ApplyOrganisationId);
@@ -149,6 +152,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [Route("first-time-apprenticeship-service")]
         public IActionResult ExistingAccount()
         {
+            var configuration = _configurationService.GetConfig().GetAwaiter().GetResult();
+
+            // redirect the user to add user details page if GovSignIn is enabled.
+            if (configuration.UseGovSignIn) return RedirectToAction("AddUserDetails");
+
             return View(new ExistingAccountViewModel());
         }
 
@@ -169,6 +177,44 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("SignIn");
             }
+        }
+
+        [HttpGet]
+        public IActionResult AddUserDetails()
+        {
+            var configuration = _configurationService.GetConfig().GetAwaiter().GetResult();
+
+            // redirect the user to home page if GovSignIn is disabled.
+            if (!configuration.UseGovSignIn) return RedirectToAction("Index", "Home");
+
+            return View(new AddUserDetailsViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddUserDetails(AddUserDetailsViewModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            // find the contact by claims email address
+            var email = User.GetEmail();
+            var contact = await _usersApiClient.GetUserByEmail(email);
+
+            // if the contact is not found then create the contact based on the collected information.
+            if (contact is null)
+            {
+                var isUserCreated = await _usersApiClient.CreateUserFromAsLogin(Guid.NewGuid(), email, vm.FirstName, vm.LastName);
+                if (!isUserCreated)
+                {
+                    return RedirectToAction("Error", "Home", new { statusCode = 555 });
+                }
+            }
+
+            _sessionService.Set("AddUserDetails", vm);
+
+            return RedirectToAction("PostSignIn");
         }
     }
 }

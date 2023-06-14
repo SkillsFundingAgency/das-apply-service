@@ -1,0 +1,69 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.AddUserDetailsViewModel
+@{
+    var isError = !ViewData.ModelState.IsValid;
+    ViewBag.Title = (isError ? "Error: " : "") + "Add user details";
+}
+
+@section Navigation
+{
+    @* Do not show any header on this page! *@
+}
+
+<a class="govuk-back-link" asp-controller="Home" asp-action="Index">Back</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <form id="add-user" asp-action="AddUserDetails" asp-controller="Users" method="post" novalidate>
+
+                <partial name="_ValidationSummary" />
+
+                <h1 class="govuk-heading-xl">Add your user details</h1>
+
+                <div class="govuk-form-group" sfa-validation-for="FirstName" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--m" for="FirstName">
+                        First name
+                    </label>
+                    @if (isError)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="FirstName"></span>
+                    }
+                    <input class="govuk-input govuk-!-width-two-thirds"
+                           id="FirstName"
+                           name="FirstName"
+                           type="text"
+                           asp-for="FirstName"
+                           sfa-validation-for="FirstName"
+                           sfa-validationerror-class="govuk-input--error"
+                           autocomplete="given-name"
+                           spellcheck="false"
+                           maxlength="10000" />
+                </div>
+
+                <div class="govuk-form-group" sfa-validation-for="LastName" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--m" for="LastName">
+                        Last name
+                    </label>
+                    @if (isError)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="LastName"></span>
+                    }
+                    <input class="govuk-input govuk-!-width-two-thirds"
+                           id="LastName"
+                           name="LastName"
+                           type="text"
+                           asp-for="LastName"
+                           sfa-validation-for="LastName"
+                           sfa-validationerror-class="govuk-input--error"
+                           autocomplete="family-name"
+                           spellcheck="false"
+                           maxlength="10000" />
+                </div>
+
+                <button class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                    Continue
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
