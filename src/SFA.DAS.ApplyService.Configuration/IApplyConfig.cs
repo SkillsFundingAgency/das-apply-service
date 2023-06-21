@@ -25,5 +25,10 @@ namespace SFA.DAS.ApplyService.Configuration
         AzureActiveDirectoryConfiguration AzureActiveDirectoryConfiguration { get; set; }
 
         FeatureToggles FeatureToggles { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the UseGovSignIn value.
+        /// </summary>
+        bool UseGovSignIn { get; set; }
     }
 }

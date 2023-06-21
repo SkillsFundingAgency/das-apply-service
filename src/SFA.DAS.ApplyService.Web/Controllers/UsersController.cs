@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -19,12 +20,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly IReapplicationCheckService _reapplicationCheckService;
+        private readonly IApplyConfig _applyConfig;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService, IApplyConfig applyConfig)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _reapplicationCheckService = reapplicationCheckService;
+            _applyConfig = applyConfig;
         }
 
         [HttpGet]
@@ -50,6 +53,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult SignIn()
         {
             return Challenge(new AuthenticationProperties() { RedirectUri = Url.Action("PostSignIn", "Users") },
@@ -149,6 +153,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [Route("first-time-apprenticeship-service")]
         public IActionResult ExistingAccount()
         {
+            // read the config for the property UseGovSignIn, if enabled re-direct the user to the GovSignIn Login screen.
+            if (_applyConfig.UseGovSignIn) return RedirectToAction("SignIn");
+
             return View(new ExistingAccountViewModel());
         }
 
