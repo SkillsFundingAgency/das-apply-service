@@ -205,39 +205,5 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             viewResult.ActionName.Should().Be("Applications");
         }
-
-        [Test]
-        public void ExistingAccount_when_GovSignIn_true_redirect_signin()
-        {
-            // arrange
-            _applyConfig.Setup(x => x.UseGovSignIn).Returns(true);
-
-            // sut
-            var result = _userController.ExistingAccount();
-
-            var viewResult = result as RedirectToActionResult;
-
-            // assert
-            viewResult.Should().NotBeNull();
-            viewResult.ActionName.Should().Be("SignIn");
-        }
-
-        [Test]
-        public void ExistingAccount_when_GovSignIn_false_return_viewresult()
-        {
-            // arrange
-            var existingAccountViewModel = new ExistingAccountViewModel();
-            _applyConfig.Setup(x => x.UseGovSignIn).Returns(false);
-
-            // sut
-            var result = _userController.ExistingAccount();
-
-            var viewResult = result as ViewResult;
-
-            // assert
-            viewResult.Should().NotBeNull();
-            viewResult.Model.Should().NotBeNull();
-            viewResult.Model.Should().BeEquivalentTo(existingAccountViewModel);
-        }
     }
 }

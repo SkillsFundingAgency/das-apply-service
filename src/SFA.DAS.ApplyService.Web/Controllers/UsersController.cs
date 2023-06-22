@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Session;
+using SFA.DAS.ApplyService.Web.Constants;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels;
@@ -54,9 +55,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpGet]
         [Authorize]
+        [Route("SignIn")]
         public IActionResult SignIn()
         {
-            return Challenge(new AuthenticationProperties() { RedirectUri = Url.Action("PostSignIn", "Users") },
+            return Challenge(new AuthenticationProperties() { RedirectUri = Url.Action("AddUserDetails", "Users") },
                 OpenIdConnectDefaults.AuthenticationScheme);
         }
 
@@ -150,17 +152,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        [Route("first-time-apprenticeship-service")]
+        [Route(RouteNames.ExistingAccount)]
         public IActionResult ExistingAccount()
         {
-            // read the config for the property UseGovSignIn, if enabled re-direct the user to the GovSignIn Login screen.
-            if (_applyConfig.UseGovSignIn) return RedirectToAction("SignIn");
-
             return View(new ExistingAccountViewModel());
         }
 
         [HttpPost]
-        [Route("first-time-apprenticeship-service")]
+        [Route(RouteNames.ExistingAccount)]
         public IActionResult ConfirmExistingAccount(ExistingAccountViewModel model)
         {
             if (!ModelState.IsValid)
@@ -176,6 +175,22 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("SignIn");
             }
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route(RouteNames.AddUserDetails)]
+        public IActionResult AddUserDetails()
+        {
+            return View(new AddUserDetailsViewModel());
+        }
+
+        [HttpPost]
+        [Route(RouteNames.AddUserDetails)]
+        public IActionResult AddUserDetails(AddUserDetailsViewModel vm)
+        {
+            // implementation will be covered in the upcoming user story FAI-799
+            return RedirectToAction("ExistingAccount");
         }
     }
 }
