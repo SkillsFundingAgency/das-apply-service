@@ -189,7 +189,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [Route(RouteNames.AddUserDetails)]
         public IActionResult AddUserDetails(AddUserDetailsViewModel vm)
         {
-            // implementation will be covered in the upcoming user story FAI-799
+            // model validation & other implementations will be covered in the upcoming user story FAI-799.
             return RedirectToAction("ExistingAccount");
         }
     }
