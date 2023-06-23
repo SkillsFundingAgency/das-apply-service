@@ -76,7 +76,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         /// <summary>
-        /// Api endpoint to get the contact by email address.
+        /// Api endpoint to get the contact by given email address parameter.
         /// </summary>
         /// <param name="email">Email address.</param>
         /// <returns>Contact</returns>

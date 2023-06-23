@@ -29,6 +29,6 @@ namespace SFA.DAS.ApplyService.Configuration
         /// <summary>
         /// Gets or Sets the UseGovSignIn value.
         /// </summary>
-        bool UseGovSignIn {get; set; }
+        bool UseGovSignIn { get; set; }
     }
 }

@@ -1,17 +1,23 @@
 using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
+using SFA.DAS.ApplyService.Web.Constants;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
@@ -20,14 +26,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly IReapplicationCheckService _reapplicationCheckService;
-        private readonly IConfigurationService _configurationService;
+        private readonly IApplyConfig _applyConfig;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService, IConfigurationService configurationService)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService, IApplyConfig applyConfig)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _reapplicationCheckService = reapplicationCheckService;
-            _configurationService = configurationService;
+            _applyConfig = applyConfig;
         }
 
         [HttpGet]
@@ -53,9 +59,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
+        [Route("SignIn")]
         public IActionResult SignIn()
         {
-            return Challenge(new AuthenticationProperties() { RedirectUri = Url.Action("PostSignIn", "Users") },
+            return Challenge(new AuthenticationProperties() { RedirectUri = Url.Action("AddUserDetails", "Users") },
                 OpenIdConnectDefaults.AuthenticationScheme);
         }
 
@@ -149,19 +157,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        [Route("first-time-apprenticeship-service")]
+        [Route(RouteNames.ExistingAccount)]
         public IActionResult ExistingAccount()
         {
-            var configuration = _configurationService.GetConfig().GetAwaiter().GetResult();
-
-            // redirect the user to add user details page if GovSignIn is enabled.
-            if (configuration.UseGovSignIn) return RedirectToAction("AddUserDetails");
+            // redirect the user to SignIn page if GovSignIn is enabled.
+            if (_applyConfig.UseGovSignIn) return RedirectToAction("SignIn");
 
             return View(new ExistingAccountViewModel());
         }
 
         [HttpPost]
-        [Route("first-time-apprenticeship-service")]
+        [Route(RouteNames.ExistingAccount)]
         public IActionResult ConfirmExistingAccount(ExistingAccountViewModel model)
         {
             if (!ModelState.IsValid)
@@ -180,23 +186,29 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddUserDetails()
+        [Authorize]
+        [Route(RouteNames.AddUserDetails)]
+        public async Task<IActionResult> AddUserDetails()
         {
-            var configuration = _configurationService.GetConfig().GetAwaiter().GetResult();
+            // find the contact by claims email address
+            var email = User.GetEmail();
+            if (!string.IsNullOrEmpty(email))
+            {
+                var contact = await _usersApiClient.GetUserByEmail(email);
 
-            // redirect the user to home page if GovSignIn is disabled.
-            if (!configuration.UseGovSignIn) return RedirectToAction("Index", "Home");
-
+                // if the contact is found, redirect the user to PostSignIn page.
+                if (contact is not null) return RedirectToAction("PostSignIn");
+            }
             return View(new AddUserDetailsViewModel());
         }
 
         [HttpPost]
+        [Authorize]
+        [Route(RouteNames.AddUserDetails)]
         public async Task<IActionResult> AddUserDetails(AddUserDetailsViewModel vm)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(vm);
-            }
+            // if the model state is invalid and got validation errors, throw the model state error.
+            if (!ModelState.IsValid) return View(vm);
 
             // find the contact by claims email address
             var email = User.GetEmail();
@@ -205,11 +217,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             // if the contact is not found then create the contact based on the collected information.
             if (contact is null)
             {
-                var isUserCreated = await _usersApiClient.CreateUserFromAsLogin(Guid.NewGuid(), email, vm.FirstName, vm.LastName);
-                if (!isUserCreated)
-                {
-                    return RedirectToAction("Error", "Home", new { statusCode = 555 });
-                }
+                // create the user using the internal Apis.
+                var isUserCreated = await _usersApiClient.CreateUserFromAsLogin(
+                    signInId: User.GetSignInId(),
+                    email: email,
+                    vm.FirstName,
+                    vm.LastName);
+
+                // if the contact could not created, redirect the user to the error page.
+                if (!isUserCreated) return RedirectToAction("Error", "Home", new { statusCode = 555 });
             }
 
             _sessionService.Set("AddUserDetails", vm);

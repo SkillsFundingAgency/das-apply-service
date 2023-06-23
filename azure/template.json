@@ -92,13 +92,14 @@
         }
     },
     "variables": {
-        "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-        "resourceNamePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-' , parameters('serviceName'))]",
-        "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
-        "uiAppServiceName": "[concat(variables('resourceNamePrefix'),'ui-as')]",
-        "apiAppServiceName": "[concat(variables('resourceNamePrefix'),'api-as')]",
-        "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
-        "databaseName": "[concat(variables('resourceNamePrefix'),'-db')]"
+      "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+      "resourceNamePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-' , parameters('serviceName'))]",
+      "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
+      "uiAppServiceName": "[concat(variables('resourceNamePrefix'),'ui-as')]",
+      "apiAppServiceName": "[concat(variables('resourceNamePrefix'),'api-as')]",
+      "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
+      "databaseName": "[concat(variables('resourceNamePrefix'),'-db')]",
+      "applyWebConfigNames": "SFA.DAS.ApplyService:ApplyConfig,SFA.DAS.Apply.GovSignIn"
     },
     "resources": [
         {
@@ -238,8 +239,16 @@
                                     "value": "[parameters('environmentName')]"
                                 },
                                 {
-                                    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                                    "value": "[reference(concat(variables('uiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
+                                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                                  "value": "[reference(concat(variables('uiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
+                                },
+                                {
+                                  "name": "ResourceEnvironmentName",
+                                  "value": "[parameters('resourceEnvironmentName')]"
+                                },
+                                {
+                                  "name": "ConfigNames",
+                                  "value": "[variables('applyWebConfigNames')]"
                                 }
                             ]
                         }
@@ -307,9 +316,9 @@
                                     "value": "[reference(concat(variables('apiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                                 },
                                 {
-                                    "name": "FileStorage:StorageConnectionString",
-                                    "value": "[reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageConnectionString.value]"
-                                }
+                                  "name": "FileStorage:StorageConnectionString",
+                                  "value": "[reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageConnectionString.value]"
+                                }                                
                             ]
                         }
                     },
