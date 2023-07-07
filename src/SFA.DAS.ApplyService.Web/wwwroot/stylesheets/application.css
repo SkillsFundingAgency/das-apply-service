@@ -1347,3 +1347,155 @@
     float: right;
   }
 }
+
+.das-user-navigation {
+    font-family: "GDS Transport",arial,sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 16px;
+    font-size: 1rem;
+    line-height: 1.25;
+    color: #fff;
+    padding: 5px 0;
+}
+
+@media (min-width: 40.0625em) {
+    .das-user-navigation {
+        font-size: 19px;
+        font-size: 1.1875rem;
+        line-height: 1.31579;
+    }
+}
+
+.das-user-navigation {
+    margin: 0 -15px;
+}
+
+@media (min-width: 40.0625em) {
+    .das-user-navigation {
+        float: right;
+    }
+}
+
+.das-user-navigation__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+@media (min-width: 40.0625em) {
+    .das-user-navigation__list-item {
+        float: left;
+        position: relative;
+    }
+}
+
+.das-user-navigation__link {
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 1px solid transparent;
+}
+
+    .das-user-navigation__link:hover {
+        text-decoration: underline;
+    }
+
+    .das-user-navigation__link:focus {
+        outline: 3px solid #fd0;
+        outline-offset: 0;
+    }
+
+.das-user-navigation__list-item--has-sub-menu .das-user-navigation__link:after {
+    position: absolute;
+    right: 15px;
+    top: 17px;
+    border-style: solid;
+    width: 0;
+    height: 0;
+    content: "";
+    border-width: 8px 5px 0 5px;
+    border-color: #fff transparent transparent transparent;
+}
+
+.das-user-navigation__sub-menu--open .das-user-navigation__link:after {
+    top: 15px;
+    border-style: solid;
+    width: 0;
+    height: 0;
+    content: "";
+    border-width: 0 5px 8px 5px;
+    border-color: transparent transparent #1d70b8 transparent;
+}
+
+.das-user-navigation__sub-menu--open > a {
+    background: #fff;
+    color: #1d70b8;
+    position: relative;
+    z-index: 2;
+    border: 1px solid #b1b4b6;
+    border-bottom: 1px solid #fff;
+}
+
+.das-user-navigation__list-item--has-sub-menu .das-user-navigation__link {
+    padding-right: 32px;
+    position: relative;
+}
+
+.das-user-navigation__sub-menu {
+    background: #505a5f;
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+    z-index: 1;
+}
+
+@media (min-width: 48.0625em) {
+    .das-user-navigation__sub-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        padding: 10px 20px;
+        background: #fff;
+        margin-top: -1px;
+        border: 1px solid #b1b4b6;
+    }
+}
+
+@media (min-width: 48.0625em) {
+    .das-user-navigation__sub-menu-list-item {
+        border-bottom: 1px solid #b1b4b6;
+    }
+}
+
+.das-user-navigation__sub-menu-link {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 8px 15px;
+    font-size: 15px;
+}
+
+@media (min-width: 48.0625em) {
+    .das-user-navigation__sub-menu-link {
+        color: #1d70b8;
+        text-decoration: underline;
+        white-space: nowrap;
+        font-size: inherit;
+        margin: 0 -15px;
+        padding: 10px 15px;
+    }
+}
+
+.das-user-navigation__sub-menu-link:focus {
+    outline: 3px solid #fd0;
+    outline-offset: 0;
+}
+
+@media (min-width: 48.0625em) {
+    .das-user-navigation__sub-menu-list-item:last-child {
+        border-bottom: none;
+    }
+}

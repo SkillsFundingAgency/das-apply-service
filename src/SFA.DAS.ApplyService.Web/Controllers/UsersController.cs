@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Session;
@@ -13,6 +14,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
@@ -22,13 +24,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly ISessionService _sessionService;
         private readonly IReapplicationCheckService _reapplicationCheckService;
         private readonly IApplyConfig _applyConfig;
+        private readonly IConfiguration _configuration;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService, IApplyConfig applyConfig)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService, IApplyConfig applyConfig, IConfiguration configuration)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _reapplicationCheckService = reapplicationCheckService;
             _applyConfig = applyConfig;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -226,6 +230,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _sessionService.Set("AddUserDetails", vm);
 
             return RedirectToAction("PostSignIn");
+        }
+
+        [HttpGet]
+        public IActionResult ChangeSignInDetails()
+        {
+            // redirect the user to home page if UseGovSignIn is set false.
+            if (!_applyConfig.UseGovSignIn) return RedirectToAction("Index", "Home");
+
+            return View(new ChangeSignInDetailsViewModel(_configuration["ResourceEnvironmentName"]));
         }
     }
 }

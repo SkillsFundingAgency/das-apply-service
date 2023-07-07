@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Configuration;
@@ -28,6 +29,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IReapplicationCheckService> _reapplicationCheckService;
         private Mock<IApplyConfig> _applyConfig;
         private Guid _userSignInId;
+        private Mock<IConfiguration> _configuration;
 
         [SetUp]
         public void Before_each_test()
@@ -50,9 +52,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService = new Mock<ISessionService>();
             _reapplicationCheckService = new Mock<IReapplicationCheckService>();
             _applyConfig = new Mock<IApplyConfig>();
+            _configuration = new Mock<IConfiguration>();
 
             _userController = new UsersController(_usersApiClient.Object, _sessionService.Object,
-                _reapplicationCheckService.Object, _applyConfig.Object)
+                _reapplicationCheckService.Object, _applyConfig.Object, _configuration.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -394,6 +397,37 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var methodInfo = type.GetMethod("SignIn", Array.Empty<Type>());
             var attributes = methodInfo?.GetCustomAttributes(typeof(AuthorizeAttribute), true);
             Assert.IsTrue(attributes?.Any(), "No AuthorizeAttribute found on SignIn() method");
+        }
+
+        [Test]
+        public void ChangeSignInDetails_Redirect_When_UseGovSignIn_False_Then_The_Redirect_To_Home()
+        {
+            //arrange
+            _applyConfig.Setup(args => args.UseGovSignIn).Returns(false);
+
+            //sut
+            var actual = _userController.ChangeSignInDetails() as RedirectToActionResult;
+
+            //assert
+            actual.Should().NotBeNull();
+            actual?.ActionName.Should().Be("Index");
+            actual?.ControllerName.Should().Be("Home");
+        }
+
+        [Test]
+        public void ChangeSignInDetails_When_UseGovSignIn_True_Then_The_View_Is_Returned_With_Model()
+        {
+            //arrange
+            _configuration.Setup(x => x["ResourceEnvironmentName"]).Returns("test");
+            _applyConfig.Setup(args => args.UseGovSignIn).Returns(true);
+
+            //sut
+            var actual = _userController.ChangeSignInDetails() as ViewResult;
+
+            //assert
+            actual.Should().NotBeNull();
+            var actualModel = actual?.Model as ChangeSignInDetailsViewModel;
+            Assert.AreEqual("https://home.integration.account.gov.uk/settings", actualModel?.SettingsLink);
         }
     }
 }
