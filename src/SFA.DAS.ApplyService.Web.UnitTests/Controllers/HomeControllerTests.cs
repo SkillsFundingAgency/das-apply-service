@@ -26,10 +26,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         public void Index_When_GovSignIn_True_ApplyNowLink_Should_Be_SignIn()
         {
             // arrange
-            HomeIndexViewModel homeIndexViewModel = new()
-            {
-                ApplyNowLink = RouteNames.SignIn
-            };
+            HomeIndexViewModel homeIndexViewModel = new(true);
             _applyConfig.Setup(args => args.UseGovSignIn).Returns(true);
 
             // sut
@@ -46,10 +43,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         public void Index_When_GovSignIn_False_ApplyNowLink_Should_Be_ExistingAccount()
         {
             // arrange
-            HomeIndexViewModel homeIndexViewModel = new()
-            {
-                ApplyNowLink = RouteNames.ExistingAccount
-            };
+            HomeIndexViewModel homeIndexViewModel = new(false);
             _applyConfig.Setup(args => args.UseGovSignIn).Returns(false);
             
             // sut
