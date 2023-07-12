@@ -1357,7 +1357,7 @@
     font-size: 1rem;
     line-height: 1.25;
     color: #fff;
-    padding: 5px 0;
+    border-bottom: 1px solid #b1b4b6;
 }
 
 @media (min-width: 40.0625em) {
@@ -1368,20 +1368,24 @@
     }
 }
 
-.das-user-navigation {
-    margin: 0 -15px;
-}
-
 @media (min-width: 40.0625em) {
-    .das-user-navigation {
-        float: right;
+    .das-user-navigation:after {
+      content: "";
+      display: block;
+      clear: both;
     }
 }
 
 .das-user-navigation__list {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 0 -15px;
+}
+
+@media (min-width: 40.0625em) {
+  .das-user-navigation__list {
+    float: right;
+  }
 }
 
 @media (min-width: 40.0625em) {
@@ -1397,16 +1401,17 @@
     padding: 10px 15px;
     font-size: 16px;
     border: 1px solid transparent;
+    color: #1d70b8;
 }
 
-    .das-user-navigation__link:hover {
-        text-decoration: underline;
-    }
+.das-user-navigation__link:hover {
+    text-decoration: underline;
+}
 
-    .das-user-navigation__link:focus {
-        outline: 3px solid #fd0;
-        outline-offset: 0;
-    }
+.das-user-navigation__link:focus {
+    outline: 3px solid #fd0;
+    outline-offset: 0;
+}
 
 .das-user-navigation__list-item--has-sub-menu .das-user-navigation__link:after {
     position: absolute;
@@ -1417,7 +1422,7 @@
     height: 0;
     content: "";
     border-width: 8px 5px 0 5px;
-    border-color: #fff transparent transparent transparent;
+    border-color: #1d70b8 transparent transparent transparent;
 }
 
 .das-user-navigation__sub-menu--open .das-user-navigation__link:after {
