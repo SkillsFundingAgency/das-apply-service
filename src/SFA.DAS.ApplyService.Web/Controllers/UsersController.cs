@@ -233,6 +233,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult ChangeSignInDetails()
         {
             // redirect the user to home page if UseGovSignIn is set false.
