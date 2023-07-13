@@ -25,15 +25,5 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Models
 
             actual.ApplyNowBtnText.Should().Be(buttonText);
         }
-
-
-        [TestCase(true, "DfE")]
-        [TestCase(false, "ESFA")]
-        public void Then_The_OrganisationName(bool useGovSignIn, string orgName)
-        {
-            var actual = new HomeIndexViewModel(useGovSignIn);
-
-            actual.OrganisationName.Should().Be(orgName);
-        }
     }
 }

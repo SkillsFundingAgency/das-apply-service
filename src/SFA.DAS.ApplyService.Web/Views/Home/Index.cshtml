@@ -21,7 +21,7 @@
                 We'll guide you through the application and you can ask for help on each page. You do not have to complete your application in one go, you can save your details and finish it later.
             </p>
             <p class="govuk-body">
-                @(Model.UseGovSignIn ? "The Department for Education (DfE) will use information:" : "The Education and Skills Funding Agency (ESFA) will use information:")
+                The Department for Education (DfE) will use information:
             </p>
             <ul class="govuk-list govuk-list--bullet">
                 <li>in the public domain to support the assessment of application answers</li>
@@ -50,7 +50,7 @@
                 <li>eligible to receive government funding to train apprentices</li>
             </ul>
             <p class="govuk-body">
-                Being on the RoATP does not mean your organisation is recommended by @Model.OrganisationName. It cannot use @Model.OrganisationName as a 'kite-mark' or an award and will not have an identification number for the RoATP.
+                Being on the RoATP does not mean your organisation is recommended by DfE. It cannot use DfE as a 'kite-mark' or an award and will not have an identification number for the RoATP.
             </p>
         </div>
 
@@ -75,7 +75,7 @@
             <h2 class="govuk-heading-m">What you'll need</h2>
 
             <p class="govuk-body">
-                @(Model.UseGovSignIn ? "Make sure your organisation has:" : "You must have:")
+                @(Model.UseGovSignIn ? "You must have:" : "Make sure your organisation has:")
             </p>
 
             <ul class="govuk-list govuk-list--bullet">

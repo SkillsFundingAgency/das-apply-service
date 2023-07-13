@@ -13,10 +13,5 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
             UseGovSignIn 
                 ? "Start now" 
                 : "Apply now";
-
-        public string OrganisationName =>
-            UseGovSignIn
-                ? "DfE"
-                : "ESFA";
     }
 }
