@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task ThenContactIsReturned(string email)
         {
             var mediator = new Mock<IMediator>();
-            mediator.Setup(m => m.Send(It.IsAny<GetContactByEmailRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new Contact
+            mediator.Setup(m => m.Send(It.Is<GetContactByEmailRequest>(c=>c.Email.Equals(email)), It.IsAny<CancellationToken>())).ReturnsAsync(new Contact
             {
                 Id = Guid.NewGuid(),
                 Email = email

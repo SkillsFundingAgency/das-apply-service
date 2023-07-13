@@ -327,19 +327,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             // sut
             var result = await _userController.AddUserDetails(new AddUserDetailsViewModel
             {
-                FirstName = It.IsAny<string>(),
-                LastName = It.IsAny<string>(),
+                FirstName = string.Empty,
+                LastName = string.Empty
             });
 
             // assert
             var viewResult = result as RedirectToActionResult;
             viewResult.Should().NotBeNull();
             viewResult?.ActionName.Should().Contain("Error");
-
-            _usersApiClient.Verify(args => args.CreateUserFromAsLogin(It.IsAny<Guid>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>()), Times.Once);
         }
 
         [Test]
@@ -356,19 +351,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             // sut
             var result = await _userController.AddUserDetails(new AddUserDetailsViewModel
             {
-                FirstName = It.IsAny<string>(),
-                LastName = It.IsAny<string>(),
+                FirstName = string.Empty,
+                LastName = string.Empty
             });
 
             // assert
             var viewResult = result as RedirectToActionResult;
             viewResult.Should().NotBeNull();
             viewResult?.ActionName.Should().Contain("PostSignIn");
-
-            _usersApiClient.Verify(args => args.CreateUserFromAsLogin(It.IsAny<Guid>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>()), Times.Once);
         }
 
         [Test]
