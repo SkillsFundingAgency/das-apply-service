@@ -1,10 +1,27 @@
-﻿<nav>
-    <ul id="navigation" class="roatp__navigation" aria-label="Top Level Navigation" role="navigation">
-        <li class="roatp__navigation-item roatp__navigation-item--current govuk-!-font-weight-bold" aria-current="page">
-            Appeal overview
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using SFA.DAS.ApplyService.Configuration
+@inject IConfigurationService Config
+@{
+    var config = await Config.GetConfig();
+}
+<nav class="das-user-navigation" id="das-user-navigation">
+    <ul class="das-user-navigation__list" aria-label="Top Level Navigation" role="navigation" role="menu">
+        <li class="das-user-navigation__list-item roatp__navigation roatp__navigation-item" role="menuitem" aria-current="page">
+            <a class="das-user-navigation__link govuk-link govuk-link--no-visited-state" href="javascripts:void(0)">Appeal overview</a>
         </li>
-        <li class="roatp__navigation-item roatp__navigation-item--signout">
-            <a class="govuk-link govuk-link--no-visited-state" asp-action="SignOut" asp-controller="Users">Sign out</a>
+        @if (config is { UseGovSignIn: true })
+        {
+            <li role="menuitem" class="das-user-navigation__list-item das-user-navigation__list-item--has-sub-menu">
+                <a href="/" class="das-user-navigation__link">Settings</a>
+                <ul role="menu" class="das-user-navigation__sub-menu js-hidden" aria-expanded="false">
+                    <li class="das-user-navigation__sub-menu-list-item" role="menuitem">
+                        <a asp-action="ChangeSignInDetails" asp-controller="Users" class="das-user-navigation__sub-menu-link">Change your sign-in details</a>
+                    </li>
+                </ul>
+            </li>
+        }
+        <li class="das-user-navigation__list-item roatp__navigation-item--signout" role="menuitem">
+            <a class="das-user-navigation__link govuk-link govuk-link--no-visited-state" asp-action="SignOut" asp-controller="Users">Sign out</a>
         </li>
     </ul>
 </nav>
