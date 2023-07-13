@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Configuration;
-using SFA.DAS.ApplyService.Web.Constants;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
@@ -17,13 +16,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         public IActionResult Index()
-        {
-            var applyNowLink = RouteNames.ExistingAccount;
-
-            // read the config from the property UseGovSignIn, if enabled re-direct the user to the GovSignIn Login screen.
-            if (_applyConfig.UseGovSignIn) applyNowLink = RouteNames.SignIn;
-
-            return View(new HomeIndexViewModel{ ApplyNowLink = applyNowLink });
+        { 
+            return View(new HomeIndexViewModel(_applyConfig.UseGovSignIn));
         }
 
         public IActionResult ContactUs()
