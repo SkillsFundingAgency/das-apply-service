@@ -74,5 +74,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
            return  await _mediator.Send(new GetContactByIdRequest(contactId));
         }
+
+        /// <summary>
+        /// Api endpoint to get the contact by given email address parameter.
+        /// </summary>
+        /// <param name="email">Email address.</param>
+        /// <returns>Contact</returns>
+        [HttpGet("/Account/Contact/{email}")]
+        public async Task<ActionResult<Contact>> GetByContactEmail(string email)
+        {
+            return await _mediator.Send(new GetContactByEmailRequest(email));
+        }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Session;
@@ -13,6 +14,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
@@ -22,13 +24,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly ISessionService _sessionService;
         private readonly IReapplicationCheckService _reapplicationCheckService;
         private readonly IApplyConfig _applyConfig;
+        private readonly IConfiguration _configuration;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService, IApplyConfig applyConfig)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IReapplicationCheckService reapplicationCheckService, IApplyConfig applyConfig, IConfiguration configuration)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _reapplicationCheckService = reapplicationCheckService;
             _applyConfig = applyConfig;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -124,7 +128,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
                 }
-             }
+            }
 
             var reapplicationRequestedAndPending =
                 await _reapplicationCheckService.ReapplicationRequestedAndPending(signInId, user.ApplyOrganisationId);
@@ -155,6 +159,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [Route(RouteNames.ExistingAccount)]
         public IActionResult ExistingAccount()
         {
+            // redirect the user to SignIn page if GovSignIn is enabled.
+            if (_applyConfig.UseGovSignIn) return RedirectToAction("SignIn");
+
             return View(new ExistingAccountViewModel());
         }
 
@@ -180,17 +187,59 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         [Authorize]
         [Route(RouteNames.AddUserDetails)]
-        public IActionResult AddUserDetails()
+        public async Task<IActionResult> AddUserDetails()
         {
+            // find the contact by claims email address
+            var email = User.GetEmail();
+            if (!string.IsNullOrEmpty(email))
+            {
+                var contact = await _usersApiClient.GetUserByEmail(email);
+
+                // if the contact is found, redirect the user to PostSignIn page.
+                if (contact is not null) return RedirectToAction("PostSignIn");
+            }
             return View(new AddUserDetailsViewModel());
         }
 
         [HttpPost]
+        [Authorize]
         [Route(RouteNames.AddUserDetails)]
-        public IActionResult AddUserDetails(AddUserDetailsViewModel vm)
+        public async Task<IActionResult> AddUserDetails(AddUserDetailsViewModel vm)
         {
-            // model validation & other implementations will be covered in the upcoming user story FAI-799.
-            return RedirectToAction("ExistingAccount");
+            // if the model state is invalid and got validation errors, throw the model state error.
+            if (!ModelState.IsValid) return View(vm);
+
+            // find the contact by claims email address
+            var email = User.GetEmail();
+            var contact = await _usersApiClient.GetUserByEmail(email);
+
+            // if the contact is not found then create the contact based on the collected information.
+            if (contact is null)
+            {
+                // create the user using the internal Apis.
+                var isUserCreated = await _usersApiClient.CreateUserFromAsLogin(
+                    signInId: User.GetSignInId(),
+                    email: email,
+                    vm.FirstName,
+                    vm.LastName);
+
+                // if the contact could not created, redirect the user to the error page.
+                if (!isUserCreated) return RedirectToAction("Error", "Home", new { statusCode = 555 });
+            }
+
+            _sessionService.Set("AddUserDetails", vm);
+
+            return RedirectToAction("PostSignIn");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult ChangeSignInDetails()
+        {
+            // redirect the user to home page if UseGovSignIn is set false.
+            if (!_applyConfig.UseGovSignIn) return RedirectToAction("Index", "Home");
+
+            return View(new ChangeSignInDetailsViewModel(_configuration["ResourceEnvironmentName"]));
         }
     }
 }

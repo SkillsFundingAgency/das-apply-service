@@ -8,6 +8,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Web.ViewModels;
+using Org.BouncyCastle.Cms;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -20,6 +21,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Contact> GetUserBySignInId(Guid signInId);
 
         Task Callback(SignInCallback callback);
+
+        Task<Contact> GetUserByEmail(string email);
     }
 
     public class UsersApiClient : ApiClientBase<UsersApiClient>, IUsersApiClient
@@ -51,6 +54,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task Callback(SignInCallback callback)
         {
             await Post($"/Account/Callback", callback);
+        }
+
+        public async Task<Contact> GetUserByEmail(string email)
+        {
+            return await Get<Contact>($"/Account/Contact/{email}");
         }
     }
 }
