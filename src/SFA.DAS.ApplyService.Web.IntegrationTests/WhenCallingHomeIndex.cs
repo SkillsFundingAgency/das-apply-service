@@ -1,17 +1,15 @@
-﻿using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using AngleSharp.Parser.Html;
+using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Configuration;
-using AngleSharp.Parser.Html;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Configuration;
-using SFA.DAS.ApplyService.Web.Infrastructure;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.IntegrationTests
 {
@@ -31,7 +29,7 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests
             configuration.SetupGet(x => x["ConfigurationStorageConnectionString"]).Returns("UseDevelopmentStorage=true;");
 
             configurationService.Setup(c => c.GetConfig())
-                .ReturnsAsync(new ApplyConfig() {SessionRedisConnectionString = "HelloDave"});
+                .ReturnsAsync(new ApplyConfig() { SessionRedisConnectionString = "HelloDave" });
 
             var builder = new WebHostBuilder();
             builder.ConfigureServices(services =>
@@ -42,7 +40,7 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests
             builder.UseStartup<Startup>();
 
             var testServer = new TestServer(builder);
-            
+
             _client = testServer.CreateClient();
         }
 
@@ -64,7 +62,7 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests
 
             var parser = new HtmlParser();
             var document = await parser.ParseAsync(await response.Content.ReadAsStringAsync());
-            document.Title.Should().Be("Register of apprenticeship training providers service");
+            document.Title.Should().Be("Apprenticeship provider and assessment register service");
         }
     }
 }
