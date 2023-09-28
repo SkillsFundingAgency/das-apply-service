@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Web.StartupExtensions
             if (contact is not null)
             {
                 userId = contact.Id;
-                signInId = Guid.Parse(contact.SigninId.ToString());
+                signInId = contact.SigninId ?? signInId;
             }
 
             return await Task.FromResult<IEnumerable<Claim>>(new List<Claim>
