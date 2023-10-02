@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Web.StartupExtensions
         public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
         {
             var userId = Guid.NewGuid();
-            var signInId = Guid.NewGuid();
+            var signInId = Guid.Empty;
 
             var email = tokenValidatedContext?.Principal?.Claims
                 .First(c => c.Type.Equals(ClaimTypes.Email))
@@ -30,10 +30,7 @@ namespace SFA.DAS.ApplyService.Web.StartupExtensions
             if (contact is not null)
             {
                 claims.Add(new Claim("UserId",$"{userId}"));
-                if (contact.SigninId is not null)
-                {
-                    claims.Add(new Claim("sub",$"{signInId}"));
-                }
+                claims.Add(new Claim("sub",$"{contact.SigninId ?? signInId}"));
             }
             
             return await Task.FromResult<IEnumerable<Claim>>(claims);
