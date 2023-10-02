@@ -322,7 +322,7 @@ namespace SFA.DAS.ApplyService.Web
             if (_configService.UseGovSignIn)
             {
                 services.Configure<GovUkOidcConfiguration>(_configuration.GetSection("GovUkOidcConfiguration"));
-                services.AddAndConfigureGovUkAuthentication(_configuration, typeof(CustomClaims), "", "/SignIn-Stub");
+                services.AddAndConfigureGovUkAuthentication(_configuration, typeof(CustomClaims), "/", "/SignIn-Stub");
             }
             else
             {
