@@ -14,7 +14,6 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
@@ -58,7 +57,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         [Route("SignIn")]
         public IActionResult SignIn()
         {
@@ -185,7 +184,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         [Route(RouteNames.AddUserDetails)]
         public async Task<IActionResult> AddUserDetails()
         {
@@ -202,7 +201,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         [Route(RouteNames.AddUserDetails)]
         public async Task<IActionResult> AddUserDetails(AddUserDetailsViewModel vm)
         {
@@ -233,7 +232,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public IActionResult ChangeSignInDetails()
         {
             // redirect the user to home page if UseGovSignIn is set false.
