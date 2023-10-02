@@ -23,18 +23,20 @@ namespace SFA.DAS.ApplyService.Web.StartupExtensions
                 .Value;
 
             var contact = await GetContactDetails(tokenValidatedContext, email);
+            var claims = new List<Claim>
+            {
+                new ("Email",$"{email}"),
+            };
             if (contact is not null)
             {
-                userId = contact.Id;
-                signInId = contact.SigninId ?? signInId;
+                claims.Add(new Claim("UserId",$"{userId}"));
+                if (contact.SigninId is not null)
+                {
+                    claims.Add(new Claim("sub",$"{signInId}"));
+                }
             }
-
-            return await Task.FromResult<IEnumerable<Claim>>(new List<Claim>
-            {
-                new ("UserId",$"{userId}"),
-                new ("Email",$"{email}"),
-                new ("sub",$"{signInId}")
-            });
+            
+            return await Task.FromResult<IEnumerable<Claim>>(claims);
         }
 
         private static async Task<Contact> GetContactDetails(TokenValidatedContext tokenValidatedContext, string email)
