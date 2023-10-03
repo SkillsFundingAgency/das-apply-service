@@ -361,7 +361,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult?.ActionName.Should().Contain("PostSignIn");
         }
 
-        [Ignore("Not required?")]
+        [Test]
         public void Post_Verify_AddUserDetails_Method_Is_Decorated_With_Authorize_Attribute()
         {
             var type = _userController.GetType();
@@ -371,7 +371,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
 
-        [Ignore("Not required?")]
+        [Test]
         public void Get_Verify_AddUserDetails_Method_Is_Decorated_With_Authorize_Attribute()
         {
             var type = _userController.GetType();

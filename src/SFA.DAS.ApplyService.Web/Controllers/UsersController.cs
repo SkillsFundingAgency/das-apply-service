@@ -184,7 +184,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         [Route(RouteNames.AddUserDetails)]
         public async Task<IActionResult> AddUserDetails()
         {
@@ -201,7 +201,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         [Route(RouteNames.AddUserDetails)]
         public async Task<IActionResult> AddUserDetails(AddUserDetailsViewModel vm)
         {
@@ -232,7 +232,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public IActionResult ChangeSignInDetails()
         {
             // redirect the user to home page if UseGovSignIn is set false.
