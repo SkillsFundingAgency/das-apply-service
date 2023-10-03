@@ -29,8 +29,9 @@ namespace SFA.DAS.ApplyService.Web.StartupExtensions
             };
             if (contact is not null)
             {
-                claims.Add(new Claim("UserId",$"{userId}"));
+                claims.Add(new Claim("UserId",$"{contact.Id}"));
                 claims.Add(new Claim("sub",$"{contact.SigninId ?? signInId}"));
+                claims.Add(new Claim(ClaimTypes.Name, $"{contact.GivenNames} {contact.FamilyName}"));
             }
             
             return await Task.FromResult<IEnumerable<Claim>>(claims);
