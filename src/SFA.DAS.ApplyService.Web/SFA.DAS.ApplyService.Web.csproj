@@ -19,7 +19,7 @@
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.5" />
     <PackageReference Include="SFA.DAS.AdminService.Common" Version="0.1.75" />
     <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="3.0.84" />
-    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.49" />
+    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.65-prerelease-2" />
     <PackageReference Include="SFA.DAS.QnA.Api.Views" Version="0.2.291" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="2.0.0" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
