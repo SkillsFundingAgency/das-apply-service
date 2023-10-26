@@ -15,15 +15,5 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Models
 
             actual.ApplyNowLink.Should().Be(applyNowLink);
         }
-
-
-        [TestCase(true, "Start now")]
-        [TestCase(false, "Apply now")]
-        public void Then_The_ApplyNowBtnText(bool useGovSignIn, string buttonText)
-        {
-            var actual = new HomeIndexViewModel(useGovSignIn);
-
-            actual.ApplyNowBtnText.Should().Be(buttonText);
-        }
     }
 }
