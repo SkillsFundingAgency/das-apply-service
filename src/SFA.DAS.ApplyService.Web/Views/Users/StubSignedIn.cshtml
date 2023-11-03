@@ -1,0 +1,16 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.AccountStubViewModel
+@{
+    Layout = "_Layout";
+}
+<div class="govuk-grid-row"  id="estimate-start-transfer">
+    <div class="govuk-grid-column-one-half">
+        <h1 class="govuk-heading-xl">
+            You've signed in
+        </h1>
+        <p class="govuk-body">Id: @Model.Id</p>
+        <p class="govuk-body">Email: @Model.Email</p>
+        <p class="govuk-body">
+            <a href="@Model.ReturnUrl" class="govuk-button" rel="noopener noreferrer">Continue</a>
+        </p>
+    </div>
+</div>

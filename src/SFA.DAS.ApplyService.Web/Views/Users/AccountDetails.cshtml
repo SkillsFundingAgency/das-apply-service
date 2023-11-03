@@ -1,0 +1,28 @@
+﻿@using SFA.DAS.ApplyService.Web.Constants
+@model SFA.DAS.ApplyService.Web.ViewModels.StubAuthenticationViewModel
+@{
+    Layout = "_Layout";
+}
+<h1 class="govuk-heading-xl">Stub Authentication - Enter sign in details</h1>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        <form method="POST" asp-route="@RouteNames.StubAccountDetailsPost">
+            <input asp-for="ReturnUrl" type="hidden" />
+            <div class="govuk-form-group">
+                <label class="govuk-label" asp-for="Id">
+                    ID
+                </label>
+                <input class="govuk-input" asp-for="Id" type="text">
+            </div>
+            <div class="govuk-form-group">
+                <label class="govuk-label" asp-for="Email">
+                    Email
+                </label>
+                <input class="govuk-input" asp-for="Email" type="email">
+            </div>
+            <div class="govuk-button-group">
+                <button class="govuk-button" type="submit">Sign in</button>
+            </div>
+        </form>
+    </div>
+</div>
