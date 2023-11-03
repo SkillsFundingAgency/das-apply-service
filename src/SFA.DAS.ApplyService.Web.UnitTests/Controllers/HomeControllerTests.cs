@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Configuration;
-using SFA.DAS.ApplyService.Web.Constants;
 using SFA.DAS.ApplyService.Web.Controllers;
 using SFA.DAS.ApplyService.Web.ViewModels;
 

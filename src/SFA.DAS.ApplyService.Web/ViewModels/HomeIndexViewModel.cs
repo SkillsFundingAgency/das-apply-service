@@ -8,10 +8,5 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
             UseGovSignIn 
                 ? RouteNames.SignIn 
                 : RouteNames.ExistingAccount;
-
-        public string ApplyNowBtnText =>
-            UseGovSignIn 
-                ? "Start now" 
-                : "Apply now";
     }
 }
