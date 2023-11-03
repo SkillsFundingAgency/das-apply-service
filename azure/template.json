@@ -87,9 +87,12 @@
             "defaultValue": "Standard"
         },
         "utcValue": {
-            "type": "string",
-            "defaultValue": "[utcNow()]"
-        }
+          "type": "string",
+          "defaultValue": "[utcNow()]"
+        },
+        "stubAuth": {
+              "type": "string"
+          }
     },
     "variables": {
       "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
@@ -249,6 +252,10 @@
                                 {
                                   "name": "ConfigNames",
                                   "value": "[variables('applyWebConfigNames')]"
+                                },
+                                {
+                                  "name": "StubAuth",
+                                  "value": "[parameters('stubAuth')]"
                                 }
                             ]
                         }

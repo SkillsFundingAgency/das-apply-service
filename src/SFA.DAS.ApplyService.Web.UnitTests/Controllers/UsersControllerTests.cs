@@ -1,22 +1,27 @@
-﻿using System;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
+using SFA.DAS.ApplyService.Web.Constants;
 using SFA.DAS.ApplyService.Web.Controllers;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+using SFA.DAS.GovUK.Auth.Services;
+using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -30,6 +35,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IApplyConfig> _applyConfig;
         private Guid _userSignInId;
         private Mock<IConfiguration> _configuration;
+        private Mock<IStubAuthenticationService> _stubAuthService;
+        private Mock<IAuthenticationService> _stubAuthenticationService;
+        private Mock<IUrlHelperFactory> _urlHelperFactory;
+        private ClaimsPrincipal _claimsPrincipal;
 
         [SetUp]
         public void Before_each_test()
@@ -38,7 +47,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var givenNames = "Test";
             var familyName = "User";
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            _claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.Name, $"{givenNames} {familyName}"),
                 new Claim(ClaimTypes.NameIdentifier, "1"),
@@ -53,13 +62,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _reapplicationCheckService = new Mock<IReapplicationCheckService>();
             _applyConfig = new Mock<IApplyConfig>();
             _configuration = new Mock<IConfiguration>();
+            _stubAuthService = new Mock<IStubAuthenticationService>();
+            _stubAuthenticationService = new Mock<IAuthenticationService>();
+            _urlHelperFactory = new Mock<IUrlHelperFactory>();
 
             _userController = new UsersController(_usersApiClient.Object, _sessionService.Object,
-                _reapplicationCheckService.Object, _applyConfig.Object, _configuration.Object)
+                _reapplicationCheckService.Object, _applyConfig.Object, _configuration.Object, _stubAuthService.Object)
             {
-                ControllerContext = new ControllerContext()
+                ControllerContext = new ControllerContext
                 {
-                    HttpContext = new DefaultHttpContext() { User = user },
+                    HttpContext = new DefaultHttpContext { User = _claimsPrincipal },
                 }
             };
         }
@@ -418,6 +430,111 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             actual.Should().NotBeNull();
             var actualModel = actual?.Model as ChangeSignInDetailsViewModel;
             Assert.AreEqual("https://home.integration.account.gov.uk/settings", actualModel?.SettingsLink);
+        }
+
+        [Test]
+        public async Task Then_The_Stub_Auth_Is_Created_When_Not_Prod()
+        {
+            var model = new StubAuthenticationViewModel();
+            _configuration.Setup(x => x["ResourceEnvironmentName"]).Returns("test");
+            _stubAuthService.Setup(x => x.GetStubSignInClaims(model)).ReturnsAsync(_claimsPrincipal);
+
+            var httpContext = new DefaultHttpContext();
+
+            var httpContextRequestServices = new Mock<IServiceProvider>();
+            httpContextRequestServices.Setup(x => x.GetService(typeof(IAuthenticationService))).Returns(_stubAuthenticationService.Object);
+            httpContextRequestServices.Setup(x => x.GetService(typeof(IUrlHelperFactory))).Returns(_urlHelperFactory.Object);
+            httpContext.RequestServices = httpContextRequestServices.Object;
+
+            var controllerContext = new ControllerContext { HttpContext = httpContext };
+            _userController.ControllerContext = controllerContext;
+
+            var actual = await _userController.AccountDetails(model) as RedirectToRouteResult;
+
+            actual?.RouteName.Should().Be(RouteNames.StubSignedIn);
+            _stubAuthService.Verify(x => x.GetStubSignInClaims(model), Times.Once);
+            _stubAuthenticationService.Verify(x => x.SignInAsync(httpContext, CookieAuthenticationDefaults.AuthenticationScheme, _claimsPrincipal, It.IsAny<AuthenticationProperties?>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Then_The_Stub_Auth_Is_Not_Created_When_Prod()
+        {
+            var model = new StubAuthenticationViewModel();
+            _configuration.Setup(x => x["ResourceEnvironmentName"]).Returns("prd");
+            var httpContext = new DefaultHttpContext();
+
+            var httpContextRequestServices = new Mock<IServiceProvider>();
+            httpContextRequestServices.Setup(x => x.GetService(typeof(IAuthenticationService))).Returns(_stubAuthenticationService.Object);
+            var controllerContext = new ControllerContext { HttpContext = httpContext };
+            _userController.ControllerContext = controllerContext;
+
+            var actual = await _userController.AccountDetails(model) as NotFoundResult;
+
+            actual.Should().NotBeNull();
+            _stubAuthService.Verify(x => x.GetStubSignInClaims(It.IsAny<StubAuthenticationViewModel>()), Times.Never);
+            _stubAuthenticationService.Verify(x => x.SignInAsync(httpContext, CookieAuthenticationDefaults.AuthenticationScheme, It.IsAny<ClaimsPrincipal>(), It.IsAny<AuthenticationProperties?>()), Times.Never);
+        }
+
+        [TestCase("http://someurl")]
+        public void Then_The_Stub_Auth_Details_Are_Not_Returned_When_Prod(string returnUrl)
+        {
+            _configuration.Setup(x => x["ResourceEnvironmentName"]).Returns("prd");
+
+            var actual = _userController.StubSignedIn(returnUrl) as NotFoundResult;
+
+            actual.Should().NotBeNull();
+        }
+
+        [TestCase("somebody@email.com", "some name", "https://someurl", "https://someurl")]
+        [TestCase("somebody@email.com", "some name", "", "/users/PostSignIn")]
+        [TestCase("somebody@email.com", "some name", null, "/users/PostSignIn")]
+        public void Then_The_Stub_Auth_Details_Are_Returned_When_Not_Prod(string email, string name, string returnUrl, string expectedUrl)
+        {
+            _configuration.Setup(x => x["ResourceEnvironmentName"]).Returns("test");
+            var httpContext = new DefaultHttpContext();
+            var emailClaim = new Claim(ClaimTypes.Email, email);
+            var nameClaim = new Claim(ClaimTypes.NameIdentifier, name);
+            var claimsPrinciple = new ClaimsPrincipal(new[] {new ClaimsIdentity(new[]
+            {
+                emailClaim,
+                nameClaim
+            })});
+            httpContext.User = claimsPrinciple;
+            _userController.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContext
+            };
+
+            var actual = _userController.StubSignedIn(returnUrl) as ViewResult;
+
+            actual.Should().NotBeNull();
+            var actualModel = actual?.Model as AccountStubViewModel;
+            actualModel.Should().NotBeNull();
+            actualModel?.Email.Should().Be(email);
+            actualModel?.Id.Should().Be(name);
+            actualModel?.ReturnUrl.Should().Be(expectedUrl);
+        }
+
+        [TestCase("http://someurl.com")]
+        public void Then_The_Get_For_Entering_Stub_Auth_Details_Is_Returned_When_Not_Prod(string returnUrl)
+        {
+            _configuration.Setup(x => x["ResourceEnvironmentName"]).Returns("test");
+
+            var actual = _userController.AccountDetails(returnUrl) as ViewResult;
+
+            actual.Should().NotBeNull();
+            var actualModel = actual?.Model as StubAuthenticationViewModel;
+            actualModel?.ReturnUrl.Should().Be(returnUrl);
+        }
+
+        [TestCase("http://someurl.com")]
+        public void Then_The_Get_For_Entering_Stub_Auth_Details_Is_Not_Returned_When_Prod(string returnUrl)
+        {
+            _configuration.Setup(x => x["ResourceEnvironmentName"]).Returns("prd");
+
+            var actual = _userController.AccountDetails(returnUrl) as NotFoundResult;
+
+            actual.Should().NotBeNull();
         }
     }
 }

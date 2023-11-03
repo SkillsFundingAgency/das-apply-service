@@ -8,10 +8,8 @@ namespace SFA.DAS.ApplyService.Web.StartupExtensions
             {
                 return "";
             }
-            
-            var environmentPart = environment.ToLower() == "prd" ? "" : $"{environment.ToLower()}-";
-            var domainPart = environment.ToLower() == "prd" ?  "service" : "education";
 
+            var environmentPart = environment.ToLower() == "prd" ? "" : $"{environment.ToLower()}-";
             return $"{environmentPart}apply.apprenticeships.education.gov.uk";
         }
     }   
