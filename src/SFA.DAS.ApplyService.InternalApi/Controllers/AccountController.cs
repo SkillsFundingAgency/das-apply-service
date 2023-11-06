@@ -65,7 +65,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult> Callback([FromBody] SignInCallback callback)
         {
             _logger.LogInformation($"Received callback from ASLogin: Sub: {callback.Sub} SourceId: {callback.SourceId}");
-            await _mediator.Send(new UpdateSignInIdRequest(Guid.Parse(callback.Sub), Guid.Parse(callback.SourceId)));
+            await _mediator.Send(new UpdateSignInIdRequest(Guid.Parse(callback.Sub), Guid.Parse(callback.SourceId), null));
             return Ok();
         }
 
