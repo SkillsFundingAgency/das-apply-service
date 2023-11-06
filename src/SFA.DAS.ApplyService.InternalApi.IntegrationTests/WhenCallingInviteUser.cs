@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
         {
             var configurationService = new Mock<IConfigurationService>();
             var contactRepository = new Mock<IContactRepository>();
-            contactRepository.Setup(r => r.CreateContact("email@email.com", "Fred", "Jones"))
+            contactRepository.Setup(r => r.CreateContact("email@email.com", "Fred", "Jones", null))
                 .ReturnsAsync(new Contact() {Id = Guid.NewGuid()});
                 
             var dfeSignInService = new Mock<IDfeSignInService>();

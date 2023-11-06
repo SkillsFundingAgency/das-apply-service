@@ -42,6 +42,7 @@ using System.IO;
 using SFA.DAS.ApplyService.Web.ConfigurationExtensions;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.GovUK.Auth.AppStart;
+using SFA.DAS.GovUK.Auth.Services;
 
 namespace SFA.DAS.ApplyService.Web
 {
@@ -315,6 +316,9 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
             services.AddTransient<ITaskListOrchestrator, TaskListOrchestrator>();
             services.AddTransient<IOverallOutcomeService, OverallOutcomeService>();
+            
+            services.AddTransient<IStubAuthenticationService, StubAuthenticationService>();
+            services.AddTransient<ICustomClaims, CustomClaims>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

@@ -30,7 +30,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [PerformValidation]
         public async Task<ActionResult> InviteUser([FromBody] NewContact newContact)
         {
-            var successful = await _mediator.Send(new CreateAccountRequest(newContact.Email, newContact.GivenName, newContact.FamilyName));
+            var successful = await _mediator.Send(new CreateAccountRequest(newContact.Email, newContact.GivenName, newContact.FamilyName, newContact.GovUkIdentifier));
 
             if (!successful)
             {
@@ -44,7 +44,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [PerformValidation]
         public async Task<ActionResult> CreateAccountFromAsLogin(Guid signInId, [FromBody] NewContact contact)
         {
-            var successful = await _mediator.Send(new CreateAccountFromAsLoginRequest(signInId, contact.Email, contact.GivenName, contact.FamilyName));
+            var successful = await _mediator.Send(new CreateAccountFromAsLoginRequest(signInId, contact.Email, contact.GivenName, contact.FamilyName, contact.GovUkIdentifier));
 
             if (!successful)
             {

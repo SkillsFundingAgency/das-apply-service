@@ -94,7 +94,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                                 var givenName = context.Principal.GetGivenName();
                                 var familyName = context.Principal.GetFamilyName();
                                 
-                                await client.CreateUserFromAsLogin(signInId, email, givenName, familyName);
+                                await client.CreateUserFromAsLogin(signInId, email, givenName, familyName, null);
                                 user = await client.GetUserBySignInId(signInId);
                             }
 

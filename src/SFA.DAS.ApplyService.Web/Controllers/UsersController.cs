@@ -242,11 +242,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (contact is null)
             {
                 // create the user using the internal Apis.
+                var signInId = User.GetSignInId();
+                var govUkIdentifier = User.GetGovLoginId();
+                if (signInId == Guid.Empty && !string.IsNullOrEmpty(govUkIdentifier))
+                {
+                    signInId = Guid.NewGuid();
+                }
+
                 var isUserCreated = await _usersApiClient.CreateUserFromAsLogin(
-                    signInId: User.GetSignInId(),
-                    email: email,
-                    vm.FirstName,
-                    vm.LastName);
+                        signInId: signInId,
+                        email: email,
+                        givenName: vm.FirstName,
+                        familyName: vm.LastName, 
+                        govUkIdentifier: govUkIdentifier);
+                
 
                 // if the contact could not created, redirect the user to the error page.
                 if (!isUserCreated) return RedirectToAction("Error", "Home", new { statusCode = 555 });

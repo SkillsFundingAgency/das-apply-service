@@ -334,6 +334,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 It.IsAny<Guid>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
+                It.IsAny<string>(), 
                 It.IsAny<string>())).ReturnsAsync(false);
 
             // sut
@@ -358,6 +359,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 It.IsAny<Guid>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
+                It.IsAny<string>(), 
                 It.IsAny<string>())).ReturnsAsync(true);
 
             // sut

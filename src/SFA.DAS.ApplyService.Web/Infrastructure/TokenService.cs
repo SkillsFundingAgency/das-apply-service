@@ -18,10 +18,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public string GetToken()
         {
-            if (_hostingEnvironment.IsDevelopment())
-                return string.Empty;
-
             var configuration = _configurationService.GetConfig().GetAwaiter().GetResult();
+            
+            if (string.IsNullOrEmpty(configuration.InternalApi.Identifier))
+                return string.Empty;
 
             var azureServiceTokenProvider = new AzureServiceTokenProvider();
             var generateTokenTask = azureServiceTokenProvider.GetAccessTokenAsync(configuration.InternalApi.Identifier);

@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
             var existingContact = await _contactRepository.GetContactByEmail(request.Email);
             if (existingContact == null)
             {
-                var newContact = await _contactRepository.CreateContact(request.Email, request.GivenName, request.FamilyName);
+                var newContact = await _contactRepository.CreateContact(request.Email, request.GivenName, request.FamilyName, request.GovUkIdentifier);
 
                 return await InviteUser(newContact);
             }
@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
             {
                 if (invitationResult.UserExists)
                 {
-                    await _contactRepository.UpdateSignInId(contact.Id, invitationResult.ExistingUserId);
+                    await _contactRepository.UpdateSignInId(contact.Id, invitationResult.ExistingUserId, null);
                     return true;
                 }
 
