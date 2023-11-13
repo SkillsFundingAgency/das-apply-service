@@ -15,8 +15,6 @@ namespace SFA.DAS.ApplyService.Web.StartupExtensions
     {
         public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
         {
-            var signInId = Guid.Empty;
-
             var email = tokenValidatedContext?.Principal?.Claims
                 .First(c => c.Type.Equals(ClaimTypes.Email))
                 .Value;

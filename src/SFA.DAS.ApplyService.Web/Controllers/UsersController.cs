@@ -244,11 +244,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 // create the user using the internal Apis.
                 var signInId = User.GetSignInId();
                 var govUkIdentifier = User.GetGovLoginId();
-                if (signInId == Guid.Empty && !string.IsNullOrEmpty(govUkIdentifier))
-                {
-                    signInId = Guid.NewGuid();
-                }
-
+                
                 var isUserCreated = await _usersApiClient.CreateUserFromAsLogin(
                         signInId: signInId,
                         email: email,
