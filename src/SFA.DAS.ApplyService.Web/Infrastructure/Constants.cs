@@ -14,6 +14,6 @@ public static class Constants
 
         public const string DownloadRegister = "https://download.apprenticeships.education.gov.uk";
 
-        public const string ApplicationGuidance = "https://www.gov.uk/guidance/apply-to-the-apar-as-an-apprenticeship-training-provider";
+        public const string ApplicationGuidance = "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1181404/APAR_Application_Guidance_August_2023.pdf";
     }
 }
