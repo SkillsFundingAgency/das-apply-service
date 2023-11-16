@@ -4,7 +4,7 @@ public static class Constants
 {
     public static class ExternalLinks
     {
-        public const string RemovalConsequences = "https://www.gov.uk/government/publications/removal-from-the-apprenticeship-provider-and-assessment-register/removal-from-the-apprenticeship-provider-and-assessment-register-guidance-for-providers#consequences-and-removal-from-the-register";
+        public const string RemovalConsequences = "https://www.gov.uk/government/publications/removal-from-the-apprenticeship-provider-and-assessment-register";
 
         public const string ComplaintsProcedure = "https://www.gov.uk/government/organisations/department-for-education/about/complaints-procedure";
 
