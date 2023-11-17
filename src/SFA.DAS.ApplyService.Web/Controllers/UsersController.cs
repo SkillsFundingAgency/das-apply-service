@@ -244,13 +244,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 // create the user using the internal Apis.
                 var signInId = User.GetSignInId();
                 var govUkIdentifier = User.GetGovLoginId();
+                Guid? userId = User.GetUserId()== Guid.Empty ? null : User.GetUserId();
                 
                 var isUserCreated = await _usersApiClient.CreateUserFromAsLogin(
                         signInId: signInId,
                         email: email,
                         givenName: vm.FirstName,
                         familyName: vm.LastName, 
-                        govUkIdentifier: govUkIdentifier);
+                        govUkIdentifier: govUkIdentifier,
+                        userId);
                 
 
                 // if the contact could not created, redirect the user to the error page.

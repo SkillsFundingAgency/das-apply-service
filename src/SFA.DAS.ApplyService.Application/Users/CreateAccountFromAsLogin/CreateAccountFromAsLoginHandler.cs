@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccountFromAsLogin
 
             if (existingContact is null)
             {
-                var newContact = await _contactRepository.CreateContact(request.Email, request.GivenName, request.FamilyName, request.GovUkIdentifier);
+                var newContact = await _contactRepository.CreateContact(request.Email, request.GivenName, request.FamilyName, request.GovUkIdentifier, request.UserId);
                 await _contactRepository.UpdateSignInId(newContact.Id, request.SignInId, request.GovUkIdentifier);
             }
             else

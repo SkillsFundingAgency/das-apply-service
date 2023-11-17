@@ -32,6 +32,7 @@ namespace SFA.DAS.ApplyService.Web.StartupExtensions
             }
             else
             {
+                claims.Add(new Claim("UserId", $"{Guid.NewGuid()}"));
                 claims.Add(new Claim("sub",$"{Guid.NewGuid()}"));
             }
             

@@ -16,14 +16,14 @@ namespace SFA.DAS.ApplyService.Data
             _dbConnectionHelper = dbConnectionHelper;
         }
         
-        public async Task<Contact> CreateContact(string email, string givenName, string familyName, string govUkIdentifier = null)
+        public async Task<Contact> CreateContact(string email, string givenName, string familyName, string govUkIdentifier = null, Guid? userId = null)
         {
             var loginType = string.IsNullOrEmpty(govUkIdentifier) ? "ASLogin" : "GovLogin";
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                await connection.ExecuteAsync(@"INSERT INTO Contacts (Email, GivenNames, FamilyName, SignInType, CreatedAt, CreatedBy, Status, GovUkidentifier) 
-                                                     VALUES (@email, @givenName, @familyName, @loginType, @createdAt, @email, 'New', @GovUkidentifier)",
-                    new { email, givenName, familyName,loginType, createdAt = DateTime.UtcNow, govUkIdentifier });
+                await connection.ExecuteAsync(@"INSERT INTO Contacts (Id, Email, GivenNames, FamilyName, SignInType, CreatedAt, CreatedBy, Status, GovUkidentifier) 
+                                                     VALUES (@userId, @email, @givenName, @familyName, @loginType, @createdAt, @email, 'New', @GovUkidentifier)",
+                    new {userId, email, givenName, familyName,loginType, createdAt = DateTime.UtcNow, govUkIdentifier });
 
                 return await GetContactByEmail(email);
             }

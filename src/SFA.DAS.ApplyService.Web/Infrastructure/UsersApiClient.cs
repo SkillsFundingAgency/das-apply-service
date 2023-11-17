@@ -17,7 +17,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<bool> InviteUser(CreateAccountViewModel vm);
 
         Task<bool> CreateUserFromAsLogin(Guid signInId, string email, string givenName, string familyName,
-            string govUkIdentifier);
+            string govUkIdentifier, Guid? userId);
 
         Task<Contact> GetUserBySignInId(Guid signInId);
 
@@ -40,9 +40,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         }
 
         public async Task<bool> CreateUserFromAsLogin(Guid signInId, string email, string givenName, string familyName,
-            string govUkIdentifier)
+            string govUkIdentifier, Guid? userId)
         {
-            var contact = new NewContact { Email = email, GivenName = givenName, FamilyName = familyName, GovUkIdentifier = govUkIdentifier };
+            var contact = new NewContact { Email = email, GivenName = givenName, FamilyName = familyName, GovUkIdentifier = govUkIdentifier , UserId = userId};
 
             var result = await Post($"/Account/{signInId}", contact);
             return result == HttpStatusCode.OK;

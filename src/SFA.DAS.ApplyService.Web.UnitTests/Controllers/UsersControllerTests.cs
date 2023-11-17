@@ -335,7 +335,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(), 
-                It.IsAny<string>())).ReturnsAsync(false);
+                It.IsAny<string>(),
+                It.IsAny<Guid?>())).ReturnsAsync(false);
 
             // sut
             var result = await _userController.AddUserDetails(new AddUserDetailsViewModel
@@ -360,7 +361,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(), 
-                It.IsAny<string>())).ReturnsAsync(true);
+                It.IsAny<string>(),
+                It.IsAny<Guid?>())).ReturnsAsync(true);
 
             // sut
             var result = await _userController.AddUserDetails(new AddUserDetailsViewModel

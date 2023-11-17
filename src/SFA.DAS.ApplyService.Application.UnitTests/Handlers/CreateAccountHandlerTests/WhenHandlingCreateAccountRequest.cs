@@ -24,12 +24,12 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
         private const string FAMILY_NAME = "Jones";
         private const string GovUkIdentifier = "test";
         private readonly Guid ContactId = Guid.NewGuid();
-
+        
         [SetUp]
         public void Setup()
         {
             _contactRepository = new Mock<IContactRepository>();
-            _contactRepository.Setup(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME, GovUkIdentifier)).ReturnsAsync(new Contact { Id = ContactId, GivenNames = GIVEN_NAME, FamilyName = FAMILY_NAME, Email = EMAIL });
+            _contactRepository.Setup(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME, GovUkIdentifier,null)).ReturnsAsync(new Contact { Id = ContactId, GivenNames = GIVEN_NAME, FamilyName = FAMILY_NAME, Email = EMAIL });
 
             _dfeSignInService = new Mock<IDfeSignInService>();
             _dfeSignInService.Setup(dfe => dfe.InviteUser(EMAIL, GIVEN_NAME, FAMILY_NAME, ContactId)).ReturnsAsync(new InviteUserResponse { IsSuccess = true });
@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
         {
             await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME,GovUkIdentifier), new CancellationToken());
 
-            _contactRepository.Verify(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME,GovUkIdentifier));
+            _contactRepository.Verify(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME,GovUkIdentifier,null));
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
 
             await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME, GovUkIdentifier), new CancellationToken());
             
-            _contactRepository.Verify(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME,GovUkIdentifier), Times.Never);
+            _contactRepository.Verify(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME,GovUkIdentifier,null), Times.Never);
         }
 
         [Test]
