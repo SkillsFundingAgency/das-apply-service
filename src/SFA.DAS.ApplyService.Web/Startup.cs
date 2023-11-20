@@ -326,7 +326,9 @@ namespace SFA.DAS.ApplyService.Web
             if (_configService.UseGovSignIn)
             {
                 services.Configure<GovUkOidcConfiguration>(_configuration.GetSection("GovUkOidcConfiguration"));
-                services.AddAndConfigureGovUkAuthentication(_configuration, typeof(CustomClaims), "/Users/SignedOut", "/account-details", DomainExtensions.GetDomain(_configuration["ResourceEnvironmentName"]));
+                var cookieDomain = DomainExtensions.GetDomain(_configuration["ResourceEnvironmentName"]);
+                var loginRedirect = string.IsNullOrEmpty(cookieDomain)? "" : $"https://{cookieDomain}/account-details";
+                services.AddAndConfigureGovUkAuthentication(_configuration, typeof(CustomClaims), "/Users/SignedOut", "/account-details", cookieDomain, loginRedirect);
             }
             else
             {
