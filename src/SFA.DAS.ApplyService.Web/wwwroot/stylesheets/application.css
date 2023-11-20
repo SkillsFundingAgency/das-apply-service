@@ -857,6 +857,14 @@
     display: flex;
     justify-content: space-between;
   }
+  .das-user-navigation > .roatp__navigation {
+    justify-content: end;
+    color: #000;
+  }
+
+  .das-user-navigation > .roatp__navigation > li:first-child {
+    margin-right: auto;
+  }
 
   .roatp__navigation-item {
     font-size: 16px;
@@ -881,6 +889,10 @@
   .roatp__navigation-item--signout {
     padding: 0;
     margin-left: auto;
+  }
+
+  .das-user-navigation .roatp__navigation-item--signout {
+    margin-left: 0;
   }
 }
 
@@ -1416,7 +1428,7 @@
 }
 @media (min-width: 40.0625em) {
   .roatp__navigation-item.das-user-navigation__list-item--has-sub-menu {
-    margin-left: 20px;
+    margin-right: 10px;
   }
 }
 
@@ -1499,8 +1511,7 @@
 
   .roatp__navigation-item.das-user-navigation__list-item--has-sub-menu
     .das-user-navigation__sub-menu {
-    right: auto;
-    left: -10px;
+    right: -10px;
     border-top: none;
     padding: 0 10px;
     margin-top: 12px;
