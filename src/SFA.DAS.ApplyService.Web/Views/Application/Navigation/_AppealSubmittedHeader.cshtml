@@ -6,40 +6,46 @@
 @{
     var config = await Config.GetConfig();
 }
-<nav>
+<nav class="das-user-navigation" id="das-user-navigation">
     <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation" role="navigation">
-        <li class="roatp__navigation-item roatp__navigation-item--current govuk-!-font-weight-bold govuk-!-margin-right-3" aria-current="page">
+        <li class="roatp__navigation-item roatp__navigation-item--current govuk-!-font-weight-bold govuk-!-margin-right-4"
+            aria-current="page">
             Application overview
         </li>
-        <li class="roatp__navigation-item">
+        <li class="roatp__navigation-item govuk-!-margin-right-4">
             @{
                 switch (Model.AppealStatus)
                 {
                     case AppealStatus.Unsuccessful:
-                        <a class="govuk-link govuk-link--no-visited-state" asp-action="AppealUnsuccessful" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Appeal overview</a>
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="AppealUnsuccessful"
+                            asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Appeal overview</a>
                         break;
                     case AppealStatus.Successful:
                     case AppealStatus.SuccessfulFitnessForFunding:
                     case AppealStatus.SuccessfulAlreadyActive:
-                        <a class="govuk-link govuk-link--no-visited-state" asp-action="AppealSuccessful" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Appeal overview</a>
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="AppealSuccessful"
+                            asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Appeal overview</a>
                         break;
                     case AppealStatus.InProgress:
-                        <a class="govuk-link govuk-link--no-visited-state" asp-action="AppealInProgress" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Appeal overview</a>
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="AppealInProgress"
+                            asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Appeal overview</a>
                         break;
                     case AppealStatus.Submitted:
                     default:
-                        <a class="govuk-link govuk-link--no-visited-state" asp-action="AppealSubmitted" asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Appeal overview</a>
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="AppealSubmitted"
+                            asp-controller="RoatpAppeals" asp-route-applicationId="@Model.ApplicationId">Appeal overview</a>
                         break;
                 }
             }
         </li>
         @if (config is { UseGovSignIn: true })
         {
-            <li role="menuitem" class="das-user-navigation__list-item das-user-navigation__list-item--has-sub-menu">
-                <a href="/" class="das-user-navigation__link">Settings</a>
+            <li class="roatp__navigation-item das-user-navigation__list-item--has-sub-menu">
+                <a href="/" class="govuk-link govuk-link--no-visited-state">Settings</a>
                 <ul role="menu" class="das-user-navigation__sub-menu js-hidden" aria-expanded="false">
                     <li class="das-user-navigation__sub-menu-list-item" role="menuitem">
-                        <a asp-action="ChangeSignInDetails" asp-controller="Users" class="das-user-navigation__sub-menu-link">Change your sign-in details</a>
+                        <a asp-action="ChangeSignInDetails" asp-controller="Users"
+                            class="das-user-navigation__sub-menu-link">Change your sign-in details</a>
                     </li>
                 </ul>
             </li>
