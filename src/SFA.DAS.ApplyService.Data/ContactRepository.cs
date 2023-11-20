@@ -21,6 +21,7 @@ namespace SFA.DAS.ApplyService.Data
             var loginType = string.IsNullOrEmpty(govUkIdentifier) ? "ASLogin" : "GovLogin";
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
+                userId ??= Guid.NewGuid();
                 await connection.ExecuteAsync(@"INSERT INTO Contacts (Id, Email, GivenNames, FamilyName, SignInType, CreatedAt, CreatedBy, Status, GovUkidentifier) 
                                                      VALUES (@userId, @email, @givenName, @familyName, @loginType, @createdAt, @email, 'New', @GovUkidentifier)",
                     new {userId, email, givenName, familyName,loginType, createdAt = DateTime.UtcNow, govUkIdentifier });
