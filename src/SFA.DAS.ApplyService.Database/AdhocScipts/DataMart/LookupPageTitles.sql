@@ -40,8 +40,8 @@ INSERT INTO LookupPageTitles ([SequenceNumber],[SectionNumber],[PageId],[Title])
 (1, 4, '160', 'Education Institute type'),
 (1, 4, '170', 'Public Body type'),
 (1, 4, '180', 'School type'),
-(1, 4, '200', 'Registered with ESFA'),
-(1, 4, '210', 'Funded by ESFA'),
+(1, 4, '200', 'Registered with DfE'),
+(1, 4, '210', 'Funded by DfE'),
 (1, 4, '220', 'Monitored by Office of Students'),
 (1, 4, '230', 'Organisation description'),
 (1, 4, '50', 'Actively trading'),
@@ -75,7 +75,7 @@ INSERT INTO LookupPageTitles ([SequenceNumber],[SectionNumber],[PageId],[Title])
 (2, 1, '2010', 'Financial health assessment'),
 
 (2, 2, '2100', 'Over £75 million for the latest reported financial year'),
-(2, 2, '2110', 'ESFA funding to be less than 5% annual turnover'),
+(2, 2, '2110', 'DfE funding to be less than 5% annual turnover'),
 (2, 2, '2120', 'Financial evidence'),
 (2, 2, '2130', 'Financial evidence'),
 (2, 2, '2140', 'Financial evidence'),
@@ -114,7 +114,7 @@ INSERT INTO LookupPageTitles ([SequenceNumber],[SectionNumber],[PageId],[Title])
 (3, 2, '3160', 'Involuntarily withdrawn from Initial Teacher Training accreditation'),
 (3, 2, '3170', 'Removed from any charity register'),
 (3, 2, '3180', 'Investigated due to safeguarding issues'),
-(3, 2, '3190', 'Subjected to an investigation by the ESFA or other public body or regulator'),
+(3, 2, '3190', 'Subjected to an investigation by the DfE or other public body or regulator'),
 (3, 2, '3199', 'Subjected to insolvency or winding up proceedings'),
 
 (3, 3, '3200', 'Criminal and compliance checks on who''s in control of your organisation'),
