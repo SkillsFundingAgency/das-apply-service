@@ -1,7 +1,7 @@
-﻿using SFA.DAS.ApplyService.Domain.Apply;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
@@ -13,7 +13,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string LevyPayingEmployer { get; set; }
 
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
-        public string Title { get { return "Your organisation cannot apply to join the RoATP as an employer provider"; }  set { } }
+        public string Title { get { return "Your organisation cannot apply to join the APAR as an employer provider"; } set { } }
 
         public Guid ApplicationId { get; set; }
 
@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string GetHelpQuestion { get; set; }
         public bool GetHelpQuerySubmitted { get; set; }
         public string GetHelpErrorMessage { get; set; }
-        
+
         public string GetHelpAction { get { return "IneligibleNonLevy"; } set { } }
     }
 }

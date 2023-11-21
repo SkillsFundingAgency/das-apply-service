@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.EmailService.Interfaces;
-using SFA.DAS.Notifications.Api.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.EmailService.Interfaces;
+using SFA.DAS.Notifications.Api.Client;
 
 namespace SFA.DAS.ApplyService.EmailService
 {
@@ -13,7 +13,7 @@ namespace SFA.DAS.ApplyService.EmailService
     {
         private const string SYSTEM_ID = "RoatpApplyService";
         protected virtual string REPLY_TO_ADDRESS => "the.apprenticeship.service@notifications.service.gov.uk";
-        protected virtual string SUBJECT => "Update to your application - RoATP service team";
+        protected virtual string SUBJECT => "Update to your application - APAR service team";
 
         protected readonly ILogger<NotificationApiEmailService> _logger;
         protected readonly IEmailTemplateClient _emailTemplateClient;
@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.EmailService
         {
             _logger = logger;
             _emailTemplateClient = emailTemplateClient;
-            _notificationsApi = notificationsApi;  
+            _notificationsApi = notificationsApi;
         }
 
         public async Task SendEmail(string templateName, string toAddress, string replyToAddress,
@@ -69,7 +69,7 @@ namespace SFA.DAS.ApplyService.EmailService
             }
         }
 
-        private async Task SendEmailViaNotificationsApi(EmailTemplate emailTemplate, string toAddress, string replyToAddress, 
+        private async Task SendEmailViaNotificationsApi(EmailTemplate emailTemplate, string toAddress, string replyToAddress,
                                                           string subject, Dictionary<string, string> personalisationTokens)
         {
             if (emailTemplate is null) return;

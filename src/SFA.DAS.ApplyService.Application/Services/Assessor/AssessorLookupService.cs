@@ -72,7 +72,7 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
                 case RoatpWorkflowPageIds.ReadinessToEngage.PriorLearningQualifications:
                     return "Process to assess English and maths";
                 case RoatpWorkflowPageIds.ReadinessToEngage.SubcontractorsUse:
-                    return "Using subcontractors in the first 12 months of joining the RoATP";
+                    return "Using subcontractors in the first 12 months of joining the APAR";
                 case RoatpWorkflowPageIds.ReadinessToEngage.SubcontractorsDueDiligence:
                     return "Due diligence on subcontractors";
 
@@ -121,7 +121,7 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.EnsureApprenticesAreSupportedOtherWays:
                     return "Other ways of supporting apprentices";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ForecastingStarts:
-                    return "Forecasting starts in the first 12 months of joining the RoATP";
+                    return "Forecasting starts in the first 12 months of joining the APAR";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ReadyToDeliverAgainstStarts:
                     return "Ready to deliver training against forecast";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.RecruitNewStaff:
@@ -309,7 +309,7 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
 
         public SectorQuestionIds GetSectorQuestionIdsForSectorPageId(string pageId)
         {
-             switch (pageId)
+            switch (pageId)
             {
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.WhatStandardsOffered:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.SectorQuestionIds;

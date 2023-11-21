@@ -12,7 +12,7 @@ namespace SFA.DAS.ApplyService.EmailService
 {
     public class ApplicationUpdatedEmailService : NotificationApiEmailService, IApplicationUpdatedEmailService
     {
-        protected override string SUBJECT => "Update to your application – RoATP service team";
+        protected override string SUBJECT => "Update to your application – APAR service team";
         private readonly IApplyRepository _applyRepository;
         private readonly IConfigurationService _configurationService;
 

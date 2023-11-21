@@ -183,7 +183,7 @@ INSERT INTO LookupPageTitles ([SequenceNumber],[SectionNumber],[PageId],[Title])
 (5, 7, '5560', 'Locations for English and maths assessments'),
 (5, 7, '5570', 'Delivering English and maths assessments if there''s a significant event'),
 
-(5, 8, '5600', 'Using subcontractors in the first 12 months of joining the RoATP'),
+(5, 8, '5600', 'Using subcontractors in the first 12 months of joining the APAR'),
 (5, 8, '5610', 'Due diligence on subcontractors'),
 
 (6, 1, '6000', 'Planning apprenticeship training'),
@@ -214,7 +214,7 @@ INSERT INTO LookupPageTitles ([SequenceNumber],[SectionNumber],[PageId],[Title])
 (6, 4, '6410', 'Ways of supporting apprentices'),
 (6, 4, '6420', 'Other ways of supporting apprentices'),
 
-(6, 5, '6500', 'Forecasting starts in the first 12 months of joining the RoATP'),
+(6, 5, '6500', 'Forecasting starts in the first 12 months of joining the APAR'),
 (6, 5, '6510', 'Ready to deliver training against forecast'),
 (6, 5, '6520', 'Recruit new staff to deliver training against forecast'),
 (6, 5, '6530', 'Typical ratio of the staff delivering training to the apprentices'),
