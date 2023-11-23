@@ -10,7 +10,7 @@ namespace SFA.DAS.ApplyService.EmailService
 {
     public class SubmitApplicationConfirmationEmailService : NotificationApiEmailService, ISubmitApplicationConfirmationEmailService
     {
-        protected override string SUBJECT => "Application submitted – RoATP service team";
+        protected override string SUBJECT => "Application submitted – APAR service team";
 
         public SubmitApplicationConfirmationEmailService(ILogger<NotificationApiEmailService> logger, IEmailTemplateClient emailTemplateClient,
                                                          INotificationsApi notificationsApi)
@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.EmailService
         public async Task SendSubmitConfirmationEmail(ApplicationSubmitConfirmation applicationSubmitConfirmation)
         {
             var templateName = EmailTemplateName.ROATP_APPLICATION_SUBMITTED;
-            
+
             var personalisationTokens = GetPersonalisationTokens(applicationSubmitConfirmation);
 
             await SendEmail(templateName, applicationSubmitConfirmation.EmailAddress, REPLY_TO_ADDRESS, SUBJECT, personalisationTokens);

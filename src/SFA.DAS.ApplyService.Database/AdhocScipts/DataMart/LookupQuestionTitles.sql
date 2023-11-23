@@ -37,12 +37,12 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (0, 1, '1', 'PRE-65', 'UKRLP Verification Charity'),
 (0, 1, '1', 'PRE-70', 'UKRLP Verification Soletrader or Partnership'),
 (0, 1, '1', 'PRE-80', 'UKRLP Primary Verification Source'),
-(0, 1, '1', 'PRE-89', 'Apply Provider Route and On RoATP'),
-(0, 1, '1', 'PRE-90', 'On RoATP'),
-(0, 1, '1', 'PRE-91', 'RoATP Current Status'),
-(0, 1, '1', 'PRE-92', 'RoATP Removed Reason'),
-(0, 1, '1', 'PRE-93', 'RoATP Status Date'),
-(0, 1, '1', 'PRE-94', 'RoATP Provider Route'),
+(0, 1, '1', 'PRE-89', 'Apply Provider Route and On APAR'),
+(0, 1, '1', 'PRE-90', 'On APAR'),
+(0, 1, '1', 'PRE-91', 'APAR Current Status'),
+(0, 1, '1', 'PRE-92', 'APAR Removed Reason'),
+(0, 1, '1', 'PRE-93', 'APAR Status Date'),
+(0, 1, '1', 'PRE-94', 'APAR Provider Route'),
 (0, 1, '1', 'PRE-95', 'Levy Paying Employer'),
 (0, 1, '2', 'YO-1', 'Apply Provider Route'),
 (0, 1, '3', 'COA-1', 'Conditions of Acceptance accepted'),
@@ -71,15 +71,15 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (1, 4, '160', 'YO-160', 'What type of educational institute is your organisation?'),
 (1, 4, '170', 'YO-170', 'What type of public body is your organisation?'),
 (1, 4, '180', 'YO-180', 'What type of school is your organisation?'),
-(1, 4, '200', 'YO-200', 'Is your organisation registered and receiving funding from ESFA?'),
-(1, 4, '210', 'YO-210', 'Is your organisation receiving funding from ESFA?'),
+(1, 4, '200', 'YO-200', 'Is your organisation registered and receiving funding from DfE?'),
+(1, 4, '210', 'YO-210', 'Is your organisation receiving funding from DfE?'),
 (1, 4, '220', 'YO-220', 'Is your organisation monitored and supported by the Office of Students?'),
 (1, 4, '230', 'YO-230', 'How would you describe your organisation?'),
 (1, 4, '50', 'YO-50', 'How long has your organisation been actively trading?'),
 (1, 4, '60', 'YO-60', 'How long has your organisation been actively trading?'),
-(1, 4, '10001', 'SHUT-001', 'Your organisation is not eligible to apply to join RoATP'),
-(1, 4, '10002', 'SHUT-002', 'Your organisation is not eligible to apply to join RoATP'),
-(1, 4, '10003', 'SHUT-003', 'Your organisation is not eligible to apply to join RoATP'),
+(1, 4, '10001', 'SHUT-001', 'Your organisation is not eligible to apply to join APAR'),
+(1, 4, '10002', 'SHUT-002', 'Your organisation is not eligible to apply to join APAR'),
+(1, 4, '10003', 'SHUT-003', 'Your organisation is not eligible to apply to join APAR'),
 
 (1, 5, '235', 'YO-235', 'Is your organisation funded by the Office for Students?'),
 (1, 5, '240', 'YO-240', 'Does your organisation offer initial teacher training?'),
@@ -101,7 +101,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (1, 5, '360', 'YO-360', 'Upload a copy of a legally binding contract between your organisation and a main or employer provider'),
 
 (2, 2, '2100', 'FH-30', 'Was your organisation''s total annual turnover over £75 million for the latest reported financial year?'),
-(2, 2, '2110', 'FH-40', 'Does your organisation expect its funding from ESFA to be less than 5% of its total annual turnover?'),
+(2, 2, '2110', 'FH-40', 'Does your organisation expect its funding from DfE to be less than 5% of its total annual turnover?'),
 (2, 2, '2120', 'FH-100', 'Enter your organisation''s total current liabilities for the latest reported financial year'),
 (2, 2, '2120', 'FH-110', 'Enter your organisation''s total borrowings for the latest reported financial year'),
 (2, 2, '2120', 'FH-120', 'Enter your organisation''s net assets for the latest reported financial year'),
@@ -199,7 +199,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (3, 2, '3170', 'CC-27-1', 'Give us more information'),
 (3, 2, '3180', 'CC-28', 'Has your organisation been investigated due to safeguarding issues in the last 3 months?'),
 (3, 2, '3180', 'CC-28-1', 'Give us more information'),
-(3, 2, '3190', 'CC-29', 'Is your organisation currently, or has within the last 5 years been, subject to an investigation by the ESFA or other public body or regulator?'),
+(3, 2, '3190', 'CC-29', 'Is your organisation currently, or has within the last 5 years been, subject to an investigation by the DfE or other public body or regulator?'),
 (3, 2, '3190', 'CC-29-1', 'Give us more information'),
 (3, 2, '3199', 'CC-30', 'Has your organisation been subject to insolvency or winding up proceedings in the last 3 years?'),
 (3, 2, '3199', 'CC-30-1', 'Give us more information'),
@@ -289,7 +289,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (5, 7, '5560', 'RTE-66', 'Where will you deliver the assessments in English and maths?'),
 (5, 7, '5570', 'RTE-67', 'How will you continue to deliver English and maths training and assessments if there''s a significant event?'),
 
-(5, 8, '5600', 'RTE-70', 'Does your organisation expect to use subcontractors in the first 12 months of joining RoATP?'),
+(5, 8, '5600', 'RTE-70', 'Does your organisation expect to use subcontractors in the first 12 months of joining APAR?'),
 (5, 8, '5610', 'RTE-71', 'How will your organisation carry out due diligence on its subcontractors?'),
 
 (6, 2, '6201', 'PAT-21', 'What type of apprenticeship training will your organisation offer?'),
@@ -316,7 +316,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (6, 4, '6410', 'PAT-641', 'How will your organisation support its apprentices?'),
 (6, 4, '6420', 'PAT-642', 'What other ways will your organisation use to support its apprentices?'),
 
-(6, 5, '6500', 'PAT-650', 'How many starts does your organisation forecast in the first 12 months of joining the RoATP?'),
+(6, 5, '6500', 'PAT-650', 'How many starts does your organisation forecast in the first 12 months of joining the APAR?'),
 (6, 5, '6510', 'PAT-651', 'When will your organisation be ready to deliver training against this forecast?'),
 (6, 5, '6520', 'PAT-652', 'Will your organisation recruit new staff to deliver training against these forecasts?'),
 (6, 5, '6530', 'PAT-653', 'What is the typical ratio of the staff who deliver training to the apprentices?'),
@@ -364,7 +364,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7600', 'DAT-7600', 'What sectors will your organisation deliver apprenticeship training in?'),
 
 (7, 6, '7610AA', 'DAT-7610AA-1', 'What standards do you intend to deliver within the ''Agriculture, environmental and animal care'' sector?'),
-(7, 6, '7610A', 'DAT-7610A-1', 'How many starts does your organisation forecast in the ''Agriculture, environmental and animal care'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7610A', 'DAT-7610A-1', 'How many starts does your organisation forecast in the ''Agriculture, environmental and animal care'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7610B', 'DAT-7610B-1', 'How many employees will deliver training in the ''Agriculture, environmental and animal care'' sector?'),
 (7, 6, '7610', 'DAT-7610-1', 'Who''s the most experienced employee in the ''Agriculture, environmental and animal care'' sector?'),
 (7, 6, '7610', 'DAT-7610-2', 'Last name'),
@@ -393,7 +393,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7613', 'DAT-76133', 'What''s the typical duration of training they have delivered to apprentices?'),
 
 (7, 6, '7615AA', 'DAT-7615AA-1', 'What standards do you intend to deliver within the ''Business and administration'' sector?'),
-(7, 6, '7615A', 'DAT-7615A-1', 'How many starts does your organisation forecast in the ''Business and administration'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7615A', 'DAT-7615A-1', 'How many starts does your organisation forecast in the ''Business and administration'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7615B', 'DAT-7615B-1', 'How many employees will deliver training in the ''Business and administration'' sector?'),
 (7, 6, '7615', 'DAT-7615-1', 'Who''s the most experienced employee in the ''Business and administration'' sector?'),
 (7, 6, '7615', 'DAT-7615-2', 'Last name'),
@@ -422,7 +422,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7618', 'DAT-76183', 'What''s the typical duration of training they have delivered to apprentices?'),
 
 (7, 6, '7620AA', 'DAT-7620AA-1', 'What standards do you intend to deliver within the ''Care services'' sector?'),
-(7, 6, '7620A', 'DAT-7620A-1', 'How many starts does your organisation forecast in the ''Care services'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7620A', 'DAT-7620A-1', 'How many starts does your organisation forecast in the ''Care services'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7620B', 'DAT-7620B-1', 'How many employees will deliver training in the ''Care services'' sector?'),
 (7, 6, '7620', 'DAT-7620-1', 'Who''s the most experienced employee in the ''Care services'' sector?'),
 (7, 6, '7620', 'DAT-7620-2', 'Last name'),
@@ -451,7 +451,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7623', 'DAT-76233', 'What''s the typical duration of training they have delivered to apprentices?'),
 
 (7, 6, '7625AA', 'DAT-7625AA-1', 'What standards do you intend to deliver within the ''Catering and hospitality'' sector?'),
-(7, 6, '7625A', 'DAT-7625A-1', 'How many starts does your organisation forecast in the ''Catering and hospitality'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7625A', 'DAT-7625A-1', 'How many starts does your organisation forecast in the ''Catering and hospitality'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7625B', 'DAT-7625B-1', 'How many employees will deliver training in the ''Catering and hospitality'' sector?'),
 (7, 6, '7625', 'DAT-7625-1', 'Who''s the most experienced employee in the ''Catering and hospitality'' sector?'),
 (7, 6, '7625', 'DAT-7625-2', 'Last name'),
@@ -480,7 +480,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7628', 'DAT-76283', 'What''s the typical duration of training they have delivered to apprentices?'),
 
 (7, 6, '7630AA', 'DAT-7630AA-1', 'What standards do you intend to deliver within the ''Construction'' sector?'),
-(7, 6, '7630A', 'DAT-7630A-1', 'How many starts does your organisation forecast in the ''Construction'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7630A', 'DAT-7630A-1', 'How many starts does your organisation forecast in the ''Construction'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7630B', 'DAT-7630B-1', 'How many employees will deliver training in the ''Construction'' sector?'),
 (7, 6, '7630', 'DAT-7630-1', 'Who''s the most experienced employee in the ''Construction'' sector?'),
 (7, 6, '7630', 'DAT-7630-2', 'Last name'),
@@ -509,7 +509,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7633', 'DAT-76333', 'What''s the typical duration of training they have delivered to apprentices?'),
 
 (7, 6, '7635AA', 'DAT-7635AA-1', 'What standards do you intend to deliver within the ''Creative and design'' sector?'),
-(7, 6, '7635A', 'DAT-7635A-1', 'How many starts does your organisation forecast in the ''Creative and design'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7635A', 'DAT-7635A-1', 'How many starts does your organisation forecast in the ''Creative and design'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7635B', 'DAT-7635B-1', 'How many employees will deliver training in the ''Creative and design'' sector?'),
 (7, 6, '7635', 'DAT-7635-1', 'Who''s the most experienced employee in the ''Creative and design'' sector?'),
 (7, 6, '7635', 'DAT-7635-2', 'Last name'),
@@ -538,7 +538,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7638', 'DAT-76383', 'What''s the typical duration of training they have delivered to apprentices?'),
 
 (7, 6, '7640AA', 'DAT-7640AA-1', 'What standards do you intend to deliver within the ''Digital'' sector?'),
-(7, 6, '7640A', 'DAT-7640A-1', 'How many starts does your organisation forecast in the ''Digital'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7640A', 'DAT-7640A-1', 'How many starts does your organisation forecast in the ''Digital'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7640B', 'DAT-7640B-1', 'How many employees will deliver training in the ''Digital'' sector?'),
 (7, 6, '7640', 'DAT-7640-1', 'Who''s the most experienced employee in the ''Digital'' sector?'),
 (7, 6, '7640', 'DAT-7640-2', 'Last name'),
@@ -567,7 +567,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7643', 'DAT-76433', 'What''s the typical duration of training they have delivered to apprentices?'),
 
 (7, 6, '7645AA', 'DAT-7645AA-1', 'What standards do you intend to deliver within the ''Education and childcare'' sector?'),
-(7, 6, '7645A', 'DAT-7645A-1', 'How many starts does your organisation forecast in the ''Education and childcare'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7645A', 'DAT-7645A-1', 'How many starts does your organisation forecast in the ''Education and childcare'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7645B', 'DAT-7645B-1', 'How many employees will deliver training in the ''Education and childcare'' sector?'),
 (7, 6, '7645', 'DAT-7645-1', 'Who''s the most experienced employee in the ''Education and childcare'' sector?'),
 (7, 6, '7645', 'DAT-7645-2', 'Last name'),
@@ -596,7 +596,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7648', 'DAT-76483', 'What''s the typical duration of training they have delivered to apprentices?'),
 
 (7, 6, '7650AA', 'DAT-7650AA-1', 'What standards do you intend to deliver within the ''Engineering and manufacturing'' sector?'),
-(7, 6, '7650A', 'DAT-7650A-1', 'How many starts does your organisation forecast in the ''Engineering and manufacturing'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7650A', 'DAT-7650A-1', 'How many starts does your organisation forecast in the ''Engineering and manufacturing'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7650B', 'DAT-7650B-1', 'How many employees will deliver training in the ''Engineering and manufacturing'' sector?'),
 (7, 6, '7650', 'DAT-7650-1', 'Who''s the most experienced employee in the ''Engineering and manufacturing'' sector?'),
 (7, 6, '7650', 'DAT-7650-2', 'Last name'),
@@ -625,7 +625,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7653', 'DAT-76533', 'What''s the typical duration of training they have delivered to apprentices?'),
 
 (7, 6, '7655AA', 'DAT-7655AA-1', 'What standards do you intend to deliver within the ''Hair and Beauty'' sector?'),
-(7, 6, '7655A', 'DAT-7655A-1', 'How many starts does your organisation forecast in the ''Hair and Beauty'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7655A', 'DAT-7655A-1', 'How many starts does your organisation forecast in the ''Hair and Beauty'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7655B', 'DAT-7655B-1', 'How many employees will deliver training in the ''Hair and Beauty'' sector?'),
 (7, 6, '7655', 'DAT-7655-1', 'Who''s the most experienced employee in the ''Hair and Beauty'' sector?'),
 (7, 6, '7655', 'DAT-7655-2', 'Last name'),
@@ -654,7 +654,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7658', 'DAT-76583', 'What''s the typical duration of training they have delivered to apprentices?'),
 
 (7, 6, '7660AA', 'DAT-7660AA-1', 'What standards do you intend to deliver within the ''Engineering and manufacturing'' sector?'),
-(7, 6, '7660A', 'DAT-7660A-1', 'How many starts does your organisation forecast in the ''Engineering and manufacturing'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7660A', 'DAT-7660A-1', 'How many starts does your organisation forecast in the ''Engineering and manufacturing'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7660B', 'DAT-7660B-1', 'How many employees will deliver training in the ''Engineering and manufacturing'' sector?'),
 (7, 6, '7660', 'DAT-7660-1', 'Who''s the most experienced employee in the ''Engineering and manufacturing'' sector?'),
 (7, 6, '7660', 'DAT-7660-2', 'Last name'),
@@ -683,7 +683,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7663', 'DAT-76633', 'What''s the typical duration of training they have delivered to apprentices?'),
 
 (7, 6, '7665AA', 'DAT-7665AA-1', 'What standards do you intend to deliver within the ''Legal, finance and accounting'' sector?'),
-(7, 6, '7665A', 'DAT-7665A-1', 'How many starts does your organisation forecast in the ''Legal, finance and accounting'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7665A', 'DAT-7665A-1', 'How many starts does your organisation forecast in the ''Legal, finance and accounting'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7665B', 'DAT-7665B-1', 'How many employees will deliver training in the ''Legal, finance and accounting'' sector?'),
 (7, 6, '7665', 'DAT-7665-1', 'Who''s the most experienced employee in the ''Legal, finance and accounting'' sector?'),
 (7, 6, '7665', 'DAT-7665-2', 'Last name'),
@@ -712,7 +712,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7668', 'DAT-76683', 'What''s the typical duration of training they have delivered to apprentices?'),
 
 (7, 6, '7670AA', 'DAT-7670AA-1', 'What standards do you intend to deliver within the ''Protective services'' sector?'),
-(7, 6, '7670A', 'DAT-7670A-1', 'How many starts does your organisation forecast in the ''Protective services'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7670A', 'DAT-7670A-1', 'How many starts does your organisation forecast in the ''Protective services'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7670B', 'DAT-7670B-1', 'How many employees will deliver training in the ''Protective services'' sector?'),
 (7, 6, '7670', 'DAT-7670-1', 'Who''s the most experienced employee in the ''Protective services'' sector?'),
 (7, 6, '7670', 'DAT-7670-2', 'Last name'),
@@ -741,7 +741,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7673', 'DAT-76733', 'What''s the typical duration of training they have delivered to apprentices?'),
 
 (7, 6, '7675AA', 'DAT-7675AA-1', 'What standards do you intend to deliver within the ''Sales, marketing and procurement'' sector?'),
-(7, 6, '7675A', 'DAT-7675A-1', 'How many starts does your organisation forecast in the ''Sales, marketing and procurement'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7675A', 'DAT-7675A-1', 'How many starts does your organisation forecast in the ''Sales, marketing and procurement'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7675B', 'DAT-7675B-1', 'How many employees will deliver training in the ''Sales, marketing and procurement'' sector?'),
 (7, 6, '7675', 'DAT-7675-1', 'Who''s the most experienced employee in the ''Sales, marketing and procurement'' sector?'),
 (7, 6, '7675', 'DAT-7675-2', 'Last name'),
@@ -770,7 +770,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 (7, 6, '7678', 'DAT-76783', 'What''s the typical duration of training they have delivered to apprentices?'),
 
 (7, 6, '7680AA', 'DAT-7680AA-1', 'What standards do you intend to deliver within the ''Transport and logistics'' sector?'),
-(7, 6, '7680A', 'DAT-7680A-1', 'How many starts does your organisation forecast in the ''Transport and logistics'' sector in the first 12 months of joining the RoATP?'),
+(7, 6, '7680A', 'DAT-7680A-1', 'How many starts does your organisation forecast in the ''Transport and logistics'' sector in the first 12 months of joining the APAR?'),
 (7, 6, '7680B', 'DAT-7680B-1', 'How many employees will deliver training in the ''Transport and logistics'' sector?'),
 (7, 6, '7680', 'DAT-7680-1', 'Who''s the most experienced employee in the ''Transport and logistics'' sector?'),
 (7, 6, '7680', 'DAT-7680-2', 'Last name'),
@@ -822,4 +822,4 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 
 (9, 2, '9100', 'FIN-40', 'Do you understand that your organisation must develop and deliver apprenticeship training in line with the Institute for Apprenticeships and Technical Education''s ''quality statement''?'),
 
-(9, 3, '9200', 'FIN-50', 'Do you understand that your organisation will not join the RoATP until it completes all post application tasks?');
+(9, 3, '9200', 'FIN-50', 'Do you understand that your organisation will not join the APAR until it completes all post application tasks?');

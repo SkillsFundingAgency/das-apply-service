@@ -1,15 +1,15 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Linq;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
-using System;
-using System.Linq;
 
 namespace SFA.DAS.ApplyService.Web.Validators.Appeals
 {
     public class GroundsOfAppealViewModelValidator : AbstractValidator<GroundsOfAppealViewModel>
     {
-        public const string NoHowFailedOnPolicyOrProcessesEntered = "Tell us how the ESFA failed to follow its own policy or processes";
-        public const string NoHowFailedOnEvidenceSubmittedEntered = "Tell us how the ESFA failed to understand or recognise the evidence submitted";
+        public const string NoHowFailedOnPolicyOrProcessesEntered = "Tell us how the DfE failed to follow its own policy or processes";
+        public const string NoHowFailedOnEvidenceSubmittedEntered = "Tell us how the DfE failed to understand or recognise the evidence submitted";
 
         public const int MaxLength = 10000;
         public const string MaxLengthError = "Your answer must be 10,000 characters or less";

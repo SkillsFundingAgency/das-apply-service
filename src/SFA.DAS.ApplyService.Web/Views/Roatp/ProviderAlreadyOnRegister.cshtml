@@ -1,7 +1,7 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ChangeProviderRouteViewModel
 
 @{
-    ViewBag.Title = "Your organisation is already on the RoATP";
+    ViewBag.Title = "Your organisation is already on the APAR";
     Layout = "_Layout";
 
     bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
@@ -26,7 +26,7 @@
                     </div>
                 </div>
             }
-            <h1 class="govuk-heading-xl">Your organisation is already on the RoATP as @Model.CurrentProviderTypeText</h1>
+            <h1 class="govuk-heading-xl">Your organisation is already on the APAR as @Model.CurrentProviderTypeText</h1>
         </div>
     </div>
 
@@ -34,14 +34,14 @@
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-m">Does your organisation want to change provider route?</h2>
             <p class="govuk-body">
-                We'll assess this as a new application and will not consider your organisation's current status on the RoATP.
+                We'll assess this as a new application and will not consider your organisation's current status on the APAR.
             </p>
         </div>
         <div class="govuk-grid-column-two-thirds govuk-warning-text">
             <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
             <strong class="govuk-warning-text__text">
                 <span class="govuk-warning-text__assistive">Warning</span>
-                If your new application is unsuccessful, we may remove your organisation from the RoATP.
+                If your new application is unsuccessful, we may remove your organisation from the APAR.
             </strong>
         </div>
     </div>

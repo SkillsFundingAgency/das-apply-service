@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.CharityCommission;
@@ -7,9 +10,6 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Ukrlp;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services
@@ -23,9 +23,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         private readonly ILogger<GatewayApiChecksService> _logger;
 
         public GatewayApiChecksService(
-            CompaniesHouseApiClient companiesHouseApiClient, 
+            CompaniesHouseApiClient companiesHouseApiClient,
             IOuterApiClient outerApiClient,
-            IRoatpApiClient roatpApiClient, 
+            IRoatpApiClient roatpApiClient,
             IInternalQnaApiClient qnaApiClient,
             ILogger<GatewayApiChecksService> logger)
         {
@@ -56,7 +56,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             var roatpStatus = await _roatpApiClient.GetOrganisationRegisterStatus(ukprn);
             if (roatpStatus == null)
             {
-                var message = $"Unable to retrieve RoATP register details for application {applicationId}";
+                var message = $"Unable to retrieve APAR register details for application {applicationId}";
                 _logger.LogError(message);
                 throw new ServiceUnavailableException(message);
             }
@@ -87,7 +87,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             {
                 companyDetails = await _companiesHouseApiClient.GetCompany(companyNumber);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 var message = $"Unable to retrieve results from companies house for company number {companyNumber}";
                 _logger.LogError(message, ex);
@@ -108,8 +108,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             if (!int.TryParse(charityNumberFromUkrlp, out var charityNumber))
             {
                 var message =
-                    $"Charity registration number cannot be parsed into a number, skipping getting details from charity commission for '{ charityNumberFromUkrlp}'";
-                
+                    $"Charity registration number cannot be parsed into a number, skipping getting details from charity commission for '{charityNumberFromUkrlp}'";
+
                 _logger.LogInformation(message);
                 return;
             }
