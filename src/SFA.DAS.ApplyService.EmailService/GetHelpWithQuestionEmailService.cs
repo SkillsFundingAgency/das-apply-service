@@ -11,7 +11,7 @@ namespace SFA.DAS.ApplyService.EmailService
 {
     public class GetHelpWithQuestionEmailService : NotificationApiEmailService, IGetHelpWithQuestionEmailService
     {
-        protected override string SUBJECT => "RoATP – Get help with this question";
+        protected override string SUBJECT => "APAR – Get help with this question";
 
         public GetHelpWithQuestionEmailService(ILogger<NotificationApiEmailService> logger, IConfigurationService configurationService,
                                                IEmailTemplateClient emailTemplateClient, INotificationsApi notificationsApi)

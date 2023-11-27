@@ -1,9 +1,9 @@
-﻿using SFA.DAS.ApplyService.Domain.Roatp;
-using System.ComponentModel.DataAnnotations;
-using SFA.DAS.ApplyService.Web.Services;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using SFA.DAS.ApplyService.Domain.Apply;
-using System;
+using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.Web.Services;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
@@ -31,12 +31,12 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 return $"{prefix} {CurrentProviderType.RouteName.ToLower()}";
             }
         }
-        
+
         [Required(ErrorMessage = "Tell us if your organisation wants to change provider route")]
         public string ChangeApplicationRoute { get; set; }
 
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
-        public string Title { get { return "Your organisation is already on the RoATP"; } set { } }
+        public string Title { get { return "Your organisation is already on the APAR"; } set { } }
 
         public Guid ApplicationId { get; }
         public int SequenceId { get; set; }
@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string GetHelpQuestion { get; set; }
         public bool GetHelpQuerySubmitted { get; set; }
         public string GetHelpErrorMessage { get; set; }
-        
+
         public string GetHelpAction { get { return "ProviderAlreadyOnRegister"; } set { } }
     }
 }
