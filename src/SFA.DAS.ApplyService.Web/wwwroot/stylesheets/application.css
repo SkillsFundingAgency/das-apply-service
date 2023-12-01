@@ -1347,3 +1347,7 @@
     float: right;
   }
 }
+
+.govuk-notification-banner__content > * {
+  max-width: 100% !important;
+}
