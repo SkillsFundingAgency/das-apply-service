@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using System.Web;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Types;
@@ -61,7 +60,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<Contact> GetUserByEmail(string email)
         {
-            return await Get<Contact>($"/Account/Contact/{HttpUtility.UrlEncode(email)}");
+            return await Get<Contact>($"/Account/Contact/{email}");
         }
     }
 }
