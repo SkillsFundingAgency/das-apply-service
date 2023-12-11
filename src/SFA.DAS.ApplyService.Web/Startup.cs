@@ -62,15 +62,10 @@ namespace SFA.DAS.ApplyService.Web
 
             var config = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
-                .SetBasePath(Directory.GetCurrentDirectory());
-
-#if DEBUG
-            if (!configuration.IsDev())
-            {
-                config.AddJsonFile("appsettings.json", false)
-                    .AddJsonFile("appsettings.Development.json", true);
-            }
-#endif
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", false)
+                .AddJsonFile("appsettings.Development.json", true);
+      
 
             config.AddEnvironmentVariables();
             config.AddAzureTableStorage(options =>
