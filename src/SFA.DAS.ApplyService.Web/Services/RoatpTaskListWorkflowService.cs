@@ -130,7 +130,11 @@ namespace SFA.DAS.ApplyService.Web.Services
                     {
                         previousSectionStatus = await SectionStatusAsync(applicationId, sequenceId, previousSectionId, applicationSequences, organisationVerificationStatus);
 
-                        if (previousSectionStatus != TaskListSectionStatus.NotRequired) break;
+                        if (previousSectionStatus != TaskListSectionStatus.NotRequired)
+                        {
+                            _logger.LogInformation($"{sequenceId} for checking {sequence.SequenceId} is at previous status {previousSectionStatus} for section {sectionId} and organisation verification status {organisationVerificationStatus}");
+                            break;
+                        }
                     }
 
                     return previousSectionStatus == TaskListSectionStatus.Completed;
