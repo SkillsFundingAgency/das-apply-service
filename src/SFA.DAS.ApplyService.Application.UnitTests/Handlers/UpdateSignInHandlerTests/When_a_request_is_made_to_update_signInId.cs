@@ -21,9 +21,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateSignInHandle
             var signInId = Guid.NewGuid();
             var contactId = Guid.NewGuid();
             
-            handler.Handle(new UpdateSignInIdRequest(signInId, contactId), new CancellationToken()).Wait();
+            handler.Handle(new UpdateSignInIdRequest(signInId, contactId,"test"), new CancellationToken()).Wait();
             
-            contactRepository.Verify(r => r.UpdateSignInId(contactId,signInId));
+            contactRepository.Verify(r => r.UpdateSignInId(contactId,signInId,"test"));
         }
     }
 }

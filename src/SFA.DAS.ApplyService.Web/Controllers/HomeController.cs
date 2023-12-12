@@ -1,15 +1,23 @@
 using System.Diagnostics;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly IApplyConfig _applyConfig;
+
+        public HomeController(IApplyConfig applyConfig)
         {
-            return View();
+            _applyConfig = applyConfig;
+        }
+
+        public IActionResult Index()
+        { 
+            return View(new HomeIndexViewModel(_applyConfig.UseGovSignIn));
         }
 
         public IActionResult ContactUs()

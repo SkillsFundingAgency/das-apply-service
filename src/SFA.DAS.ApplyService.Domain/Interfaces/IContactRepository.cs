@@ -6,10 +6,10 @@ namespace SFA.DAS.ApplyService.Domain.Interfaces
 {
     public interface IContactRepository
     {
-        Task<Contact> CreateContact(string email, string givenName, string familyName);
+        Task<Contact> CreateContact(string email, string givenName, string familyName, string govUkIdentifier = null, Guid? userId = null);
         Task<Contact> GetContact(Guid userId);
         Task<Contact> GetContactByEmail(string email);
         Task<Contact> GetContactBySignInId(Guid signInId);
-        Task UpdateSignInId(Guid contactId, Guid? signInId);
+        Task UpdateSignInId(Guid contactId, Guid? signInId, string govIdentifier);
     }
 }

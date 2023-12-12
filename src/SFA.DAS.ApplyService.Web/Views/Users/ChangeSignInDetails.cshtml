@@ -1,0 +1,33 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.ChangeSignInDetailsViewModel
+@{
+    ViewBag.Title = "Change your sign-in details";
+    Layout = "_Layout";
+}
+@section Navigation
+{
+    <partial name="~/Views/Appeals/Navigation/_ApplicationSubmittedSignoutOnlyHeader.cshtml" />
+}
+@section breadcrumb {
+    <div class="breadcrumbs">
+        <a href="javascript:window.history.back();" class="govuk-back-link">Back</a>
+    </div>
+}
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Change your sign-in details</h1>
+            <p class="govuk-body">
+                You use your GOV.UK One Login to sign in to this service.
+            </p>
+            <p class="govuk-body">You can change these details for your GOV.UK One Login:</p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+                <li>email address</li>
+                <li>password</li>
+                <li>how you get security codes to sign in</li>
+            </ul>
+            <a href="@Model.SettingsLink" class="govuk-link" target="_blank" rel="noopener noreferrer">
+                Change your sign-in details for your GOV.UK One Login (opens in new tab).
+            </a>
+        </div>
+    </div>
+</main>

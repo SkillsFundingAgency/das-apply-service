@@ -22,13 +22,14 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
         private const string EMAIL = "name@email.com";
         private const string GIVEN_NAME = "James";
         private const string FAMILY_NAME = "Jones";
+        private const string GovUkIdentifier = "test";
         private readonly Guid ContactId = Guid.NewGuid();
-
+        
         [SetUp]
         public void Setup()
         {
             _contactRepository = new Mock<IContactRepository>();
-            _contactRepository.Setup(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME)).ReturnsAsync(new Contact { Id = ContactId, GivenNames = GIVEN_NAME, FamilyName = FAMILY_NAME, Email = EMAIL });
+            _contactRepository.Setup(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME, GovUkIdentifier,null)).ReturnsAsync(new Contact { Id = ContactId, GivenNames = GIVEN_NAME, FamilyName = FAMILY_NAME, Email = EMAIL });
 
             _dfeSignInService = new Mock<IDfeSignInService>();
             _dfeSignInService.Setup(dfe => dfe.InviteUser(EMAIL, GIVEN_NAME, FAMILY_NAME, ContactId)).ReturnsAsync(new InviteUserResponse { IsSuccess = true });
@@ -39,15 +40,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
         [Test]
         public async Task ThenANewUserIsCreated()
         {
-            await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME), new CancellationToken());
+            await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME,GovUkIdentifier), new CancellationToken());
 
-            _contactRepository.Verify(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME));
+            _contactRepository.Verify(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME,GovUkIdentifier,null));
         }
 
         [Test]
         public async Task ThenANewUserIsInvitedToDfeSignin()
         {
-            await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME), new CancellationToken());
+            await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME, GovUkIdentifier), new CancellationToken());
 
             _dfeSignInService.Verify(dfe => dfe.InviteUser(EMAIL, GIVEN_NAME, FAMILY_NAME, ContactId));
         }
@@ -57,9 +58,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
         {
             _contactRepository.Setup(r => r.GetContactByEmail(EMAIL)).ReturnsAsync(new Contact { Id = ContactId, GivenNames = GIVEN_NAME, FamilyName = FAMILY_NAME, Email = EMAIL });
 
-            await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME), new CancellationToken());
+            await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME, GovUkIdentifier), new CancellationToken());
             
-            _contactRepository.Verify(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME), Times.Never);
+            _contactRepository.Verify(r => r.CreateContact(EMAIL, GIVEN_NAME, FAMILY_NAME,GovUkIdentifier,null), Times.Never);
         }
 
         [Test]
@@ -67,7 +68,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
         {
             _contactRepository.Setup(r => r.GetContactByEmail(EMAIL)).ReturnsAsync(new Contact { Id = ContactId, GivenNames = GIVEN_NAME, FamilyName = FAMILY_NAME, Email = EMAIL });
 
-            await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME), new CancellationToken());
+            await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME,GovUkIdentifier), new CancellationToken());
 
             _dfeSignInService.Verify(dfe => dfe.InviteUser(EMAIL, GIVEN_NAME, FAMILY_NAME, It.IsAny<Guid>()));
         }
@@ -77,7 +78,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
         {
             _dfeSignInService.Setup(dfe => dfe.InviteUser(EMAIL, GIVEN_NAME, FAMILY_NAME, ContactId)).ReturnsAsync(new InviteUserResponse { IsSuccess = false });
             
-            var result = await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME), new CancellationToken());
+            var result = await _handler.Handle(new CreateAccountRequest(EMAIL, GIVEN_NAME, FAMILY_NAME,GovUkIdentifier), new CancellationToken());
 
             result.Should().Be(false);
         }             

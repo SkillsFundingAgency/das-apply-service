@@ -169,7 +169,9 @@
         </nav>
     }
 </div>
-
+<div class="govuk-width-container">
+    @await RenderSectionAsync("breadcrumb", required: false)
+</div>
 <div class="govuk-width-container">
     @RenderBody()
 </div>
@@ -222,9 +224,13 @@
 <environment include="Development">
     <script src="~/javascripts/das-cookie-banner.js"></script>
     <script src="~/javascripts/application.js"></script>
+    <script src="~/javascripts/jquery.js"></script>
+    <script src="~/javascripts/user-navigation.js"></script>
 </environment>
 <environment exclude="Development">
     <script src="~/javascripts/application.min.js"></script>
+    <script src="~/javascripts/jquery.js"></script>
+    <script src="~/javascripts/user-navigation.js"></script>
 </environment>
 
 @RenderSection("Scripts", required: false)

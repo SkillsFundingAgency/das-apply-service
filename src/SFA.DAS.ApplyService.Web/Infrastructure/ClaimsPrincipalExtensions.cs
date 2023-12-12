@@ -29,6 +29,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             return signInId;
         }
+        public static string GetGovLoginId(this ClaimsPrincipal principal)
+        {
+            var value = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            return value;
+        }
 
         public static string GetGivenName(this ClaimsPrincipal principal)
         {

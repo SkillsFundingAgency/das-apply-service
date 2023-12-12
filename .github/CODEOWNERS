@@ -1,5 +1,4 @@
-#Requires review when making changes to the following files/folders
-* @MarkFCain @chrisfoster76 @DevenKShah @raviudari01
+#Changes to the following files/folders require review from listed teams
 .github/CODEOWNERS      @SkillsFundingAgency/das-platform-engineering
 /azure/                 @SkillsFundingAgency/das-platform-engineering
 azure-pipelines.yml     @SkillsFundingAgency/das-platform-engineering

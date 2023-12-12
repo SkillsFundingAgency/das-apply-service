@@ -14,7 +14,8 @@ CREATE TABLE [dbo].[Contacts](
    UpdatedAt	Datetime2(7)		NULL,	--Date / Time of the last update
    UpdatedBy	[nvarchar](256)	NULL,	--Username (staff or ApplyContact)
    DeletedAt	Datetime2(7)		NULL,	--Date / Time of the soft delete
-   DeletedBy	[nvarchar](256)	NULL	--Username (staff or ApplyContact)
+   DeletedBy	[nvarchar](256)	NULL,	--Username (staff or ApplyContact)
+   GovUkIdentifier  [nvarchar](256)	NULL
     CONSTRAINT [PK_Contact] PRIMARY KEY ([Id]),
 ) 
 GO
@@ -34,3 +35,5 @@ CREATE INDEX [IX_Contacts_SignInId] ON [Contacts] ([SigninId])
 GO
 CREATE INDEX [IX_Contacts_SignInType] ON [Contacts] ([SigninType])
 GO
+CREATE INDEX [IX_Contacts_GovUkIdentifier] ON [Contacts] ([GovUkIdentifier])
+    GO

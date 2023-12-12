@@ -16,13 +16,15 @@ namespace SFA.DAS.ApplyService.Data
             _dbConnectionHelper = dbConnectionHelper;
         }
         
-        public async Task<Contact> CreateContact(string email, string givenName, string familyName)
+        public async Task<Contact> CreateContact(string email, string givenName, string familyName, string govUkIdentifier = null, Guid? userId = null)
         {
+            var loginType = string.IsNullOrEmpty(govUkIdentifier) ? "ASLogin" : "GovLogin";
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                await connection.ExecuteAsync(@"INSERT INTO Contacts (Email, GivenNames, FamilyName, SignInType, CreatedAt, CreatedBy, Status) 
-                                                     VALUES (@email, @givenName, @familyName, 'ASLogin', @createdAt, @email, 'New')",
-                    new { email, givenName, familyName, createdAt = DateTime.UtcNow });
+                userId ??= Guid.NewGuid();
+                await connection.ExecuteAsync(@"INSERT INTO Contacts (Id, Email, GivenNames, FamilyName, SignInType, CreatedAt, CreatedBy, Status, GovUkidentifier) 
+                                                     VALUES (@userId, @email, @givenName, @familyName, @loginType, @createdAt, @email, 'New', @GovUkidentifier)",
+                    new {userId, email, givenName, familyName,loginType, createdAt = DateTime.UtcNow, govUkIdentifier });
 
                 return await GetContactByEmail(email);
             }
@@ -55,13 +57,13 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task UpdateSignInId(Guid contactId, Guid? signInId)
+        public async Task UpdateSignInId(Guid contactId, Guid? signInId, string govIdentifier)
         {
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
                 await connection.ExecuteAsync(
-                    @"UPDATE Contacts SET SignInId = @signInId, UpdatedAt = GETUTCDATE(), UpdatedBy = 'ASLogin', Status = 'Live' WHERE Id = @contactId",
-                    new {contactId, signInId});
+                    @"UPDATE Contacts SET SignInId = @signInId, UpdatedAt = GETUTCDATE(), GovUkidentifier=@govIdentifier, UpdatedBy = 'ASLogin', Status = 'Live' WHERE Id = @contactId",
+                    new {contactId, signInId, govIdentifier});
             }
         }
     }

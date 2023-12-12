@@ -30,7 +30,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [PerformValidation]
         public async Task<ActionResult> InviteUser([FromBody] NewContact newContact)
         {
-            var successful = await _mediator.Send(new CreateAccountRequest(newContact.Email, newContact.GivenName, newContact.FamilyName));
+            var successful = await _mediator.Send(new CreateAccountRequest(newContact.Email, newContact.GivenName, newContact.FamilyName, newContact.GovUkIdentifier));
 
             if (!successful)
             {
@@ -44,7 +44,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [PerformValidation]
         public async Task<ActionResult> CreateAccountFromAsLogin(Guid signInId, [FromBody] NewContact contact)
         {
-            var successful = await _mediator.Send(new CreateAccountFromAsLoginRequest(signInId, contact.Email, contact.GivenName, contact.FamilyName));
+            var successful = await _mediator.Send(new CreateAccountFromAsLoginRequest(signInId, contact.Email, contact.GivenName, contact.FamilyName, contact.GovUkIdentifier, contact.UserId));
 
             if (!successful)
             {
@@ -65,7 +65,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult> Callback([FromBody] SignInCallback callback)
         {
             _logger.LogInformation($"Received callback from ASLogin: Sub: {callback.Sub} SourceId: {callback.SourceId}");
-            await _mediator.Send(new UpdateSignInIdRequest(Guid.Parse(callback.Sub), Guid.Parse(callback.SourceId)));
+            await _mediator.Send(new UpdateSignInIdRequest(Guid.Parse(callback.Sub), Guid.Parse(callback.SourceId), null));
             return Ok();
         }
 
@@ -73,6 +73,17 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<Contact>> GetByContactId(Guid contactId)
         {
            return  await _mediator.Send(new GetContactByIdRequest(contactId));
+        }
+
+        /// <summary>
+        /// Api endpoint to get the contact by given email address parameter.
+        /// </summary>
+        /// <param name="email">Email address.</param>
+        /// <returns>Contact</returns>
+        [HttpGet("/Account/Contact/{email}")]
+        public async Task<ActionResult<Contact>> GetByContactEmail(string email)
+        {
+            return await _mediator.Send(new GetContactByEmailRequest(email));
         }
     }
 }

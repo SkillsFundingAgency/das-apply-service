@@ -38,6 +38,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
+using SFA.DAS.Configuration.AzureTableStorage;
+using SFA.DAS.GovUK.Auth.AppStart;
+using SFA.DAS.GovUK.Auth.Services;
 
 namespace SFA.DAS.ApplyService.Web
 {
@@ -48,15 +52,32 @@ namespace SFA.DAS.ApplyService.Web
         private readonly ILogger<Startup> _logger;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IApplyConfig _configService;
-        private const string ServiceName = "SFA.DAS.ApplyService";
-        private const string Version = "1.0";
 
-        public Startup(IConfiguration configuration, ILogger<Startup> logger, IWebHostEnvironment hostingEnvironment, IWebHostEnvironment env)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger, IWebHostEnvironment hostingEnvironment)
         {
             _configuration = configuration;
             _logger = logger;
             _hostingEnvironment = hostingEnvironment;
-            _configService =  new ConfigurationService(env, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], Version, ServiceName).GetConfig().GetAwaiter().GetResult();
+
+            var config = new ConfigurationBuilder()
+                .AddConfiguration(configuration)
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", false)
+                .AddJsonFile("appsettings.Development.json", true);
+      
+
+            config.AddEnvironmentVariables();
+            config.AddAzureTableStorage(options =>
+                {
+                    options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                    options.EnvironmentName = configuration["EnvironmentName"];
+                    options.PreFixConfigurationKeys = false;
+                }
+            );
+
+            _configuration = config.Build();
+            _configService = _configuration.GetSection(nameof(ApplyConfig)).Get<ApplyConfig>();
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -228,6 +249,9 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
+            services.AddSingleton<IApplyConfig>(_ => _configService);
+
+            // TODO: IConfigurationService could be remov
             services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
                 sp.GetService<IWebHostEnvironment>(),
                 _configuration["EnvironmentName"],
@@ -239,12 +263,7 @@ namespace SFA.DAS.ApplyService.Web
                 s.GetService<IHttpContextAccessor>(),
                 _configuration["EnvironmentName"]));
 
-            services.AddTransient<IFeatureToggles>(s =>
-            {
-                var configService = s.GetService<IConfigurationService>();
-                var config = configService.GetConfig().GetAwaiter().GetResult();
-                return config.FeatureToggles ?? new FeatureToggles();
-            });
+            services.AddTransient<IFeatureToggles>(_ => _configService.FeatureToggles ?? new FeatureToggles());
 
             services.AddTransient<IDfeSignInService, DfeSignInService>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
@@ -291,14 +310,24 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
             services.AddTransient<ITaskListOrchestrator, TaskListOrchestrator>();
             services.AddTransient<IOverallOutcomeService, OverallOutcomeService>();
+            
+            services.AddTransient<IStubAuthenticationService, StubAuthenticationService>();
+            services.AddTransient<ICustomClaims, CustomClaims>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)
         {
-            var configService = new ConfigurationService(_hostingEnvironment, _configuration["EnvironmentName"],
-                _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService");
-
-            services.AddDfeSignInAuthorization(configService.GetConfig().Result, _logger, _hostingEnvironment);
+            if (_configService.UseGovSignIn)
+            {
+                services.Configure<GovUkOidcConfiguration>(_configuration.GetSection("GovUkOidcConfiguration"));
+                var cookieDomain = DomainExtensions.GetDomain(_configuration["ResourceEnvironmentName"]);
+                var loginRedirect = string.IsNullOrEmpty(cookieDomain)? "" : $"https://{cookieDomain}/account-details";
+                services.AddAndConfigureGovUkAuthentication(_configuration, typeof(CustomClaims), "/Users/SignedOut", "/account-details", cookieDomain, loginRedirect);
+            }
+            else
+            {
+                services.AddDfeSignInAuthorization(_configService, _logger, _hostingEnvironment);
+            }
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
