@@ -457,7 +457,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             actual?.RouteName.Should().Be(RouteNames.StubSignedIn);
             _stubAuthService.Verify(x => x.GetStubSignInClaims(model), Times.Once);
-            _stubAuthenticationService.Verify(x => x.SignInAsync(httpContext, CookieAuthenticationDefaults.AuthenticationScheme, _claimsPrincipal, It.IsAny<AuthenticationProperties?>()), Times.Once);
+            _stubAuthenticationService.Verify(x => x.SignInAsync(httpContext, CookieAuthenticationDefaults.AuthenticationScheme, _claimsPrincipal, It.IsAny<AuthenticationProperties>()), Times.Once);
         }
 
         [Test]
@@ -476,7 +476,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             actual.Should().NotBeNull();
             _stubAuthService.Verify(x => x.GetStubSignInClaims(It.IsAny<StubAuthenticationViewModel>()), Times.Never);
-            _stubAuthenticationService.Verify(x => x.SignInAsync(httpContext, CookieAuthenticationDefaults.AuthenticationScheme, It.IsAny<ClaimsPrincipal>(), It.IsAny<AuthenticationProperties?>()), Times.Never);
+            _stubAuthenticationService.Verify(x => x.SignInAsync(httpContext, CookieAuthenticationDefaults.AuthenticationScheme, It.IsAny<ClaimsPrincipal>(), It.IsAny<AuthenticationProperties>()), Times.Never);
         }
 
         [TestCase("http://someurl")]

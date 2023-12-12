@@ -39,7 +39,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using SFA.DAS.ApplyService.Web.ConfigurationExtensions;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.GovUK.Auth.AppStart;
 using SFA.DAS.GovUK.Auth.Services;
