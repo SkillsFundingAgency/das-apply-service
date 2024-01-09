@@ -22,7 +22,7 @@
     <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.77-prerelease-3" />
     <PackageReference Include="SFA.DAS.QnA.Api.Views" Version="0.2.291" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="2.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="7.0.3" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
