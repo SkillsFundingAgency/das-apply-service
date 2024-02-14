@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Azure.Identity;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
-    using Azure.Core;
     using Configuration;
+    using Microsoft.Azure.Services.AppAuthentication;
 
     public class RoatpTokenService : IRoatpTokenService
     {
@@ -21,11 +20,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             if (baseUri != null && baseUri.IsLoopback)
                 return string.Empty;
 
-            var defaultAzureCredential = new DefaultAzureCredential();
-            var result = await defaultAzureCredential.GetTokenAsync(
-                new TokenRequestContext(scopes: new string[] { _configuration.RoatpApiAuthentication.Identifier + "/.default" }) { });
-
-            return result.Token;
+            return await new AzureServiceTokenProvider().GetAccessTokenAsync(_configuration.RoatpApiAuthentication.Identifier);
         }
     }
 }
