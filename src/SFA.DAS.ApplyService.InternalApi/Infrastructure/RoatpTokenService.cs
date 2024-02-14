@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Azure.Identity;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
+    using Azure.Core;
     using Configuration;
-    using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
     public class RoatpTokenService : IRoatpTokenService
     {
@@ -14,22 +16,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _configuration = configurationService.GetConfig().Result;
         }
 
-        public string GetToken(Uri baseUri)
+        public async Task<string> GetToken(Uri baseUri)
         {
             if (baseUri != null && baseUri.IsLoopback)
                 return string.Empty;
 
-            var tenantId = _configuration.RoatpApiAuthentication.TenantId;
-            var clientId = _configuration.RoatpApiAuthentication.ClientId;
-            var appKey = _configuration.RoatpApiAuthentication.ClientSecret;
-            var resourceId = _configuration.RoatpApiAuthentication.ResourceId;
+            var defaultAzureCredential = new DefaultAzureCredential();
+            var result = await defaultAzureCredential.GetTokenAsync(
+                new TokenRequestContext(scopes: new string[] { _configuration.RoatpApiAuthentication.Identifier + "/.default" }) { });
 
-            var authority = $"https://login.microsoftonline.com/{tenantId}";
-            var clientCredential = new ClientCredential(clientId, appKey);
-            var context = new AuthenticationContext(authority, true);
-            var result = context.AcquireTokenAsync(resourceId, clientCredential).Result;
-
-            return result.AccessToken;
+            return result.Token;
         }
     }
 }
