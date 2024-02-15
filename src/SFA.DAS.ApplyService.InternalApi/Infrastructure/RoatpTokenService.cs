@@ -1,26 +1,34 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
     using Configuration;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.Azure.Services.AppAuthentication;
+    using Microsoft.Extensions.Hosting;
 
     public class RoatpTokenService : IRoatpTokenService
     {
-        private readonly IApplyConfig _configuration;
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IConfigurationService _configurationService;
 
-        public RoatpTokenService(IConfigurationService configurationService)
+        public RoatpTokenService(IWebHostEnvironment hostingEnvironment, IConfigurationService configurationService)
         {
-            _configuration = configurationService.GetConfig().Result;
+            _hostingEnvironment = hostingEnvironment;
+            _configurationService = configurationService;
         }
 
-        public async Task<string> GetToken(Uri baseUri)
+        public async Task<string> GetToken()
         {
-            if (baseUri != null && baseUri.IsLoopback)
+            if (_hostingEnvironment.IsDevelopment())
                 return string.Empty;
 
-            return await new AzureServiceTokenProvider().GetAccessTokenAsync(_configuration.RoatpApiAuthentication.Identifier);
+            var configuration = await _configurationService.GetConfig();
+
+            var azureServiceTokenProvider = new AzureServiceTokenProvider();
+            var generatedToken = await azureServiceTokenProvider.GetAccessTokenAsync(configuration.QnaApiAuthentication.Identifier);
+
+            return generatedToken;
         }
     }
 }
