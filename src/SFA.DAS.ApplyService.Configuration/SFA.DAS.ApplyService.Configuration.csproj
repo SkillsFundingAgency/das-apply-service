@@ -2,7 +2,7 @@
 
     <PropertyGroup>
       <ProjectGuid>{2B3A5F1C-D63B-4A0F-888A-CEFBF919907D}</ProjectGuid>
-      <TargetFramework>net6.0</TargetFramework>
+      <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
