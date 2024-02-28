@@ -46,6 +46,26 @@ Licensed under the [MIT license](https://github.com/SkillsFundingAgency/das-appl
 - Create a Configuration table in your (Development) local Azure Storage account.
 - Add a row to the Configuration table with fields: PartitionKey: LOCAL, RowKey: SFA.DAS.Apply.GovSignIn_1.0, Data: {The contents of the local config json file}.
 
+In addition, SFA.DAS.ApplyService.Web, if it does not exist already, add appSettings.Development.json file with following content:
+```json
+{
+  "Logging": {
+    "IncludeScopes": false,
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  },
+  "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true;",
+  "ConfigNames": "SFA.DAS.ApplyService:ApplyConfig,SFA.DAS.Apply.GovSignIn",
+  "ConnectionStrings": {
+    "Redis": "localhost:6379"
+  },
+  "EnvironmentName": "LOCAL"
+}
+```
+
 ##### To run a local copy you will also require 
 
 - [Login Service](https://github.com/SkillsFundingAgency/das-login-service)
