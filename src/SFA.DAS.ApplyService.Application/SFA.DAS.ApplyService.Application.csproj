@@ -2,13 +2,12 @@
 
     <PropertyGroup>
       <ProjectGuid>{C32FBF75-32C0-40D4-A306-B240A13FCF87}</ProjectGuid>
-      <TargetFramework>net6.0</TargetFramework>
+      <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
       <PackageReference Include="MediatR" Version="7.0.0" />
-      <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
       <PackageReference Include="NPOI" Version="2.5.6" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />

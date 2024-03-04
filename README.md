@@ -16,8 +16,8 @@ Licensed under the [MIT license](https://github.com/SkillsFundingAgency/das-appl
 
 #### Requirements
 
-- Install [.NET Core 2.2 SDK](https://www.microsoft.com/net/download)
-- Install [SQL Server 2017 Developer Edition](https://go.microsoft.com/fwlink/?linkid=853016)
+- Install [.NET Core 8 SDK](https://www.microsoft.com/net/download)
+- Install [SQL Server 2017 Developer Edition] or later (https://go.microsoft.com/fwlink/?linkid=853016)
 - Install [SQL Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
 - Install [Azure Storage Emulator](https://go.microsoft.com/fwlink/?linkid=717179&clcid=0x409) (Make sure you are on v5.3)
 - Install [Azure Storage Explorer](http://storageexplorer.com/)
@@ -42,6 +42,29 @@ Licensed under the [MIT license](https://github.com/SkillsFundingAgency/das-appl
 - Create a Configuration table in your (Development) local Azure Storage account.
 - Add a row to the Configuration table with fields: PartitionKey: LOCAL, RowKey: SFA.DAS.ApplyService_1.0, Data: {The contents of the local config json file}.
 - Alter the SqlConnectionString value in the json to point to your database.
+- Grab the GovSignIn configuration json file from [das-employer-config](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-shared-config/SFA.DAS.Apply.GovSignIn.json)
+- Create a Configuration table in your (Development) local Azure Storage account.
+- Add a row to the Configuration table with fields: PartitionKey: LOCAL, RowKey: SFA.DAS.Apply.GovSignIn_1.0, Data: {The contents of the local config json file}.
+
+In addition, SFA.DAS.ApplyService.Web, if it does not exist already, add appSettings.Development.json file with following content:
+```json
+{
+  "Logging": {
+    "IncludeScopes": false,
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  },
+  "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true;",
+  "ConfigNames": "SFA.DAS.ApplyService:ApplyConfig,SFA.DAS.Apply.GovSignIn",
+  "ConnectionStrings": {
+    "Redis": "localhost:6379"
+  },
+  "EnvironmentName": "LOCAL"
+}
+```
 
 ##### To run a local copy you will also require 
 

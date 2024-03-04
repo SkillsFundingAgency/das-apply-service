@@ -2,7 +2,7 @@
 
     <PropertyGroup>
       <ProjectGuid>{42FEF463-18F2-4A9E-BED0-EB35069DEA40}</ProjectGuid>
-      <TargetFramework>net6.0</TargetFramework>
+      <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
   <ItemGroup>
@@ -11,21 +11,20 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="7.0.1" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
         <PackageReference Include="MediatR" Version="7.0.0" />
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="5.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
         <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="7.0.14" />
         <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.2" />
-        <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="10.0.3" />
         <PackageReference Include="Microsoft.Extensions.Azure" Version="1.6.0" />
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.14" />
-        <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.2.9" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.10" />
         <PackageReference Include="Polly" Version="7.2.3" />
         <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
-        <PackageReference Include="Microsoft.ApplicationInsights.NLogTarget" Version="2.21.0" />
-        <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+        <PackageReference Include="Microsoft.ApplicationInsights.NLogTarget" Version="2.22.0" />
+        <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
         <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.5" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
         <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.0" />

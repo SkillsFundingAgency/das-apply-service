@@ -2,7 +2,7 @@
 
     <PropertyGroup>
       <ProjectGuid>{FE687ABB-F327-4EBC-ADB3-6AD3C7186E1A}</ProjectGuid>
-      <TargetFramework>net6.0</TargetFramework>
+      <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Dapper" Version="2.0.123"/>
+      <PackageReference Include="Dapper" Version="2.0.123" />
     </ItemGroup>
 
 </Project>

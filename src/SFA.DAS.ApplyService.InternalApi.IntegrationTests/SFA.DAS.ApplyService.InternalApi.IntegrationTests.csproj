@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <ProjectGuid>{81E74E65-4049-486B-A5DF-330213C67152}</ProjectGuid>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <OutputType>Library</OutputType>
     </PropertyGroup>
 
