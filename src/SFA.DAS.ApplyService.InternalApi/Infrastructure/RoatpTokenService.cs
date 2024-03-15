@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             var configuration = await _configurationService.GetConfig();
 
             var azureServiceTokenProvider = new AzureServiceTokenProvider();
-            var generatedToken = await azureServiceTokenProvider.GetAccessTokenAsync(configuration.QnaApiAuthentication.Identifier);
+            var generatedToken = await azureServiceTokenProvider.GetAccessTokenAsync(configuration.RoatpApiAuthentication.Identifier);
 
             return generatedToken;
         }
