@@ -1,6 +1,7 @@
 # ![crest](https://assets.publishing.service.gov.uk/government/assets/crests/org_crest_27px-916806dcf065e7273830577de490d5c7c42f36ddec83e907efe62086785f24fb.png) Digital Apprenticeships Service
 
-##  RoATP Apply Service
+##  RoATP Apply Service 
+This incorporates the web front end (SFA.DAS.ApplyService.Web) and the api that services it (SFA.DAS.ApplyService.InternalApi)
 Licensed under the [MIT license](https://github.com/SkillsFundingAgency/das-apply-service/blob/master/LICENSE)
 
 |               |               |
@@ -45,26 +46,6 @@ Licensed under the [MIT license](https://github.com/SkillsFundingAgency/das-appl
 - Grab the GovSignIn configuration json file from [das-employer-config](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-shared-config/SFA.DAS.Apply.GovSignIn.json)
 - Create a Configuration table in your (Development) local Azure Storage account.
 - Add a row to the Configuration table with fields: PartitionKey: LOCAL, RowKey: SFA.DAS.Apply.GovSignIn_1.0, Data: {The contents of the local config json file}.
-
-In addition, SFA.DAS.ApplyService.Web, if it does not exist already, add appSettings.Development.json file with following content:
-```json
-{
-  "Logging": {
-    "IncludeScopes": false,
-    "LogLevel": {
-      "Default": "Debug",
-      "System": "Information",
-      "Microsoft": "Information"
-    }
-  },
-  "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true;",
-  "ConfigNames": "SFA.DAS.ApplyService:ApplyConfig,SFA.DAS.Apply.GovSignIn",
-  "ConnectionStrings": {
-    "Redis": "localhost:6379"
-  },
-  "EnvironmentName": "LOCAL"
-}
-```
 
 ##### To run a local copy you will also require 
 
@@ -124,9 +105,3 @@ Once you have filled out an application, you will then submit it for Assessment
 	- Financial Assessment
 	- Blind Assessor & Moderation
 	- Oversight
-	
-#### Work In Progress
-Due to COVID-19 we have had to suspend work on this project. Current development on the following branch:
-[Assessor Submaster](https://github.com/SkillsFundingAgency/das-apply-service/tree/Assessor_Submaster)
-
-This will need to be merged back into `master` once tested
