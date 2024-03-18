@@ -7,7 +7,7 @@
     bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 }
 
-@if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
+@if (Model.ApplicationId != Guid.Empty)
 {
     @section Navigation
     {
