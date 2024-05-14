@@ -40,7 +40,7 @@
 
             _config.GetConfig().GetAwaiter().GetResult().RoatpApiAuthentication.ApiBaseAddress = RoatpApiBaseAddress;
 
-            _apiClient = new RoatpApiClient(httpClient, logger.Object, new RoatpTokenService(_config));
+            _apiClient = new RoatpApiClient(httpClient, logger.Object, new RoatpTokenService(hostingEnvironment.Object, _config));
         }
 
         [Ignore("Failed test")]
@@ -55,7 +55,7 @@
         public void Client_returns_reapply_status_for_existing_UKPRN_that_is_active()
         {
             var existingUKPRN = 10001123;
-            
+
             var reapplyStatus = _apiClient.GetOrganisationRegisterStatus(existingUKPRN.ToString()).GetAwaiter().GetResult();
 
             reapplyStatus.ProviderTypeId.Should().Be(ProviderType.MainProvider);
@@ -77,7 +77,7 @@
         public void Matching_UKPRN_returns_single_result()
         {
             var ukprn = "10001724";
-            
+
             var result = _apiClient.GetUkrlpDetails(ukprn).GetAwaiter().GetResult();
 
             result.Should().NotBeNull();
