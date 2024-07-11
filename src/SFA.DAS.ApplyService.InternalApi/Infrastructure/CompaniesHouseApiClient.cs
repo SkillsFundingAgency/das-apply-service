@@ -92,18 +92,17 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             {
                 _client.DefaultRequestHeaders.Authorization = GetBasicAuthHeader();
 
-                using (var responseMessage = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
-                {
-                    if (responseMessage.StatusCode == HttpStatusCode.ServiceUnavailable || responseMessage.StatusCode == HttpStatusCode.InternalServerError)
-                    {   // The Companies House API service returns a NotFound if the company details not available so don't fail on that
-                        throw new HttpRequestException(
-                            $"Unable to retrieve data from Companies House API - Status Code {responseMessage.StatusCode}");
-                    }
+                using var responseMessage = await _client.GetAsync(new Uri(uri, UriKind.Relative));
 
-                    if (responseMessage.StatusCode == HttpStatusCode.NotFound) return default;
-
-                    return await responseMessage.Content.ReadAsAsync<T>();
+                if (responseMessage.StatusCode == HttpStatusCode.ServiceUnavailable || responseMessage.StatusCode == HttpStatusCode.InternalServerError)
+                {   // The Companies House API service returns a NotFound if the company details not available so don't fail on that
+                    throw new HttpRequestException(
+                        $"Unable to retrieve data from Companies House API - Status Code {responseMessage.StatusCode}");
                 }
+
+                if (responseMessage.StatusCode == HttpStatusCode.NotFound) return default;
+
+                return await responseMessage.Content.ReadAsAsync<T>();
             }
             catch (Exception ex)
             {
@@ -164,7 +163,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _logger.LogInformation("Searching Companies House - People With Significant Control. Company Number: {CompanyNumber}", companyNumber);
             var apiResponse = await Get<PersonWithSignificantControlList>($"/company/{companyNumber}/persons-with-significant-control?items_per_page=100");
 
-            if (apiResponse == null) apiResponse = new PersonWithSignificantControlList() { items = new List<Models.CompaniesHouse.PersonWithSignificantControl>() };
+            apiResponse ??= new PersonWithSignificantControlList() { items = [] };
 
             var items = activeOnly ? apiResponse.items?.Where(i => i.ceased_on is null) : apiResponse.items;
             return Mapper.Map<IEnumerable<Models.CompaniesHouse.PersonWithSignificantControl>, IEnumerable<Types.CompaniesHouse.PersonWithSignificantControl>>(items);
