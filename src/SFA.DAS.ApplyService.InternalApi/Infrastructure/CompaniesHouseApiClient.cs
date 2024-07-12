@@ -1,16 +1,16 @@
-﻿using AutoMapper;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Configuration;
-using SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
+using AutoMapper;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse;
 using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
@@ -60,7 +60,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             {
                 Success = true,
                 Response = company
-            };        
+            };
         }
 
         public async Task<bool> IsCompanyActivelyTrading(string companyNumber)
@@ -71,7 +71,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
             if (company != null)
             {
-                isTrading = "active".Equals(company.Status, StringComparison.InvariantCultureIgnoreCase) 
+                isTrading = "active".Equals(company.Status, StringComparison.InvariantCultureIgnoreCase)
                             && company.DissolvedOn == null && company.IsLiquidated != true;
             }
 
@@ -86,26 +86,27 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return new AuthenticationHeaderValue("Basic", token);
         }
 
-        private async Task<T> Get<T>(string uri) 
+        private async Task<T> Get<T>(string uri)
         {
             try
             {
                 _client.DefaultRequestHeaders.Authorization = GetBasicAuthHeader();
 
-                using (var responseMessage = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
-                {
-                    if (responseMessage.StatusCode == HttpStatusCode.ServiceUnavailable || responseMessage.StatusCode == HttpStatusCode.InternalServerError)
-                    {   // The Companies House API service returns a NotFound if the company details not available so don't fail on that
-                        throw new HttpRequestException(
-                            $"Unable to retrieve data from Companies House API - Status Code {responseMessage.StatusCode}");
-                    }
+                using var responseMessage = await _client.GetAsync(new Uri(uri, UriKind.Relative));
 
-                    return await responseMessage.Content.ReadAsAsync<T>();
+                if (responseMessage.StatusCode == HttpStatusCode.ServiceUnavailable || responseMessage.StatusCode == HttpStatusCode.InternalServerError)
+                {   // The Companies House API service returns a NotFound if the company details not available so don't fail on that
+                    throw new HttpRequestException(
+                        $"Unable to retrieve data from Companies House API - Status Code {responseMessage.StatusCode}");
                 }
+
+                if (responseMessage.StatusCode == HttpStatusCode.NotFound) return default;
+
+                return await responseMessage.Content.ReadAsAsync<T>();
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unable to retrieve data from Companies House API", ex);
+                _logger.LogError(ex, "Unable to retrieve data from Companies House API");
                 throw new ServiceUnavailableException($"Unable to retrieve data from Companies House API - {ex.Message}");
             }
         }
@@ -113,21 +114,21 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         private async Task<Company> GetCompanyDetails(string companyNumber)
         {
-            _logger.LogInformation($"Searching Companies House - Company Details. Company Number: {companyNumber}");
+            _logger.LogInformation("Searching Companies House - Company Details. Company Number: {CompanyNumber}", companyNumber);
             var apiResponse = await Get<CompanyDetails>($"/company/{companyNumber}");
             return Mapper.Map<CompanyDetails, Company>(apiResponse);
         }
 
         private async Task<IEnumerable<Types.CompaniesHouse.Officer>> GetOfficers(string companyNumber, bool activeOnly = true)
         {
-            _logger.LogInformation($"Searching Companies House - Officers. Company Number: {companyNumber}");
+            _logger.LogInformation("Searching Companies House - Officers. Company Number: {CompanyNumber}", companyNumber);
             var apiResponse = await Get<OfficerList>($"/company/{companyNumber}/officers?items_per_page=100");
 
             var items = activeOnly ? apiResponse.items?.Where(i => i.resigned_on is null) : apiResponse.items;
 
-            var officers = Mapper.Map<IEnumerable<Models.CompaniesHouse.Officer>, IEnumerable<Types.CompaniesHouse.Officer>> (items);
+            var officers = Mapper.Map<IEnumerable<Models.CompaniesHouse.Officer>, IEnumerable<Types.CompaniesHouse.Officer>>(items);
 
-            foreach(var officer in officers)
+            foreach (var officer in officers)
             {
                 officer.Disqualifications = await GetOfficerDisqualifications(officer.Id);
             }
@@ -137,15 +138,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         private async Task<IEnumerable<Types.CompaniesHouse.Disqualification>> GetOfficerDisqualifications(string officerId)
         {
-            _logger.LogInformation($"Searching Companies House - Natural Officer's Disqualifications. Officer Id: {officerId}");
+            _logger.LogInformation("Searching Companies House - Natural Officer's Disqualifications. Officer Id: {OfficerId}", officerId);
             var apiResponseNatural = await Get<DisqualificationList>($"/disqualified-officers/natural/{officerId}");
 
-            _logger.LogInformation($"Searching Companies House - Corporate Officer's Disqualifications. Officer Id: {officerId}");
+            _logger.LogInformation("Searching Companies House - Corporate Officer's Disqualifications. Officer Id: {OfficerId}", officerId);
             var apiResponseCorporate = await Get<DisqualificationList>($"/disqualified-officers/corporate/{officerId}");
 
             var disqualifications = new List<Models.CompaniesHouse.Disqualification>();
 
-            if(apiResponseNatural?.disqualifications != null)
+            if (apiResponseNatural?.disqualifications != null)
             {
                 disqualifications.AddRange(apiResponseNatural.disqualifications);
             }
@@ -154,32 +155,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                 disqualifications.AddRange(apiResponseCorporate.disqualifications);
             }
 
-            return Mapper.Map<IEnumerable<Models.CompaniesHouse.Disqualification>, IEnumerable<Types.CompaniesHouse.Disqualification>> (disqualifications);
+            return Mapper.Map<IEnumerable<Models.CompaniesHouse.Disqualification>, IEnumerable<Types.CompaniesHouse.Disqualification>>(disqualifications);
         }
 
         private async Task<IEnumerable<Types.CompaniesHouse.PersonWithSignificantControl>> GetPeopleWithSignificantControl(string companyNumber, bool activeOnly = true)
         {
-            _logger.LogInformation($"Searching Companies House - People With Significant Control. Company Number: {companyNumber}");
+            _logger.LogInformation("Searching Companies House - People With Significant Control. Company Number: {CompanyNumber}", companyNumber);
             var apiResponse = await Get<PersonWithSignificantControlList>($"/company/{companyNumber}/persons-with-significant-control?items_per_page=100");
+
+            apiResponse ??= new PersonWithSignificantControlList() { items = [] };
 
             var items = activeOnly ? apiResponse.items?.Where(i => i.ceased_on is null) : apiResponse.items;
             return Mapper.Map<IEnumerable<Models.CompaniesHouse.PersonWithSignificantControl>, IEnumerable<Types.CompaniesHouse.PersonWithSignificantControl>>(items);
-        }
-
-        private async Task<IEnumerable<dynamic>> GetCharges(string companyNumber)
-        {
-            _logger.LogInformation($"Searching Companies House - Charges. Company Number: {companyNumber}");
-            var apiResponse = await Get<ChargeList>($"/company/{companyNumber}/charges");
-            return apiResponse.items;
-            //return Mapper.Map<IEnumerable<Charge>, IEnumerable<Types.CompaniesHouse.Charge>> (apiResponse.items);
-        }
-
-        private async Task<dynamic> GetInsolvencyDetails(string companyNumber)
-        {
-            _logger.LogInformation($"Searching Companies House - Insolvency. Company Number: {companyNumber}");
-            var apiResponse = await Get<InsolvencyDetails>($"/company/{companyNumber}/insolvency");
-            return apiResponse;
-            //return Mapper.Map<InsolvencyDetails, InsolvencyDetails> (apiResponse);
         }
     }
 }
