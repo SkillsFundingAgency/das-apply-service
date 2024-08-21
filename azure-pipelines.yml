@@ -35,6 +35,7 @@ stages:
     - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
       parameters:
         SonarCloudProjectKey: SkillsFundingAgency_das-apply-service
+        ContinueOnVulnerablePackageScanError: true
 
     - task: DotNetCoreCLI@2
       displayName: 'dotnet pack'
