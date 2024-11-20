@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -18,6 +13,11 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -149,7 +149,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
 
-       
+
 
         [Route("confirm-directors-pscs")]
         public async Task<IActionResult> ConfirmDirectorsPscs(Guid applicationId, string ukprn, string companyNumber)
@@ -218,6 +218,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> ConfirmTrustees(Guid applicationId)
         {
             var trusteesData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
+
+            // A service will call the database to check if the ukprn is in the exempted table and return a true/false for the application's ukprn
+            var qnaApplicationData = await _qnaApiClient.GetApplicationData(applicationId);
+            var ukprn = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UKPRN)?.Value<string>();
+            var charityExcluded = ukprn == "10094400";
+            // go get the excluded ukprns and act accordingly
+            if (charityExcluded)
+            {
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+            }
+            ///////////////////////////
 
             if (trusteesData is null)
             {

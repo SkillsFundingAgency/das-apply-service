@@ -31,6 +31,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                     CharityCommissionManualEntry = CharityCommissionManualEntry(qnaApplicationData),
                     CompaniesHouseDataConfirmed = CompaniesHouseDataConfirmed(qnaApplicationData),
                     CharityCommissionDataConfirmed = CharityCommissionDataConfirmed(qnaApplicationData),
+                    CharityCommissionDataExempted = CharityCommissionDataExempted(qnaApplicationData),
                     WhosInControlConfirmed = WhosInControlConfirmed(qnaApplicationData),
                     WhosInControlStarted = WhosInControlStarted(qnaApplicationData)
                 };
@@ -82,6 +83,19 @@ namespace SFA.DAS.ApplyService.Web.Services
             var trusteesDobConfirmed = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.TrusteesDobConfirmed)?.Value<string>();
 
             return trusteesConfirmed == "Y" && trusteesDobConfirmed == "Y";
+        }
+
+        private static bool CharityCommissionDataExempted(JObject qnaApplicationData)
+        {
+            // A service will call the database to check if the ukprn is in the exempted table and return a true/false for the application's ukprn
+            var ukprn = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UKPRN)?.Value<string>();
+
+            if (ukprn == "10094400")
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static bool WhosInControlStarted(JObject qnaApplicationData)

@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Application.Apply.Roatp;
+﻿using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Orchestrators
 {
@@ -105,14 +105,14 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
             //Within Your Organisation, sections are locked until the previous one is completed
             if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation && sectionId != 1)
             {
-                return ! await _roatpTaskListWorkflowService.PreviousSectionCompleted(applicationId, sequenceId, sectionId, sequences, organisationVerificationStatus);
+                return !await _roatpTaskListWorkflowService.PreviousSectionCompleted(applicationId, sequenceId, sectionId, sequences, organisationVerificationStatus);
             }
 
             //Entire Finish section is locked until all app sequences are completed, and sections are locked until previous one is completed
             if (sequenceId == RoatpWorkflowSequenceIds.Finish)
             {
-                return !applicationSequencesCompleted 
-                    || ! await _roatpTaskListWorkflowService.PreviousSectionCompleted(applicationId, sequenceId, sectionId, sequences, organisationVerificationStatus);
+                return !applicationSequencesCompleted
+                    || !await _roatpTaskListWorkflowService.PreviousSectionCompleted(applicationId, sequenceId, sectionId, sequences, organisationVerificationStatus);
             }
 
             // CriminalComplianceChecks has two intro pages...
@@ -147,7 +147,7 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
             foreach (var section in yourOrganisationSequence.Sections)
             {
                 var sectionStatus = await _roatpTaskListWorkflowService.SectionStatusAsync(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, section.SectionId, sequences, organisationVerificationStatus);
-                if (sectionStatus != TaskListSectionStatus.NotRequired &&  sectionStatus != TaskListSectionStatus.Completed)
+                if (sectionStatus != TaskListSectionStatus.NotRequired && sectionStatus != TaskListSectionStatus.Completed)
                 {
                     yourOrganisationSequenceCompleted = false;
                     break;

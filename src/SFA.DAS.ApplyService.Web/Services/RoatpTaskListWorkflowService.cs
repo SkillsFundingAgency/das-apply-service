@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -10,19 +6,23 @@ using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Web.Configuration;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Services
 {
     public class RoatpTaskListWorkflowService : IRoatpTaskListWorkflowService
     {
         private const string ConfirmedAnswer = "Yes";
-        
+
         private readonly IQnaApiClient _qnaApiClient;
         private readonly INotRequiredOverridesService _notRequiredOverridesService;
         private readonly List<TaskListConfiguration> _configuration;
         private readonly ILogger<RoatpTaskListWorkflowService> _logger;
-        
-        public RoatpTaskListWorkflowService(IQnaApiClient qnaApiClient, INotRequiredOverridesService notRequiredOverridesService, 
+
+        public RoatpTaskListWorkflowService(IQnaApiClient qnaApiClient, INotRequiredOverridesService notRequiredOverridesService,
                                             IOptions<List<TaskListConfiguration>> configuration, ILogger<RoatpTaskListWorkflowService> logger)
         {
             _qnaApiClient = qnaApiClient;
@@ -49,7 +49,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             return sectionText;
         }
 
-        public string SectionStatus(Guid applicationId, int sequenceId, int sectionId, 
+        public string SectionStatus(Guid applicationId, int sequenceId, int sectionId,
                                     IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
             return SectionStatusAsync(applicationId, sequenceId, sectionId, applicationSequences, organisationVerificationStatus)
@@ -97,7 +97,7 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             var sequence = applicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
 
-            if(sequence is null)
+            if (sequence is null)
             {
                 _logger.LogError($"PreviousSectionCompleted - Sequence '{sequenceId}' could not found in Application {applicationId}");
                 return false;
@@ -105,7 +105,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             else if (sequence.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation)
             {
                 var complete = true;
-                for(var index = 1; index < sectionId; index++)
+                for (var index = 1; index < sectionId; index++)
                 {
                     if (await SectionStatusAsync(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, index, applicationSequences, organisationVerificationStatus) != TaskListSectionStatus.Completed)
                     {
@@ -134,7 +134,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                     }
 
                     return previousSectionStatus == TaskListSectionStatus.Completed;
-                }                
+                }
             }
             else if (sequence.Sequential && sectionId > 1)
             {
@@ -151,7 +151,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
                 var previousSectionsCompletedCount = SectionCompletedQuestionsCount(previousSection);
                 if (previousSectionsCompletedCount == 0)
-                    return false;                               
+                    return false;
 
                 var previousSectionQuestionsCount = previousSection.QnAData.Pages.Where(p => !p.NotRequired).SelectMany(x => x.Questions)
                     .DistinctBy(q => q.QuestionId).Count();
@@ -263,11 +263,11 @@ namespace SFA.DAS.ApplyService.Web.Services
                 }
             }
         }
-        
+
         private static int SectionCompletedQuestionsCount(ApplicationSection section)
         {
             int answeredQuestions = 0;
-            
+
             var pages = section.QnAData.Pages.Where(p => p.NotRequired == false);
             foreach (var page in pages)
             {
@@ -289,7 +289,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             return answeredQuestions;
         }
 
-        private static string GetSectionText(int completedCount, ApplicationSection section,  bool sequential)
+        private static string GetSectionText(int completedCount, ApplicationSection section, bool sequential)
         {
             if ((section.PagesComplete == section.PagesActive && section.PagesActive > 0))
                 return TaskListSectionStatus.Completed;
@@ -310,31 +310,33 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return TaskListSectionStatus.Blank;
             }
 
-            if ((organisationVerificationStatus.CompaniesHouseManualEntry || organisationVerificationStatus.CharityCommissionManualEntry) 
+            if ((organisationVerificationStatus.CompaniesHouseManualEntry || organisationVerificationStatus.CharityCommissionManualEntry)
                 && !organisationVerificationStatus.CharityCommissionDataConfirmed
                 && !organisationVerificationStatus.CompaniesHouseDataConfirmed
                 && !organisationVerificationStatus.WhosInControlConfirmed)
                 return TaskListSectionStatus.Next;
 
             var companiesHouseVerified = organisationVerificationStatus.CompaniesHouseDataConfirmed || organisationVerificationStatus.CompaniesHouseManualEntry;
-            var charityCommissionVerified = organisationVerificationStatus.CharityCommissionDataConfirmed 
+            var charityCommissionVerified = organisationVerificationStatus.CharityCommissionDataConfirmed
                                           || organisationVerificationStatus.CharityCommissionManualEntry;
+
+            var charityCommissionExempted = organisationVerificationStatus.CharityCommissionDataExempted;
 
             if (organisationVerificationStatus.VerifiedCompaniesHouse
                 && organisationVerificationStatus.VerifiedCharityCommission)
             {
-                if ((companiesHouseVerified
-                    && !charityCommissionVerified)
-                    || (!companiesHouseVerified
-                    && charityCommissionVerified))
-                {
-                    return TaskListSectionStatus.InProgress;
-                }
                 if (companiesHouseVerified
-                    && charityCommissionVerified)
+                    && (charityCommissionVerified || charityCommissionExempted))
                 {
                     return TaskListSectionStatus.Completed;
                 }
+
+                if ((companiesHouseVerified && !charityCommissionVerified)
+                    || (!companiesHouseVerified && charityCommissionVerified))
+                {
+                    return TaskListSectionStatus.InProgress;
+                }
+
             }
 
             if (organisationVerificationStatus.VerifiedCompaniesHouse
@@ -359,7 +361,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             {
                 return TaskListSectionStatus.Completed;
             }
-            
+
             if (organisationVerificationStatus.WhosInControlStarted)
             {
                 return TaskListSectionStatus.InProgress;
