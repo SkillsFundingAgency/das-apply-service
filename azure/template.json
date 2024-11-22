@@ -260,6 +260,10 @@
                                 {
                                   "name": "StubAuth",
                                   "value": "[parameters('stubAuth')]"
+                                },
+                                {
+                                    "name": "ProvidersExemptedFromHavingTrustees",
+                                    "value": "10094400"
                                 }
                             ]
                         }
@@ -329,7 +333,7 @@
                                 {
                                   "name": "FileStorage:StorageConnectionString",
                                   "value": "[reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageConnectionString.value]"
-                                }                                
+                                }
                             ]
                         }
                     },
