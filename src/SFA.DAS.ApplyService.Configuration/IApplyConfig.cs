@@ -26,6 +26,8 @@ namespace SFA.DAS.ApplyService.Configuration
 
         FeatureToggles FeatureToggles { get; set; }
 
+        string ProvidersExemptedFromHavingTrustees { get; set; }
+
         /// <summary>
         /// Gets or Sets the UseGovSignIn value.
         /// </summary>

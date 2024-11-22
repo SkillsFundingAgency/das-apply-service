@@ -31,6 +31,9 @@ using SFA.DAS.ApplyService.Web.Orchestrators;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.StartupExtensions;
 using SFA.DAS.ApplyService.Web.Validators;
+using SFA.DAS.Configuration.AzureTableStorage;
+using SFA.DAS.GovUK.Auth.AppStart;
+using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
@@ -39,9 +42,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using SFA.DAS.Configuration.AzureTableStorage;
-using SFA.DAS.GovUK.Auth.AppStart;
-using SFA.DAS.GovUK.Auth.Services;
 
 namespace SFA.DAS.ApplyService.Web
 {
@@ -64,7 +64,7 @@ namespace SFA.DAS.ApplyService.Web
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", false)
                 .AddJsonFile("appsettings.Development.json", true);
-      
+
 
             config.AddEnvironmentVariables();
             config.AddAzureTableStorage(options =>
@@ -83,7 +83,7 @@ namespace SFA.DAS.ApplyService.Web
         public void ConfigureServices(IServiceCollection services)
         {
             IdentityModelEventSource.ShowPII = false;
-        
+
             ConfigureAuth(services);
 
             services.AddTransient<IAuthorizationHandler, AuthorizationHandler>();
@@ -153,9 +153,9 @@ namespace SFA.DAS.ApplyService.Web
                     HttpOnly = true
                 };
             });
-            
-            services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator,CacheOverrideHtmlGenerator>();
-            
+
+            services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator, CacheOverrideHtmlGenerator>();
+
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Apply.AntiForgery", HttpOnly = true });
 
             services.AddHealthChecks();
@@ -275,13 +275,15 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
             services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();
             services.AddTransient<IAnswerFormService, AnswerFormService>();
+            services.AddTransient<ITrusteeExemptionService, TrusteeExemptionService>();
             services.AddTransient<IEmailTokenService, EmailTokenService>();
             services.AddTransient<IAssessorLookupService, AssessorLookupService>();
             services.AddTransient<IGetHelpWithQuestionEmailService, GetHelpWithQuestionEmailService>();
             services.AddTransient<IReapplicationCheckService, ReapplicationCheckService>();
             services.AddTransient<IResetCompleteFlagService, ResetCompleteFlagService>();
             services.AddTransient<IRequestInvitationToReapplyEmailService, RequestInvitationToReapplyEmailService>();
-            services.AddTransient<INotificationsApi>(x => {
+            services.AddTransient<INotificationsApi>(x =>
+            {
                 var apiConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
                 {
                     ApiBaseUrl = _configService.NotificationsApiClientConfiguration.ApiBaseUrl,
@@ -310,7 +312,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
             services.AddTransient<ITaskListOrchestrator, TaskListOrchestrator>();
             services.AddTransient<IOverallOutcomeService, OverallOutcomeService>();
-            
+
             services.AddTransient<IStubAuthenticationService, StubAuthenticationService>();
             services.AddTransient<ICustomClaims, CustomClaims>();
         }
@@ -321,7 +323,7 @@ namespace SFA.DAS.ApplyService.Web
             {
                 services.Configure<GovUkOidcConfiguration>(_configuration.GetSection("GovUkOidcConfiguration"));
                 var cookieDomain = DomainExtensions.GetDomain(_configuration["ResourceEnvironmentName"]);
-                var loginRedirect = string.IsNullOrEmpty(cookieDomain)? "" : $"https://{cookieDomain}/account-details";
+                var loginRedirect = string.IsNullOrEmpty(cookieDomain) ? "" : $"https://{cookieDomain}/account-details";
                 services.AddAndConfigureGovUkAuthentication(_configuration, typeof(CustomClaims), "/Users/SignedOut", "/account-details", cookieDomain, loginRedirect);
             }
             else

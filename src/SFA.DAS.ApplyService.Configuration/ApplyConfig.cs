@@ -30,6 +30,7 @@ namespace SFA.DAS.ApplyService.Configuration
         [JsonRequired]
         public FeatureToggles FeatureToggles { get; set; }
 
+        public string ProvidersExemptedFromHavingTrustees { get; set; }
         //<inherit-doc/>
         public bool UseGovSignIn { get; set; }
     }
