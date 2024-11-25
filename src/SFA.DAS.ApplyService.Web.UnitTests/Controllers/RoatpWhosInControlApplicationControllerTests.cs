@@ -21,6 +21,7 @@ using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -525,7 +526,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
 
         [Test]
-        public void Confirm_trustees_exempted_returns_to_tasklist()
+        public async Task Confirm_NoTrusteesAndProviderExempted_ReturnsToTaskList()
         {
             var ukprn = "12345678";
 
@@ -547,7 +548,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany, It.IsAny<string>())).ReturnsAsync(verifiedCompanyAnswer);
 
-            var result = _controller.ConfirmTrustees(Guid.NewGuid()).GetAwaiter().GetResult();
+            var result = await _controller.ConfirmTrustees(Guid.NewGuid());
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();

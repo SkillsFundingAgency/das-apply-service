@@ -23,8 +23,3 @@ public class TrusteeExemptionService : ITrusteeExemptionService
         return isPresent;
     }
 }
-
-public interface ITrusteeExemptionService
-{
-    Task<bool> IsProviderExempted(string ukprn);
-}
