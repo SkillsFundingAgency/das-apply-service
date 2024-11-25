@@ -523,6 +523,66 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             trusteesCount.Should().Be(2);
         }
 
+
+        [Test]
+        public void Confirm_trustees_exempted_returns_to_tasklist()
+        {
+            var ukprn = "12345678";
+            // var trustees = new TabularData
+            // {
+            //     Caption = "",
+            //     HeadingTitles = new List<string>()
+            //     {
+            //         "Name"
+            //     },
+            //     DataRows = new List<TabularDataRow>
+            //     {
+            //         new TabularDataRow
+            //         {
+            //             Id = Guid.NewGuid().ToString(),
+            //             Columns = new List<string>
+            //             {
+            //                 "Mr A Trustee"
+            //             }
+            //         },
+            //         new TabularDataRow
+            //         {
+            //             Id = Guid.NewGuid().ToString(),
+            //             Columns = new List<string>
+            //             {
+            //                 "Mrs B Trustee"
+            //             }
+            //         }
+            //     }
+            // };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(new TabularData());
+            _trusteeExemptionServiceMock.Setup(s => s.IsProviderExempted(It.IsAny<string>())).ReturnsAsync(true);
+
+            var verifiedCompanyAnswer = new Answer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany,
+                Value = "TRUE"
+            };
+
+            var qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.UKPRN] = ukprn
+            };
+
+            _qnaClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>())).ReturnsAsync(qnaApplicationData);
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany, It.IsAny<string>())).ReturnsAsync(verifiedCompanyAnswer);
+
+            var result = _controller.ConfirmTrustees(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult!.ActionName.Should().Be("TaskList");
+
+            _applicationClient.VerifyAll();
+        }
+
         [Test]
         public void Confirm_trustees_presents_single_trustee()
         {

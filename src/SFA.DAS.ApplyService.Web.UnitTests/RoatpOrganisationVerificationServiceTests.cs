@@ -241,5 +241,31 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             verificationResult.WhosInControlStarted.Should().BeFalse();
             verificationResult.WhosInControlConfirmed.Should().BeFalse();
         }
+
+        [Test]
+        public async Task CharityCommissionExemptedCheck_TrusteeExemptionServiceFalse_NotExempted()
+        {
+            var qnaApplicationData = new JObject();
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(qnaApplicationData);
+
+            _trusteeExemptionServiceMock.Setup(t => t.IsProviderExempted(It.IsAny<string>())).ReturnsAsync(false);
+
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
+
+            verificationResult.CharityCommissionDataExempted.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task CharityCommissionExemptedCheck_TrusteeExemptionServiceTrue_Exempted()
+        {
+            var qnaApplicationData = new JObject();
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(qnaApplicationData);
+
+            _trusteeExemptionServiceMock.Setup(t => t.IsProviderExempted(It.IsAny<string>())).ReturnsAsync(true);
+
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
+
+            verificationResult.CharityCommissionDataExempted.Should().BeTrue();
+        }
     }
 }
