@@ -528,33 +528,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         public void Confirm_trustees_exempted_returns_to_tasklist()
         {
             var ukprn = "12345678";
-            // var trustees = new TabularData
-            // {
-            //     Caption = "",
-            //     HeadingTitles = new List<string>()
-            //     {
-            //         "Name"
-            //     },
-            //     DataRows = new List<TabularDataRow>
-            //     {
-            //         new TabularDataRow
-            //         {
-            //             Id = Guid.NewGuid().ToString(),
-            //             Columns = new List<string>
-            //             {
-            //                 "Mr A Trustee"
-            //             }
-            //         },
-            //         new TabularDataRow
-            //         {
-            //             Id = Guid.NewGuid().ToString(),
-            //             Columns = new List<string>
-            //             {
-            //                 "Mrs B Trustee"
-            //             }
-            //         }
-            //     }
-            // };
 
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(new TabularData());
             _trusteeExemptionServiceMock.Setup(s => s.IsProviderExempted(It.IsAny<string>())).ReturnsAsync(true);
