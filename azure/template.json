@@ -96,6 +96,9 @@
           "minimumTlsVersion": {
             "type": "string",
             "defaultValue": "TLS1_2"
+        },
+        "ProvidersExemptedFromHavingTrustees": {
+            "type": "string"
         }
     },
     "variables": {
@@ -260,6 +263,10 @@
                                 {
                                   "name": "StubAuth",
                                   "value": "[parameters('stubAuth')]"
+                                },
+                                {
+                                    "name": "ProvidersExemptedFromHavingTrustees",
+                                    "value": "[parameters('ProvidersExemptedFromHavingTrustees')]"
                                 }
                             ]
                         }
@@ -329,7 +336,7 @@
                                 {
                                   "name": "FileStorage:StorageConnectionString",
                                   "value": "[reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageConnectionString.value]"
-                                }                                
+                                }
                             ]
                         }
                     },
