@@ -96,6 +96,9 @@
           "minimumTlsVersion": {
             "type": "string",
             "defaultValue": "TLS1_2"
+        },
+        "ProvidersExemptedFromHavingTrustees": {
+            "type": "string"
         }
     },
     "variables": {
@@ -263,7 +266,7 @@
                                 },
                                 {
                                     "name": "ProvidersExemptedFromHavingTrustees",
-                                    "value": "10094400"
+                                    "value": "[parameters('ProvidersExemptedFromHavingTrustees')]"
                                 }
                             ]
                         }
