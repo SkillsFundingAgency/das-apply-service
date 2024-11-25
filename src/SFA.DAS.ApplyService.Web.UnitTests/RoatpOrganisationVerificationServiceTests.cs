@@ -15,6 +15,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
     public class RoatpOrganisationVerificationServiceTests
     {
         private Mock<IQnaApiClient> _qnaApiClient;
+        private Mock<ITrusteeExemptionService> _trusteeExemptionServiceMock;
         private IRoatpOrganisationVerificationService _service;
         private Guid _applicationId;
 
@@ -24,8 +25,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _applicationId = Guid.NewGuid();
 
             _qnaApiClient = new Mock<IQnaApiClient>();
+            _trusteeExemptionServiceMock = new Mock<ITrusteeExemptionService>();
 
-            _service = new RoatpOrganisationVerificationService(_qnaApiClient.Object);
+            _service = new RoatpOrganisationVerificationService(_qnaApiClient.Object, _trusteeExemptionServiceMock.Object);
         }
 
         [TestCase("TRUE", true)]
@@ -214,7 +216,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 [RoatpWorkflowQuestionTags.SoleTraderOrPartnership] = null,
                 [RoatpWorkflowQuestionTags.AddPeopleInControl] = "details",
             };
-            
+
             _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(_qnaApplicationData);
 
             var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
@@ -238,6 +240,32 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
 
             verificationResult.WhosInControlStarted.Should().BeFalse();
             verificationResult.WhosInControlConfirmed.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task CharityCommissionExemptedCheck_TrusteeExemptionServiceFalse_NotExempted()
+        {
+            var qnaApplicationData = new JObject();
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(qnaApplicationData);
+
+            _trusteeExemptionServiceMock.Setup(t => t.IsProviderExempted(It.IsAny<string>())).ReturnsAsync(false);
+
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
+
+            verificationResult.CharityCommissionDataExempted.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task CharityCommissionExemptedCheck_TrusteeExemptionServiceTrue_Exempted()
+        {
+            var qnaApplicationData = new JObject();
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(qnaApplicationData);
+
+            _trusteeExemptionServiceMock.Setup(t => t.IsProviderExempted(It.IsAny<string>())).ReturnsAsync(true);
+
+            var verificationResult = await _service.GetOrganisationVerificationStatus(_applicationId);
+
+            verificationResult.CharityCommissionDataExempted.Should().BeTrue();
         }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -18,6 +13,11 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -30,12 +30,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IAnswerFormService _answerFormService;
         private readonly ITabularDataRepository _tabularDataRepository;
         private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
+        private readonly ITrusteeExemptionService _trusteeExemptionService;
         private readonly ILogger<RoatpWhosInControlApplicationController> _logger;
 
         public RoatpWhosInControlApplicationController(IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient,
                                                        IAnswerFormService answerFormService, ITabularDataRepository tabularDataRepository,
                                                        ISessionService sessionService, ICompaniesHouseApiClient companiesHouseApiClient,
-                                                       IOrganisationApiClient organisationApiClient, ILogger<RoatpWhosInControlApplicationController> logger)
+                                                       IOrganisationApiClient organisationApiClient,
+                                                       ITrusteeExemptionService trusteeExemptionService,
+                                                       ILogger<RoatpWhosInControlApplicationController> logger)
             : base(sessionService)
         {
             _qnaApiClient = qnaApiClient;
@@ -44,6 +47,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _tabularDataRepository = tabularDataRepository;
             _companiesHouseApiClient = companiesHouseApiClient;
             _organisationApiClient = organisationApiClient;
+            _trusteeExemptionService = trusteeExemptionService;
             _logger = logger;
         }
 
@@ -149,7 +153,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
 
-       
+
 
         [Route("confirm-directors-pscs")]
         public async Task<IActionResult> ConfirmDirectorsPscs(Guid applicationId, string ukprn, string companyNumber)
@@ -218,6 +222,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> ConfirmTrustees(Guid applicationId)
         {
             var trusteesData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
+
+            var qnaApplicationData = await _qnaApiClient.GetApplicationData(applicationId);
+            var ukprn = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UKPRN)?.Value<string>();
+            var charityExcluded = await _trusteeExemptionService.IsProviderExempted(ukprn);
+
+            if (charityExcluded)
+            {
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+            }
 
             if (trusteesData is null)
             {

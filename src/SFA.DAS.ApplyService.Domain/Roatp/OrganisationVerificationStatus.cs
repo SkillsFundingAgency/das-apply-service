@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SFA.DAS.ApplyService.Domain.Roatp
+﻿namespace SFA.DAS.ApplyService.Domain.Roatp
 {
     public class OrganisationVerificationStatus
     {
@@ -12,6 +8,7 @@ namespace SFA.DAS.ApplyService.Domain.Roatp
         public bool CharityCommissionManualEntry { get; set; }
         public bool CompaniesHouseDataConfirmed { get; set; }
         public bool CharityCommissionDataConfirmed { get; set; }
+        public bool CharityCommissionDataExempted { get; set; }
         public bool WhosInControlConfirmed { get; set; }
         public bool WhosInControlStarted { get; set; }
     }
