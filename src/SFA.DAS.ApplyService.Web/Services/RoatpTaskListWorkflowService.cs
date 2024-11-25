@@ -330,7 +330,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                     return TaskListSectionStatus.Completed;
                 }
 
-                if (companiesHouseVerified || charityCommissionVerified || charityCommissionExempted)
+                if (companiesHouseVerified || charityCommissionVerified)
                 {
                     return TaskListSectionStatus.InProgress;
                 }
