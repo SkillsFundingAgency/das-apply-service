@@ -11,10 +11,12 @@ namespace SFA.DAS.ApplyService.Web.Services
     public class RoatpOrganisationVerificationService : IRoatpOrganisationVerificationService
     {
         private readonly IQnaApiClient _qnaApiClient;
+        private readonly ITrusteeExemptionService _trusteeExemptionService;
 
-        public RoatpOrganisationVerificationService(IQnaApiClient qnaApiClient)
+        public RoatpOrganisationVerificationService(IQnaApiClient qnaApiClient, ITrusteeExemptionService trusteeExemptionService)
         {
             _qnaApiClient = qnaApiClient;
+            _trusteeExemptionService = trusteeExemptionService;
         }
 
         public async Task<OrganisationVerificationStatus> GetOrganisationVerificationStatus(Guid applicationId)
@@ -31,6 +33,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                     CharityCommissionManualEntry = CharityCommissionManualEntry(qnaApplicationData),
                     CompaniesHouseDataConfirmed = CompaniesHouseDataConfirmed(qnaApplicationData),
                     CharityCommissionDataConfirmed = CharityCommissionDataConfirmed(qnaApplicationData),
+                    CharityCommissionDataExempted = await CharityCommissionDataExempted(qnaApplicationData),
                     WhosInControlConfirmed = WhosInControlConfirmed(qnaApplicationData),
                     WhosInControlStarted = WhosInControlStarted(qnaApplicationData)
                 };
@@ -89,6 +92,15 @@ namespace SFA.DAS.ApplyService.Web.Services
             var soleTraderOrPartnership = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.SoleTraderOrPartnership)?.Value<string>();
 
             return soleTraderOrPartnership == RoatpOrganisationTypes.SoleTrader || soleTraderOrPartnership == RoatpOrganisationTypes.Partnership;
+        }
+
+        private async Task<bool> CharityCommissionDataExempted(JObject qnaApplicationData)
+        {
+            var ukprn = qnaApplicationData.GetValue(RoatpWorkflowQuestionTags.UKPRN)?.Value<string>();
+
+            var charityExcluded = await _trusteeExemptionService.IsProviderExempted(ukprn);
+
+            return charityExcluded;
         }
 
         private static bool WhosInControlConfirmed(JObject qnaApplicationData)

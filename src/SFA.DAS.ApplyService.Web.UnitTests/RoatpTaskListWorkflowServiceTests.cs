@@ -143,7 +143,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var sequenceId = 1;
             var sectionId = 3;
             var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1, Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = 2 } } } };
-            var organisationVerificationStatus = new OrganisationVerificationStatus(); 
+            var organisationVerificationStatus = new OrganisationVerificationStatus();
             var actualResult = _service.SectionStatus(_applicationId, sequenceId, sectionId, applicationSequences, organisationVerificationStatus);
             Assert.AreEqual(expectedResult, actualResult);
         }
@@ -305,7 +305,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                             QnAData = new QnAData
                             {
                                 Pages = new List<Domain.Apply.Page>
-                                {                                    
+                                {
                                     new Domain.Apply.Page
                                     {
                                         PageId = "YO-100",
@@ -734,10 +734,31 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
 
             var applicationSequences = GenerateSectionsCompletedUpToWhosInControl();
 
-            var status = _service.SectionStatus(Guid.NewGuid(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, 
+            var status = _service.SectionStatus(Guid.NewGuid(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
                                    applicationSequences, organisationVerificationStatus);
 
             status.Should().Be(TaskListSectionStatus.Next);
+        }
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_completed_if_companies_house_confirmed_and_Trustees_exempted()
+        {
+            var organisationVerificationStatus = new OrganisationVerificationStatus
+            {
+                VerifiedCompaniesHouse = true,
+                VerifiedCharityCommission = true,
+                CompaniesHouseDataConfirmed = true,
+                CharityCommissionDataConfirmed = false,
+                CharityCommissionDataExempted = true,
+                WhosInControlConfirmed = false
+            };
+
+            var applicationSequences = GenerateSectionsCompletedUpToWhosInControl();
+
+            var status = _service.SectionStatus(Guid.NewGuid(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                applicationSequences, organisationVerificationStatus);
+
+            status.Should().Be(TaskListSectionStatus.Completed);
         }
 
         [Test]
@@ -987,14 +1008,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
 
             status.Should().Be(TaskListSectionStatus.Completed);
         }
-        
+
         [Test]
         public async Task Finish_application_checks_shows_blank_if_not_all_sequences_completed()
         {
             var applicationSequences = new List<ApplicationSequence>();
 
             var status = await _service.FinishSectionStatus(Guid.NewGuid(), RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks, applicationSequences, false);
-            
+
             status.Should().Be(TaskListSectionStatus.Blank);
         }
 

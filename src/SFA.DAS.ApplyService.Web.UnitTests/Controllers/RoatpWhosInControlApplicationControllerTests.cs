@@ -1,12 +1,19 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.CompaniesHouse;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Controllers.Roatp;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
@@ -14,13 +21,7 @@ using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.InternalApi.Types;
-using SFA.DAS.ApplyService.Session;
-using Newtonsoft.Json.Linq;
-using SFA.DAS.ApplyService.Domain.CompaniesHouse;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -34,6 +35,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<ISessionService> _sessionService;
         private Mock<IOrganisationApiClient> _organisationApiClient;
         private Mock<ICompaniesHouseApiClient> _companiesHouseApiClient;
+        private Mock<ITrusteeExemptionService> _trusteeExemptionServiceMock;
         private Mock<ILogger<RoatpWhosInControlApplicationController>> _logger;
         private RoatpWhosInControlApplicationController _controller;
 
@@ -50,7 +52,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService = new Mock<ISessionService>();
             _organisationApiClient = new Mock<IOrganisationApiClient>();
             _companiesHouseApiClient = new Mock<ICompaniesHouseApiClient>();
+            _trusteeExemptionServiceMock = new Mock<ITrusteeExemptionService>();
             _logger = new Mock<ILogger<RoatpWhosInControlApplicationController>>();
+
+            _trusteeExemptionServiceMock.Setup(s => s.IsProviderExempted(It.IsAny<string>())).ReturnsAsync(false);
 
             var signInId = Guid.NewGuid();
 
@@ -63,13 +68,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 new Claim("custom-claim", "example claim value"),
             }, "mock"));
 
-            _controller = new RoatpWhosInControlApplicationController(_qnaClient.Object, 
-                                                                      _applicationClient.Object, 
+            _controller = new RoatpWhosInControlApplicationController(_qnaClient.Object,
+                                                                      _applicationClient.Object,
                                                                       _answerFormService.Object,
                                                                       _tabularDataRepository.Object,
                                                                       _sessionService.Object,
                                                                       _companiesHouseApiClient.Object,
                                                                       _organisationApiClient.Object,
+                                                                      _trusteeExemptionServiceMock.Object,
                                                                       _logger.Object)
             {
                 ControllerContext = new ControllerContext()
@@ -77,7 +83,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     HttpContext = new DefaultHttpContext() { User = user },
                 },
                 TempData = Mock.Of<ITempDataDictionary>()
-            }; 
+            };
 
             _directors = new TabularData
             {
@@ -156,7 +162,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _qnaClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>())).ReturnsAsync(_qnaApplicationData);
-            
+
             var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
 
             result.Should().BeOfType<RedirectToActionResult>();
@@ -329,8 +335,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var companyNumber = "87654321";
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHouseDirectors)).ReturnsAsync(_directors);
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHousePscs)).ReturnsAsync(_pscs);
-            
-            var result = _controller.ConfirmDirectorsPscs(Guid.NewGuid(),ukprn,companyNumber ).GetAwaiter().GetResult();
+
+            var result = _controller.ConfirmDirectorsPscs(Guid.NewGuid(), ukprn, companyNumber).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
@@ -355,8 +361,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHouseDirectors)).ReturnsAsync(directorsData);
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHousePscs)).ReturnsAsync(_pscs);
-            
-            var result = _controller.ConfirmDirectorsPscs(Guid.NewGuid(),ukprn,companyNumber).GetAwaiter().GetResult();
+
+            var result = _controller.ConfirmDirectorsPscs(Guid.NewGuid(), ukprn, companyNumber).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
@@ -498,6 +504,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 Value = "TRUE"
             };
 
+            var qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.UKPRN] = "12345678",
+            };
+
+            _qnaClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>())).ReturnsAsync(qnaApplicationData);
+
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany, It.IsAny<string>())).ReturnsAsync(verifiedCompanyAnswer);
 
             var result = _controller.ConfirmTrustees(Guid.NewGuid()).GetAwaiter().GetResult();
@@ -509,6 +522,39 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             int trusteesCount = model.Trustees.TableData.DataRows.Count;
             trusteesCount.Should().Be(2);
+        }
+
+
+        [Test]
+        public async Task Confirm_NoTrusteesAndProviderExempted_ReturnsToTaskList()
+        {
+            var ukprn = "12345678";
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(new TabularData());
+            _trusteeExemptionServiceMock.Setup(s => s.IsProviderExempted(It.IsAny<string>())).ReturnsAsync(true);
+
+            var verifiedCompanyAnswer = new Answer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany,
+                Value = "TRUE"
+            };
+
+            var qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.UKPRN] = ukprn
+            };
+
+            _qnaClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>())).ReturnsAsync(qnaApplicationData);
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany, It.IsAny<string>())).ReturnsAsync(verifiedCompanyAnswer);
+
+            var result = await _controller.ConfirmTrustees(Guid.NewGuid());
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult!.ActionName.Should().Be("TaskList");
+
+            _applicationClient.VerifyAll();
         }
 
         [Test]
@@ -535,6 +581,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trustees);
+
+            var qnaApplicationData = new JObject
+            {
+                [RoatpWorkflowQuestionTags.UKPRN] = "12345678",
+            };
+
+            _qnaClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>())).ReturnsAsync(qnaApplicationData);
 
             var verifiedCompanyAnswer = new Answer
             {
@@ -579,7 +632,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trustees);
-            
+
             var result = _controller.ConfirmTrusteesDob(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
@@ -737,7 +790,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trustees);
-            
+
             var viewModel = new ConfirmTrusteesDateOfBirthViewModel
             {
                 ApplicationId = Guid.NewGuid()
@@ -940,7 +993,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Confirm_sole_trade_redirects_to_task_list_for_valid_values()
         {
-            var section = new ApplicationSection {
+            var section = new ApplicationSection
+            {
                 SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
                 Id = Guid.NewGuid()
             };
@@ -996,7 +1050,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             model.PersonInControlDobMonth.Should().BeNullOrEmpty();
             model.PersonInControlDobYear.Should().BeNullOrEmpty();
         }
-        
+
         [TestCase("", "", "", true)]
         [TestCase("", "", "", false)]
         [TestCase("", "1", "", true)]
@@ -1030,7 +1084,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             model.Should().NotBeNull();
             model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
         }
-        
+
         [Test]
         public void Edit_partner_replays_stored_details_for_an_individual_partner()
         {
@@ -1201,7 +1255,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnerTableData);
-            
+
             var result = _controller.ConfirmPartners(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
@@ -1324,7 +1378,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             model.PersonInControlDobMonth.Should().Be("6");
             model.PersonInControlDobYear.Should().Be("1975");
         }
-                
+
         [Test]
         public void Edit_people_in_control_redirects_to_confirm_page_if_invalid_index_supplied()
         {
@@ -1521,7 +1575,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             redirectResult.ActionName.Should().Be("ConfirmPeopleInControl");
         }
-        
+
         [Test]
         public void Remove_item_from_pscs_shows_error_if_not_confirmed()
         {
@@ -1542,7 +1596,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var viewModel = viewResult.Model as ConfirmRemovePersonInControlViewModel;
             model.Should().NotBeNull();
             model.ErrorMessages.Count.Should().Be(1);
-            model.ErrorMessages[0].ErrorMessage.Should().Contain(model.Name); 
+            model.ErrorMessages[0].ErrorMessage.Should().Contain(model.Name);
         }
 
         [Test]
@@ -1711,7 +1765,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var companyNumber = "12345678";
             var ukprn = "43214321";
-            
+
             var applicationId = Guid.NewGuid();
             var activeCompany = new CompaniesHouseSummary
             {
@@ -1722,20 +1776,20 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 IncorporationDate = new DateTime(1960, 12, 12),
                 Status = "active"
             };
-            
-            _organisationApiClient.Setup(x => x.UpdateDirectorsAndPscs(ukprn,It.IsAny<List<DirectorInformation>>(), It.IsAny<List<PersonSignificantControlInformation>>(), It.IsAny<Guid>())).ReturnsAsync(true);
+
+            _organisationApiClient.Setup(x => x.UpdateDirectorsAndPscs(ukprn, It.IsAny<List<DirectorInformation>>(), It.IsAny<List<PersonSignificantControlInformation>>(), It.IsAny<Guid>())).ReturnsAsync(true);
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(companyNumber))
                 .ReturnsAsync(activeCompany).Verifiable();
 
-            var result = _controller.RefreshDirectorsPscs(applicationId, ukprn,companyNumber).GetAwaiter().GetResult();
+            var result = _controller.RefreshDirectorsPscs(applicationId, ukprn, companyNumber).GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be("StartPage");
 
-            _organisationApiClient.Verify(x => x.UpdateDirectorsAndPscs(ukprn,listOfDirectors,listOfPSCs, It.IsAny<Guid>()), Times.Once);
-            _qnaClient.Verify(x=>x.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, It.IsAny<List<Answer>>()),Times.Once);
-            _qnaClient.Verify(x=>x.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage),Times.Once);
-            _qnaClient.Verify(x => x.ResetPageAnswersBySection(applicationId,RoatpWorkflowSequenceIds.CriminalComplianceChecks, RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl),Times.Once);
+            _organisationApiClient.Verify(x => x.UpdateDirectorsAndPscs(ukprn, listOfDirectors, listOfPSCs, It.IsAny<Guid>()), Times.Once);
+            _qnaClient.Verify(x => x.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, It.IsAny<List<Answer>>()), Times.Once);
+            _qnaClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage), Times.Once);
+            _qnaClient.Verify(x => x.ResetPageAnswersBySection(applicationId, RoatpWorkflowSequenceIds.CriminalComplianceChecks, RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl), Times.Once);
         }
 
         [TestCase(CompaniesHouseSummary.ServiceUnavailable, "CompaniesHouseNotAvailable")]
