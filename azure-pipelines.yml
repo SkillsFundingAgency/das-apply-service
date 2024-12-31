@@ -104,7 +104,6 @@ stages:
   variables:
   - group: PreProd Management Resources
   - group: PreProd Shared Resources
-  - group: PREPROD das-candidate-account-api
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -119,7 +118,6 @@ stages:
   variables:
   - group: PROD Management Resources
   - group: PROD Shared Resources
-  - group: PROD das-candidate-account-api
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
