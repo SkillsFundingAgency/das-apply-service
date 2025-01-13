@@ -1,0 +1,27 @@
+jobs:
+- job: DacpacBuild
+  dependsOn: CodeBuild
+  pool:
+    name: DAS - Continuous Integration
+  workspace:
+    clean: all
+  steps:
+  - task: VSBuild@1
+    displayName: Build DACPAC
+    inputs:
+      solution: 'src/SFA.DAS.ApplyService.Database/SFA.DAS.ApplyService.Database.sqlproj'
+      platform: any cpu
+      configuration: release
+      msbuildArgs: /p:PackageLocation="$(build.artifactstagingdirectory)/publish"
+
+  - task: CopyFiles@2
+    displayName: Copy Files to - $(build.artifactstagingdirectory)
+    inputs:
+      contents: |
+        src/**/*.dacpac
+      targetFolder: $(build.artifactstagingdirectory)/publish
+
+  - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        pathtoPublish: '$(build.artifactstagingdirectory)/publish'
