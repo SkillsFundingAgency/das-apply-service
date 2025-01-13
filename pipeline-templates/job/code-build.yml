@@ -1,0 +1,56 @@
+parameters:
+  SolutionBaseName:
+  BuildConfiguration:
+
+jobs:
+- job: CodeBuild
+  pool:
+    name: DAS - Continuous Integration Agents
+    workspace:
+      clean: all
+  variables:
+  - group: BUILD Management Resources
+  steps:
+  - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
+  - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
+    parameters:
+      SonarCloudProjectKey: SkillsFundingAgency_das-apply-service
+      ContinueOnVulnerablePackageScanError: true
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Pack Types'
+    inputs:
+      command: pack
+      packagesToPack: 'src/SFA.DAS.ApplyService.Types/SFA.DAS.ApplyService.Types.csproj'
+      versioningScheme: byBuildNumber
+      packDirectory: $(build.artifactstagingdirectory)/NugetPackages
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish Website'
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: src/${{ parameters.SolutionBaseName }}.Web/${{ parameters.SolutionBaseName }}.Web.csproj
+      arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish API'
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: src/${{ parameters.SolutionBaseName }}.InternalApi/${{ parameters.SolutionBaseName }}.InternalApi.csproj
+      arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore  --no-build'   
+
+  - task: CopyFiles@2
+    displayName: Copy Files to $(build.artifactstagingdirectory)/publish
+    inputs:
+      Contents: |
+        azure/**
+      TargetFolder: $(build.artifactstagingdirectory)/publish
+      OverWrite: true
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Build Artifact
+    inputs:
+      targetPath: $(build.artifactstagingdirectory)/publish
+      artifactName: ${{ parameters.SolutionBaseName }}
