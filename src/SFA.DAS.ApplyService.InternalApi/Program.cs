@@ -7,11 +7,8 @@ namespace SFA.DAS.ApplyService.InternalApi
     {
         public static void Main(string[] args)
         {
-
-        }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
+        }
     }
 }
