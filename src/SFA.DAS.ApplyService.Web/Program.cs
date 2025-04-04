@@ -9,7 +9,8 @@ namespace SFA.DAS.ApplyService.Web
         {
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseUrls("https://localhost:6016", "http://localhost:6015");
+                .UseUrls("https://localhost:6016", "http://localhost:6015")
+                .Build().Run();
         }
     }
 }
