@@ -1,4 +1,4 @@
-{
+﻿{
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -87,13 +87,13 @@
             "defaultValue": "Standard"
         },
         "utcValue": {
-          "type": "string",
-          "defaultValue": "[utcNow()]"
+            "type": "string",
+            "defaultValue": "[utcNow()]"
         },
         "stubAuth": {
-              "type": "string"
-          },
-          "minimumTlsVersion": {
+            "type": "string"
+        },
+        "minimumTlsVersion": {
             "type": "string",
             "defaultValue": "TLS1_2"
         },
@@ -102,14 +102,15 @@
         }
     },
     "variables": {
-      "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-      "resourceNamePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-' , parameters('serviceName'))]",
-      "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
-      "uiAppServiceName": "[concat(variables('resourceNamePrefix'),'ui-as')]",
-      "apiAppServiceName": "[concat(variables('resourceNamePrefix'),'api-as')]",
-      "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
-      "databaseName": "[concat(variables('resourceNamePrefix'),'-db')]",
-      "applyWebConfigNames": "SFA.DAS.ApplyService:ApplyConfig,SFA.DAS.Apply.GovSignIn"
+        "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+        "resourceNamePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-' , parameters('serviceName'))]",
+        "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
+        "uiAppServiceName": "[concat(variables('resourceNamePrefix'),'ui-as')]",
+        "apiAppServiceName": "[concat(variables('resourceNamePrefix'),'api-as')]",
+        "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
+        "databaseName": "[concat(variables('resourceNamePrefix'),'-db')]",
+        "applyWebConfigNames": "SFA.DAS.ApplyService:ApplyConfig,SFA.DAS.Apply.GovSignIn",
+        "privateLinkScopeName": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-shared-ampls'))]"
     },
     "resources": [
         {
@@ -118,8 +119,7 @@
             "type": "Microsoft.Resources/resourceGroups",
             "location": "[parameters('resourceGroupLocation')]",
             "tags": "[parameters('tags')]",
-            "properties": {
-            }
+            "properties": {}
         },
         {
             "apiVersion": "2020-06-01",
@@ -162,8 +162,7 @@
                     }
                 }
             },
-            "dependsOn": [
-            ]
+            "dependsOn": []
         },
         {
             "apiVersion": "2020-06-01",
@@ -249,20 +248,20 @@
                                     "value": "[parameters('environmentName')]"
                                 },
                                 {
-                                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                                  "value": "[reference(concat(variables('uiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
+                                    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                                    "value": "[reference(concat(variables('uiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                                 },
                                 {
-                                  "name": "ResourceEnvironmentName",
-                                  "value": "[parameters('resourceEnvironmentName')]"
+                                    "name": "ResourceEnvironmentName",
+                                    "value": "[parameters('resourceEnvironmentName')]"
                                 },
                                 {
-                                  "name": "ConfigNames",
-                                  "value": "[variables('applyWebConfigNames')]"
+                                    "name": "ConfigNames",
+                                    "value": "[variables('applyWebConfigNames')]"
                                 },
                                 {
-                                  "name": "StubAuth",
-                                  "value": "[parameters('stubAuth')]"
+                                    "name": "StubAuth",
+                                    "value": "[parameters('stubAuth')]"
                                 },
                                 {
                                     "name": "ProvidersExemptedFromHavingTrustees",
@@ -334,8 +333,8 @@
                                     "value": "[reference(concat(variables('apiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                                 },
                                 {
-                                  "name": "FileStorage:StorageConnectionString",
-                                  "value": "[reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageConnectionString.value]"
+                                    "name": "FileStorage:StorageConnectionString",
+                                    "value": "[reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                                 }
                             ]
                         }
@@ -446,6 +445,30 @@
                     },
                     "logAnalyticsWorkspaceName": {
                         "value": "[parameters('logAnalyticsWorkspaceName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2021-04-01",
+            "name": "[concat(variables('apiAppServiceName'), '-private-link-scoped-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'private-linked-scoped-resource.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "privateLinkScopeName": {
+                        "value": "[variables('privateLinkScopeName')]"
+                    },
+                    "scopedResourceName": {
+                        "value": "[variables('apiAppServiceName')]"
+                    },
+                    "scopedResourceId": {
+                        "value": "[reference(concat(variables('apiAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.AppInsightsResourceId.value]"
                     }
                 }
             }
