@@ -144,6 +144,7 @@
             }
         },
         {
+            "condition": "[and(not(equals(parameters('resourceEnvironmentName'), 'prd')), not(equals(parameters('resourceEnvironmentName'), 'mo')))]"
             "apiVersion": "2021-04-01",
             "name": "[concat(variables('uiAppServiceName'), '-private-link-scoped-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
@@ -191,6 +192,7 @@
             ]
         },
         {
+            "condition": "[and(not(equals(parameters('resourceEnvironmentName'), 'prd')), not(equals(parameters('resourceEnvironmentName'), 'mo')))]"
             "apiVersion": "2021-04-01",
             "name": "[concat(variables('apiAppServiceName'), '-private-link-scoped-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
