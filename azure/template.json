@@ -30,8 +30,7 @@
             "type": "securestring"
         },
         "deployPrivateLinkedScopedResource": {
-            "type": "bool",
-            "defaultValue": "false"
+            "type": "bool"
         },
         "loggingRedisConnectionString": {
             "type": "securestring"
