@@ -29,6 +29,9 @@
         "configurationStorageConnectionString": {
             "type": "securestring"
         },
+        "deployPrivateLinkedScopedResource": {
+            "type": "bool"
+        },
         "loggingRedisConnectionString": {
             "type": "securestring"
         },
@@ -105,6 +108,7 @@
       "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
       "resourceNamePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-' , parameters('serviceName'))]",
       "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
+      "privateLinkScopeName": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-shared-ampls'))]",
       "uiAppServiceName": "[concat(variables('resourceNamePrefix'),'ui-as')]",
       "apiAppServiceName": "[concat(variables('resourceNamePrefix'),'api-as')]",
       "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
@@ -143,6 +147,31 @@
             }
         },
         {
+            "condition": "[parameters('deployPrivateLinkedScopedResource')]",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(variables('uiAppServiceName'), '-private-link-scoped-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'private-linked-scoped-resource.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "privateLinkScopeName": {
+                        "value": "[variables('privateLinkScopeName')]"
+                    },
+                    "scopedResourceName": {
+                        "value": "[variables('uiAppServiceName')]"
+                    },
+                    "scopedResourceId": {
+                        "value": "[reference(concat(variables('uiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.AppInsightsResourceId.value]"
+                    }
+                }
+            }
+        },
+        {
             "apiVersion": "2020-06-01",
             "name": "[concat(variables('apiAppServiceName'), '-app-insights-', parameters('utcValue'))]",
             "resourceGroup": "[variables('resourceGroupName')]",
@@ -164,6 +193,31 @@
             },
             "dependsOn": [
             ]
+        },
+        {
+            "condition": "[parameters('deployPrivateLinkedScopedResource')]",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(variables('apiAppServiceName'), '-private-link-scoped-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'private-linked-scoped-resource.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "privateLinkScopeName": {
+                        "value": "[variables('privateLinkScopeName')]"
+                    },
+                    "scopedResourceName": {
+                        "value": "[variables('apiAppServiceName')]"
+                    },
+                    "scopedResourceId": {
+                        "value": "[reference(concat(variables('apiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.AppInsightsResourceId.value]"
+                    }
+                }
+            }
         },
         {
             "apiVersion": "2020-06-01",
