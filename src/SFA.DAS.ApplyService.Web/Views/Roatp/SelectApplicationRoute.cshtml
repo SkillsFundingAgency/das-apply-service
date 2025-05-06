@@ -10,13 +10,13 @@
 
     var submitAction = "ProcessRoute";
 
-    if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
+    if (Model.ApplicationId != Guid.Empty)
     {
         submitAction = "UpdateApplicationProviderRoute";
     }
 }
 
-@if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
+@if (Model.ApplicationId != Guid.Empty)
 {
     @section Navigation
     {
