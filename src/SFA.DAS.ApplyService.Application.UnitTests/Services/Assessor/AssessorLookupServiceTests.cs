@@ -38,7 +38,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Services.Assessor
 
         [TestCase(RoatpWorkflowPageIds.ProtectingYourApprentices.ContinuityPlan)]
         [TestCase(RoatpWorkflowPageIds.ReadinessToEngage.EngagedWithEmployers)]
-        [TestCase(RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main)]
+        [TestCase(RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_MainEmployer)]
         public void GetTitleForPage_when_valid_page_returns_title(string validPageId)
         {
             var actualTitle = _assessorLookupService.GetTitleForPage(validPageId);
