@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.OpenApi.Models;
 using SFA.DAS.ApplyService.Application.Behaviours;
 using SFA.DAS.ApplyService.Application.Interfaces;
@@ -99,6 +101,12 @@ namespace SFA.DAS.ApplyService.InternalApi
             });
 
             services.AddFluentValidationAutoValidation().AddValidatorsFromAssemblyContaining<Startup>();
+
+            services.AddLogging(builder =>
+            {
+                builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
+                builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
+            });
 
             services.AddApplicationInsightsTelemetry();
 
@@ -254,7 +262,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddTransient<IFileStorageService, FileStorageService>();
-            
+
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
