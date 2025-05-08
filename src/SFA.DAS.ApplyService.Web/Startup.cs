@@ -39,16 +39,11 @@ using SFA.DAS.ApplyService.Web.StartupExtensions;
 using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.GovUK.Auth.AppStart;
+using SFA.DAS.GovUK.Auth.Models;
 using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.IO;
-using SFA.DAS.GovUK.Auth.Models;
 
 namespace SFA.DAS.ApplyService.Web
 {
@@ -337,13 +332,13 @@ namespace SFA.DAS.ApplyService.Web
                 services.Configure<GovUkOidcConfiguration>(_configuration.GetSection("GovUkOidcConfiguration"));
                 var cookieDomain = DomainExtensions.GetDomain(_configuration["ResourceEnvironmentName"]);
                 var loginRedirect = string.IsNullOrEmpty(cookieDomain) ? "" : $"https://{cookieDomain}/account-details";
-                services.AddAndConfigureGovUkAuthentication(_configuration,new AuthRedirects
-                    {
-                        CookieDomain = cookieDomain,
-                        LoginRedirect = loginRedirect,
-                        SignedOutRedirectUrl ="/Users/SignedOut",
-                        LocalStubLoginPath ="/account-details" 
-                    }, 
+                services.AddAndConfigureGovUkAuthentication(_configuration, new AuthRedirects
+                {
+                    CookieDomain = cookieDomain,
+                    LoginRedirect = loginRedirect,
+                    SignedOutRedirectUrl = "/Users/SignedOut",
+                    LocalStubLoginPath = "/account-details"
+                },
                     typeof(CustomClaims));
             }
             else
