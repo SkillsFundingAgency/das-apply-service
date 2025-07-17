@@ -220,7 +220,7 @@ INSERT INTO LookupPageTitles ([SequenceNumber],[SectionNumber],[PageId],[Title])
 (6, 5, '6530', 'Typical ratio of the staff delivering training to the apprentices'),
 (6, 5, '6540', 'Proposed staff to learner support'),
 
-(6, 6, '6600', 'Methods used to deliver 20% off the job training'),
+(6, 6, '6600', 'Methods used to deliver the minimum required off the job training'),
 (6, 6, '6610', 'Off the job training relevant to apprenticeship being delivered'),
 
 (6, 7, '6700', 'Where apprentices will be trained'),
