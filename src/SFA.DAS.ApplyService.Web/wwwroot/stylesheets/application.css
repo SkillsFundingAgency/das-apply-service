@@ -1552,8 +1552,21 @@
   .das-user-navigation__sub-menu-list-item:last-child {
     border-bottom: none;
   }
+}
 
 .govuk-notification-banner__content > * {
   max-width: 100% !important;
+}
 
+.govuk-footer__copyright-logo {
+  background-image: url(/assets/images/govuk-crest.svg);
+}
+
+.govuk-header__logotype {
+  display: inline-block;
+  position: relative;
+  top: -3px;
+  margin-right: 5px;
+  fill: currentcolor;
+  vertical-align: top;
 }
