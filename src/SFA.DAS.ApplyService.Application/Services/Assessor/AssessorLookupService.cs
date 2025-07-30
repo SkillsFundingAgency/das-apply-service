@@ -131,7 +131,7 @@ namespace SFA.DAS.ApplyService.Application.Services.Assessor
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.HowSupportIsAgreed:
                     return "Proposed staff to learner support";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnTheJobTrainingTeachingMethods:
-                    return "Methods used to deliver 20% off the job training";
+                    return "Methods used to deliver the minimum required off the job training";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnTheJobTrainingTeachingRelevance:
                     return "Off the job training relevant to apprenticeship being delivered";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.AddressWhereApprenticesWillBeTrained:
