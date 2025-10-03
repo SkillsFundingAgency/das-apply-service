@@ -40,7 +40,7 @@
 
             _config.GetConfig().GetAwaiter().GetResult().RoatpApiAuthentication.ApiBaseAddress = RoatpApiBaseAddress;
 
-            _apiClient = new RoatpApiClient(httpClient, logger.Object, new RoatpTokenService(_config));
+            _apiClient = new RoatpApiClient(httpClient, logger.Object, new RoatpTokenService(hostingEnvironment.Object, _config));
         }
 
         [Ignore("Failed test")]

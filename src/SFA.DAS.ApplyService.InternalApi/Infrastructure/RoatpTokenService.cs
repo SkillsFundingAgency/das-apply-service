@@ -1,35 +1,36 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
     using Configuration;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Azure.Services.AppAuthentication;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
     public class RoatpTokenService : IRoatpTokenService
     {
-        private readonly IApplyConfig _configuration;
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IConfigurationService _configurationService;
 
-        public RoatpTokenService(IConfigurationService configurationService)
+        public RoatpTokenService(IWebHostEnvironment hostingEnvironment, IConfigurationService configurationService)
         {
-            _configuration = configurationService.GetConfig().Result;
+            _hostingEnvironment = hostingEnvironment;
+            _configurationService = configurationService;
         }
 
-        public string GetToken(Uri baseUri)
+        public async Task<string> GetToken()
         {
-            if (baseUri != null && baseUri.IsLoopback)
+            if (_hostingEnvironment.IsDevelopment())
                 return string.Empty;
 
-            var tenantId = _configuration.RoatpApiAuthentication.TenantId;
-            var clientId = _configuration.RoatpApiAuthentication.ClientId;
-            var appKey = _configuration.RoatpApiAuthentication.ClientSecret;
-            var resourceId = _configuration.RoatpApiAuthentication.ResourceId;
+            var configuration = await _configurationService.GetConfig();
 
-            var authority = $"https://login.microsoftonline.com/{tenantId}";
-            var clientCredential = new ClientCredential(clientId, appKey);
-            var context = new AuthenticationContext(authority, true);
-            var result = context.AcquireTokenAsync(resourceId, clientCredential).Result;
+            var azureServiceTokenProvider = new AzureServiceTokenProvider();
+            var generatedToken = await azureServiceTokenProvider.GetAccessTokenAsync(configuration.RoatpApiAuthentication.Identifier);
 
-            return result.AccessToken;
+            return generatedToken;
         }
     }
 }
