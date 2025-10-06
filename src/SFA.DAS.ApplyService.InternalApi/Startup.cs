@@ -192,13 +192,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddRefitClient<RoatpApiClient>()
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.Url))
                 .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(), _applyConfig.RoatpApiAuthentication.Identifier));
-
-            //services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
-            //{
-            //    config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.Url);
-            //})
-            //.SetHandlerLifetime(handlerLifeTime);
-
+            
             services.AddHttpClient<IInternalQnaApiClient, InternalQnaApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.QnaApiAuthentication.ApiBaseAddress);
