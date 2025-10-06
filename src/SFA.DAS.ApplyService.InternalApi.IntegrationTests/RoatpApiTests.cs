@@ -38,7 +38,7 @@
             var hostingEnvironment = new Mock<IWebHostEnvironment>();
             _config = new ConfigurationService(hostingEnvironment.Object, "LOCAL", ConnectionString, Version, ServiceName);
 
-            _config.GetConfig().GetAwaiter().GetResult().RoatpApiAuthentication.ApiBaseAddress = RoatpApiBaseAddress;
+            _config.GetConfig().GetAwaiter().GetResult().RoatpApiAuthentication.Url = RoatpApiBaseAddress;
 
             _apiClient = new RoatpApiClient(httpClient, logger.Object, new RoatpTokenService(hostingEnvironment.Object, _config));
         }

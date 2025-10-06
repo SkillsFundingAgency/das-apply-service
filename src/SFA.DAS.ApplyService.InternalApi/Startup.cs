@@ -17,6 +17,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.OpenApi.Models;
+using Refit;
+using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.ApplyService.Application.Behaviours;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Services;
@@ -187,11 +189,15 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .SetHandlerLifetime(handlerLifeTime);
 
-            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.ApiBaseAddress);
-            })
-            .SetHandlerLifetime(handlerLifeTime);
+            services.AddRefitClient<RoatpApiClient>()
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.Url))
+                .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(), _applyConfig.RoatpApiAuthentication.Identifier));
+
+            //services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
+            //{
+            //    config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.Url);
+            //})
+            //.SetHandlerLifetime(handlerLifeTime);
 
             services.AddHttpClient<IInternalQnaApiClient, InternalQnaApiClient>(config =>
             {

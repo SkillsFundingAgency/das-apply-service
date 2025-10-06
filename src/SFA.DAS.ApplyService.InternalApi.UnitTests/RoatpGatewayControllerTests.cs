@@ -72,7 +72,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             };
 
             var configurationService = new Mock<IConfigurationService>();
-            configurationService.Setup(x => x.GetConfig()).ReturnsAsync(new ApplyConfig { RoatpApiAuthentication = new RoatpApiAuthentication { ApiBaseAddress = "https://localhost" } });
+            configurationService.Setup(x => x.GetConfig()).ReturnsAsync(new ApplyConfig { RoatpApiAuthentication = new RoatpApiAuthentication { Url = "https://localhost" } });
 
             _logger = new Mock<ILogger<RoatpGatewayController>>();
             _fileStorage = new Mock<IFileStorageService>();
