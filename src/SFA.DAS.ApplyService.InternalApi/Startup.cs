@@ -54,7 +54,6 @@ using CompaniesHouseApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.
 using IQnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.IQnaTokenService;
 using IRoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.IRoatpApiClient;
 using QnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.QnaTokenService;
-using RoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.RoatpApiClient;
 using SecurityHeadersExtensions = SFA.DAS.ApplyService.InternalApi.Infrastructure.SecurityHeadersExtensions;
 
 namespace SFA.DAS.ApplyService.InternalApi
@@ -189,7 +188,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .SetHandlerLifetime(handlerLifeTime);
 
-            services.AddRefitClient<RoatpApiClient>()
+            services.AddRefitClient<IRoatpApiClient>()
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.Url))
                 .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(), _applyConfig.RoatpApiAuthentication.Identifier));
             
@@ -239,7 +238,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
             services.AddTransient<IQnaTokenService, QnaTokenService>();
-            services.AddTransient<IRoatpTokenService, RoatpTokenService>();
             services.AddTransient<IGatewayApiChecksService, GatewayApiChecksService>();
             services.AddTransient<ICriminalComplianceChecksQuestionLookupService, CriminalComplianceChecksQuestionLookupService>();
             services.AddTransient<IRegistrationDetailsService, RegistrationDetailsService>();
