@@ -17,6 +17,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.OpenApi.Models;
+using Refit;
+using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.ApplyService.Application.Behaviours;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Services;
@@ -52,7 +54,6 @@ using CompaniesHouseApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.
 using IQnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.IQnaTokenService;
 using IRoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.IRoatpApiClient;
 using QnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.QnaTokenService;
-using RoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.RoatpApiClient;
 using SecurityHeadersExtensions = SFA.DAS.ApplyService.InternalApi.Infrastructure.SecurityHeadersExtensions;
 
 namespace SFA.DAS.ApplyService.InternalApi
@@ -187,12 +188,10 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .SetHandlerLifetime(handlerLifeTime);
 
-            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.ApiBaseAddress);
-            })
-            .SetHandlerLifetime(handlerLifeTime);
-
+            services.AddRefitClient<IRoatpApiClient>()
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.Url))
+                .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(), _applyConfig.RoatpApiAuthentication.Identifier));
+            
             services.AddHttpClient<IInternalQnaApiClient, InternalQnaApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.QnaApiAuthentication.ApiBaseAddress);
@@ -239,7 +238,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
             services.AddTransient<IQnaTokenService, QnaTokenService>();
-            services.AddTransient<IRoatpTokenService, RoatpTokenService>();
             services.AddTransient<IGatewayApiChecksService, GatewayApiChecksService>();
             services.AddTransient<ICriminalComplianceChecksQuestionLookupService, CriminalComplianceChecksQuestionLookupService>();
             services.AddTransient<IRegistrationDetailsService, RegistrationDetailsService>();
