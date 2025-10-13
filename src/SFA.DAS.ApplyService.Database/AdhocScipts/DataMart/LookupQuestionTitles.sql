@@ -83,7 +83,7 @@ INSERT INTO LookupQuestionTitles ([SequenceNumber],[SectionNumber],[PageId],[Que
 
 (1, 5, '235', 'YO-235', 'Is your organisation funded by the Office for Students?'),
 (1, 5, '240', 'YO-240', 'Does your organisation offer initial teacher training?'),
-(1, 5, '250', 'YO-250', 'Is the postgraduate teaching apprenticeship the only apprenticeship your organisation intends to deliver?'),
+(1, 5, '250', 'YO-250', 'Is the postgraduate and/or undergraduate teaching apprenticeships the only apprenticeship programmes your organisation intends to deliver?'),
 (1, 5, '260', 'YO-260', 'Has your organisation had a full Ofsted inspection in further education and skills?'),
 (1, 5, '270', 'YO-270', 'Did your organisation get a grade for apprenticeships in this full Ofsted inspection?'),
 (1, 5, '280', 'YO-280', 'What grade did your organisation get for overall effectiveness in this full Ofsted inspection?'),
