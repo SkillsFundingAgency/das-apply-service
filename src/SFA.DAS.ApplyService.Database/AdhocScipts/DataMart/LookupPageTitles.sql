@@ -90,7 +90,7 @@ INSERT INTO LookupPageTitles ([SequenceNumber],[SectionNumber],[PageId],[Title])
 (2, 2, '2220', 'Management accounts - What you need to upload'),
 (2, 2, '2225', 'Upload full management accounts covering the last 12 months'),
 (2, 2, '2230', 'Management accounts - What you need to upload'),
-(2, 2, '2240', 'Upload management accounts covering at least 3 months within the last 12 months'),
+(2, 2, '2240', 'Upload your organisation''s management accounts covering a period no less than one year, with the management accounts comprising at least 6 months of actual trading activity'),
 (2, 2, '2250', 'Upload financial projections covering the remaining period'),
 (2, 2, '2260', 'Who prepared the answers and uploads in this section?'),
 (2, 2, '2270', 'Accounting reference date'),
