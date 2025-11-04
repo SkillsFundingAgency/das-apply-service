@@ -10,24 +10,24 @@ using Polly;
 using Polly.Retry;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using SFA.DAS.ApplyService.InternalApi.Services;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
     [Authorize]
     public class RoatpApplicationController : Controller
     {
-        private ILogger<RoatpApplicationController> _logger;
-
-        private IRoatpApiClient _apiClient;
-        
-        private AsyncRetryPolicy _retryPolicy;
-
+        private readonly ILogger<RoatpApplicationController> _logger;
+        private readonly IRoatpApiClient _apiClient;
+        private readonly AsyncRetryPolicy _retryPolicy;
         private readonly List<RoatpSequences> _roatpSequences;
+        private readonly IRoatpService _roatpService;
 
-        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, IRoatpApiClient apiClient, IOptions<List<RoatpSequences>> roatpSequences)
+        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, IRoatpApiClient apiClient, IOptions<List<RoatpSequences>> roatpSequences, IRoatpService roatpService)
         {
             _logger = logger;
             _apiClient = apiClient;
+            _roatpService = roatpService;
             _retryPolicy = GetRetryPolicy();
             _roatpSequences = roatpSequences.Value;
         }
@@ -37,7 +37,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<IActionResult> GetApplicationRoutes()
         {
             var providerTypes = await _retryPolicy.ExecuteAsync(context => _apiClient.GetProviderTypes(), new Context());
-            
+
             var applicationRoutes = Mapper.Map<IEnumerable<ApplicationRoute>>(providerTypes);
 
             return Ok(applicationRoutes);
@@ -48,11 +48,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<IActionResult> UkprnOnRegister(int ukprn)
         {
             var registerStatus = await _retryPolicy.ExecuteAsync(
-                context => _apiClient.GetOrganisationRegisterStatus(ukprn.ToString()),
+                context => _roatpService.GetRegisterStatus(ukprn),
                 new Context());
-     
+
             return Ok(registerStatus);
-        
+
         }
 
         [Route("roatp-sequences")]

@@ -191,7 +191,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddRefitClient<IRoatpApiClient>()
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.Url))
                 .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(), _applyConfig.RoatpApiAuthentication.Identifier));
-            
+
             services.AddHttpClient<IInternalQnaApiClient, InternalQnaApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.QnaApiAuthentication.ApiBaseAddress);
@@ -251,6 +251,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IModeratorReviewCreationService, ModeratorReviewCreationService>();
             services.AddTransient<IBankHolidayService, BankHolidayService>();
             services.AddTransient<IBankHolidayRepository, BankHolidayRepository>();
+            services.AddTransient<IRoatpService, RoatpService>();
 
             services.AddTransient<IApplicationRepository, ApplicationRepository>();
             services.AddTransient<IDiffService, DiffService>();

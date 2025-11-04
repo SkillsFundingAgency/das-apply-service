@@ -17,6 +17,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
     using NUnit.Framework;
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Controllers;
+    using SFA.DAS.ApplyService.InternalApi.Services;
 
     [TestFixture]
     public class RoatpApplicationControllerTests
@@ -24,19 +25,21 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<ILogger<RoatpApplicationController>> _logger;
         private Mock<IRoatpApiClient> _apiClient;
         private Mock<IOptions<List<RoatpSequences>>> _sequencesMock;
+        private Mock<IRoatpService> _roatpServiceMock;
 
         private RoatpApplicationController _controller;
-        private readonly RoatpSequences _sequence = new RoatpSequences {Id = 1};
+        private readonly RoatpSequences _sequence = new RoatpSequences { Id = 1 };
 
         [SetUp]
         public void Before_each_test()
         {
+            _roatpServiceMock = new Mock<IRoatpService>();
             _logger = new Mock<ILogger<RoatpApplicationController>>();
             _apiClient = new Mock<IRoatpApiClient>();
             _sequencesMock = new Mock<IOptions<List<RoatpSequences>>>();
             _sequencesMock.Setup(s => s.Value).Returns(new List<RoatpSequences>() { _sequence });
 
-            _controller = new RoatpApplicationController(_logger.Object, _apiClient.Object, _sequencesMock.Object);
+            _controller = new RoatpApplicationController(_logger.Object, _apiClient.Object, _sequencesMock.Object, _roatpServiceMock.Object);
 
             Mapper.Reset();
 
@@ -86,7 +89,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 ProviderTypeId = ProviderType.EmployerProvider
             };
 
-            _apiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<string>())).ReturnsAsync(registerStatus).Verifiable();
+            _roatpServiceMock.Setup(x => x.GetRegisterStatus(It.IsAny<int>())).ReturnsAsync(registerStatus).Verifiable();
 
             var result = await _controller.UkprnOnRegister(10002000);
 
@@ -100,7 +103,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             registerStatusResult.StatusId.Should().Be(registerStatus.StatusId);
             registerStatusResult.ProviderTypeId.Should().Be(registerStatus.ProviderTypeId);
 
-            _apiClient.Verify(x => x.GetOrganisationRegisterStatus(It.IsAny<string>()), Times.Once);
+            _roatpServiceMock.Verify(x => x.GetRegisterStatus(It.IsAny<int>()), Times.Once);
         }
 
         [Test]
