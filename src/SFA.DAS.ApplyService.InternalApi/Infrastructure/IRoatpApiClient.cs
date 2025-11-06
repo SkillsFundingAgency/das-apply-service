@@ -18,6 +18,6 @@ public interface IRoatpApiClient
     [Get("/organisations/{ukprn}/ukrlp-data")]
     Task<UkprnLookupResponse> GetUkrlpDetails([Query("ukprn")] string ukprn);
 
-    [Get("/api/v1/lookupData/organisationTypes?providerTypeId={providerTypeId}")]
-    Task<IEnumerable<OrganisationType>> GetOrganisationTypes([AliasAs("providerTypeId")] int? providerTypeId);
+    [Get("/organisation-types?providerTypeId={providerTypeId}")]
+    Task<OrganisationTypesResponse> GetOrganisationTypes([Query("providerTypeId")] int? providerTypeId);
 }
