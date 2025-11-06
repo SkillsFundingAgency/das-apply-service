@@ -9,14 +9,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure;
 
 public interface IRoatpApiClient
 {
-    [Get("/api/v1/lookupData/providerTypes")]
+    [Get("/provider-types")]
     Task<IEnumerable<Models.Roatp.ProviderType>> GetProviderTypes();
 
     [Get("/organisations/{ukprn}")]
     Task<ApiResponse<OrganisationModel>> GetOrganisation([Query("ukprn")] int ukprn);
 
-    [Get("/api/v1/ukrlp/lookup/{ukprn}")]
-    Task<UkprnLookupResponse> GetUkrlpDetails([AliasAs("ukprn")] string ukprn);
+    [Get("/organisations/{ukprn}/ukrlp-data")]
+    Task<UkprnLookupResponse> GetUkrlpDetails([Query("ukprn")] string ukprn);
 
     [Get("/api/v1/lookupData/organisationTypes?providerTypeId={providerTypeId}")]
     Task<IEnumerable<OrganisationType>> GetOrganisationTypes([AliasAs("providerTypeId")] int? providerTypeId);
