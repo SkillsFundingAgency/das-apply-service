@@ -11,7 +11,6 @@
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="7.0.14" />
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.10" />
-    <PackageReference Include="SFA.DAS.AdminService.Common" Version="0.1.75" />
     <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="3.0.84" />
     <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.141" />
     <PackageReference Include="SFA.DAS.QnA.Api.Views" Version="0.2.291" />
