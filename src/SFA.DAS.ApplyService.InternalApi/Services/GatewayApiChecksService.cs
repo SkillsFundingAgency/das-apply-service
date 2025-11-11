@@ -21,19 +21,22 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly ILogger<GatewayApiChecksService> _logger;
+        private readonly IRoatpService _roatpService;
 
         public GatewayApiChecksService(
             CompaniesHouseApiClient companiesHouseApiClient,
             IOuterApiClient outerApiClient,
             IRoatpApiClient roatpApiClient,
             IInternalQnaApiClient qnaApiClient,
-            ILogger<GatewayApiChecksService> logger)
+            ILogger<GatewayApiChecksService> logger,
+            IRoatpService roatpService)
         {
             _companiesHouseApiClient = companiesHouseApiClient;
             _outerApiClient = outerApiClient;
             _roatpApiClient = roatpApiClient;
             _qnaApiClient = qnaApiClient;
             _logger = logger;
+            _roatpService = roatpService;
         }
 
         public async Task<ApplyGatewayDetails> GetExternalApiCheckDetails(Guid applicationId)
@@ -53,7 +56,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             var ukrlpDetails = ukrlpResults.Results.FirstOrDefault();
             applyGatewayDetails.UkrlpDetails = Mapper.Map<ProviderDetails>(ukrlpDetails);
 
-            var roatpStatus = await _roatpApiClient.GetOrganisationRegisterStatus(ukprn);
+            var roatpStatus = await _roatpService.GetRegisterStatus(int.Parse(ukprn));
             if (roatpStatus == null)
             {
                 var message = $"Unable to retrieve APAR register details for application {applicationId}";

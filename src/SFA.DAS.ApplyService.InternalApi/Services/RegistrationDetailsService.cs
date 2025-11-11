@@ -1,12 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services
 {
@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         public async Task<RoatpRegistrationDetails> GetRegistrationDetails(Guid applicationId)
         {
             _logger.LogInformation($"Retrieving registration details for application id {applicationId}");
-            
+
             var providerTypeId = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
             int providerTypeIdValue;
             int.TryParse(providerTypeId.Value, out providerTypeIdValue);
@@ -77,7 +77,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         {
             int organisationTypeId = 0; // default to 'Unassigned'
 
-            var organisationTypes = await _roatpApiClient.GetOrganisationTypes(providerTypeId);
+            var organisationTypesResponse = await _roatpApiClient.GetOrganisationTypes(providerTypeId);
 
             string organisationTypePageId = RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage;
             string organisationTypeQuestionId = RoatpYourOrganisationQuestionIdConstants.OrganisationTypeMainSupporting;
@@ -92,7 +92,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                                                                         RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, organisationTypePageId);
 
             var organisationDetailsAnswers = organisationTypePage.PageOfAnswers.FirstOrDefault();
-            if (organisationDetailsAnswers != null && organisationTypes != null)
+            if (organisationDetailsAnswers != null && organisationTypesResponse != null)
             {
                 var organisationTypeAnswer =
                     organisationDetailsAnswers.Answers.FirstOrDefault(x => x.QuestionId == organisationTypeQuestionId);
@@ -100,7 +100,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 if (organisationTypeAnswer != null)
                 {
                     var matchingOrganisationType =
-                        organisationTypes.FirstOrDefault(x => x.Type.Equals(organisationTypeAnswer.Value));
+                        organisationTypesResponse.OrganisationTypes.FirstOrDefault(x => x.Description.Equals(organisationTypeAnswer.Value));
 
                     if (matchingOrganisationType != null)
                     {
@@ -111,16 +111,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                     {
                         case RailFranchise:
                             organisationTypeId =
-                                    organisationTypes.FirstOrDefault(x => x.Type == RoatpMatchRailFranchise).Id;
+                                    organisationTypesResponse.OrganisationTypes.FirstOrDefault(x => x.Description == RoatpMatchRailFranchise).Id;
                             break;
                         case PublicBodyOrganisationType:
                             organisationTypeId =
-                                await MapPublicBodyOrganisationType(applicationId, providerTypeId, organisationTypes);
+                                await MapPublicBodyOrganisationType(applicationId, providerTypeId, organisationTypesResponse.OrganisationTypes);
                             break;
                         case EducationalInstituteOrganisationType:
                             organisationTypeId =
                                 await MapEducationalInstituteOrganisationType(applicationId, providerTypeId,
-                                    organisationTypes);
+                                    organisationTypesResponse.OrganisationTypes);
                             break;
                     }
                 }
@@ -141,7 +141,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             var organisationDetailsAnswers = publicBodyOrganisationTypePage.PageOfAnswers.FirstOrDefault();
             var organisationTypeAnswer = organisationDetailsAnswers.Answers.FirstOrDefault(x => x.QuestionId == publicBodyOrganisationTypeQuestionId);
 
-            var matchingOrganisationType = organisationTypes.FirstOrDefault(x => x.Type.Equals(organisationTypeAnswer.Value.ToString()));
+            var matchingOrganisationType = organisationTypes.FirstOrDefault(x => x.Description.Equals(organisationTypeAnswer.Value.ToString()));
 
             if (matchingOrganisationType != null)
             {
@@ -151,7 +151,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             return 0;
         }
 
-        private async Task<int> MapEducationalInstituteOrganisationType(Guid applicationId, int providerTypeId, 
+        private async Task<int> MapEducationalInstituteOrganisationType(Guid applicationId, int providerTypeId,
                                                                         IEnumerable<OrganisationType> organisationTypes)
         {
             var educationOrganisationTypePageId = RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteType;
@@ -164,7 +164,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             var organisationDetailsAnswers = educationOrganisationTypePage.PageOfAnswers.FirstOrDefault();
             var organisationTypeAnswer = organisationDetailsAnswers.Answers.FirstOrDefault(x => x.QuestionId == educationOrganisationTypeQuestionId);
 
-            var matchingOrganisationType = organisationTypes.FirstOrDefault(x => x.Type.Equals(organisationTypeAnswer.Value.ToString()));
+            var matchingOrganisationType = organisationTypes.FirstOrDefault(x => x.Description.Equals(organisationTypeAnswer.Value.ToString()));
 
             if (matchingOrganisationType != null)
             {

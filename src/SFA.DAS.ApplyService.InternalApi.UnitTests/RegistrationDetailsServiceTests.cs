@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Collections.Generic;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -7,8 +9,6 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Services;
-using System;
-using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -57,110 +57,110 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 new OrganisationType
                 {
                     Id = 1,
-                    Type = "School"
+                    Description = "School"
                 },
                 new OrganisationType
                 {
                     Id = 2,
-                    Type = "General Further Education College"
+                    Description = "General Further Education College"
                 },
                 new OrganisationType
                 {
                     Id = 3,
-                    Type = "National College"
+                    Description = "National College"
                 },
                 new OrganisationType
                 {
                     Id = 4,
-                    Type = "Sixth Form College"
+                    Description = "Sixth Form College"
                 },
                 new OrganisationType
                 {
                     Id = 5,
-                    Type = "Further Education Institute"
+                    Description = "Further Education Institute"
                 },
                 new OrganisationType
                 {
                     Id = 6,
-                    Type = "Higher Education Institute or university"
+                    Description = "Higher Education Institute or university"
                 },
                 new OrganisationType
                 {
                     Id = 7,
-                    Type = "Academy"
+                    Description = "Academy"
                 },
                 new OrganisationType
                 {
                     Id = 8,
-                    Type = "Multi-Academy Trust"
+                    Description = "Multi-Academy Trust"
                 },
                 new OrganisationType
                 {
                     Id = 9,
-                    Type = "NHS Trust"
+                    Description = "NHS Trust"
                 },
                 new OrganisationType
                 {
                     Id = 10,
-                    Type = "Police"
+                    Description = "Police"
                 },
                 new OrganisationType
                 {
                     Id = 11,
-                    Type = "Fire authority"
+                    Description = "Fire authority"
                 },
                 new OrganisationType
                 {
                     Id = 12,
-                    Type = "Local authority"
+                    Description = "Local authority"
                 },
                 new OrganisationType
                 {
                     Id = 13,
-                    Type = "Government department"
+                    Description = "Government department"
                 },
                 new OrganisationType
                 {
                     Id = 14,
-                    Type = "Non departmental public body (NDPB)"
+                    Description = "Non departmental public body (NDPB)"
                 },
                 new OrganisationType
                 {
                     Id = 15,
-                    Type = "Executive agency"
+                    Description = "Executive agency"
                 },
                 new OrganisationType
                 {
                     Id = 16,
-                    Type = "An Independent Training Provider"
+                    Description = "An Independent Training Provider"
                 },
                 new OrganisationType
                 {
                     Id = 17,
-                    Type = "An Apprenticeship Training Agency"
+                    Description = "An Apprenticeship Training Agency"
                 },
                 new OrganisationType
                 {
                     Id = 18,
-                    Type = "A Group Training Association"
+                    Description = "A Group Training Association"
                 },
                 new OrganisationType
                 {
                     Id = 19,
-                    Type = "An employer training apprentices in other organisations"
+                    Description = "An employer training apprentices in other organisations"
                 },
                 new OrganisationType
                 {
                     Id = 20,
-                    Type = "None of the above"
+                    Description = "None of the above"
                 },
                 new OrganisationType
                 {
                     Id = 21,
-                    Type = "Rail franchise"
+                    Description = "Rail franchise"
                 }
             };
-            _roatpApiClient.Setup(x => x.GetOrganisationTypes(It.IsAny<int>())).ReturnsAsync(_organisationTypes);
+            _roatpApiClient.Setup(x => x.GetOrganisationTypes(It.IsAny<int>())).ReturnsAsync(new OrganisationTypesResponse(_organisationTypes));
 
             _logger = new Mock<ILogger<RegistrationDetailsService>>();
             _service = new RegistrationDetailsService(_qnaApiClient.Object, _roatpApiClient.Object, _logger.Object);
@@ -509,7 +509,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                                                           RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation,
                                                           RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage))
                                                          .ReturnsAsync(organisationDetailsPage);
-           
+
             _qnaApiClient.Setup(x => x.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>()))
                          .ReturnsAsync(new Answer { Value = ProviderTypeEmployer.ToString() });
 
@@ -715,7 +715,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             };
 
             _qnaApiClient.Setup(x => x.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation,
-                                                          RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, 
+                                                          RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation,
                                                           RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage))
                                                          .ReturnsAsync(organisationTypePage);
 
@@ -785,7 +785,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             };
 
             _qnaApiClient.Setup(x => x.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation,
-                                                          RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, 
+                                                          RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation,
                                                           RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage))
                                                          .ReturnsAsync(organisationTypePage);
 
@@ -810,7 +810,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             };
 
             _qnaApiClient.Setup(x => x.GetPageBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation,
-                                                          RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, 
+                                                          RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation,
                                                           RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyType))
                                                          .ReturnsAsync(publicBodyTypePage);
 
@@ -856,10 +856,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             };
 
             _qnaApiClient.Setup(x => x.GetPageBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation,
-                                                          RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, 
+                                                          RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation,
                                                           RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage))
                                                          .ReturnsAsync(organisationTypePage);
-            
+
             _qnaApiClient.Setup(x => x.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>()))
                         .ReturnsAsync(new Answer { Value = providerTypeId.ToString() });
 
@@ -893,7 +893,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                     }
                 }
             };
-                        
+
             _qnaApiClient.Setup(x => x.GetPageBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.Preamble,
                                                           RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble))
                                                          .ReturnsAsync(preamblePage);

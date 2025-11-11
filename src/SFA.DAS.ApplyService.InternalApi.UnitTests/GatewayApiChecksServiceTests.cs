@@ -1,4 +1,8 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -13,10 +17,6 @@ using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
 using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -28,6 +28,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<ILogger<GatewayApiChecksService>> _logger;
+        private Mock<IRoatpService> _roatpServiceMock;
 
         private GatewayApiChecksService _service;
         private string _ukprn;
@@ -56,10 +57,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _roatpApiClient = new Mock<IRoatpApiClient>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _logger = new Mock<ILogger<GatewayApiChecksService>>();
+            _roatpServiceMock = new Mock<IRoatpService>();
 
             _qnaApiClient.Setup(x => x.GetQuestionTag(_applicationId, RoatpWorkflowQuestionTags.UKPRN)).ReturnsAsync(_ukprn);
 
-            _ukrlpDetails = new UkprnLookupResponse 
+            _ukrlpDetails = new UkprnLookupResponse
             {
                 Success = true,
                 Results = new List<ProviderDetails>
@@ -87,10 +89,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 UkprnOnRegister = false
             };
 
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(_ukprn)).ReturnsAsync(_registerStatus);
+            _roatpServiceMock.Setup(x => x.GetRegisterStatus(int.Parse(_ukprn))).ReturnsAsync(_registerStatus);
 
             _service = new GatewayApiChecksService(_companiesHouseApiClient.Object, _outerApiClient.Object,
-                                                   _roatpApiClient.Object, _qnaApiClient.Object, _logger.Object);
+                                                   _roatpApiClient.Object, _qnaApiClient.Object, _logger.Object, _roatpServiceMock.Object);
         }
 
         [Test]
@@ -102,7 +104,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             result.UkrlpDetails.UKPRN.Should().Be(_ukrlpDetails.Results[0].UKPRN);
             result.UkrlpDetails.ProviderName.Should().Be(_ukrlpDetails.Results[0].ProviderName);
             result.RoatpRegisterDetails.UkprnOnRegister.Should().Be(_registerStatus.UkprnOnRegister);
-            result.CompaniesHouseDetails.Should().BeNull(); 
+            result.CompaniesHouseDetails.Should().BeNull();
         }
 
         [Test]
@@ -126,7 +128,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Success = true,
                 Response = new Company
                 {
-                    CompanyNumber = companyNumber, 
+                    CompanyNumber = companyNumber,
                     CompanyName = "Test Name"
                 }
             };
@@ -159,7 +161,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var charityDetails = new Charity
             {
                 CharityNumber = charityNumber.ToString(),
-                Name = "Test Name"                
+                Name = "Test Name"
             };
 
             _outerApiClient.Setup(x => x.GetCharityDetails(charityNumber)).ReturnsAsync(charityDetails);
@@ -185,7 +187,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void Service_throws_exception_if_no_roatp_details_returned()
         {
             _registerStatus = null;
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(_ukprn)).ReturnsAsync(_registerStatus);
+            _roatpServiceMock.Setup(x => x.GetRegisterStatus(int.Parse(_ukprn))).ReturnsAsync(_registerStatus);
             Action serviceCall = () => _service.GetExternalApiCheckDetails(_applicationId).GetAwaiter().GetResult();
             serviceCall.Should().Throw<ServiceUnavailableException>();
         }
