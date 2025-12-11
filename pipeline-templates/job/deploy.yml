@@ -1,0 +1,101 @@
+parameters:
+- name: ServiceConnection
+  type: string
+- name: SolutionBaseName
+  type: string
+- name: Environment
+  type: string
+- name: AppRoleAssignmentsServiceConnection
+  type: string
+
+jobs:
+- deployment: DeployWebApp
+  pool:
+    name: DAS - Continuous Deployment Agents
+  environment: ${{ parameters.Environment }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - template: azure-pipelines-templates/deploy/step/wait-azure-devops-deployment.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            EnvironmentId: $(Environment.Id)
+            PipelineName: $(Build.DefinitionName)
+            RunId: $(Build.BuildId)
+        - template: azure-pipelines-templates/deploy/step/set-backendaccessrestrictions-variable.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            SharedEnvResourceGroup: $(SharedEnvResourceGroup)
+            SharedEnvVirtualNetworkName : $(SharedEnvVirtualNetworkName)
+            BackEndAccessRestrictionsExcludedSubnets: $(BackEndAccessRestrictionsExcludedSubnets)
+            ResourceEnvironmentName: $(ResourceEnvironmentName)
+            UnrestrictedEnvironments: $(UnrestrictedEnvironments)
+            UptimeMonitoringAccessRestrictions: $(UptimeMonitoringAccessRestrictions)
+        - template: azure-pipelines-templates/deploy/step/get-product-app-insights.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            AppInsightsResourceGroup: $(SharedEnvResourceGroup)
+            AppInsightsName: $(ProductAppInsightsName)
+            IsMultiRepoCheckout: true
+        - template: azure-pipelines-templates/deploy/step/arm-deploy.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            SubscriptionId: $(SubscriptionId)
+            Location: $(ResourceGroupLocation)
+            Environment: ${{ parameters.Environment }}
+            TemplatePath: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/azure/legacy.template.json
+            ParametersPath: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/azure/legacy.template.parameters.json
+            IsMultiRepoCheckout: true
+            TemplateSecrets:
+              LoggingRedisConnectionString: $(LoggingRedisConnectionString)
+              ConfigurationStorageConnectionString: $(ConfigurationStorageConnectionString)
+              StorageConnectionString: $(StorageConnectionString)
+              ApplicationInsightsConnectionString: $(ApplicationInsightsConnectionString)
+        - template: azure-pipelines-templates/deploy/step/get-apim-subscription-key.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            ApimResourceGroup: $(SharedApimResourceGroup)
+            ApimName: $(SharedApimName)
+            SubscriptionId: $(UiAppServiceName)
+            PipelineVariableName: EmployerAccountsApimSubscriptionKey
+            IsMultiRepoCheckout: true
+        - template: azure-pipelines-templates/deploy/step/generate-config.yml@das-platform-building-blocks
+          parameters:
+            EnvironmentName: $(EnvironmentName)
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            SourcePath: $(Pipeline.Workspace)/das-employer-config/Configuration/das-employerapprenticeshipsservice
+            StorageAccountName: $(ConfigurationStorageAccountName)
+            StorageAccountResourceGroup: $(SharedEnvResourceGroup)
+            TargetFileName: '*.schema.json'
+            TableName: Configuration
+            ConfigurationSecrets:
+              AADClientKey: $(AADClientKey)
+              EmployerAccountsApiClientClientSecret: $(EmployerAccountsApiClientClientSecret)
+              IdentityClientSecret: $(IdentityClientSecret)
+              EmployerAccountsApimSubscriptionKey: $(EmployerAccountsApimSubscriptionKey)
+        - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}
+            ResourceName: $(ApiAppServiceName)
+            Tenant: $(Tenant)
+            IsMultiRepoCheckout: true
+        - template: azure-pipelines-templates/deploy/step/sql-dacpac-deploy.yml@das-platform-building-blocks
+          parameters:
+            AzureSubscription: ${{ parameters.ServiceConnection }}
+            ServerName: $(SharedSQLServerFQDN)
+            SqlUsername: $(SharedSQLServerUsername)
+            DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/${{ parameters.SolutionBaseName }}.Database/bin/release/netstandard2.1/${{ parameters.SolutionBaseName }}.Database.dacpac
+            DatabaseName: $(DatabaseName)
+            OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+            Environment: ${{ parameters.Environment }}
+        - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            AppServiceName: $(ApiAppServiceName)
+            DeploymentPackagePath: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/${{ parameters.SolutionBaseName }}.Web.zip
+        - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            AppServiceName: $(UiAppServiceName)
+            DeploymentPackagePath: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/${{ parameters.SolutionBaseName }}.Api.zip

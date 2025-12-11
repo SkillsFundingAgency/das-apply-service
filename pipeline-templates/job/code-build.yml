@@ -1,0 +1,83 @@
+parameters:
+- name: SolutionBaseName
+  type: string
+- name: BuildConfiguration
+  type: string
+
+jobs:
+- job: 'CodeBuild'
+  pool:
+    name: DAS - Continuous Integration Agents
+    demands: LATEST_DOTNET_VERSION -equals 3.1
+  workspace:
+    clean: all
+  steps:
+  - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
+
+  - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
+    parameters:
+      SonarCloudProjectKey: SkillsFundingAgency_das-apply-service
+      ContinueOnVulnerablePackageScanError: true
+
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet pack'
+    inputs:
+      command: pack
+      packagesToPack: 'src/${{ parameters.SolutionBaseName }}.Types/${{ parameters.SolutionBaseName }}.Types.csproj'
+      versioningScheme: byBuildNumber
+      packDirectory: $(build.artifactstagingdirectory)/NugetPackages
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish Website'
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: 'src/${{ parameters.SolutionBaseName }}.Web/${{ parameters.SolutionBaseName }}.Web.csproj'
+      arguments: '--configuration ${{ parameters.BuildConfiguration }} --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish API'
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: 'src/${{ parameters.SolutionBaseName }}.InternalApi/${{ parameters.SolutionBaseName }}.InternalApi.csproj'
+      arguments: '--configuration ${{ parameters.BuildConfiguration }} --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+    inputs:
+      contents: |
+        azure/**
+      targetFolder: '$(build.artifactstagingdirectory)/publish'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      pathtoPublish: '$(build.artifactstagingdirectory)/publish'
+
+  - publish: $(build.artifactstagingdirectory)/NugetPackages
+    artifact: NugetPackages
+
+- job: 'DACPACBuild'
+  pool:
+    vmImage: 'windows-2019'
+  workspace:
+    clean: all
+  steps:
+  - task: VSBuild@1
+    displayName: 'Build DACPAC'
+    inputs:
+      solution: 'src/${{ parameters.SolutionBaseName }}.Database/${{ parameters.SolutionBaseName }}.Database.sqlproj'
+      platform: '$(buildPlatform)'
+      configuration: '${{ parameters.BuildConfiguration }}'
+      msbuildArgs: '/p:PackageLocation="$(build.artifactstagingdirectory)/publish"'
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+    inputs:
+      contents: |
+        src/**/*.dacpac
+      targetFolder: '$(build.artifactstagingdirectory)/publish'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      pathtoPublish: '$(build.artifactstagingdirectory)/publish'
