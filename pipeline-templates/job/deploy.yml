@@ -35,12 +35,6 @@ jobs:
             ResourceEnvironmentName: $(ResourceEnvironmentName)
             UnrestrictedEnvironments: $(UnrestrictedEnvironments)
             UptimeMonitoringAccessRestrictions: $(UptimeMonitoringAccessRestrictions)
-        - template: azure-pipelines-templates/deploy/step/get-product-app-insights.yml@das-platform-building-blocks
-          parameters:
-            ServiceConnection: ${{ parameters.ServiceConnection }}
-            AppInsightsResourceGroup: $(SharedEnvResourceGroup)
-            AppInsightsName: $(ProductAppInsightsName)
-            IsMultiRepoCheckout: true
         - template: azure-pipelines-templates/deploy/step/arm-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
