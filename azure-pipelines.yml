@@ -4,6 +4,13 @@ trigger:
     include:
       - "master"
 
+#REMEMBER: set the ApproveProdOverrideBlockOnPossibleDataLoss pipeline variable when connecting this pipeline, see Approve-SqlDacpacDeploymentDataLoss.ps1 docs for more info.
+parameters:
+- name: OverrideBlockOnPossibleDataLoss
+  displayName: Add /p:BlockOnPossibleDataLoss=false argument to DACPAC deployment
+  type: boolean
+  default: false
+
 variables:
 - name: SolutionBaseName
   value: SFA.DAS.ApplyService

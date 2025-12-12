@@ -7,6 +7,9 @@ parameters:
   type: string
 - name: AppRoleAssignmentsServiceConnection
   type: string
+- name: OverrideBlockOnPossibleDataLoss
+  type: boolean
+  default: false
 
 jobs:
 - deployment: DeployWebApp
