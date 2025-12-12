@@ -49,6 +49,10 @@ stages:
     parameters:
       BuildConfiguration: $(BuildConfiguration)
       SolutionBaseName: $(SolutionBaseName)
+  - template: azure-pipelines-templates/build/job/dacpac-template.yml@das-platform-building-blocks
+    parameters:
+      SolutionBaseName: $(SolutionBaseName)
+      SqlProjectPath: src/$(SolutionBaseName).Database/$(SolutionBaseName).Database.sqlproj
 
 - template: azure-pipelines-templates/deploy/stage/nuget-publish.yml@das-platform-building-blocks
 
