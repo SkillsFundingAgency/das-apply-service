@@ -55,10 +55,11 @@ jobs:
       TargetFolder: $(build.artifactstagingdirectory)/publish
       OverWrite: true
 
-  - task: PublishBuildArtifacts@1
-    displayName: Publish Artifact
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Build Artifact
     inputs:
-      pathtoPublish: $(build.artifactstagingdirectory)/publish
+      targetPath: $(build.artifactstagingdirectory)/publish
+      artifactName: ${{ parameters.SolutionBaseName }}
 
   - publish: $(build.artifactstagingdirectory)/NugetPackages
     artifact: NugetPackages
