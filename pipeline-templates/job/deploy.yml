@@ -54,7 +54,7 @@ jobs:
             ServiceConnection: ${{ parameters.ServiceConnection }}
             ApimResourceGroup: $(SharedApimResourceGroup)
             ApimName: $(SharedApimName)
-            SubscriptionId: $(UiAppServiceName)
+            SubscriptionId: $(ApiAppServiceName)
             PipelineVariableName: EmployerAccountsApimSubscriptionKey
             IsMultiRepoCheckout: true
         - template: azure-pipelines-templates/deploy/step/generate-config.yml@das-platform-building-blocks
