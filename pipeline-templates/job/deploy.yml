@@ -75,6 +75,7 @@ jobs:
               CompaniesHouseApiAuthenticationApiKey: $(CompaniesHouseApiAuthenticationApiKey)
               RoatpApiAuthenticationClientSecret: $(RoatpApiAuthenticationClientSecret)
               SessionRedisConnectionString: $(SessionRedisConnectionString)
+              ApiNotificationsClientToken: $(SharedNotificationsApiClientToken)
         - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}
