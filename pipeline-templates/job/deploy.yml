@@ -67,15 +67,16 @@ jobs:
             TargetFileName: '*.schema.json'
             TableName: Configuration
             ConfigurationSecrets:
-              DfeSignInClientSecret: $(DfeSignInClientSecret)
-              DfeSignInApiClientSecret: $(DfeSignInApiClientSecret)
               ApiNotificationsClientSecret: $(ApiNotificationsClientSecret)
+              ApiNotificationsClientToken: $(SharedNotificationsApiClientToken)
+              CompaniesHouseApiAuthenticationApiKey: $(CompaniesHouseApiAuthenticationApiKey)
+              DfeSignInApiClientSecret: $(DfeSignInApiClientSecret)
+              DfeSignInClientSecret: $(DfeSignInClientSecret)
               FileStorageFileEncryptionKey: $(FileStorageFileEncryptionKey)
               FileStorageStorageConnectionString: $(FileStorageStorageConnectionString)
-              CompaniesHouseApiAuthenticationApiKey: $(CompaniesHouseApiAuthenticationApiKey)
               RoatpApiAuthenticationClientSecret: $(RoatpApiAuthenticationClientSecret)
+              RoatpApimSubscriptionKey: $(RoatpApimSubscriptionKey)
               SessionRedisConnectionString: $(SessionRedisConnectionString)
-              ApiNotificationsClientToken: $(SharedNotificationsApiClientToken)
         - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}
