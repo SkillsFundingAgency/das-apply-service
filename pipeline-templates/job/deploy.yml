@@ -61,16 +61,19 @@ jobs:
           parameters:
             EnvironmentName: $(EnvironmentName)
             ServiceConnection: ${{ parameters.ServiceConnection }}
-            SourcePath: $(Pipeline.Workspace)/das-employer-config/Configuration/das-employerapprenticeshipsservice
+            SourcePath: $(Pipeline.Workspace)/das-employer-config/Configuration/das-apply-service
             StorageAccountName: $(ConfigurationStorageAccountName)
             StorageAccountResourceGroup: $(SharedEnvResourceGroup)
             TargetFileName: '*.schema.json'
             TableName: Configuration
             ConfigurationSecrets:
-              AADClientKey: $(AADClientKey)
-              EmployerAccountsApiClientClientSecret: $(EmployerAccountsApiClientClientSecret)
-              IdentityClientSecret: $(IdentityClientSecret)
-              EmployerAccountsApimSubscriptionKey: $(EmployerAccountsApimSubscriptionKey)
+              DfeSignInClientSecret: $(DfeSignInClientSecret)
+              DfeSignInApiClientSecret: $(DfeSignInApiClientSecret)
+              ApiNotificationsClientSecret: $(ApiNotificationsClientSecret)
+              FileStorageFileEncryptionKey: $(FileStorageFileEncryptionKey)
+              FileStorageStorageConnectionString: $(FileStorageStorageConnectionString)
+              CompaniesHouseApiAuthenticationApiKey: $(CompaniesHouseApiAuthenticationApiKey)
+              RoatpApiAuthenticationClientSecret: $(RoatpApiAuthenticationClientSecret)
         - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}
