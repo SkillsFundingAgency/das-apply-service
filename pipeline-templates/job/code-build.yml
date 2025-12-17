@@ -8,7 +8,6 @@ jobs:
 - job: CodeBuild
   pool:
     name: DAS - Continuous Integration Agents
-    demands: LATEST_DOTNET_VERSION -equals 3.1
   workspace:
     clean: all
   variables:
@@ -18,7 +17,6 @@ jobs:
 
   - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
     parameters:
-      SonarCloudProjectKey: SkillsFundingAgency_das-apply-service
       ContinueOnVulnerablePackageScanError: true
 
   - task: DotNetCoreCLI@2
