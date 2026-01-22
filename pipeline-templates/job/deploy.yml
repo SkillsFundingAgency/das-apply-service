@@ -10,6 +10,9 @@ parameters:
 - name: OverrideBlockOnPossibleDataLoss
   type: boolean
   default: false
+- name: AADGroupObjectIdArray
+  type: object
+  default: []
 
 jobs:
 - deployment: DeployWebApp
@@ -79,14 +82,14 @@ jobs:
               SessionRedisConnectionString: $(SessionRedisConnectionString)
         - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
           parameters:
-            AADGroupObjectIdArray: $(AdminAADGroupObjectId),$(DevAADGroupObjectId)
+            AADGroupObjectIdArray: ${{ parameters.AADGroupObjectIdArray }}
             IsMultiRepoCheckout: true
             ResourceName: $(ApiAppServiceName)
             ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}
             Tenant: $(Tenant)
         - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
           parameters:
-            AADGroupObjectIdArray: $(AdminAADGroupObjectId),$(DevAADGroupObjectId)
+            AADGroupObjectIdArray: ${{ parameters.AADGroupObjectIdArray }}
             IsMultiRepoCheckout: true
             ResourceName: $(UiAppServiceName)
             ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}
