@@ -1,17 +1,11 @@
 parameters:
 - name: ServiceConnection
-  type: string
 - name: SolutionBaseName
-  type: string
 - name: Environment
-  type: string
 - name: AppRoleAssignmentsServiceConnection
-  type: string
 - name: OverrideBlockOnPossibleDataLoss
-  type: boolean
   default: false
 - name: AADGroupObjectIdArray
-  type: object
   default: []
 
 jobs:
