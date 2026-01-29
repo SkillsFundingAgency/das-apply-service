@@ -1,0 +1,59 @@
+parameters:
+- name: SolutionBaseName
+  type: string
+- name: BuildConfiguration
+  type: string
+
+jobs:
+- job: CodeBuild
+  pool:
+    name: DAS - Continuous Integration Agents
+  workspace:
+    clean: all
+  variables:
+  - group: BUILD Management Resources 
+  steps:
+  - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
+
+  - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
+    parameters:
+      ContinueOnVulnerablePackageScanError: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish - dotnet publish ${{ parameters.SolutionBaseName }} website
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: src/${{ parameters.SolutionBaseName }}.Web/${{ parameters.SolutionBaseName }}.Web.csproj
+      arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
+      modifyOutputPath: true
+      zipAfterPublish: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish - dotnet publish ${{ parameters.SolutionBaseName }} API
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: src/${{ parameters.SolutionBaseName }}.InternalApi/${{ parameters.SolutionBaseName }}.InternalApi.csproj
+      arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
+      modifyOutputPath: true
+      zipAfterPublish: true
+
+  - task: CopyFiles@2
+    displayName: Copy Files to $(build.artifactstagingdirectory)/publish
+    inputs:
+      Contents: |
+        azure/**
+      TargetFolder: $(build.artifactstagingdirectory)/publish
+      OverWrite: true
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Build Artifact
+    inputs:
+      targetPath: $(build.artifactstagingdirectory)/publish
+      artifactName: ${{ parameters.SolutionBaseName }}
+
+  - template: azure-pipelines-templates/build/step/nuget-pack.yml@das-platform-building-blocks
+    parameters:
+      DotNetStandardPackagesToPack: |
+        src/SFA.DAS.ApplyService.Types/SFA.DAS.ApplyService.Types.csproj
