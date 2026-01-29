@@ -4,9 +4,7 @@ parameters:
 - name: Environment
 - name: AppRoleAssignmentsServiceConnection
 - name: OverrideBlockOnPossibleDataLoss
-  default: false
 - name: AADGroupObjectIdArray
-  default: []
 
 jobs:
 - deployment: DeployWebApp
