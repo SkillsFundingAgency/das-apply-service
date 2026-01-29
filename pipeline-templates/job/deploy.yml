@@ -1,10 +1,10 @@
 parameters:
-- name: ServiceConnection
-- name: SolutionBaseName
-- name: Environment
-- name: AppRoleAssignmentsServiceConnection
-- name: OverrideBlockOnPossibleDataLoss
-- name: AADGroupObjectIdArray
+  ServiceConnection:
+  SolutionBaseName:
+  Environment:
+  AppRoleAssignmentsServiceConnection:
+  OverrideBlockOnPossibleDataLoss:
+  AADGroupObjectIdArray:
 
 jobs:
 - deployment: DeployWebApp
