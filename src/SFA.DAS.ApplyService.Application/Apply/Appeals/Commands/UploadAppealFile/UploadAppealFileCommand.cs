@@ -4,7 +4,7 @@ using SFA.DAS.ApplyService.Domain.Models;
 
 namespace SFA.DAS.ApplyService.Application.Appeals.Commands.UploadAppealFile
 {
-    public class UploadAppealFileCommand : IRequest
+    public class UploadAppealFileCommand : IRequest<Unit>
     {
         public Guid ApplicationId { get; set; }
         public FileUpload AppealFile { get; set; }

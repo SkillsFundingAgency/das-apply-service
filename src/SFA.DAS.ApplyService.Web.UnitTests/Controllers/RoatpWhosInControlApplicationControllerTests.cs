@@ -987,7 +987,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             var model = viewResult.Model as SoleTradeDobViewModel;
             model.Should().NotBeNull();
-            model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
+            model.ErrorMessages.Count.Should().BeGreaterThanOrEqualTo(1);
         }
 
         [Test]
@@ -1082,7 +1082,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             var model = viewResult.Model as AddEditPeopleInControlViewModel;
             model.Should().NotBeNull();
-            model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
+            model.ErrorMessages.Count.Should().BeGreaterThanOrEqualTo(1);
         }
 
         [Test]
@@ -1235,7 +1235,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             var model = viewResult.Model as AddEditPeopleInControlViewModel;
             model.Should().NotBeNull();
-            model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
+            model.ErrorMessages.Count.Should().BeGreaterThanOrEqualTo(1);
         }
 
         [Test]
@@ -1336,7 +1336,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             var model = viewResult.Model as AddEditPeopleInControlViewModel;
             model.Should().NotBeNull();
-            model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
+            model.ErrorMessages.Count.Should().BeGreaterThanOrEqualTo(1);
         }
 
         [Test]
@@ -1444,7 +1444,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             var model = viewResult.Model as AddEditPeopleInControlViewModel;
             model.Should().NotBeNull();
-            model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
+            model.ErrorMessages.Count.Should().BeGreaterThanOrEqualTo(1);
         }
 
         [Test]

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class AssignAssessorRequest : IRequest
+    public class AssignAssessorRequest : IRequest<Unit>
     {
         public AssignAssessorRequest(Guid applicationId, int assessorNumber, string assessorUserId, string assessorName)
         {

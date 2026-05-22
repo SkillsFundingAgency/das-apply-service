@@ -43,7 +43,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             Mapper.Reset();
 
-            Mapper.Initialize(cfg => { cfg.AddProfile<CharityCommissionProfile>(); });
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile<CharityCommissionProfile>();
+                cfg.AddProfile<CharityTrusteeProfile>();
+            });
 
             _service = new RefreshTrusteesService(_qnaApiClient.Object,
                 _outerApiClient.Object,

@@ -14,7 +14,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.IdentityModel.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
@@ -134,8 +133,8 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddLogging(builder =>
             {
-                builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
-                builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
+                builder.AddFilter(string.Empty, LogLevel.Information);
+                builder.AddFilter("Microsoft", LogLevel.Information);
             });
 
             services.AddApplicationInsightsTelemetry();
@@ -306,7 +305,7 @@ namespace SFA.DAS.ApplyService.Web
 
                 var httpClient = string.IsNullOrWhiteSpace(apiConfiguration.ClientId)
                     ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(apiConfiguration)).Build()
-                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(apiConfiguration)).Build();
+                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(apiConfiguration)).Build();
 
                 return new NotificationsApi(httpClient, apiConfiguration);
             });

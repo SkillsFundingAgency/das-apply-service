@@ -8,7 +8,7 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Appeals.Commands.DeleteAppealFile
 {
-    public class DeleteAppealFileCommandHandler : IRequestHandler<DeleteAppealFileCommand>
+    public class DeleteAppealFileCommandHandler : IRequestHandler<DeleteAppealFileCommand, Unit>
     {
         private readonly IAppealFileRepository _appealFileRepository;
         private readonly IAuditService _auditService;

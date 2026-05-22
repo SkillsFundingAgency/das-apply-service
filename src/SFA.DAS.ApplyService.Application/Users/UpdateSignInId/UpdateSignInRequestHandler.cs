@@ -5,7 +5,7 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Users.UpdateSignInId
 {
-    public class UpdateSignInRequestHandler : IRequestHandler<UpdateSignInIdRequest>
+    public class UpdateSignInRequestHandler : IRequestHandler<UpdateSignInIdRequest, Unit>
     {
         private readonly IContactRepository _contactRepository;
 
@@ -13,11 +13,11 @@ namespace SFA.DAS.ApplyService.Application.Users.UpdateSignInId
         {
             _contactRepository = contactRepository;
         }
-        
+
         public async Task<Unit> Handle(UpdateSignInIdRequest request, CancellationToken cancellationToken)
         {
             await _contactRepository.UpdateSignInId(request.ContactId, request.SignInId, request.GovUkIdentifier);
-            
+
             return Unit.Value;
         }
     }

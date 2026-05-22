@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -9,7 +8,7 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 {
-    public class CreateEmptyModeratorReviewHandler : IRequestHandler<CreateEmptyModeratorReviewRequest>
+    public class CreateEmptyModeratorReviewHandler : IRequestHandler<CreateEmptyModeratorReviewRequest, Unit>
     {
         private readonly ILogger<CreateEmptyModeratorReviewHandler> _logger;
         private readonly IApplyRepository _applyRepository;

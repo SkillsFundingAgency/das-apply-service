@@ -1,5 +1,5 @@
-﻿using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using SFA.DAS.ApplyService.Configuration;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -10,29 +10,29 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files;
 [ExcludeFromCodeCoverage]
 public static class BlobContainerHelpers
 {
-    public static async Task<CloudBlobContainer> GetContainer(FileStorageConfig fileStorageConfig, ContainerType containerType)
+    public static async Task<BlobContainerClient> GetContainer(FileStorageConfig fileStorageConfig, ContainerType containerType)
     {
-        var container = default(CloudBlobContainer);
+        BlobContainerClient container = null;
 
         var containerName = GetContainerName(fileStorageConfig, containerType);
 
         if (!string.IsNullOrWhiteSpace(containerName))
         {
-            var account = CloudStorageAccount.Parse(fileStorageConfig.StorageConnectionString);
-            var client = account.CreateCloudBlobClient();
-            container = client.GetContainerReference(containerName.ToLower());
+            var options = new BlobClientOptions(BlobClientOptions.ServiceVersion.V2023_11_03);
+            var client = new BlobServiceClient(fileStorageConfig.StorageConnectionString, options);
+            container = client.GetBlobContainerClient(containerName.ToLower());
             await container.CreateIfNotExistsAsync();
         }
 
         return container;
     }
 
-    public static CloudBlobDirectory GetDirectory(this CloudBlobContainer container, Guid applicationId)
+    public static BlobDirectory GetDirectory(this BlobContainerClient container, Guid applicationId)
     {
         return container.GetApplicationDirectory(applicationId);
     }
 
-    public static CloudBlobDirectory GetDirectory(this CloudBlobContainer container, Guid applicationId, int? sequenceNumber, int? sectionNumber, string pageId)
+    public static BlobDirectory GetDirectory(this BlobContainerClient container, Guid applicationId, int? sequenceNumber, int? sectionNumber, string pageId)
     {
         if (string.IsNullOrWhiteSpace(pageId))
         {
@@ -49,25 +49,19 @@ public static class BlobContainerHelpers
         }
     }
 
-    private static CloudBlobDirectory GetApplicationDirectory(this CloudBlobContainer container, Guid applicationId)
+    private static BlobDirectory GetApplicationDirectory(this BlobContainerClient container, Guid applicationId)
     {
-        return container.GetDirectoryReference(applicationId.ToString()); ;
+        return new BlobDirectory(container, $"{applicationId}/");
     }
 
-    private static CloudBlobDirectory GetPageDirectory(this CloudBlobContainer container, Guid applicationId, string pageId)
+    private static BlobDirectory GetPageDirectory(this BlobContainerClient container, Guid applicationId, string pageId)
     {
-        var applicationFolder = container.GetApplicationDirectory(applicationId);
-        var pageFolder = applicationFolder.GetDirectoryReference(pageId.ToLower());
-        return pageFolder;
+        return new BlobDirectory(container, $"{applicationId}/{pageId.ToLowerInvariant()}/");
     }
 
-    private static CloudBlobDirectory GetPageDirectory(this CloudBlobContainer container, Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
+    private static BlobDirectory GetPageDirectory(this BlobContainerClient container, Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
     {
-        var applicationFolder = container.GetApplicationDirectory(applicationId);
-        var sequenceFolder = applicationFolder.GetDirectoryReference(sequenceNumber.ToString());
-        var sectionFolder = sequenceFolder.GetDirectoryReference(sectionNumber.ToString());
-        var pageFolder = sectionFolder.GetDirectoryReference(pageId.ToLower());
-        return pageFolder;
+        return new BlobDirectory(container, $"{applicationId}/{sequenceNumber}/{sectionNumber}/{pageId.ToLowerInvariant()}/");
     }
 
     private static string GetContainerName(FileStorageConfig fileStorageConfig, ContainerType containerType)
@@ -86,4 +80,17 @@ public static class BlobContainerHelpers
                 return null;
         }
     }
+
+public sealed class BlobDirectory
+{
+    public BlobDirectory(BlobContainerClient container, string prefix)
+    {
+        Container = container;
+        Prefix = prefix;
+    }
+
+    public BlobContainerClient Container { get; }
+
+    public string Prefix { get; }
+}
 }

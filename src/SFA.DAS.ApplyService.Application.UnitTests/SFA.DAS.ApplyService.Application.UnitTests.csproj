@@ -2,7 +2,7 @@
 
     <PropertyGroup>
       <ProjectGuid>{1CE19FAB-AE68-4192-AAB4-3C2060B02932}</ProjectGuid>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,14 +12,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoFixture" Version="4.17.0" />
-      <PackageReference Include="CompareNETObjects" Version="4.72.0" />
-      <PackageReference Include="FluentAssertions" Version="6.8.0" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-      <PackageReference Include="Moq" Version="4.18.2" />
-      <PackageReference Include="NUnit" Version="3.13.3" />
-      <PackageReference Include="NUnit3TestAdapter" Version="4.3.0" />
+      <PackageReference Include="AutoFixture" Version="4.18.1" />
+      <PackageReference Include="CompareNETObjects" Version="4.84.0" />
+      <PackageReference Include="FluentAssertions" Version="8.10.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
+      <PackageReference Include="Moq" Version="4.20.72" />
+      <PackageReference Include="NUnit" Version="4.6.1" />
+      <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
     </ItemGroup>
 
     <ItemGroup>

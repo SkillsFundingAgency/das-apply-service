@@ -93,4 +93,17 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
                 .ForMember(dest => dest.PrimaryVerificationSource, opt => opt.MapFrom(source => source.PrimaryVerificationSource));
         }
     }
+
+    public class UkrlpLookupResultsProfile : Profile
+    {
+        public UkrlpLookupResultsProfile()
+        {
+            CreateMap<Models.Ukrlp.ProviderDetails, Domain.Ukrlp.ProviderDetails>();
+            CreateMap<Models.Ukrlp.ProviderContact, Domain.Ukrlp.ProviderContact>();
+            CreateMap<Models.Ukrlp.ProviderAlias, Domain.Ukrlp.ProviderAlias>();
+            CreateMap<Models.Ukrlp.ContactAddress, Domain.Ukrlp.ContactAddress>();
+            CreateMap<Models.Ukrlp.ContactPersonalDetails, Domain.Ukrlp.ContactPersonalDetails>();
+            CreateMap<Models.Ukrlp.VerificationDetails, Domain.Ukrlp.VerificationDetails>();
+        }
+    }
 }

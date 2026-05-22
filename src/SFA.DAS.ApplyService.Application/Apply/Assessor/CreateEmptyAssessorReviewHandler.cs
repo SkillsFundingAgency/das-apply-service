@@ -6,7 +6,7 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class CreateEmptyAssessorReviewHandler : IRequestHandler<CreateEmptyAssessorReviewRequest>
+    public class CreateEmptyAssessorReviewHandler : IRequestHandler<CreateEmptyAssessorReviewRequest, Unit>
     {
         private readonly IAssessorRepository _repository;
         private readonly ILogger<CreateEmptyAssessorReviewHandler> _logger;

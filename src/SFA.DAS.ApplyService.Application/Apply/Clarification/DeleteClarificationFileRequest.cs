@@ -1,9 +1,9 @@
-﻿using MediatR;
-using System;
+﻿using System;
+using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Clarification
 {
-    public class DeleteClarificationFileRequest : IRequest
+    public class DeleteClarificationFileRequest : IRequest<Unit>
     {
         public DeleteClarificationFileRequest(Guid applicationId,
                                                         int sequenceNumber,

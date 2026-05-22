@@ -13,7 +13,7 @@ using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 {
-    public class RecordOversightGatewayRemovedOutcomeCommandHandler : IRequestHandler<RecordOversightGatewayRemovedOutcomeCommand>
+    public class RecordOversightGatewayRemovedOutcomeCommandHandler : IRequestHandler<RecordOversightGatewayRemovedOutcomeCommand, Unit>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IOversightReviewRepository _oversightReviewRepository;
@@ -58,9 +58,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
             _auditService.StartTracking(UserAction.RecordOversightGatewayRemovedOutcome, request.UserId, request.UserName);
             _auditService.AuditInsert(oversightReview);
-            
+
             _oversightReviewRepository.Add(oversightReview);
-           
+
             _auditService.Save();
 
             await _unitOfWork.Commit();

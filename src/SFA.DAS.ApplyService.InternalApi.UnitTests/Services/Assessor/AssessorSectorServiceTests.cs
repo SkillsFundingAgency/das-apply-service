@@ -68,7 +68,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         {
             var result = await _assessorSectorService.GetSectorsForAssessor(_applicationId, _userId);
 
-            CollectionAssert.IsNotEmpty(result);
+            Assert.That(result, Is.Not.Empty);
             Assert.AreEqual(result[0].PageId, OverallAccountabilityPageId);
             Assert.AreEqual(result[0].Status, PassStatus);
             Assert.AreEqual(result[1].PageId, ManagementHierarchyPageId);
@@ -79,7 +79,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         public async Task GetSectorsForModerator_returns_expected_result()
         {
             var result = await _assessorSectorService.GetSectorsForModerator(_applicationId, _userId);
-            CollectionAssert.IsNotEmpty(result);
+            Assert.That(result, Is.Not.Empty);
             Assert.AreEqual(result[0].PageId, OverallAccountabilityPageId);
             Assert.AreEqual(result[0].Status, PassStatus);
             Assert.AreEqual(result[1].PageId, ManagementHierarchyPageId);
@@ -102,7 +102,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             };
 
             var result = _assessorSectorService.GetSectorsForEmptyReview(managementHierarchySection);
-            CollectionAssert.IsEmpty(result);
+            Assert.That(result, Is.Empty);
         }
 
         [Test]
@@ -123,7 +123,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             };
 
             var result = _assessorSectorService.GetSectorsForEmptyReview(sectorsSection);
-            CollectionAssert.IsNotEmpty(result);
+            Assert.That(result, Is.Not.Empty);
             Assert.AreEqual(result[0].PageId, startingPageId);
         }
 

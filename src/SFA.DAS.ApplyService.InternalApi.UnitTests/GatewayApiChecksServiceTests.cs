@@ -43,9 +43,19 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             Mapper.Initialize(cfg =>
             {
+                cfg.AddProfile<UkrlpVerificationDetailsProfile>();
+                cfg.AddProfile<UkrlpContactPersonalDetailsProfile>();
+                cfg.AddProfile<UkrlpContactAddressProfile>();
+                cfg.AddProfile<UkrlpProviderAliasProfile>();
+                cfg.AddProfile<UkrlpProviderContactProfile>();
+                cfg.AddProfile<UkrlpProviderDetailsProfile>();
+                cfg.AddProfile<UkrlpLookupResultsProfile>();
 
                 cfg.AddProfile<UkrlpCharityCommissionProfile>();
+                cfg.AddProfile<CharityTrusteeProfile>();
                 cfg.AddProfile<UkrlpCompaniesHouseProfile>();
+                cfg.AddProfile<UkrlpDirectorInformationProfile>();
+                cfg.AddProfile<UkrlpPersonSignificantControlInformationProfile>();
             });
 
             Mapper.AssertConfigurationIsValid();

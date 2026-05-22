@@ -1,14 +1,14 @@
-﻿using MediatR;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
-using System.Threading;
-using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 {
-    public class SubmitModeratorPageOutcomeHandler : IRequestHandler<SubmitModeratorPageOutcomeRequest>
+    public class SubmitModeratorPageOutcomeHandler : IRequestHandler<SubmitModeratorPageOutcomeRequest, Unit>
     {
         private readonly ILogger<SubmitModeratorPageOutcomeHandler> _logger;
         private readonly IApplyRepository _applyRepository;
@@ -25,13 +25,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
         {
             _logger.LogInformation($"SubmitModeratorPageOutcome for ApplicationId '{request.ApplicationId}' - PageId '{request.PageId}' - Status '{request.Status}'");
 
-            await _moderatorRepository.SubmitModeratorPageOutcome(request.ApplicationId, 
-                                                        request.SequenceNumber, 
-                                                        request.SectionNumber, 
-                                                        request.PageId,  
-                                                        request.UserId, 
+            await _moderatorRepository.SubmitModeratorPageOutcome(request.ApplicationId,
+                                                        request.SequenceNumber,
+                                                        request.SectionNumber,
+                                                        request.PageId,
+                                                        request.UserId,
                                                         request.UserName,
-                                                        request.Status, 
+                                                        request.Status,
                                                         request.Comment);
 
             // APR-1633 - Update Moderation Status from 'New' to 'In Progress'

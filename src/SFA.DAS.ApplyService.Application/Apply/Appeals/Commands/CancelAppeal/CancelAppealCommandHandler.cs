@@ -7,7 +7,7 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.CancelAppeal
 {
-    public class CancelAppealCommandHandler : IRequestHandler<CancelAppealCommand>
+    public class CancelAppealCommandHandler : IRequestHandler<CancelAppealCommand, Unit>
     {
         private readonly IAppealRepository _appealRepository;
         private readonly IAppealFileRepository _appealFileRepository;
@@ -25,9 +25,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.CancelAppeal
             _auditService.StartTracking(UserAction.CancelAppeal, request.UserId, request.UserName);
 
             var appealFiles = await _appealFileRepository.GetAllForApplication(request.ApplicationId);
-            if(appealFiles != null)
+            if (appealFiles != null)
             {
-                foreach(var file in appealFiles)
+                foreach (var file in appealFiles)
                 {
                     _auditService.AuditDelete(file);
                     _appealFileRepository.Remove(file.Id);

@@ -15,8 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.ApplicationInsights;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Refit;
 using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.ApplyService.Application.Behaviours;
@@ -105,8 +104,8 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddLogging(builder =>
             {
-                builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
-                builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
+                builder.AddFilter(string.Empty, LogLevel.Information);
+                builder.AddFilter("Microsoft", LogLevel.Information);
             });
 
             services.AddApplicationInsightsTelemetry();
@@ -124,7 +123,11 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SFA.DAS.ApplyService.InternalApi", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "SFA.DAS.ApplyService.InternalApi",
+                    Version = "v1"
+                });
                 c.CustomSchemaIds(x => x.FullName); // Fixes issue when the same type name appears twice
             });
 
@@ -287,7 +290,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
                 var httpClient = string.IsNullOrWhiteSpace(apiConfiguration.ClientId)
                     ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(apiConfiguration)).Build()
-                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(apiConfiguration)).Build();
+                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(apiConfiguration)).Build();
 
                 return new NotificationsApi(httpClient, apiConfiguration);
             });

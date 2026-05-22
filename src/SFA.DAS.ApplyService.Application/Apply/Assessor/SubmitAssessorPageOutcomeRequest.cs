@@ -1,9 +1,9 @@
-﻿using MediatR;
-using System;
+﻿using System;
+using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class SubmitAssessorPageOutcomeRequest : IRequest
+    public class SubmitAssessorPageOutcomeRequest : IRequest<Unit>
     {
         public SubmitAssessorPageOutcomeRequest(Guid applicationId,
                                                         int sequenceNumber,

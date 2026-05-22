@@ -3,7 +3,7 @@ using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.CancelAppeal
 {
-    public class CancelAppealCommand : IRequest
+    public class CancelAppealCommand : IRequest<Unit>
     {
         public Guid ApplicationId { get; set; }
         public string UserId { get; set; }

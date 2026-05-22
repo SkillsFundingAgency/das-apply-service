@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
                 .ForMember(dest => dest.PrimaryContactEmail,
                     opt => opt.MapFrom(source => source.UkrlpLookupDetails.PrimaryContactDetails.ContactEmail))
                 .ForMember(dest => dest.OrganisationDetails,
-                    opt => opt.ResolveUsing(new RoatpOrganisationDetailsCustomResolver()))
+                    opt => opt.MapFrom<RoatpOrganisationDetailsCustomResolver>())
                 .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(source => source.CreatedBy))                
                 .ForAllOtherMembers(opt => opt.Ignore());
         }

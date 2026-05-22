@@ -1,12 +1,12 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Clarification
 {
-    public class DeleteClarificationFileHandler : IRequestHandler<DeleteClarificationFileRequest>
+    public class DeleteClarificationFileHandler : IRequestHandler<DeleteClarificationFileRequest, Unit>
     {
         private readonly IClarificationRepository _repository;
         private readonly ILogger<DeleteClarificationFileHandler> _logger;

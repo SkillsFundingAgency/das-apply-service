@@ -12,7 +12,7 @@ using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 {
-    public class RecordOversightGatewayFailOutcomeCommandHandler : IRequestHandler<RecordOversightGatewayFailOutcomeCommand>
+    public class RecordOversightGatewayFailOutcomeCommandHandler : IRequestHandler<RecordOversightGatewayFailOutcomeCommand, Unit>
     {
         private readonly IApplicationRepository _applyRepository;
         private readonly IOversightReviewRepository _oversightReviewRepository;

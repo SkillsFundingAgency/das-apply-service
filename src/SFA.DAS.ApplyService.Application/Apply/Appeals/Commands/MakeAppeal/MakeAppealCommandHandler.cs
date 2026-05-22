@@ -11,21 +11,21 @@ using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
 {
-    public class MakeAppealCommandHandler : IRequestHandler<MakeAppealCommand>
+    public class MakeAppealCommandHandler : IRequestHandler<MakeAppealCommand, Unit>
     {
         private readonly IOversightReviewRepository _oversightReviewRepository;
         private readonly IAppealRepository _appealRepository;
         private readonly IAuditService _auditService;
 
-		public MakeAppealCommandHandler(IOversightReviewRepository oversightReviewRepository, IAppealRepository appealRepository, IAuditService auditService)
+        public MakeAppealCommandHandler(IOversightReviewRepository oversightReviewRepository, IAppealRepository appealRepository, IAuditService auditService)
         {
             _oversightReviewRepository = oversightReviewRepository;
             _appealRepository = appealRepository;
             _auditService = auditService;
         }
 
-		public async Task<Unit> Handle(MakeAppealCommand request, CancellationToken cancellationToken)
-		{
+        public async Task<Unit> Handle(MakeAppealCommand request, CancellationToken cancellationToken)
+        {
             var oversightReview = await _oversightReviewRepository.GetByApplicationId(request.ApplicationId);
             VerifyOversightReviewIsUnsuccessfulOrRemoved(oversightReview);
 
@@ -34,11 +34,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
 
             _auditService.StartTracking(UserAction.MakeAppeal, request.UserId, request.UserName);
 
-            if(currentAppeal is null)
+            if (currentAppeal is null)
             {
-                currentAppeal = new Appeal 
-                { 
-                    ApplicationId = request.ApplicationId ,
+                currentAppeal = new Appeal
+                {
+                    ApplicationId = request.ApplicationId,
                     Status = AppealStatus.Submitted,
                     AppealSubmittedDate = DateTime.UtcNow,
                     HowFailedOnPolicyOrProcesses = request.HowFailedOnPolicyOrProcesses,
@@ -67,8 +67,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
 
             _auditService.Save();
 
-			return Unit.Value;
-		}
+            return Unit.Value;
+        }
 
         private void VerifyOversightReviewIsUnsuccessfulOrRemoved(OversightReview oversightReview)
         {
@@ -91,5 +91,5 @@ namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
                 throw new InvalidOperationException($"Unable to create Appeal for Application {appeal.ApplicationId} as Appeal {appeal.Id} already submitted");
             }
         }
-	}
+    }
 }

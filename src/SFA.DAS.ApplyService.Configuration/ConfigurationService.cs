@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
+using Azure.Data.Tables;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
@@ -60,15 +59,13 @@ namespace SFA.DAS.ApplyService.Configuration
                     "Cannot find settings 'EnvironmentName' and 'ConfigurationStorageConnectionString'");
             }
 
-            var conn = CloudStorageAccount.Parse(_storageConnectionString);
-            var tableClient = conn.CreateCloudTableClient();
-            var table = tableClient.GetTableReference("Configuration");
+            var tableServiceClient = new TableServiceClient(_storageConnectionString);
+            var tableClient = tableServiceClient.GetTableClient("Configuration");
 
-            var operation = TableOperation.Retrieve(_environment, $"{_serviceName}_{_version}");
-            TableResult result;
+            TableEntity result;
             try
             {
-                result = await table.ExecuteAsync(operation);
+                result = await tableClient.GetEntityAsync<TableEntity>(_environment, $"{_serviceName}_{_version}");
             }
             catch (Exception e)
             {
@@ -81,8 +78,7 @@ namespace SFA.DAS.ApplyService.Configuration
                 throw new InvalidOperationException("Could not connect to Storage to retrieve settings.", e);
             }
 
-            var dynResult = result.Result as DynamicTableEntity;
-            if (result.HttpStatusCode == StatusCodes.Status404NotFound)
+            if (result == null)
             {
                 if (_hostingEnvironment.IsDevelopment())
                 {
@@ -93,7 +89,7 @@ namespace SFA.DAS.ApplyService.Configuration
                 throw new InvalidOperationException("Cannot open Configuration table.");
             }
 
-            var data = dynResult.Properties["Data"].StringValue;
+            var data = result.GetString("Data");
 
             ApplyConfig webConfig;
             try
