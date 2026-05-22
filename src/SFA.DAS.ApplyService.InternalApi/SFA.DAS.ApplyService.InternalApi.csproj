@@ -14,7 +14,6 @@
         <PackageReference Include="Azure.Storage.Blobs" Version="12.28.0" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
         <PackageReference Include="MediatR" Version="12.5.0" />
-        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
         <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.8" />
         <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.2" />
@@ -27,8 +26,8 @@
         <PackageReference Include="Refit" Version="10.1.6" />
         <PackageReference Include="Refit.HttpClientFactory" Version="10.1.6" />
         <PackageReference Include="SFA.DAS.Api.Common" Version="17.1.165" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
-        <PackageReference Include="System.ServiceModel.Duplex" Version="6.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+		<PackageReference Include="System.ServiceModel.Duplex" Version="6.0.0" />
         <PackageReference Include="System.ServiceModel.Http" Version="10.0.652802" />
         <PackageReference Include="System.ServiceModel.NetTcp" Version="10.0.652802" />
         <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />

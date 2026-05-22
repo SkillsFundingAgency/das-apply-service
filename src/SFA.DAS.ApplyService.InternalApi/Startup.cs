@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -15,7 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 using Refit;
 using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.ApplyService.Application.Behaviours;
@@ -108,7 +107,10 @@ namespace SFA.DAS.ApplyService.InternalApi
                 builder.AddFilter("Microsoft", LogLevel.Information);
             });
 
-            services.AddApplicationInsightsTelemetry();
+            if (!_hostingEnvironment.IsDevelopment())
+            {
+                services.AddApplicationInsightsTelemetry();
+            }
 
             services.AddOptions();
 
@@ -265,7 +267,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddTransient<IFileStorageService, FileStorageService>();
 
-            services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateAccountHandler).Assembly));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 

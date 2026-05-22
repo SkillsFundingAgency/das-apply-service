@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.InternalApi
                 cfg.AddProfile<CompaniesHousePersonWithSignificantControlProfile>();
                 cfg.AddProfile<CompaniesHousePersonWithSignificantControlAddressProfile>();
 
-                
+
                 cfg.AddProfile<UkrlpVerificationDetailsProfile>();
                 cfg.AddProfile<UkrlpContactPersonalDetailsProfile>();
                 cfg.AddProfile<UkrlpContactAddressProfile>();
@@ -36,6 +36,7 @@ namespace SFA.DAS.ApplyService.InternalApi
                 cfg.AddProfile<UkrlpCompaniesHouseProfile>();
                 cfg.AddProfile<UkrlpDirectorInformationProfile>();
                 cfg.AddProfile<UkrlpPersonSignificantControlInformationProfile>();
+                cfg.AddProfile<CharityTrusteeProfile>();
             });
 
             Mapper.AssertConfigurationIsValid();
