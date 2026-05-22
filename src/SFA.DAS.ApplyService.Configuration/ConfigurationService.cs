@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
-using Azure.Data.Tables;
-using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using Azure.Data.Tables;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.ApplyService.Configuration
 {
@@ -32,7 +31,7 @@ namespace SFA.DAS.ApplyService.Configuration
         {
             //This class is registered as singleton, so it is possible that the _applyConfig is already populated
             if (_applyConfig != null) return _applyConfig;
-            
+
             if (_environment == null || _storageConnectionString == null)
             {
                 if (_hostingEnvironment.IsDevelopment())
@@ -106,7 +105,7 @@ namespace SFA.DAS.ApplyService.Configuration
 
                 throw;
             }
-                
+
             _applyConfig = webConfig;
 
             return webConfig;

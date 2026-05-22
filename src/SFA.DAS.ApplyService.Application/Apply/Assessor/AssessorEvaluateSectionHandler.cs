@@ -1,10 +1,10 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Domain.Entities;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
         }
 
         public async Task<bool> Handle(AssessorEvaluateSectionRequest request, CancellationToken cancellationToken)
-        {            
+        {
             var applyData = await _applyRepository.GetApplyData(request.ApplicationId);
 
             if (applyData == null)
@@ -62,7 +62,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
             }
             sequenceUnderReview.Status = sequenceStatus;
 
-            _logger.LogInformation($"Assessor evaluation of {sectionUnderReview.Status} for application {request.ApplicationId} sequence {request.SequenceId} section {request.SectionId}");
+            _logger.LogInformation("Assessor evaluation of {status} for application {applicationId} sequence {sequenceId} section {sectionId}",
+                sectionUnderReview.Status, request.ApplicationId, request.SequenceId, request.SectionId);
 
             return await _applyRepository.UpdateApplyData(request.ApplicationId, applyData, request.Reviewer);
         }

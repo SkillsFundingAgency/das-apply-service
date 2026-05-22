@@ -1,9 +1,8 @@
-﻿using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-using SFA.DAS.ApplyService.Configuration;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
+using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services.Files;
 
@@ -81,16 +80,16 @@ public static class BlobContainerHelpers
         }
     }
 
-public sealed class BlobDirectory
-{
-    public BlobDirectory(BlobContainerClient container, string prefix)
+    public sealed class BlobDirectory
     {
-        Container = container;
-        Prefix = prefix;
+        public BlobDirectory(BlobContainerClient container, string prefix)
+        {
+            Container = container;
+            Prefix = prefix;
+        }
+
+        public BlobContainerClient Container { get; }
+
+        public string Prefix { get; }
     }
-
-    public BlobContainerClient Container { get; }
-
-    public string Prefix { get; }
-}
 }

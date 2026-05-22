@@ -78,7 +78,8 @@ namespace SFA.DAS.ApplyService.Web
             );
 
             _configuration = config.Build();
-            _configuration.Bind(_configService = new ApplyConfig());
+            _configService = new ApplyConfig();
+            _configuration.Bind(_configService);
         }
 
         public void ConfigureServices(IServiceCollection services)
