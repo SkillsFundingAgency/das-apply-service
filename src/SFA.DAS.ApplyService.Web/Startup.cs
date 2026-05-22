@@ -137,7 +137,10 @@ namespace SFA.DAS.ApplyService.Web
                 builder.AddFilter("Microsoft", LogLevel.Information);
             });
 
-            services.AddApplicationInsightsTelemetry();
+            if (!_hostingEnvironment.IsDevelopment())
+            {
+                services.AddApplicationInsightsTelemetry();
+            }
 
             services.AddOptions();
 
