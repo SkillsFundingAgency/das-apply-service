@@ -195,7 +195,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddRefitClient<IRoatpApiClient>()
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.Url))
-                .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(), _applyConfig.RoatpApiAuthentication.Identifier));
+                .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(_configuration), _applyConfig.RoatpApiAuthentication.Identifier));
 
             services.AddHttpClient<IInternalQnaApiClient, InternalQnaApiClient>(config =>
             {
@@ -292,7 +292,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
                 var httpClient = string.IsNullOrWhiteSpace(apiConfiguration.ClientId)
                     ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(apiConfiguration)).Build()
-                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(apiConfiguration)).Build();
+                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureActiveDirectoryBearerTokenGenerator(apiConfiguration)).Build();
 
                 return new NotificationsApi(httpClient, apiConfiguration);
             });
