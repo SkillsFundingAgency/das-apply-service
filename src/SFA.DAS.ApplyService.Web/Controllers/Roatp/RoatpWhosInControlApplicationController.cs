@@ -236,7 +236,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 return RedirectToAction("AddPeopleInControl", new { applicationId });
             }
-            ;
 
             var model = new ConfirmTrusteesViewModel
             {
