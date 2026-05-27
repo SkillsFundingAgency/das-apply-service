@@ -309,7 +309,7 @@ namespace SFA.DAS.ApplyService.Web
 
                 var httpClient = string.IsNullOrWhiteSpace(apiConfiguration.ClientId)
                     ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(apiConfiguration)).Build()
-                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(apiConfiguration)).Build();
+                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureActiveDirectoryBearerTokenGenerator(apiConfiguration)).Build();
 
                 return new NotificationsApi(httpClient, apiConfiguration);
             });
