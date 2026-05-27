@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Clarification
 
         public async Task<Unit> Handle(SubmitClarificationPageOutcomeRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"SubmitClarificationPageOutcome for ApplicationId '{request.ApplicationId}' - PageId '{request.PageId}' - Status '{request.Status}'");
+            _logger.LogInformation("SubmitClarificationPageOutcome for ApplicationId '{ApplicationId}' - PageId '{PageId}' - Status '{Status}'", request.ApplicationId, request.PageId, request.Status);
 
             await _repository.SubmitClarificationPageOutcome(request.ApplicationId,
                                                         request.SequenceNumber,

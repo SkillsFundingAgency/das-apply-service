@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public async Task<bool> Handle(UpdateApplicationStatusRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Updating application status to {request.ApplicationStatus} for application ID {request.ApplicationId}");
+            _logger.LogInformation("Updating application status to {ApplicationStatus} for application ID {ApplicationId}", request.ApplicationStatus, request.ApplicationId);
 
             try
             {
@@ -28,7 +28,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             }
             catch (Exception updateException)
             {
-                _logger.LogError($"Updating application status failed for application ID {request.ApplicationId}", updateException);
+                _logger.LogError(updateException, "Updating application status failed for application ID {ApplicationId}", request.ApplicationId);
             }
 
             return true;

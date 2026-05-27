@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 
         public async Task<Unit> Handle(AssignAssessorRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Assigning assessor for application {request.ApplicationId}");
+            _logger.LogInformation("Assigning assessor for application {ApplicationId}", request.ApplicationId);
 
             if (request.AssessorNumber == 1)
             {

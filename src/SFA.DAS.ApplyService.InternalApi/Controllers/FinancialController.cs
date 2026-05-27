@@ -1,18 +1,18 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply.Financial;
 using SFA.DAS.ApplyService.Application.Apply.Financial.Applications;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Application.Apply.Roatp;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -71,7 +71,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("/Financial/{applicationId}/Grade")]
         public async Task<IActionResult> RecordGrade(Guid applicationId, [FromBody] FinancialReviewDetails financialReviewDetails)
         {
-            if(financialReviewDetails != null)
+            if (financialReviewDetails != null)
             {
                 // Note: This gets around the WAF block
                 financialReviewDetails.FinancialEvidences = await GetFinancialEvidence(applicationId);
@@ -92,7 +92,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
                 if (!uploadedSuccessfully)
                 {
-                    _logger.LogError($"Unable to upload files for application: {applicationId} || File name {clarificationFileName}");
+                    _logger.LogError("Unable to upload files for application: {applicationId} || File name {clarificationFileName}", applicationId, clarificationFileName);
                     return BadRequest();
                 }
                 await _mediator.Send(new AddClarificationFileUploadRequest(applicationId, clarificationFileName));
@@ -108,7 +108,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             if (file is null)
             {
-                _logger.LogError($"Unable to download file for application: {applicationId} || ClarificationId {RoatpClarificationUpload.ClarificationFile} || filename {fileName}");
+                _logger.LogError("Unable to download file for application: {applicationId} || ClarificationId {clarificationId} || filename {fileName}", applicationId, RoatpClarificationUpload.ClarificationFile, fileName);
                 return NotFound();
             }
 
@@ -116,18 +116,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("Clarification/Applications/{applicationId}/Remove")]
-        public async Task<IActionResult> RemoveClarificationFile(Guid applicationId,  [FromBody] RemoveClarificationFileCommand command)
+        public async Task<IActionResult> RemoveClarificationFile(Guid applicationId, [FromBody] RemoveClarificationFileCommand command)
         {
-          
+
             var removedSuccessfully = await _fileStorageService.DeleteFile(applicationId, RoatpWorkflowSequenceIds.FinancialEvidence, 0, RoatpClarificationUpload.ClarificationFile, command.FileName, ContainerType.Financial, new CancellationToken());
 
             if (!removedSuccessfully)
             {
-                _logger.LogError($"Unable to remove uploaded file for application: {applicationId} || File name {command.FileName}");
+                _logger.LogError("Unable to remove uploaded file for application: {applicationId} || File name {fileName}", applicationId, command.FileName);
                 return BadRequest();
             }
             await _mediator.Send(new RemoveClarificationFileUploadRequest(applicationId, command.FileName));
-                
+
             return Ok();
         }
 

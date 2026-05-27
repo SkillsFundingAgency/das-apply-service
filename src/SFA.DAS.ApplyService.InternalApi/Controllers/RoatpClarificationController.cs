@@ -86,7 +86,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
                 if (!uploadedSuccessfully)
                 {
-                    _logger.LogError($"Unable to upload files for application: {applicationId} || pageId {request.PageId}");
+                    _logger.LogError("Unable to upload files for application: {ApplicationId} || pageId {PageId}", applicationId, request.PageId);
                     return BadRequest();
                 }
             }
@@ -126,7 +126,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             if (file is null)
             {
-                _logger.LogError($"Unable to download file for application: {applicationId} || pageId {pageId} || filename {fileName}");
+                _logger.LogError("Unable to download file for application: {ApplicationId} || pageId {PageId} || filename {FileName}", applicationId, pageId, fileName);
                 return NotFound();
             }
 
@@ -142,7 +142,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             if (!deletedSuccessfully)
             {
-                _logger.LogError($"Unable to delete file for application: {applicationId} || pageId {pageId} || filename {fileName}");
+                _logger.LogError("Unable to delete file for application: {ApplicationId} || pageId {PageId} || filename {FileName}", applicationId, pageId, fileName);
             }
 
             return deletedSuccessfully;

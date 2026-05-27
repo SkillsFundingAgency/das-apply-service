@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 
         public async Task<Unit> Handle(SubmitAssessorPageOutcomeRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"SubmitAssessorPageOutcome for ApplicationId '{request.ApplicationId}' -  PageId '{request.PageId}' - Status '{request.Status}'");
+            _logger.LogInformation("SubmitAssessorPageOutcome for ApplicationId '{ApplicationId}' - PageId '{PageId}' - Status '{Status}'", request.ApplicationId, request.PageId, request.Status);
 
             await _repository.SubmitAssessorPageOutcome(request.ApplicationId,
                                                         request.SequenceNumber,

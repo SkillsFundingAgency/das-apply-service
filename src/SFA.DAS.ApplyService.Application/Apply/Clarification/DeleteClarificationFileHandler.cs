@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Clarification
 
         public async Task<Unit> Handle(DeleteClarificationFileRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"DeleteClarificationFile for ApplicationId '{request.ApplicationId}' - PageId '{request.PageId}' - ClarificationFile '{request.ClarificationFile}'");
+            _logger.LogInformation("DeleteClarificationFile for ApplicationId '{ApplicationId}' - PageId '{PageId}' - ClarificationFile '{ClarificationFile}'", request.ApplicationId, request.PageId, request.ClarificationFile);
 
             await _repository.DeleteClarificationFile(request.ApplicationId,
                                                         request.SequenceNumber,

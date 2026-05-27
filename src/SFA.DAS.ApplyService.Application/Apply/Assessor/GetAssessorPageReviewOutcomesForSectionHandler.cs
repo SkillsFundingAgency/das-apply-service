@@ -1,9 +1,9 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Domain.Apply.Assessor;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
@@ -21,8 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 
         public async Task<List<AssessorPageReviewOutcome>> Handle(GetAssessorPageReviewOutcomesForSectionRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"GetAssessorPageReviewOutcomesForSection for ApplicationId '{request.ApplicationId}' - " +
-                                                    $"SequenceNumber '{request.SequenceNumber}' - SectionNumber '{request.SectionNumber}'");
+            _logger.LogInformation("GetAssessorPageReviewOutcomesForSection for ApplicationId '{ApplicationId}' - SequenceNumber '{SequenceNumber}' - SectionNumber '{SectionNumber}'", request.ApplicationId, request.SequenceNumber, request.SectionNumber);
 
             var assessorPageReviewOutcomes = await _repository.GetAssessorPageReviewOutcomesForSection(request.ApplicationId,
                                                         request.SequenceNumber,

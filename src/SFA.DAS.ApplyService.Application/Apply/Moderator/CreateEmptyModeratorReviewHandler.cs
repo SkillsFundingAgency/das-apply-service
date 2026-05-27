@@ -24,7 +24,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 
         public async Task<Unit> Handle(CreateEmptyModeratorReviewRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"CreateEmptyModeratorReview for ApplicationId '{request.ApplicationId}'");
+            _logger.LogInformation("CreateEmptyModeratorReview for ApplicationId '{ApplicationId}'", request.ApplicationId);
             await _moderatorRepository.CreateEmptyModeratorReview(request.ApplicationId, request.ModeratorUserId, request.ModeratorUserName, request.PageReviewOutcomes);
 
             // APR-1945 - Show details of last person to do Moderation (in this case it's empty as no-one has started it yet)

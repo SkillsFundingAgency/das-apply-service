@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.ApplyService.Web.Validators
 {
@@ -10,7 +9,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
             // APR-2989 required this to pass even though not 'active'
             if (ukprn == "10043575")
             {
-                logger.LogWarning("CompaniesHouseValidator call - bypassing companies house status check for ukprn {ukprn}",ukprn);
+                logger.LogWarning("CompaniesHouseValidator call - bypassing companies house status check for ukprn {Ukprn}", ukprn);
                 return true;
             }
 

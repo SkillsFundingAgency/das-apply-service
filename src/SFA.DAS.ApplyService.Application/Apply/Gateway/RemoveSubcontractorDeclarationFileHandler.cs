@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -23,7 +22,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
 
         public async Task<bool> Handle(RemoveSubcontractorDeclarationFileRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Removing subcontractor declaration clarification file [{request.FileName}] for application ID {request.ApplicationId}");
+            _logger.LogInformation("Removing subcontractor declaration clarification file [{FileName}] for application ID {ApplicationId}", request.FileName, request.ApplicationId);
             var application = await _applyRepository.GetApplication(request.ApplicationId);
 
             var gatewayReviewDetails = application.ApplyData.GatewayReviewDetails;
@@ -36,7 +35,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
             }
             else
             {
-                _logger.LogError($"Removing subcontractor declaration clarification file [{request.FileName}] for application ID {request.ApplicationId} failed as filename could not be matched");
+                _logger.LogError("Removing subcontractor declaration clarification file [{FileName}] for application ID {ApplicationId} failed as filename could not be matched", request.FileName, request.ApplicationId);
                 return false;
             }
         }

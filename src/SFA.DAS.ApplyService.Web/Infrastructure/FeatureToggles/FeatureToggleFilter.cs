@@ -26,12 +26,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles
             {
                 if (string.IsNullOrWhiteSpace(filterAttribute.RedirectToController) || string.IsNullOrWhiteSpace(filterAttribute.RedirectToAction))
                 {
-                    _logger.LogInformation($"{filterAttribute.FeatureToogle} not enabled - Redirecting to default route");
+                    _logger.LogInformation("{FeatureToggle} not enabled - Redirecting to default route", filterAttribute.FeatureToogle);
                     context.Result = new RedirectToRouteResult("default", null);
                 }
                 else
                 {
-                    _logger.LogInformation($"{filterAttribute.FeatureToogle} not enabled - Redirecting to controller: {filterAttribute.RedirectToController} | action: {filterAttribute.RedirectToAction}");
+                    _logger.LogInformation("{FeatureToggle} not enabled - Redirecting to controller: {RedirectToController} | action: {RedirectToAction}", filterAttribute.FeatureToogle, filterAttribute.RedirectToController, filterAttribute.RedirectToAction);
                     context.Result = new RedirectToActionResult(filterAttribute.RedirectToAction, filterAttribute.RedirectToController, null);
                 }
             }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -72,12 +71,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 { new StringContent(userName), nameof(UploadAppealFileRequest.UserName) }
             };
 
-            if (appealFileToUpload != null )
+            if (appealFileToUpload != null)
             {
-                    var fileContent = new StreamContent(appealFileToUpload.OpenReadStream())
-                    { Headers = { ContentLength = appealFileToUpload.Length, ContentType = new MediaTypeHeaderValue(appealFileToUpload.ContentType) } };
+                var fileContent = new StreamContent(appealFileToUpload.OpenReadStream())
+                { Headers = { ContentLength = appealFileToUpload.Length, ContentType = new MediaTypeHeaderValue(appealFileToUpload.ContentType) } };
 
-                    content.Add(fileContent, nameof(UploadAppealFileRequest.AppealFile), appealFileToUpload.FileName);
+                content.Add(fileContent, nameof(UploadAppealFileRequest.AppealFile), appealFileToUpload.FileName);
             }
 
             try
@@ -89,7 +88,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"Error when uploading appeal file for Application: {applicationId} | File: {appealFileToUpload?.FileName}");
+                _logger.LogError(ex, "Error when uploading appeal file for Application: {ApplicationId} | File: {FileName}", applicationId, appealFileToUpload?.FileName);
                 return false;
             }
         }

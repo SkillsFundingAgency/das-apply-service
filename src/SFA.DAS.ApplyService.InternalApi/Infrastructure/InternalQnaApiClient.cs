@@ -1,21 +1,17 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Serialization;
-using SFA.DAS.ApplyService.Configuration;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.Infrastructure.Firewall;
-using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
-using SFA.DAS.ApplyService.Application.Apply;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
@@ -65,7 +61,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                 var apiError = JsonConvert.DeserializeObject<ApiError>(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
-                _logger.LogError($"Error in QnaApiClient.GetQuestionTag() - applicationId {applicationId} | questionTag : {questionTag} | StatusCode : {response.StatusCode} | ErrorMessage: { apiErrorMessage }");
+                _logger.LogError("Error in QnaApiClient.GetQuestionTag() - applicationId {ApplicationId} | questionTag : {QuestionTag} | StatusCode : {StatusCode} | ErrorMessage: {ErrorMessage}", applicationId, questionTag, response.StatusCode, apiErrorMessage);
                 return null;
             }
         }

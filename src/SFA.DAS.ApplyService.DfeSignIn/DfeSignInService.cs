@@ -20,19 +20,19 @@ namespace SFA.DAS.ApplyService.DfeSignIn
             _configurationService = configurationService;
             _logger = logger;
         }
-        
+
         public async Task<InviteUserResponse> InviteUser(string email, string givenName, string familyName, Guid userId)
         {
             var config = await _configurationService.GetConfig();
-           
-            
+
+
             var client = new HttpClient();
             var disco = await client.GetDiscoveryDocumentAsync(config.DfeSignIn.MetadataAddress);
             if (disco.IsError)
             {
                 Console.WriteLine(disco.Error);
             }
-            
+
             // request token
             var tokenResponse = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
             {
@@ -53,7 +53,7 @@ namespace SFA.DAS.ApplyService.DfeSignIn
             {
                 httpClient.SetBearerToken(tokenResponse.AccessToken);
 
-            
+
                 var inviteJson = JsonConvert.SerializeObject(new
                 {
                     sourceId = userId.ToString(),
@@ -63,30 +63,30 @@ namespace SFA.DAS.ApplyService.DfeSignIn
                     userRedirect = config.DfeSignIn.RedirectUri,
                     callback = config.DfeSignIn.CallbackUri
                 });
-                
+
                 var response = await httpClient.PostAsync(config.DfeSignIn.ApiUri,
                     new StringContent(inviteJson, Encoding.UTF8, "application/json")
                 );
-            
-            
+
+
                 var content = await response.Content.ReadAsStringAsync();
 
                 var responseObject = JsonConvert.DeserializeObject<CreateInvitationResponse>(content);
-                
-                _logger.LogInformation("Returned from DfE Invitation Service. Status Code: {0}. Message: {0}",
-                    (int) response.StatusCode, content);
+
+                _logger.LogInformation("Returned from DfE Invitation Service. Status Code: {StatusCode}. Message: {Message}",
+                    (int)response.StatusCode, content);
 
                 if (response.IsSuccessStatusCode)
                     return responseObject.Message == "User already exists"
-                        ? new InviteUserResponse() {UserExists = true, IsSuccess = false, ExistingUserId = responseObject.ExistingUserId}
+                        ? new InviteUserResponse() { UserExists = true, IsSuccess = false, ExistingUserId = responseObject.ExistingUserId }
                         : new InviteUserResponse();
-                
-                _logger.LogError("Error from DfE Invitation Service. Status Code: {0}. Message: {0}",
-                    (int) response.StatusCode, content);
-                return new InviteUserResponse() {IsSuccess = false};
+
+                _logger.LogError("Error from DfE Invitation Service. Status Code: {StatusCode}. Message: {Message}",
+                    (int)response.StatusCode, content);
+                return new InviteUserResponse() { IsSuccess = false };
             }
         }
-        
+
         private class CreateInvitationResponse
         {
             public string Message { get; set; }

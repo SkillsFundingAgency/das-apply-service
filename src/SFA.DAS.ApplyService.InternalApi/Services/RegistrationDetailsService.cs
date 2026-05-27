@@ -32,7 +32,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
 
         public async Task<RoatpRegistrationDetails> GetRegistrationDetails(Guid applicationId)
         {
-            _logger.LogInformation($"Retrieving registration details for application id {applicationId}");
+            _logger.LogInformation("Retrieving registration details for application id {ApplicationId}", applicationId);
 
             var providerTypeId = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
             int providerTypeIdValue;

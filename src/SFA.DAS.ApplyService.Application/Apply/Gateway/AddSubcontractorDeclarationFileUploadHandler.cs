@@ -24,7 +24,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
         public async Task<bool> Handle(AddSubcontractorDeclarationFileUploadRequest request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(request.FileName)) return false;
-            _logger.LogInformation($"Adding subcontractor declaration clarification file [{request.FileName}] for application ID {request.ApplicationId}");
+            _logger.LogInformation("Adding subcontractor declaration clarification file '{FileName}' for application ID '{ApplicationId}'", request.FileName, request.ApplicationId);
 
             var application = await _applyRepository.GetApplication(request.ApplicationId);
             var gatewayReviewDetails = application.ApplyData.GatewayReviewDetails;

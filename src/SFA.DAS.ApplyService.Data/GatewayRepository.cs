@@ -104,11 +104,11 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-            public async Task<List<RoatpGatewaySummaryItem>> GetNewGatewayApplications(string searchTerm, string sortOrder)
+        public async Task<List<RoatpGatewaySummaryItem>> GetNewGatewayApplications(string searchTerm, string sortOrder)
         {
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                var orderByClause = $"{GetSortColumnForNew()} { GetOrderByDirection(sortOrder)}";
+                var orderByClause = $"{GetSortColumnForNew()} {GetOrderByDirection(sortOrder)}";
 
                 return (await connection
                     .QueryAsync<RoatpGatewaySummaryItem>(
@@ -148,7 +148,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                var orderByClause = $"{GetSortColumnForInProgress(sortColumn)} { GetOrderByDirection(sortOrder)}";
+                var orderByClause = $"{GetSortColumnForInProgress(sortColumn)} {GetOrderByDirection(sortOrder)}";
 
                 return (await connection
                     .QueryAsync<RoatpGatewaySummaryItem>(
@@ -191,7 +191,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                var orderByClause = $"{GetSortColumnForOutcome(sortColumn)} { GetOrderByDirection(sortOrder)}";
+                var orderByClause = $"{GetSortColumnForOutcome(sortColumn)} {GetOrderByDirection(sortOrder)}";
 
                 return (await connection
                     .QueryAsync<RoatpGatewaySummaryItem>(
@@ -262,10 +262,10 @@ namespace SFA.DAS.ApplyService.Data
                                     OR org.Name LIKE  @searchString
                                 )
                         GROUP BY GatewayReviewStatus, ApplicationStatus
-                        ", 
-                    new 
-                    { 
-                        searchString = $"%{searchTerm}%" 
+                        ",
+                    new
+                    {
+                        searchString = $"%{searchTerm}%"
                     });
 
                 return applicationStatuses;
@@ -296,7 +296,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> EvaluateGateway(Guid applicationId, bool isGatewayApproved, string userId, string userName)
         {
-            var applicationStatus = isGatewayApproved ? ApplicationStatus.GatewayAssessed : ApplicationStatus.Rejected;   
+            var applicationStatus = isGatewayApproved ? ApplicationStatus.GatewayAssessed : ApplicationStatus.Rejected;
             var gatewayReviewStatus = isGatewayApproved ? GatewayReviewStatus.Pass : GatewayReviewStatus.Fail;
 
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
@@ -418,7 +418,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for non-clarification responses");
+                _logger.LogInformation("Updating applicationId {ApplicationId} for non-clarification responses", pageAnswer.ApplicationId);
                 var rowsAffected = await connection.ExecuteAsync(
                                     @"UPDATE GatewayAnswer
                                         SET Status = @status,
@@ -437,10 +437,10 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<bool> UpdateGatewayPageAnswerClarification(GatewayPageAnswer pageAnswer, string userId, string userName)
         {
-            _logger.LogInformation($"updating Gateway answer for applicationID [{pageAnswer.ApplicationId}], Status: {pageAnswer.Status}, Clarification answer '{pageAnswer.ClarificationAnswer}'");
+            _logger.LogInformation("Updating Gateway answer for applicationID {ApplicationId}, Status: {Status}, Clarification answer '{ClarificationAnswer}'", pageAnswer.ApplicationId, pageAnswer.Status, pageAnswer.ClarificationAnswer);
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for clarification");
+                _logger.LogInformation("Updating applicationId {ApplicationId} for clarification", pageAnswer.ApplicationId);
                 var rowsAffected = await connection.ExecuteAsync(
                                     @"UPDATE GatewayAnswer
                                          SET Status = @status,
@@ -461,7 +461,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = _dbConnectionHelper.GetDatabaseConnection())
             {
-                _logger.LogInformation($"Updating applicationId {pageAnswer.ApplicationId} for non-clarification responses");
+                _logger.LogInformation("Updating applicationId {ApplicationId} for non-clarification responses", pageAnswer.ApplicationId);
                 var rowsAffected = await connection.ExecuteAsync(
                                     @"UPDATE GatewayAnswer
                                         SET Status = @status,

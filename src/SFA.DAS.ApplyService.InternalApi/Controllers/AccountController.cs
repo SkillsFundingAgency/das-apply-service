@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _mediator = mediator;
             _logger = logger;
         }
-               
+
         [HttpPost("/Account/")]
         [PerformValidation]
         public async Task<ActionResult> InviteUser([FromBody] NewContact newContact)
@@ -64,7 +64,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [PerformValidation]
         public async Task<ActionResult> Callback([FromBody] SignInCallback callback)
         {
-            _logger.LogInformation($"Received callback from ASLogin: Sub: {callback.Sub} SourceId: {callback.SourceId}");
+            _logger.LogInformation("Received callback from ASLogin: Sub: {Sub} SourceId: {SourceId}", callback.Sub, callback.SourceId);
             await _mediator.Send(new UpdateSignInIdRequest(Guid.Parse(callback.Sub), Guid.Parse(callback.SourceId), null));
             return Ok();
         }
@@ -72,7 +72,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("/Account/Contact/{contactId:Guid}")]
         public async Task<ActionResult<Contact>> GetByContactId(Guid contactId)
         {
-           return  await _mediator.Send(new GetContactByIdRequest(contactId));
+            return await _mediator.Send(new GetContactByIdRequest(contactId));
         }
 
         /// <summary>

@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -6,10 +10,6 @@ using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Web.Configuration;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Services
 {
@@ -99,7 +99,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             if (sequence is null)
             {
-                _logger.LogError($"PreviousSectionCompleted - Sequence '{sequenceId}' could not found in Application {applicationId}");
+                _logger.LogError("PreviousSectionCompleted - Sequence '{SequenceId}' could not found in Application {ApplicationId}", sequenceId, applicationId);
                 return false;
             }
             else if (sequence.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation)

@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.Domain.Ukrlp;
+using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Services;
 
@@ -121,7 +121,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             websiteMessage += string.IsNullOrEmpty(organisationWebsite) ? "No website found" : string.Empty;
 
             _logger.LogInformation(
-                $"Getting Organisation WebsiteAddress for application '{applicationId}' - Website '{websiteMessage}'");
+                "Getting Organisation WebsiteAddress for application '{applicationId}' - Website '{websiteMessage}'", applicationId, websiteMessage);
 
             return organisationWebsite;
         }
@@ -130,7 +130,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("Gateway/{applicationId}/OrganisationAddress")]
         public async Task<ActionResult<ContactAddress>> GetOrganisationAddress(Guid applicationId)
         {
-            _logger.LogInformation($"Getting Company Address from QnA API for application '{applicationId}'");
+            _logger.LogInformation("Getting Company Address from QnA API for application '{applicationId}'", applicationId);
             var PreamblePage =
                 await _qnaApiClient.GetPageBySectionNo(applicationId, 0, 1, RoatpWorkflowPageIds.Preamble);
 
@@ -161,14 +161,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<string>> GetIcoNumber(Guid applicationId)
         {
             _logger.LogInformation(
-                $"GatewayChecksController-GetIcoNumber - applicationId - '{applicationId}'");
+                "GatewayChecksController-GetIcoNumber - applicationId - '{applicationId}'", applicationId);
             var page = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
                 RoatpWorkflowPageIds.YourOrganisationIcoNumber);
             var icoNumber = page?.PageOfAnswers.SelectMany(a => a.Answers)
                 .Where(a => a.QuestionId == RoatpYourOrganisationQuestionIdConstants.IcoNumber).FirstOrDefault().Value;
 
-            return Json(new IcoNumber {ApplicationId = applicationId, Value = icoNumber});
+            return Json(new IcoNumber { ApplicationId = applicationId, Value = icoNumber });
         }
 
 

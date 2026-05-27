@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public async Task<bool> Handle(ReapplicationRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Setting reapplication status for Application ID {request.ApplicationId}");
+            _logger.LogInformation("Setting reapplication status for Application ID {ApplicationId}", request.ApplicationId);
 
             return await _repository.SubmitReapplicationRequest(request.ApplicationId, request.UserId);
         }

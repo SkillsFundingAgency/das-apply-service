@@ -35,7 +35,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
         public async Task<Unit> Handle(RecordOversightGatewayFailOutcomeCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Recording Oversight review status of Unsuccessful for gateway fail application Id {request.ApplicationId}");
+            _logger.LogInformation("Recording Oversight review status of Unsuccessful for gateway fail application Id {ApplicationId}", request.ApplicationId);
 
             var application = await _applyRepository.GetApplication(request.ApplicationId);
 

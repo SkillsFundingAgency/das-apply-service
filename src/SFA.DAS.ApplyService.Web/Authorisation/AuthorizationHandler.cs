@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.Web.Authorization
 
             if (Guid.TryParse(requestedApplicationId, out var applicationId))
             {
-                _logger.LogInformation($"Requested application {applicationId}");
+                _logger.LogInformation("Requested application {ApplicationId}", applicationId);
                 var signInId = _httpContextAccessor.HttpContext.User.GetSignInId();
                 application = await _apiClient.GetApplicationByUserId(applicationId, signInId);
             }
@@ -54,18 +54,18 @@ namespace SFA.DAS.ApplyService.Web.Authorization
 
             foreach (var requirement in pendingRequirements)
             {
-                _logger.LogInformation($"Evaluating requirement: {requirement.GetType().Name}");
+                _logger.LogInformation("Evaluating requirement: {RequirementType}", requirement.GetType().Name);
 
                 if (requirement is AccessApplicationRequirement)
                 {
                     if (application != null && application.ApplicationId == applicationId)
                     {
                         context.Succeed(requirement);
-                        _logger.LogInformation($"Requirement {requirement.GetType().Name} met");
+                        _logger.LogInformation("Requirement {RequirementType} met", requirement.GetType().Name);
                     }
                     else
                     {
-                        _logger.LogInformation($"Requirement {requirement.GetType().Name} not met");
+                        _logger.LogInformation("Requirement {RequirementType} not met", requirement.GetType().Name);
                     }
                 }
 
@@ -74,13 +74,13 @@ namespace SFA.DAS.ApplyService.Web.Authorization
                     if (application != null && statusRequirement.Statuses.Contains(application.ApplicationStatus))
                     {
                         context.Succeed(requirement);
-                        _logger.LogInformation($"Requirement {requirement.GetType().Name} met");
+                        _logger.LogInformation("Requirement {RequirementType} met", requirement.GetType().Name);
                     }
                     else
                     {
                         var requiredStatus = string.Join(",", statusRequirement.Statuses);
                         var actualStatus = application == null ? "null" : application?.ApplicationStatus;
-                        _logger.LogInformation($"Requirement {requirement.GetType().Name} not met - application status required: one of [{requiredStatus}], actual {actualStatus}");
+                        _logger.LogInformation("Requirement {RequirementType} not met - application status required: one of [{RequiredStatus}], actual {ActualStatus}", requirement.GetType().Name, requiredStatus, actualStatus);
                     }
                 }
 
@@ -93,19 +93,19 @@ namespace SFA.DAS.ApplyService.Web.Authorization
                         if (appeal?.AppealSubmittedDate is null)
                         {
                             context.Succeed(requirement);
-                            _logger.LogInformation($"Requirement {requirement.GetType().Name} met");
+                            _logger.LogInformation("Requirement {RequirementType} met", requirement.GetType().Name);
                         }
                         else
                         {
-                            _logger.LogInformation($"Requirement {requirement.GetType().Name} not met - appeal has been submitted");
+                            _logger.LogInformation("Requirement {RequirementType} not met - appeal has been submitted", requirement.GetType().Name);
                         }
                     }
                     else
                     {
-                        _logger.LogInformation($"Requirement {requirement.GetType().Name} not met - application not found");
+                        _logger.LogInformation("Requirement {RequirementType} not met - application not found", requirement.GetType().Name);
                     }
                 }
-                
+
             }
         }
 
@@ -119,21 +119,21 @@ namespace SFA.DAS.ApplyService.Web.Authorization
                     ? _httpContextAccessor.HttpContext.Request.Query["ApplicationId"].ToString()
                     : _httpContextAccessor.HttpContext.Request.Form["ApplicationId"].ToString();
             }
-            catch(Exception ex) when (ex is NullReferenceException || ex is InvalidOperationException)
+            catch (Exception ex) when (ex is NullReferenceException || ex is InvalidOperationException)
             {
-                _logger.LogError(ex, $"Unable to determine requested ApplicationId from HttpContext");
+                _logger.LogError(ex, "Unable to determine requested ApplicationId from HttpContext");
                 requestedApplicationId = null;
             }
 
-            if(string.IsNullOrWhiteSpace(requestedApplicationId))
+            if (string.IsNullOrWhiteSpace(requestedApplicationId))
             {
                 var path = _httpContextAccessor.HttpContext.Request.Path.Value;
 
                 if (path.StartsWith("/Application/", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    foreach(var substring in path.Split('/'))
+                    foreach (var substring in path.Split('/'))
                     {
-                        if(Guid.TryParse(substring, out var applicationId))
+                        if (Guid.TryParse(substring, out var applicationId))
                         {
                             requestedApplicationId = applicationId.ToString();
                             break;

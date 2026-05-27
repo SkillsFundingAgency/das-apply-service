@@ -59,7 +59,7 @@ public static class BlobDirectoryHelpers
         }
         catch (Exception ex)
         {
-            logger.LogError($"Error uploading files to directory: {directory.Prefix} || Message: {ex.Message} || Stack trace: {ex.StackTrace}");
+            logger.LogError(ex, "Error uploading files to directory: {DirectoryPrefix}", directory.Prefix);
             success = false;
         }
 

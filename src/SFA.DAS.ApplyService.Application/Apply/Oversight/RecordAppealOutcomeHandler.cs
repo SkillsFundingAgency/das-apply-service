@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
         public RecordAppealOutcomeHandler(ILogger<RecordAppealOutcomeHandler> logger,
             IAppealRepository appealRepository,
             IApplicationRepository applyRepository,
-            IAuditService auditService, 
+            IAuditService auditService,
             IUnitOfWork unitOfWork,
             IApplicationUpdatedEmailService applicationUpdatedEmailService)
         {
@@ -39,7 +39,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
         public async Task<bool> Handle(RecordAppealOutcomeCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Recording Appeal review status of {request.AppealStatus} for application Id {request.ApplicationId}");
+            _logger.LogInformation("Recording Appeal review status of {AppealStatus} for application Id {ApplicationId}", request.AppealStatus, request.ApplicationId);
 
             _auditService.StartTracking(UserAction.RecordAppealOutcome, request.UserId, request.UserName);
 
@@ -52,7 +52,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
             _auditService.Save();
             await _unitOfWork.Commit();
-            
+
             return true;
         }
 
@@ -65,7 +65,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 throw new InvalidOperationException($"Application {applicationId} not found");
             }
 
-         
+
 
             return application;
         }
@@ -84,7 +84,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             }
             else
             {
-                if (appeal.Status != AppealStatus.InProgress && appeal.Status != AppealStatus.Submitted) 
+                if (appeal.Status != AppealStatus.InProgress && appeal.Status != AppealStatus.Submitted)
                 {
                     throw new InvalidOperationException($"Unable to modify appeal review for application {applicationId} with a status of {appeal.Status}");
                 }
@@ -111,12 +111,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 appeal.InProgressUserId = request.UserId;
                 appeal.InProgressUserName = request.UserName;
             }
-           
 
-            if(request.AppealStatus==AppealStatus.Successful
-                || request.AppealStatus==AppealStatus.Unsuccessful
-                || request.AppealStatus==AppealStatus.SuccessfulFitnessForFunding
-                || request.AppealStatus==AppealStatus.SuccessfulAlreadyActive)
+
+            if (request.AppealStatus == AppealStatus.Successful
+                || request.AppealStatus == AppealStatus.Unsuccessful
+                || request.AppealStatus == AppealStatus.SuccessfulFitnessForFunding
+                || request.AppealStatus == AppealStatus.SuccessfulAlreadyActive)
             {
                 appeal.AppealDeterminedDate = DateTime.UtcNow;
                 appeal.InternalComments = request.InternalComments;
@@ -141,7 +141,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
             {
                 _auditService.AuditUpdate(application);
             }
-            
+
             switch (appeal.Status)
             {
                 case AppealStatus.InProgress:
@@ -152,7 +152,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                 case AppealStatus.SuccessfulFitnessForFunding:
                     if (application.GatewayReviewStatus == GatewayReviewStatus.Fail)
                         application.ApplicationStatus = ApplicationStatus.AppealSuccessful;
-                            else
+                    else
                         application.ApplicationStatus = ApplicationStatus.Successful;
                     break;
                 case AppealStatus.Unsuccessful:

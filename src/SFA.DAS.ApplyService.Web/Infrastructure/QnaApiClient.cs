@@ -1,4 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -9,14 +17,6 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.Infrastructure.Firewall;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
@@ -58,7 +58,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 var apiError = GetApiErrorFromJson(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
-                _logger.LogError($"Error Starting Application in QnA. UserReference : {userReference} | WorkflowType : {workflowType} | ApplicationData : {applicationData} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
+                _logger.LogError("Error Starting Application in QnA. UserReference : {UserReference} | WorkflowType : {WorkflowType} | ApplicationData : {ApplicationData} | StatusCode : {StatusCode} | Response: {ApiErrorMessage}", userReference, workflowType, applicationData, response.StatusCode, apiErrorMessage);
                 return new StartQnaApplicationResponse { ApplicationId = Guid.Empty };
             }
         }
@@ -78,7 +78,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 var apiError = GetApiErrorFromJson(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
-                _logger.LogError($"Error in QnaApiClient.GetApplicationData() - applicationId {applicationId}  | StatusCode : {response.StatusCode} | ErrorMessage: { apiErrorMessage }");
+                _logger.LogError("Error in QnaApiClient.GetApplicationData() - applicationId {ApplicationId}  | StatusCode : {StatusCode} | ErrorMessage: {ApiErrorMessage}", applicationId, response.StatusCode, apiErrorMessage);
                 return null;
             }
         }
@@ -86,7 +86,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<string> GetQuestionTag(Guid applicationId, string questionTag)
         {
             var response = await GetResponse($"Applications/{applicationId}/applicationData/{questionTag}");
-            
+
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadAsAsync<string>();
@@ -97,9 +97,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 var apiError = GetApiErrorFromJson(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
-                _logger.LogError($"Error in QnaApiClient.GetQuestionTag() - applicationId {applicationId} | questionTag : {questionTag} | StatusCode : {response.StatusCode} | ErrorMessage: { apiErrorMessage }");
-                return null; 
-            }           
+                _logger.LogError("Error in QnaApiClient.GetQuestionTag() - applicationId {ApplicationId} | questionTag : {QuestionTag} | StatusCode : {StatusCode} | ErrorMessage: {ApiErrorMessage}", applicationId, questionTag, response.StatusCode, apiErrorMessage);
+                return null;
+            }
         }
 
         public async Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId)
@@ -181,16 +181,16 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null)
         {
             var answer = new Answer { QuestionId = questionId };
-        
+
             var questionTagData = await GetQuestionTag(applicationId, questionTag);
-            if(questionTagData != null)
+            if (questionTagData != null)
             {
                 answer.Value = questionTagData.ToString();
             }
 
             return answer;
         }
-        
+
         public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answers)
         {
             // NOTE: This should be called SetPageAnswers, but leaving alone for now
@@ -223,13 +223,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 var apiErrorMessage = apiError?.Message ?? json;
 
                 _logger.LogError(
-                    $"Error Updating Page Answers into QnA. Application: {applicationId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
+                    "Error Updating Page Answers into QnA. Application: {ApplicationId} | PageId: {PageId} | StatusCode : {StatusCode} | Response: {ApiErrorMessage}", applicationId, pageId, response.StatusCode, apiErrorMessage);
 
                 var validationErrorMessage = "Cannot save answers at this time. Please contact your system administrator.";
 
                 var validationError = new KeyValuePair<string, string>(string.Empty, validationErrorMessage);
                 return new SetPageAnswersResponse
-                    {ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> {validationError}};
+                { ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> { validationError } };
             }
         }
 
@@ -245,7 +245,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<ResetPageAnswersResponse> ResetPageAnswers(Guid applicationId, Guid sectionId, string pageId)
         {
-            var response = await _httpClient.PostAsJsonAsync($"/Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/reset", new{});
+            var response = await _httpClient.PostAsJsonAsync($"/Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/reset", new { });
 
             var json = await response.Content.ReadAsStringAsync();
 
@@ -257,12 +257,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             {
                 var apiError = GetApiErrorFromJson(json);
                 var apiErrorMessage = apiError?.Message ?? json;
-                var errorMessage =
-                    $"Error Resetting Page Answers into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}";
+                _logger.LogError("Error Resetting Page Answers into QnA. Application: {ApplicationId} | SectionId: {SectionId} | PageId: {PageId} | StatusCode : {StatusCode} | Response: {ApiErrorMessage}", applicationId, sectionId, pageId, response.StatusCode, apiErrorMessage);
 
-                _logger.LogError(errorMessage);
-
-                return new ResetPageAnswersResponse { ValidationPassed = false, ValidationErrors = null  };
+                return new ResetPageAnswersResponse { ValidationPassed = false, ValidationErrors = null };
             }
         }
 
@@ -281,10 +278,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             var apiError = GetApiErrorFromJson(json);
             var apiErrorMessage = apiError?.Message ?? json;
-            var errorMessage =
-                $"Error Resetting Page Answers into QnA section. Application: {applicationId} | SequenceNo: {sequenceNo}| SectionNo: {sectionNo} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}";
 
-            _logger.LogError(errorMessage);
+            _logger.LogError("Error Resetting Page Answers into QnA section. Application: {applicationId} | SequenceNo: {sequenceNo}| SectionNo: {sectionNo} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}", applicationId, sequenceNo, sectionNo, response.StatusCode, apiErrorMessage);
 
             return new ResetSectionAnswersResponse { ValidationPassed = false, ValidationErrors = null };
         }
@@ -306,12 +301,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             {
                 var apiError = GetApiErrorFromJson(json);
                 var apiErrorMessage = apiError?.Message ?? json;
-                var errorMessage =
-                    $"Error Resetting Page Answers into QnA. Application: {applicationId} | SequenceNo: {sequenceNo}| SectionNo: {sectionNo} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}";
 
-                _logger.LogError(errorMessage);
+                _logger.LogError("Error Resetting Page Answers into QnA. Application: {applicationId} | SequenceNo: {sequenceNo}| SectionNo: {sectionNo} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}", applicationId, sequenceNo, sectionNo, pageId, response.StatusCode, apiErrorMessage);
 
-                return new ResetPageAnswersResponse {ValidationPassed = false, ValidationErrors = null};
+                return new ResetPageAnswersResponse { ValidationPassed = false, ValidationErrors = null };
             }
         }
 
@@ -379,7 +372,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 var apiError = GetApiErrorFromJson(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
-                _logger.LogError($"Error Uploading files into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
+                _logger.LogError("Error Uploading files into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {statusCode} | Response: {apiErrorMessage}", applicationId, sectionId, pageId, response.StatusCode, apiErrorMessage);
 
                 var validationErrorMessage = "Cannot upload files at this time. Please contact your system administrator.";
 
@@ -495,9 +488,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             try
             {
-              return JsonConvert.DeserializeObject<ApiError>(json);
+                return JsonConvert.DeserializeObject<ApiError>(json);
             }
-            catch(JsonException)
+            catch (JsonException)
             {
                 return null;
             }

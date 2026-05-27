@@ -1,10 +1,10 @@
-﻿using MediatR;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Interfaces;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 {
@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 
         public async Task<List<BlindAssessmentOutcome>> Handle(GetAllBlindAssessmentOutcomesRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"GetAllBlindAssessmentOutcome for ApplicationId '{request.ApplicationId}");
+            _logger.LogInformation("GetAllBlindAssessmentOutcome for ApplicationId '{ApplicationId}'", request.ApplicationId);
 
             var blindAssessmentOutcome = await _repository.GetAllBlindAssessmentOutcome(request.ApplicationId);
 

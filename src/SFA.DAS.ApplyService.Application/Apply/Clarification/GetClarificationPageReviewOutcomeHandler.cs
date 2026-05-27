@@ -1,8 +1,8 @@
-﻿using MediatR;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
-using System.Threading;
-using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Clarification
@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Clarification
 
         public async Task<ClarificationPageReviewOutcome> Handle(GetClarificationPageReviewOutcomeRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"GetClarificationPageReviewOutcome for ApplicationId '{request.ApplicationId}' - PageId '{request.PageId}'");
+            _logger.LogInformation("GetClarificationPageReviewOutcome for ApplicationId '{ApplicationId}' - PageId '{PageId}'", request.ApplicationId, request.PageId);
 
             var pagePageReviewOutcome = await _repository.GetClarificationPageReviewOutcome(request.ApplicationId,
                                                         request.SequenceNumber,

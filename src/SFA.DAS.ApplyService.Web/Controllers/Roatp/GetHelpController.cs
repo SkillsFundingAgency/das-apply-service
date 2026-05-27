@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -9,10 +13,6 @@ using SFA.DAS.ApplyService.EmailService.Interfaces;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Configuration;
 using SFA.DAS.ApplyService.Web.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -81,7 +81,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             if (applicationId.HasValue && applicationId.Value != Guid.Empty)
             {
-                try 
+                try
                 {
                     var qnaApplicationData = await _qnaApiClient.GetApplicationData(applicationId.Value);
 
@@ -115,21 +115,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         getHelpQuery.ApplicationSection = currentSection.Title;
                     }
 
-                    var currentPage = currentSection?.QnAData.Pages.FirstOrDefault( pg => pg.PageId == pageId);
+                    var currentPage = currentSection?.QnAData.Pages.FirstOrDefault(pg => pg.PageId == pageId);
                     if (!string.IsNullOrEmpty(currentPage?.Title))
                     {
                         getHelpQuery.PageTitle = currentPage.Title;
                     }
                 }
-                catch(ApplyService.Infrastructure.Exceptions.ApiClientException apiEx)
+                catch (ApplyService.Infrastructure.Exceptions.ApiClientException apiEx)
                 {
                     // Safe to ignore any QnA issues. We just want to send help with as much info as possible.
-                    _logger.LogError(apiEx, $"Unable to retrieve QNA details for application : {applicationId.Value}");
+                    _logger.LogError(apiEx, "Unable to retrieve QNA details for application : {ApplicationId}", applicationId.Value);
                 }
                 catch (NullReferenceException nullRefEx)
                 {
                     // Safe to ignore any QnA issues. We just want to send help with as much info as possible.
-                    _logger.LogError(nullRefEx, $"QNA details were not found for application: {applicationId.Value}");
+                    _logger.LogError(nullRefEx, "QNA details were not found for application: {ApplicationId}", applicationId.Value);
                 }
             }
             else
@@ -138,9 +138,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 getHelpQuery.ApplicationSequence = "Preamble";
                 getHelpQuery.ApplicationSection = "Preamble";
 
-                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);   
+                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
 
-                if(applicationDetails != null)
+                if (applicationDetails != null)
                 {
                     getHelpQuery.UKPRN = applicationDetails.UKPRN.ToString();
 
@@ -161,9 +161,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     {
                         getHelpQuery.CharityNumber = organisationCharityNumber;
                     }
-                }                
+                }
             }
-            
+
             getHelpQuery.GetHelpQuery = getHelp;
 
             var userDetails = await _usersApiClient.GetUserBySignInId(User.GetSignInId());

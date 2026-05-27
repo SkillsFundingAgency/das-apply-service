@@ -106,14 +106,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (applicationCountExcludingReapplications > 1)
             {
-                _logger.LogError($"Multiple in flight applications found for userId: {signinId}");
+                _logger.LogError("Multiple in flight applications found for userId: {UserId}", signinId);
                 return View("~/Views/Roatp/Applications.cshtml", applications);
             }
 
             Apply application = null;
             if (applicationCountExcludingReapplications == 1)
             {
-                _logger.LogDebug($"Application found for userId: {signinId}");
+                _logger.LogDebug("Application found for userId: {UserId}", signinId);
                 application = applications[0];
                 return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { application.ApplicationId });
             }
@@ -129,7 +129,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { application.ApplicationId });
             }
 
-            _logger.LogDebug($"No applications found for userId: {signinId}");
+            _logger.LogDebug("No applications found for userId: {UserId}", signinId);
 
             application = await StartApplication(signinId);
 
@@ -162,8 +162,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return new Apply { ApplicationId = Guid.Empty };
             }
 
-            _logger.LogDebug($"Found applications details in user session. Attempting to create application.");
-            _logger.LogDebug($"Application Details:: Ukprn: [{applicationDetails?.UKPRN}], ProviderName: [{applicationDetails?.UkrlpLookupDetails?.ProviderName}], RouteId: [{applicationDetails?.ApplicationRoute?.Id}]");
+            _logger.LogDebug("Found applications details in user session. Attempting to create application.");
+            _logger.LogDebug("Application Details:: Ukprn: [{Ukprn}], ProviderName: [{ProviderName}], RouteId: [{RouteId}]", applicationDetails?.UKPRN, applicationDetails?.UkrlpLookupDetails?.ProviderName, applicationDetails?.ApplicationRoute?.Id);
             var providerRoute = applicationDetails.ApplicationRoute.Id;
 
             var startApplicationData = new JObject
@@ -177,9 +177,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
 
-            _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{user.Id}], startApplicationJson: [{startApplicationJson}]");
+            _logger.LogDebug("RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{UserId}], startApplicationJson: [{StartApplicationJson}]", user.Id, startApplicationJson);
             var qnaResponse = await _qnaApiClient.StartApplication(user.Id.ToString(), ApplicationTypes.RegisterTrainingProviders, startApplicationJson);
-            _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{qnaResponse?.ApplicationId}]");
+            _logger.LogDebug("RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{ApplicationId}]", qnaResponse?.ApplicationId);
 
             var applicationId = Guid.Empty;
 
@@ -196,7 +196,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, applicationDetails.RoatpRegisterStatus.ProviderTypeId, allQnaSequences, allQnaSections);
 
                 applicationId = await _apiClient.StartApplication(startApplicationRequest);
-                _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{applicationId}]");
+                _logger.LogDebug("RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{ApplicationId}]", applicationId);
 
                 if (applicationId != Guid.Empty)
                 {
@@ -212,7 +212,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
                     {
                         await SaveCharityCommissionInformation(applicationId, applicationDetails);
-                        _logger.LogDebug("Save Charity Commission information saved");
+                        _logger.LogDebug("Charity Commission information saved");
                     }
                 }
 
@@ -1369,7 +1369,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Unable to extract finanical data for application: {applicationId}");
+                _logger.LogError(ex, "Unable to extract financial data for application: {ApplicationId}", applicationId);
                 return new FinancialData { ApplicationId = applicationId };
             }
         }
