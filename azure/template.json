@@ -389,10 +389,10 @@
                                 },
                                 {
                                     "name": "FileStorage:StorageConnectionString",
-                                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageResourceId.value).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+                                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
                                 }
                             ]
-                        }
+                        },
                     },
                     "appServiceConnectionStrings": {
                         "value": {
@@ -415,7 +415,8 @@
                         "value": "[parameters('backEndAccessRestrictions')]"
                     }
                 }
-            }
+            },
+            "dependsOn": "[concat(variables('storageAccountName'), '-', parameters('utcValue'))]"
         },
         {
             "apiVersion": "2020-06-01",
