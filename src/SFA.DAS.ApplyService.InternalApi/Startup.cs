@@ -38,6 +38,7 @@ using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.Infrastructure.Database;
 using SFA.DAS.ApplyService.InternalApi.Authentication;
 using SFA.DAS.ApplyService.InternalApi.Authorization;
+using SFA.DAS.ApplyService.InternalApi.Extensions;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Services;
@@ -109,7 +110,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             if (!_hostingEnvironment.IsDevelopment())
             {
-                services.AddApplicationInsightsTelemetry();
+                services.AddTelemetryRegistration((IConfigurationRoot)_configuration);
             }
 
             services.AddOptions();

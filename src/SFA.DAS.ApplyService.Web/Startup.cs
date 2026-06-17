@@ -27,6 +27,7 @@ using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Authorization;
 using SFA.DAS.ApplyService.Web.Configuration;
+using SFA.DAS.ApplyService.Web.Extensions;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
@@ -140,7 +141,7 @@ namespace SFA.DAS.ApplyService.Web
 
             if (!_hostingEnvironment.IsDevelopment())
             {
-                services.AddApplicationInsightsTelemetry();
+                services.AddTelemetryRegistration((IConfigurationRoot)_configuration);
             }
 
             services.AddOptions();
