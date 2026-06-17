@@ -415,7 +415,10 @@
                         "value": "[parameters('backEndAccessRestrictions')]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "[concat(variables('storageAccountName'), '-', parameters('utcValue'))]"
+            ]
         },
         {
             "apiVersion": "2020-06-01",
