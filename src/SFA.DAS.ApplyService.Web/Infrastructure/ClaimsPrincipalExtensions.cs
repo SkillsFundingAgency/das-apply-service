@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public static string GetEmail(this ClaimsPrincipal principal)
         {
-            string value = principal.FindFirstValue("Email") ?? principal.FindFirstValue("name");
+            string value = principal.FindFirstValue(ClaimTypes.Email) ?? principal.FindFirstValue(ClaimTypes.Name);
 
             return value;
         }

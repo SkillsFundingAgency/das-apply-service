@@ -52,31 +52,4 @@ public class CustomClaims : ICustomClaims
         var client = tokenValidatedContext.HttpContext.RequestServices.GetRequiredService<IUsersApiClient>();
         return client.GetUserByEmail(email ?? string.Empty);
     }
-
-
-    public Task<IEnumerable<Claim>> GetClaims(ClaimsPrincipal principal)
-    {
-        var email = principal?.Claims.FirstOrDefault(c => string.Equals(c.Type, ClaimTypes.Email, StringComparison.OrdinalIgnoreCase))?.Value ?? string.Empty;
-        var name = principal?.Claims.FirstOrDefault(c => string.Equals(c.Type, ClaimTypes.Name, StringComparison.OrdinalIgnoreCase))?.Value
-                   ?? principal?.Identity?.Name ?? string.Empty;
-        var sub = principal?.Claims.FirstOrDefault(c => string.Equals(c.Type, ClaimTypes.NameIdentifier, StringComparison.OrdinalIgnoreCase))?.Value
-                  ?? Guid.NewGuid().ToString();
-
-        var generatedId = Guid.NewGuid().ToString();
-
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Email, email),
-            new Claim("UserId", generatedId),
-            new Claim("sub", sub)
-        };
-
-        if (!string.IsNullOrEmpty(name))
-        {
-            claims.Add(new Claim(ClaimTypes.Name, name));
-        }
-
-        return Task.FromResult<IEnumerable<Claim>>(claims);
-    }
-
 }
