@@ -388,8 +388,8 @@
                                     "value": "[reference(concat(variables('apiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                                 },
                                 {
-                                  "name": "FileStorage:StorageConnectionString",
-                                  "value": "[reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageConnectionString]"
+                                    "name": "FileStorage:StorageConnectionString",
+                                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageResourceId.value).keys[0].value, ';EndpointSuffix=core.windows.net')]"
                                 }
                             ]
                         }
