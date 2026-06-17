@@ -112,7 +112,7 @@
       "uiAppServiceName": "[concat(variables('resourceNamePrefix'),'ui-as')]",
       "apiAppServiceName": "[concat(variables('resourceNamePrefix'),'api-as')]",
       "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
-      "storageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')).apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]",
+      "storageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2026-04-01').keys[0].value, ';EndpointSuffix=core.windows.net')]",
       "databaseName": "[concat(variables('resourceNamePrefix'),'-db')]",
       "applyWebConfigNames": "SFA.DAS.ApplyService:ApplyConfig,SFA.DAS.Apply.GovSignIn"
     },
