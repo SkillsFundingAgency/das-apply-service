@@ -417,7 +417,7 @@
                 }
             },
             "dependsOn": [
-                "[concat('storage-account-arm-', parameters('utcValue'))]"
+                "[concat(variables('storageAccountName'), '-', parameters('utcValue'))]"
             ]
         },
         {
