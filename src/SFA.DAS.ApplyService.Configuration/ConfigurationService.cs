@@ -5,39 +5,39 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 
-namespace SFA.DAS.ApplyService.Configuration
+namespace SFA.DAS.ApplyService.Configuration;
+
+public class ConfigurationService : IConfigurationService
 {
-    public class ConfigurationService : IConfigurationService
+    private readonly IWebHostEnvironment _hostingEnvironment;
+    private readonly string _environment;
+    private readonly string _storageConnectionString;
+    private readonly string _version;
+    private readonly string _serviceName;
+
+    public ConfigurationService(IWebHostEnvironment hostingEnvironment, string environment,
+        string storageConnectionString, string version, string serviceName)
     {
-        private readonly IWebHostEnvironment _hostingEnvironment;
-        private readonly string _environment;
-        private readonly string _storageConnectionString;
-        private readonly string _version;
-        private readonly string _serviceName;
+        _hostingEnvironment = hostingEnvironment;
+        _environment = environment;
+        _storageConnectionString = storageConnectionString;
+        _version = version;
+        _serviceName = serviceName;
+    }
 
-        public ConfigurationService(IWebHostEnvironment hostingEnvironment, string environment,
-            string storageConnectionString, string version, string serviceName)
+    private ApplyConfig _applyConfig;
+
+    public async Task<IApplyConfig> GetConfig()
+    {
+        //This class is registered as singleton, so it is possible that the _applyConfig is already populated
+        if (_applyConfig != null) return _applyConfig;
+
+        if (_environment == null || _storageConnectionString == null)
         {
-            _hostingEnvironment = hostingEnvironment;
-            _environment = environment;
-            _storageConnectionString = storageConnectionString;
-            _version = version;
-            _serviceName = serviceName;
-        }
-
-        private ApplyConfig _applyConfig;
-
-        public async Task<IApplyConfig> GetConfig()
-        {
-            //This class is registered as singleton, so it is possible that the _applyConfig is already populated
-            if (_applyConfig != null) return _applyConfig;
-
-            if (_environment == null || _storageConnectionString == null)
+            if (_hostingEnvironment.IsDevelopment())
             {
-                if (_hostingEnvironment.IsDevelopment())
-                {
-                    throw new DeveloperEnvironmentException(
-                        @"Cannot find settings 'EnvironmentName' and 'ConfigurationStorageConnectionString' in appsettings.json. Please ensure your appsettings.json file is at least set up like `{
+                throw new DeveloperEnvironmentException(
+                    @"Cannot find settings 'EnvironmentName' and 'ConfigurationStorageConnectionString' in appsettings.json. Please ensure your appsettings.json file is at least set up like `{
                     ""Logging"": {
                         ""IncludeScopes"": false,
                         ""LogLevel"": {
@@ -52,74 +52,73 @@ namespace SFA.DAS.ApplyService.Configuration
                     },
                     ""EnvironmentName"": ""LOCAL""
                 }`");
-                }
-
-                throw new InvalidOperationException(
-                    "Cannot find settings 'EnvironmentName' and 'ConfigurationStorageConnectionString'");
             }
 
-            var tableServiceClient = new TableServiceClient(_storageConnectionString);
-            var tableClient = tableServiceClient.GetTableClient("Configuration");
-
-            TableEntity result;
-            try
-            {
-                result = await tableClient.GetEntityAsync<TableEntity>(_environment, $"{_serviceName}_{_version}");
-            }
-            catch (Exception e)
-            {
-                if (_hostingEnvironment.IsDevelopment())
-                {
-                    throw new DeveloperEnvironmentException(
-                        "Could not connect to Storage to retrieve settings.  Please ensure you have a Azure Storage server (azure or local emulator) configured with a `Configuration` table and the correct row.  See README.MD for details.");
-                }
-
-                throw new InvalidOperationException("Could not connect to Storage to retrieve settings.", e);
-            }
-
-            if (result == null)
-            {
-                if (_hostingEnvironment.IsDevelopment())
-                {
-                    throw new DeveloperEnvironmentException(
-                        "Cannot open Configuration table. Please ensure you have a Azure Storage server (azure or local emulator) configured with a `Configuration` table and the correct row.  See README.MD for details.");
-                }
-
-                throw new InvalidOperationException("Cannot open Configuration table.");
-            }
-
-            var data = result.GetString("Data");
-
-            ApplyConfig webConfig;
-            try
-            {
-                webConfig = JsonConvert.DeserializeObject<ApplyConfig>(data);
-            }
-            catch (Exception)
-            {
-                if (_hostingEnvironment.IsDevelopment())
-                {
-                    throw new DeveloperEnvironmentException(
-                        "There is a mismatch between ApplyConfig:IApplyConfig and the JSON returned from storage.");
-                }
-
-                throw;
-            }
-
-            _applyConfig = webConfig;
-
-            return webConfig;
+            throw new InvalidOperationException(
+                "Cannot find settings 'EnvironmentName' and 'ConfigurationStorageConnectionString'");
         }
 
-        public string GetEnvironmentName()
+        var tableServiceClient = new TableServiceClient(_storageConnectionString);
+        var tableClient = tableServiceClient.GetTableClient("Configuration");
+
+        TableEntity result;
+        try
         {
-            return _environment;
+            result = await tableClient.GetEntityAsync<TableEntity>(_environment, $"{_serviceName}_{_version}");
         }
+        catch (Exception e)
+        {
+            if (_hostingEnvironment.IsDevelopment())
+            {
+                throw new DeveloperEnvironmentException(
+                    "Could not connect to Storage to retrieve settings.  Please ensure you have a Azure Storage server (azure or local emulator) configured with a `Configuration` table and the correct row.  See README.MD for details.");
+            }
+
+            throw new InvalidOperationException("Could not connect to Storage to retrieve settings.", e);
+        }
+
+        if (result == null)
+        {
+            if (_hostingEnvironment.IsDevelopment())
+            {
+                throw new DeveloperEnvironmentException(
+                    "Cannot open Configuration table. Please ensure you have a Azure Storage server (azure or local emulator) configured with a `Configuration` table and the correct row.  See README.MD for details.");
+            }
+
+            throw new InvalidOperationException("Cannot open Configuration table.");
+        }
+
+        var data = result.GetString("Data");
+
+        ApplyConfig webConfig;
+        try
+        {
+            webConfig = JsonConvert.DeserializeObject<ApplyConfig>(data);
+        }
+        catch (Exception)
+        {
+            if (_hostingEnvironment.IsDevelopment())
+            {
+                throw new DeveloperEnvironmentException(
+                    "There is a mismatch between ApplyConfig:IApplyConfig and the JSON returned from storage.");
+            }
+
+            throw;
+        }
+
+        _applyConfig = webConfig;
+
+        return webConfig;
     }
 
-    public interface IConfigurationService
+    public string GetEnvironmentName()
     {
-        Task<IApplyConfig> GetConfig();
-        string GetEnvironmentName();
+        return _environment;
     }
+}
+
+public interface IConfigurationService
+{
+    Task<IApplyConfig> GetConfig();
+    string GetEnvironmentName();
 }
