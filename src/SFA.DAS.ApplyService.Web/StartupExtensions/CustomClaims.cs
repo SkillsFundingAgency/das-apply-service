@@ -16,40 +16,35 @@ public class CustomClaims : ICustomClaims
     public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
     {
         var email = tokenValidatedContext?.Principal?.Claims
-            .FirstOrDefault(c => string.Equals(c.Type, ClaimTypes.Email, StringComparison.OrdinalIgnoreCase))
-            ?.Value ?? string.Empty;
+            .First(c => c.Type.Equals(ClaimTypes.Email))
+            .Value;
 
-        var contact = await GetContactDetails(tokenValidatedContext, email).ConfigureAwait(false);
-
+        var contact = await GetContactDetails(tokenValidatedContext, email);
         var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Email, email)
-        };
-
+            {
+                new ("Email",$"{email}"),
+            };
         if (contact is not null)
         {
-            claims.Add(new Claim("UserId", contact.Id.ToString()));
-            claims.Add(new Claim("sub", contact.SigninId?.ToString() ?? Guid.NewGuid().ToString()));
-            var displayName = $"{contact.GivenNames} {contact.FamilyName}".Trim();
-            if (!string.IsNullOrEmpty(displayName))
-            {
-                claims.Add(new Claim(ClaimTypes.Name, displayName));
-            }
+            claims.Add(new Claim("UserId", $"{contact.Id}"));
+            claims.Add(new Claim("sub", $"{contact.SigninId}"));
+            claims.Add(new Claim(ClaimTypes.Name, $"{contact.GivenNames} {contact.FamilyName}"));
         }
         else
         {
-            var generatedId = Guid.NewGuid().ToString();
-            claims.Add(new Claim("UserId", generatedId));
-            claims.Add(new Claim("sub", generatedId));
+            claims.Add(new Claim("UserId", $"{Guid.NewGuid()}"));
+            claims.Add(new Claim("sub", $"{Guid.NewGuid()}"));
         }
 
-        return claims;
+        return await Task.FromResult<IEnumerable<Claim>>(claims);
     }
 
-    private static Task<Contact> GetContactDetails(TokenValidatedContext tokenValidatedContext, string email)
+    private static async Task<Contact> GetContactDetails(TokenValidatedContext tokenValidatedContext, string email)
     {
-        if (tokenValidatedContext is null) throw new ArgumentNullException(nameof(tokenValidatedContext));
         var client = tokenValidatedContext.HttpContext.RequestServices.GetRequiredService<IUsersApiClient>();
-        return client.GetUserByEmail(email ?? string.Empty);
+        return await client.GetUserByEmail(email);
     }
 }
+
+
+
