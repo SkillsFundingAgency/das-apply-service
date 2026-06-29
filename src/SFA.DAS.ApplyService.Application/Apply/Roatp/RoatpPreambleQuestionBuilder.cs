@@ -1,12 +1,12 @@
 ﻿namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Domain.Apply;
     using Domain.Roatp;
     using Domain.Ukrlp;
     using Newtonsoft.Json;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public static class RoatpPreambleQuestionIdConstants
     {
@@ -42,8 +42,8 @@
         public const string RoatpStatusDate = "PRE-93";
         public const string RoatpProviderRoute = "PRE-94";
         public const string LevyPayingEmployer = "PRE-95";
-        public const string ApplyProviderRoute = "YO-1";      
-        public const string COAStage1Application = "COA-1";                  
+        public const string ApplyProviderRoute = "YO-1";
+        public const string COAStage1Application = "COA-1";
     }
 
     public static class RoatpYourOrganisationQuestionIdConstants
@@ -204,7 +204,7 @@
         public const string YourOrganisationParentCompanyDetails = "21";
         public const string WebsiteManuallyEntered = "40";
         public const string YourOrganisationIcoNumber = "30";
-        
+
 
         public static class WhosInControl
         {
@@ -239,7 +239,7 @@
         }
 
         public static class ExperienceAndAccreditations
-        { 
+        {
             public const string OfficeForStudents = "235";
             public const string InitialTeacherTraining = "240";
             public const string HasHadFullInspection = "260";
@@ -414,7 +414,7 @@
     {
 
         public const string MainOnRoatp = "MainOnRoatp";
-        public const string MainNotOnRoatp= "MainNotOnRoatp";
+        public const string MainNotOnRoatp = "MainNotOnRoatp";
         public const string EmployerOnRoatp = "EmployerOnRoatp";
         public const string EmployerNotOnRoatp = "EmployerNotOnRoatp";
         public const string SupportingOnRoatp = "SupportingOnRoatp";
@@ -450,10 +450,10 @@
             CreateLevyEmployerQuestionAnswers(applicationDetails, questions);
 
             CreateApplyQuestionAnswers(applicationDetails, questions);
-            
+
             return questions;
         }
-        
+
         public static List<PreambleAnswer> CreateCompaniesHouseWhosInControlQuestions(ApplicationDetails applicationDetails)
         {
             var questions = new List<PreambleAnswer>();
@@ -560,7 +560,7 @@
             questions.Add(new PreambleAnswer
             {
                 QuestionId = RoatpPreambleQuestionIdConstants.UkrlpTradingName,
-                Value = applicationDetails.UkrlpLookupDetails?.ProviderAliases?[0].Alias
+                Value = applicationDetails.UkrlpLookupDetails?.ProviderAliases?.FirstOrDefault()?.Alias
             });
 
             var companiesHouseVerification = applicationDetails.UkrlpLookupDetails?.VerificationDetails?.FirstOrDefault(x => x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority);
@@ -572,7 +572,7 @@
                     QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany,
                     Value = "TRUE"
                 });
-                
+
                 questions.Add(new PreambleAnswer
                 {
                     QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompanyNumber,
@@ -622,7 +622,7 @@
                     x.VerificationAuthority == VerificationAuthorities.SoleTraderPartnershipAuthority) != null)
             {
                 soleTraderPartnershipVerification = "TRUE";
-            }           
+            }
 
             questions.Add(new PreambleAnswer
             {
@@ -640,7 +640,7 @@
                 });
             }
         }
-        
+
         private static void CreateCompaniesHouseQuestionAnswers(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
         {
             var manualEntryRequired = string.Empty;
@@ -828,7 +828,7 @@
 
             return dateOfBirth.Value.ToString("MMM yyyy");
         }
-        
+
         private static void CreateCharityCommissionQuestionAnswers(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
         {
             var trusteeManualEntryRequired = string.Empty;
@@ -860,7 +860,7 @@
                 Value = incorporationDate
             });
         }
-        
+
         private static void CreateBlankCompaniesHouseConfirmationQuestion(List<PreambleAnswer> questions)
         {
             questions.Add(new PreambleAnswer
@@ -919,7 +919,7 @@
                     routeAndOnRoatp = onRoatpRegister == onRoatpRegisterTrue ? RouteAndOnRoatpTags.EmployerOnRoatp : RouteAndOnRoatpTags.EmployerNotOnRoatp;
                     break;
                 case ApplicationRoute.SupportingProviderApplicationRoute:
-                    routeAndOnRoatp = onRoatpRegister == onRoatpRegisterTrue ? RouteAndOnRoatpTags.SupportingOnRoatp : RouteAndOnRoatpTags.SupportingNotOnRoatp;    
+                    routeAndOnRoatp = onRoatpRegister == onRoatpRegisterTrue ? RouteAndOnRoatpTags.SupportingOnRoatp : RouteAndOnRoatpTags.SupportingNotOnRoatp;
                     break;
             }
 
