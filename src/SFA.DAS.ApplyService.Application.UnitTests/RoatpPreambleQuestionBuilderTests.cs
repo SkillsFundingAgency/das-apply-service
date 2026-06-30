@@ -185,7 +185,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
 
             var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.UkrlpTradingName);
             question.Should().NotBeNull();
-            question.Value.Should().Be(_applicationDetails.UkrlpLookupDetails.ProviderAliases[0].Alias);
+            question.Value.Should().Be(_applicationDetails.UkrlpLookupDetails.ProviderAliases.FirstOrDefault()?.Alias);
         }
 
         [TestCase(true, "TRUE")]
@@ -334,7 +334,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
             var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
 
             questions.Should().NotBeNull();
-            
+
             var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.UkrlpVerificationCharityRegNumber);
             question.Should().NotBeNull();
             question.Value.Should().Be(_applicationDetails.UkrlpLookupDetails.VerificationDetails.FirstOrDefault(x => x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority).VerificationId);
@@ -433,7 +433,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         [Test]
         public void Preamble_questions_contains_on_roatp_flag()
         {
-            _applicationDetails.RoatpRegisterStatus = new OrganisationRegisterStatus{ UkprnOnRegister = true };
+            _applicationDetails.RoatpRegisterStatus = new OrganisationRegisterStatus { UkprnOnRegister = true };
 
             var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
 
@@ -466,8 +466,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         [TestCase(false, ApplicationRoute.SupportingProviderApplicationRoute, RouteAndOnRoatpTags.SupportingNotOnRoatp)]
         public void Preamble_questions_contains_roatp_RouteAndOnRoatp_status(bool onRegister, int route, string expectedValue)
         {
-            _applicationDetails.RoatpRegisterStatus = new OrganisationRegisterStatus { UkprnOnRegister = onRegister};
-            _applicationDetails.ApplicationRoute = new ApplicationRoute {Id=route};
+            _applicationDetails.RoatpRegisterStatus = new OrganisationRegisterStatus { UkprnOnRegister = onRegister };
+            _applicationDetails.ApplicationRoute = new ApplicationRoute { Id = route };
 
             var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
 
@@ -497,7 +497,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         {
             _applicationDetails.RoatpRegisterStatus = new OrganisationRegisterStatus
             {
-                UkprnOnRegister = true, StatusId = OrganisationStatus.Removed, RemovedReasonId = removedReason
+                UkprnOnRegister = true,
+                StatusId = OrganisationStatus.Removed,
+                RemovedReasonId = removedReason
             };
 
             var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
@@ -514,7 +516,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         {
             _applicationDetails.RoatpRegisterStatus = new OrganisationRegisterStatus
             {
-                UkprnOnRegister = true, StatusId = OrganisationStatus.Active, StatusDate = new DateTime(2014, 02, 02)
+                UkprnOnRegister = true,
+                StatusId = OrganisationStatus.Active,
+                StatusDate = new DateTime(2014, 02, 02)
             };
 
             var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);

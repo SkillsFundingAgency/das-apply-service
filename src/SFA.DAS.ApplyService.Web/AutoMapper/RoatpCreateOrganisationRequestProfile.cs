@@ -73,7 +73,7 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
             destMember.OrganisationReferenceId = source.UkrlpLookupDetails?.UKPRN;
             destMember.OrganisationReferenceType = "UKRLP";
             destMember.Postcode = source.UkrlpLookupDetails?.PrimaryContactDetails?.ContactAddress.PostCode;
-            var primaryAlias = source.UkrlpLookupDetails?.ProviderAliases.FirstOrDefault();
+            var primaryAlias = source.UkrlpLookupDetails?.ProviderAliases?.FirstOrDefault();
             if (primaryAlias != null)
             {
                 destMember.TradingName = primaryAlias.Alias;

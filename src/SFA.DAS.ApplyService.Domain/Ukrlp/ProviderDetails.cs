@@ -20,8 +20,8 @@
         {
             get
             {
-                return VerificationDetails.Any(x =>
-                    x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority);
+                return VerificationDetails?.Any(x =>
+                    x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority) ?? false;
             }
         }
 
@@ -29,8 +29,8 @@
         {
             get
             {
-                return VerificationDetails.Any(x =>
-                    x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority);
+                return VerificationDetails?.Any(x =>
+                    x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority) ?? false;
             }
         }
 
@@ -38,14 +38,14 @@
         {
             get
             {
-                return VerificationDetails.Any(x =>
-                    x.VerificationAuthority == VerificationAuthorities.SoleTraderPartnershipAuthority);
+                return VerificationDetails?.Any(x =>
+                    x.VerificationAuthority == VerificationAuthorities.SoleTraderPartnershipAuthority) ?? false;
             }
         }
 
         public ProviderContact PrimaryContactDetails
         {
-            get { return ContactDetails.FirstOrDefault(x => x.ContactType == LegalAddressIdentifier); }
+            get { return ContactDetails?.FirstOrDefault(x => x.ContactType == LegalAddressIdentifier); }
         }
 
     }
