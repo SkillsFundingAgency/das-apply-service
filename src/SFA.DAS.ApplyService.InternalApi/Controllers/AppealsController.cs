@@ -4,21 +4,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Appeals.Commands.DeleteAppealFile;
 using SFA.DAS.ApplyService.Application.Appeals.Commands.UploadAppealFile;
 using SFA.DAS.ApplyService.Application.Appeals.Queries.GetAppealFile;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands;
+using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.CancelAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal;
 using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppeal;
-using SFA.DAS.ApplyService.InternalApi.Types.Requests.Appeals;
-using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
+using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppealFileList;
 using SFA.DAS.ApplyService.InternalApi.Extensions;
 using SFA.DAS.ApplyService.InternalApi.Services.Files;
-using SFA.DAS.ApplyService.Application.Apply.Appeals.Queries.GetAppealFileList;
-using SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.CancelAppeal;
-using Microsoft.AspNetCore.Http;
+using SFA.DAS.ApplyService.InternalApi.Types.Requests.Appeals;
+using SFA.DAS.ApplyService.InternalApi.Types.Responses.Appeals;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -101,7 +101,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             if (!deletedSuccessfully)
             {
-                _logger.LogError($"Unable to delete appeal files for application: {applicationId}");
+                _logger.LogError("Unable to delete appeal files for application: {ApplicationId}", applicationId);
             }
 
             var command = new CancelAppealCommand
@@ -152,7 +152,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             if (!uploadedSuccessfully)
             {
-                _logger.LogError($"Unable to upload appeal file for application: {request.ApplicationId}");
+                _logger.LogError("Unable to upload appeal file for application: {ApplicationId}", request.ApplicationId);
                 return BadRequest();
             }
 
@@ -179,16 +179,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             };
 
             var appealFile = await _mediator.Send(query);
-            if(appealFile is null)
+            if (appealFile is null)
             {
-                _logger.LogError($"Unable to find appeal file for application: {request.ApplicationId} || fileName {request.FileName}");
+                _logger.LogError("Unable to find appeal file for application: {ApplicationId} || fileName {FileName}", request.ApplicationId, request.FileName);
                 return NotFound();
             }
 
             var file = await _fileStorageService.DownloadApplicationFile(appealFile.ApplicationId, appealFile.FileName, ContainerType.Appeals, new CancellationToken());
             if (file is null)
             {
-                _logger.LogError($"Unable to download appeal file for application: {request.ApplicationId} || fileName {request.FileName}");
+                _logger.LogError("Unable to download appeal file for application: {ApplicationId} || fileName {FileName}", request.ApplicationId, request.FileName);
                 return NotFound();
             }
 
@@ -221,7 +221,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             if (!deletedSuccessfully)
             {
-                _logger.LogError($"Unable to delete appeal file for application: {applicationId} ||  filename {fileName}");
+                _logger.LogError("Unable to delete appeal file for application: {ApplicationId} ||  filename {FileName}", applicationId, fileName);
             }
 
             return new OkResult();

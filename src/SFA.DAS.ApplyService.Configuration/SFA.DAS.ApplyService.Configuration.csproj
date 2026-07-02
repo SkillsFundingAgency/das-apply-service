@@ -2,12 +2,12 @@
 
     <PropertyGroup>
       <ProjectGuid>{2B3A5F1C-D63B-4A0F-888A-CEFBF919907D}</ProjectGuid>
-      <TargetFramework>net8.0</TargetFramework>
+      <TargetFramework>net10.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.App" />
-      <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="3.0.84" />
+      <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="17.1.165" />
     </ItemGroup>
 
     <ItemGroup>

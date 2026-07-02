@@ -3,7 +3,7 @@ using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 {
-    public class RecordOversightGatewayFailOutcomeCommand : IRequest
+    public class RecordOversightGatewayFailOutcomeCommand : IRequest<Unit>
     {
         public Guid ApplicationId { get; set; }
         public string UserId { get; set; }

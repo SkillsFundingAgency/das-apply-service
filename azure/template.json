@@ -113,7 +113,7 @@
       "apiAppServiceName": "[concat(variables('resourceNamePrefix'),'api-as')]",
       "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
       "databaseName": "[concat(variables('resourceNamePrefix'),'-db')]",
-      "applyWebConfigNames": "SFA.DAS.ApplyService:ApplyConfig,SFA.DAS.Apply.GovSignIn"
+      "applyWebConfigNames": "SFA.DAS.ApplyService,SFA.DAS.Apply.GovSignIn"
     },
     "resources": [
         {

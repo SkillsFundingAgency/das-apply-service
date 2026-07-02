@@ -1,7 +1,7 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Roatp
@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public async Task<bool> Handle(ChangeProviderRouteRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Changing ProviderRoute to {request.ProviderRoute} for Application ID {request.ApplicationId}");
+            _logger.LogInformation("Changing ProviderRoute to {ProviderRoute} for Application ID {ApplicationId}", request.ProviderRoute, request.ApplicationId);
 
             return await _repository.ChangeProviderRoute(request.ApplicationId, request.ProviderRoute, request.ProviderRouteName);
         }

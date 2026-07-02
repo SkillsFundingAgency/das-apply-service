@@ -1,4 +1,4 @@
-﻿using AngleSharp.Parser.Html;
+﻿using AngleSharp.Html.Parser;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -61,7 +61,7 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests
             var response = await _client.GetAsync("/");
 
             var parser = new HtmlParser();
-            var document = await parser.ParseAsync(await response.Content.ReadAsStringAsync());
+            var document = parser.ParseDocument(await response.Content.ReadAsStringAsync());
             document.Title.Should().Be("Apprenticeship provider and assessment register service");
         }
     }

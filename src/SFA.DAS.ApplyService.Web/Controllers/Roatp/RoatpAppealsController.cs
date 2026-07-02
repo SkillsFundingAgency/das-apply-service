@@ -1,17 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Web.Infrastructure;
-using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
-using SFA.DAS.ApplyService.Types;
-using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
 using SFA.DAS.ApplyService.Configuration;
-using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.EmailService.Interfaces;
+using SFA.DAS.ApplyService.Types;
+using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp.Appeals;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -60,7 +60,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             if (!success)
             {
-                _logger.LogError($"Unable to request reapplication: {applicationId}");
+                _logger.LogError("Unable to request reapplication: {ApplicationId}", applicationId);
                 return RedirectToAction("ProcessApplicationStatus", "RoatpOverallOutcome", new { applicationId });
             }
 
@@ -74,11 +74,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             };
 
             await _emailService.SendRequestToReapplyEmail(emailRequest);
-            return RedirectToAction("RequestNewInvitationRefresh", "RoatpAppeals", new {applicationId });
+            return RedirectToAction("RequestNewInvitationRefresh", "RoatpAppeals", new { applicationId });
 
         }
 
-        [HttpGet] 
+        [HttpGet]
         [Authorize(Policy = null)]
         [Route("application/{applicationId}/request-new-invitation")]
         public IActionResult RequestNewInvitationRefresh(Guid applicationId)

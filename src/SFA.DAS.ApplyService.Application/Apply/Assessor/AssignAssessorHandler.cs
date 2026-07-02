@@ -1,12 +1,12 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class AssignAssessorHandler : IRequestHandler<AssignAssessorRequest>
+    public class AssignAssessorHandler : IRequestHandler<AssignAssessorRequest, Unit>
     {
         private readonly IAssessorRepository _assessorRepository;
         private readonly ILogger<AssignAssessorHandler> _logger;
@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 
         public async Task<Unit> Handle(AssignAssessorRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Assigning assessor for application {request.ApplicationId}");
+            _logger.LogInformation("Assigning assessor for application {ApplicationId}", request.ApplicationId);
 
             if (request.AssessorNumber == 1)
             {
@@ -29,7 +29,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
             {
                 await _assessorRepository.AssignAssessor2(request.ApplicationId, request.AssessorUserId, request.AssessorName);
             }
-
             return Unit.Value;
         }
     }

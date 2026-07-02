@@ -12,7 +12,7 @@ using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 {
-    public class RecordOversightGatewayFailOutcomeCommandHandler : IRequestHandler<RecordOversightGatewayFailOutcomeCommand>
+    public class RecordOversightGatewayFailOutcomeCommandHandler : IRequestHandler<RecordOversightGatewayFailOutcomeCommand, Unit>
     {
         private readonly IApplicationRepository _applyRepository;
         private readonly IOversightReviewRepository _oversightReviewRepository;
@@ -35,7 +35,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
         public async Task<Unit> Handle(RecordOversightGatewayFailOutcomeCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Recording Oversight review status of Unsuccessful for gateway fail application Id {request.ApplicationId}");
+            _logger.LogInformation("Recording Oversight review status of Unsuccessful for gateway fail application Id {ApplicationId}", request.ApplicationId);
 
             var application = await _applyRepository.GetApplication(request.ApplicationId);
 

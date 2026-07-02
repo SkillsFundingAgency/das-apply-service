@@ -1,8 +1,8 @@
-﻿using MediatR;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Apply.Moderator;
-using System.Threading;
-using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Moderator
@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 
         public async Task<ModeratorPageReviewOutcome> Handle(GetModeratorPageReviewOutcomeRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"GetModeratorPageReviewOutcome for ApplicationId '{request.ApplicationId}' - PageId '{request.PageId}'");
+            _logger.LogInformation("GetModeratorPageReviewOutcome for ApplicationId '{ApplicationId}' - PageId '{PageId}'", request.ApplicationId, request.PageId);
 
             var pagePageReviewOutcome = await _repository.GetModeratorPageReviewOutcome(request.ApplicationId,
                                                         request.SequenceNumber,

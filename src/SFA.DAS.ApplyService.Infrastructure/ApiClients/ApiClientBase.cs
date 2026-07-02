@@ -1,12 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Infrastructure.Firewall;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Infrastructure.Exceptions;
+using SFA.DAS.ApplyService.Infrastructure.Firewall;
 
 namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
 {
@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
     {
         private const string _acceptHeaderName = "Accept";
         protected const string _contentType = "application/json";
-        
+
         protected readonly HttpClient _httpClient;
         protected readonly ILogger<AC> _logger;
 
@@ -55,7 +55,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Get} - {uri}");
+                _logger.LogError(ex, "Error when processing request: {HttpMethod} - {Uri}", HttpMethod.Get, uri);
                 throw;
             }
         }
@@ -72,14 +72,14 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
             {
                 using (var response = await _httpClient.GetAsync(new Uri(uri, UriKind.Relative)))
                 {
-                    await LogErrorIfUnsuccessfulResponse(response); 
+                    await LogErrorIfUnsuccessfulResponse(response);
                     ThrowExceptionIfUnsuccessfulResponse(response);
                     return await response.Content.ReadAsAsync<string>();
                 }
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Get} - {uri}");
+                _logger.LogError(ex, "Error when processing request: {HttpMethod} - {Uri}", HttpMethod.Get, uri);
                 throw;
             }
         }
@@ -102,7 +102,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Get} - {uri}");
+                _logger.LogError(ex, "Error when processing request: {HttpMethod} - {Uri}", HttpMethod.Get, uri);
                 throw;
             }
         }
@@ -129,7 +129,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Post} - {uri}");
+                _logger.LogError(ex, "Error when processing request: {HttpMethod} - {Uri}", HttpMethod.Post, uri);
                 throw;
             }
         }
@@ -158,7 +158,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Post} - {uri}");
+                _logger.LogError(ex, "Error when processing request: {HttpMethod} - {Uri}", HttpMethod.Post, uri);
                 throw;
             }
         }
@@ -185,7 +185,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Put} - {uri}");
+                _logger.LogError(ex, "Error when processing request: {HttpMethod} - {Uri}", HttpMethod.Put, uri);
                 throw;
             }
         }
@@ -214,7 +214,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Put} - {uri}");
+                _logger.LogError(ex, "Error when processing request: {HttpMethod} - {Uri}", HttpMethod.Put, uri);
                 throw;
             }
         }
@@ -237,7 +237,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Delete} - {uri}");
+                _logger.LogError(ex, "Error when processing request: {HttpMethod} - {Uri}", HttpMethod.Delete, uri);
                 throw;
             }
         }
@@ -254,7 +254,7 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var message = TryParseJson<ApiError>(responseContent, out var apiError) ? apiError?.Message : responseContent;
 
-                _logger.LogError($"HTTP {statusCode} {reasonPhrase} || {httpMethod}: {requestUri} || Message: {message}");
+                _logger.LogError("HTTP {StatusCode} {ReasonPhrase} || {HttpMethod}: {RequestUri} || Message: {Message}", statusCode, reasonPhrase, httpMethod, requestUri, message);
             }
         }
 

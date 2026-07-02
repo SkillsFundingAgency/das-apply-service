@@ -1,7 +1,7 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions
@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions
 
         public async Task<bool> Handle(RemoveApplicationRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Performing Remove Application action for ApplicationId: {request.ApplicationId}");
+            _logger.LogInformation("Performing Remove Application action for ApplicationId: '{ApplicationId}'", request.ApplicationId);
 
             return await _repository.RemoveApplication(request.ApplicationId, request.Comments, request.ExternalComments, request.UserId, request.UserName);
         }

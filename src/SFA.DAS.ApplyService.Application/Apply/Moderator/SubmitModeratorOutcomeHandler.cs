@@ -39,10 +39,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 
             applyData.ModeratorReviewDetails = moderatorReviewDetails;
 
-            _logger.LogInformation($"submitting moderator outcome for ApplicationId: {request.ApplicationId}");
+            _logger.LogInformation("submitting moderator outcome for ApplicationId: {ApplicationId}", request.ApplicationId);
 
-            var tasks = new List<Task<bool>>() 
-            { 
+            var tasks = new List<Task<bool>>()
+            {
                 _moderatorRepository.UpdateUserForAutoModerationOutcomes(request.ApplicationId, request.UserId, request.UserName),
                 _moderatorRepository.UpdateModerationStatus(request.ApplicationId, applyData, request.Status, request.UserId)
             };

@@ -1,14 +1,14 @@
-﻿using MediatR;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Audit;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.Types;
-using System.Threading;
-using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 using SFA.DAS.ApplyService.EmailService.Interfaces;
-using System;
+using SFA.DAS.ApplyService.Types;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions
 {
@@ -31,7 +31,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions
 
         public async Task<bool> Handle(WithdrawApplicationCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Performing Withdraw Application action for ApplicationId: {request.ApplicationId}");
+            _logger.LogInformation("Performing Withdraw Application action for ApplicationId: {ApplicationId}", request.ApplicationId);
 
             var oversightReview = new OversightReview
             {
@@ -53,7 +53,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway.ApplicationActions
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Unable to send withdraw confirmation email for application: {request.ApplicationId}");
+                _logger.LogError(ex, "Unable to send withdraw confirmation email for application: {ApplicationId}", request.ApplicationId);
             }
 
             _auditService.StartTracking(UserAction.WithdrawApplication, request.UserId, request.UserName);

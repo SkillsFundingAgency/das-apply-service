@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -9,7 +8,7 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 {
-    public class CreateEmptyModeratorReviewHandler : IRequestHandler<CreateEmptyModeratorReviewRequest>
+    public class CreateEmptyModeratorReviewHandler : IRequestHandler<CreateEmptyModeratorReviewRequest, Unit>
     {
         private readonly ILogger<CreateEmptyModeratorReviewHandler> _logger;
         private readonly IApplyRepository _applyRepository;
@@ -25,7 +24,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 
         public async Task<Unit> Handle(CreateEmptyModeratorReviewRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"CreateEmptyModeratorReview for ApplicationId '{request.ApplicationId}'");
+            _logger.LogInformation("CreateEmptyModeratorReview for ApplicationId '{ApplicationId}'", request.ApplicationId);
             await _moderatorRepository.CreateEmptyModeratorReview(request.ApplicationId, request.ModeratorUserId, request.ModeratorUserName, request.PageReviewOutcomes);
 
             // APR-1945 - Show details of last person to do Moderation (in this case it's empty as no-one has started it yet)

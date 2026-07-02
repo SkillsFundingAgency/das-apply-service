@@ -5,7 +5,7 @@ using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class CreateEmptyAssessorReviewRequest : IRequest
+    public class CreateEmptyAssessorReviewRequest : IRequest<Unit>
     {
         public Guid ApplicationId { get; }
         public string AssessorUserId { get; }

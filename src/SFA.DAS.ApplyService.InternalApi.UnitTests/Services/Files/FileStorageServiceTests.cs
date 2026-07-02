@@ -72,8 +72,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Files
         {
             var result = await _fileStorageService.GetApplicationFileList(_applicationId, _containerType, new CancellationToken());
 
-            CollectionAssert.IsNotEmpty(result);
-            CollectionAssert.Contains(result.Select(f => f.FileName), _fileName);
+            Assert.That(result, Is.Not.Empty);
+            Assert.That(result.Select(f => f.FileName), Contains.Item(_fileName));
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Files
             var applicationThatDoesNotExist = Guid.NewGuid();
             var result = await _fileStorageService.GetApplicationFileList(applicationThatDoesNotExist, _containerType, new CancellationToken());
 
-            CollectionAssert.IsEmpty(result);
+            Assert.That(result, Is.Empty);
         }
 
         [Test]
@@ -90,8 +90,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Files
         {
             var result = await _fileStorageService.GetFileList(_applicationId, _sequenceNumber, _sectionNumber, _pageId, _containerType, new CancellationToken());
 
-            CollectionAssert.IsNotEmpty(result);
-            CollectionAssert.Contains(result.Select(f => f.FileName), _fileName);
+            Assert.That(result, Is.Not.Empty);
+            Assert.That(result.Select(f => f.FileName), Contains.Item(_fileName));
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Files
             var nameOfPageThatDoesNotExist = $"{Guid.NewGuid()}";
             var result = await _fileStorageService.GetFileList(_applicationId, _sequenceNumber, _sectionNumber, nameOfPageThatDoesNotExist, _containerType, new CancellationToken());
 
-            CollectionAssert.IsEmpty(result);
+            Assert.That(result, Is.Empty);
         }
         #endregion
 
@@ -225,7 +225,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Files
             var result = await _fileStorageService.DownloadApplicationFile(_applicationId, _fileName, _containerType, new CancellationToken()); ;
 
             Assert.IsNotNull(result);
-            StringAssert.AreEqualIgnoringCase(_fileName, result.FileName);
+            Assert.That(result.FileName, Is.EqualTo(_fileName).IgnoreCase);
         }
 
         [Test]
@@ -234,7 +234,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Files
             var result = await _fileStorageService.DownloadFile(_applicationId, _sequenceNumber, _sectionNumber, _pageId, _fileName, _containerType, new CancellationToken()); ;
 
             Assert.IsNotNull(result);
-            StringAssert.AreEqualIgnoringCase(_fileName, result.FileName);
+            Assert.That(result.FileName, Is.EqualTo(_fileName).IgnoreCase);
         }
 
         [Test]
@@ -279,8 +279,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Files
             var result = await _fileStorageService.DownloadApplicationFiles(_applicationId, _containerType, new CancellationToken());
 
             Assert.IsNotNull(result);
-            StringAssert.EndsWith(".zip", result.FileName);
-            StringAssert.AreEqualIgnoringCase("application/zip", result.ContentType);
+            Assert.That(result.FileName, Does.EndWith(".zip"));
+            Assert.That(result.ContentType, Is.EqualTo("application/zip").IgnoreCase);
         }
 
         [Test]
@@ -289,8 +289,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Files
             var result = await _fileStorageService.DownloadFiles(_applicationId, _sequenceNumber, _sectionNumber, _pageId, _containerType, new CancellationToken());
 
             Assert.IsNotNull(result);
-            StringAssert.EndsWith(".zip", result.FileName);
-            StringAssert.AreEqualIgnoringCase("application/zip", result.ContentType);
+            Assert.That(result.FileName, Does.EndWith(".zip"));
+            Assert.That(result.ContentType, Is.EqualTo("application/zip").IgnoreCase);
         }
 
         [Test]

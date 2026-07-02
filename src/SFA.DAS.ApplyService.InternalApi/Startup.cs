@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -15,7 +14,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.OpenApi.Models;
 using Refit;
 using SFA.DAS.Api.Common.Infrastructure;
@@ -40,6 +38,7 @@ using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.Infrastructure.Database;
 using SFA.DAS.ApplyService.InternalApi.Authentication;
 using SFA.DAS.ApplyService.InternalApi.Authorization;
+using SFA.DAS.ApplyService.InternalApi.Extensions;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Services;
@@ -105,11 +104,14 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddLogging(builder =>
             {
-                builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
-                builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
+                builder.AddFilter(string.Empty, LogLevel.Information);
+                builder.AddFilter("Microsoft", LogLevel.Information);
             });
 
-            services.AddApplicationInsightsTelemetry();
+            if (!_hostingEnvironment.IsDevelopment())
+            {
+                services.AddTelemetryRegistration((IConfigurationRoot)_configuration);
+            }
 
             services.AddOptions();
 
@@ -124,7 +126,11 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SFA.DAS.ApplyService.InternalApi", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "SFA.DAS.ApplyService.InternalApi",
+                    Version = "v1"
+                });
                 c.CustomSchemaIds(x => x.FullName); // Fixes issue when the same type name appears twice
             });
 
@@ -190,7 +196,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddRefitClient<IRoatpApiClient>()
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.Url))
-                .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(), _applyConfig.RoatpApiAuthentication.Identifier));
+                .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(_configuration), _applyConfig.RoatpApiAuthentication.Identifier));
 
             services.AddHttpClient<IInternalQnaApiClient, InternalQnaApiClient>(config =>
             {
@@ -262,7 +268,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddTransient<IFileStorageService, FileStorageService>();
 
-            services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateAccountHandler).Assembly));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
@@ -287,7 +293,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
                 var httpClient = string.IsNullOrWhiteSpace(apiConfiguration.ClientId)
                     ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(apiConfiguration)).Build()
-                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(apiConfiguration)).Build();
+                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureActiveDirectoryBearerTokenGenerator(apiConfiguration)).Build();
 
                 return new NotificationsApi(httpClient, apiConfiguration);
             });

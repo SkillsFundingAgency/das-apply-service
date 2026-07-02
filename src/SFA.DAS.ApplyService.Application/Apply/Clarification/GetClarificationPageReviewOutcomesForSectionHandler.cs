@@ -1,9 +1,9 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Domain.Apply.Clarification;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Clarification
@@ -21,8 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Clarification
 
         public async Task<List<ClarificationPageReviewOutcome>> Handle(GetClarificationPageReviewOutcomesForSectionRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"GetClarificationPageReviewOutcomesForSection for ApplicationId '{request.ApplicationId}' - " +
-                                                    $"SequenceNumber '{request.SequenceNumber}' - SectionNumber '{request.SectionNumber}'");
+            _logger.LogInformation("GetClarificationPageReviewOutcomesForSection for ApplicationId '{ApplicationId}' - SequenceNumber '{SequenceNumber}' - SectionNumber '{SectionNumber}'", request.ApplicationId, request.SequenceNumber, request.SectionNumber);
 
             var clarificationPageReviewOutcomes = await _repository.GetClarificationPageReviewOutcomesForSection(request.ApplicationId,
                                                         request.SequenceNumber,

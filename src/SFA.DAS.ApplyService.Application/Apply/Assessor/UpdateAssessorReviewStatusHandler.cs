@@ -1,12 +1,12 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class UpdateAssessorReviewStatusHandler : IRequestHandler<UpdateAssessorReviewStatusRequest>
+    public class UpdateAssessorReviewStatusHandler : IRequestHandler<UpdateAssessorReviewStatusRequest, Unit>
     {
         private readonly IAssessorRepository _repository;
         private readonly ILogger<UpdateAssessorReviewStatusHandler> _logger;
@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 
         public async Task<Unit> Handle(UpdateAssessorReviewStatusRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"UpdateAssessorReviewStatus for ApplicationId '{request.ApplicationId}' - Status '{request.Status}'");
+            _logger.LogInformation("UpdateAssessorReviewStatus for ApplicationId '{ApplicationId}' - Status '{Status}'", request.ApplicationId, request.Status);
 
             await _repository.UpdateAssessorReviewStatus(request.ApplicationId, request.UserId, request.Status);
 

@@ -141,7 +141,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
 
             Assert.That(actualPage, Is.Not.Null);
             Assert.That(actualPage.PageId, Is.EqualTo(managementHierarchyFinancialPage));
-            CollectionAssert.IsNotEmpty(actualPage.Questions);
+            Assert.That(actualPage.Questions, Is.Not.Empty);
         }
 
         [Test]

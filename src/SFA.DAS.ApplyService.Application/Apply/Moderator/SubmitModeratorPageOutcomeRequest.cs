@@ -1,9 +1,9 @@
-﻿using MediatR;
-using System;
+﻿using System;
+using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 {
-    public class SubmitModeratorPageOutcomeRequest : IRequest
+    public class SubmitModeratorPageOutcomeRequest : IRequest<Unit>
     {
         public SubmitModeratorPageOutcomeRequest(Guid applicationId,
                                                         int sequenceNumber,

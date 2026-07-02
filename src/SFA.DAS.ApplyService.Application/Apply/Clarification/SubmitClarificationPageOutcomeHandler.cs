@@ -1,12 +1,12 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Clarification
 {
-    public class SubmitClarificationPageOutcomeHandler : IRequestHandler<SubmitClarificationPageOutcomeRequest>
+    public class SubmitClarificationPageOutcomeHandler : IRequestHandler<SubmitClarificationPageOutcomeRequest, Unit>
     {
         private readonly IClarificationRepository _repository;
         private readonly ILogger<SubmitClarificationPageOutcomeHandler> _logger;
@@ -19,15 +19,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Clarification
 
         public async Task<Unit> Handle(SubmitClarificationPageOutcomeRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"SubmitClarificationPageOutcome for ApplicationId '{request.ApplicationId}' - PageId '{request.PageId}' - Status '{request.Status}'");
+            _logger.LogInformation("SubmitClarificationPageOutcome for ApplicationId '{ApplicationId}' - PageId '{PageId}' - Status '{Status}'", request.ApplicationId, request.PageId, request.Status);
 
-            await _repository.SubmitClarificationPageOutcome(request.ApplicationId, 
-                                                        request.SequenceNumber, 
-                                                        request.SectionNumber, 
-                                                        request.PageId,  
+            await _repository.SubmitClarificationPageOutcome(request.ApplicationId,
+                                                        request.SequenceNumber,
+                                                        request.SectionNumber,
+                                                        request.PageId,
                                                         request.UserId,
                                                         request.UserName,
-                                                        request.Status, 
+                                                        request.Status,
                                                         request.Comment,
                                                         request.ClarificationResponse,
                                                         request.ClarificationFile);

@@ -16,10 +16,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
             _applyRepository = applyRepository;
             _logger = logger;
         }
-        
+
         public async Task<bool> Handle(StartFinancialReviewRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Starting financial review for application {request.ApplicationId}");
+            _logger.LogInformation("Starting financial review for application '{ApplicationId}'", request.ApplicationId);
             return await _applyRepository.StartFinancialReview(request.ApplicationId, request.Reviewer);
         }
     }

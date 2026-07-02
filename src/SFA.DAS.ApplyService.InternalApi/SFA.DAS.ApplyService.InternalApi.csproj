@@ -2,7 +2,7 @@
 
     <PropertyGroup>
       <ProjectGuid>{42FEF463-18F2-4A9E-BED0-EB35069DEA40}</ProjectGuid>
-      <TargetFramework>net8.0</TargetFramework>
+      <TargetFramework>net10.0</TargetFramework>
     </PropertyGroup>
 
   <ItemGroup>
@@ -10,28 +10,27 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="7.0.1" />
-        <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
-        <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
-        <PackageReference Include="MediatR" Version="7.0.0" />
-        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="5.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
-        <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="7.0.14" />
+        <PackageReference Include="AutoMapper" Version="8.1.1" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.28.0" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
+        <PackageReference Include="MediatR" Version="12.5.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.8" />
         <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.2" />
-        <PackageReference Include="Microsoft.Extensions.Azure" Version="1.6.0" />
-        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.14" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
-        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.10" />
-        <PackageReference Include="Polly" Version="7.2.3" />
-        <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
-        <PackageReference Include="Refit" Version="8.0.0" />
-        <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
-        <PackageReference Include="SFA.DAS.Api.Common" Version="17.1.150" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-        <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.0" />
-        <PackageReference Include="System.ServiceModel.Http" Version="4.10.0" />
-        <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.0" />
-        <PackageReference Include="System.ServiceModel.Security" Version="4.10.0" />
+        <PackageReference Include="Microsoft.Extensions.Azure" Version="1.14.0" />
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.8" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
+        <PackageReference Include="Polly" Version="8.6.6" />
+		<PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.5.0" />
+        <PackageReference Include="Refit" Version="11.0.1" />
+        <PackageReference Include="Refit.HttpClientFactory" Version="11.0.1" />
+        <PackageReference Include="SFA.DAS.Api.Common" Version="17.1.165" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+		<PackageReference Include="System.ServiceModel.Duplex" Version="6.0.0" />
+        <PackageReference Include="System.ServiceModel.Http" Version="10.0.652802" />
+        <PackageReference Include="System.ServiceModel.NetTcp" Version="10.0.652802" />
+        <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
     </ItemGroup>
     
     <ItemGroup>

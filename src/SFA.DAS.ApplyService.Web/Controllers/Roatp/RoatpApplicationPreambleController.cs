@@ -1,14 +1,10 @@
-﻿using System.Diagnostics;
-using SFA.DAS.ApplyService.Web.Services;
+﻿using SFA.DAS.ApplyService.Web.Services;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
-    using SFA.DAS.ApplyService.Web.Infrastructure;
     using System.Threading.Tasks;
     using Domain.Apply;
     using Domain.CharityCommission;
@@ -17,17 +13,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     using Domain.Ukrlp;
     using global::AutoMapper;
     using InternalApi.Types.CharityCommission;
-    using Session;
-    using ViewModels.Roatp;
-    using Validators;
     using Microsoft.AspNetCore.Authorization;
-    using SFA.DAS.ApplyService.InternalApi.Types;
-    using SFA.DAS.ApplyService.Web.Resources;
-    using System.Collections.Generic;
-    using SFA.DAS.ApplyService.Domain.Entities;
-    using SFA.DAS.ApplyService.Application.Apply.Roatp;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using Session;
     using SFA.DAS.ApplyService.Application.Apply;
+    using SFA.DAS.ApplyService.Application.Apply.Roatp;
+    using SFA.DAS.ApplyService.Domain.Entities;
     using SFA.DAS.ApplyService.Infrastructure.ApiClients;
+    using SFA.DAS.ApplyService.InternalApi.Types;
+    using SFA.DAS.ApplyService.Web.Infrastructure;
+    using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
+    using SFA.DAS.ApplyService.Web.Resources;
+    using Validators;
+    using ViewModels.Roatp;
 
     [Authorize]
     public class RoatpApplicationPreambleController : RoatpApplyControllerBase
@@ -53,7 +52,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                                                   IUsersApiClient usersApiClient,
                                                   IApplicationApiClient applicationApiClient,
                                                   IQnaApiClient qnaApiClient,
-                                                  IAllowedUkprnValidator ukprnWhitelistValidator, 
+                                                  IAllowedUkprnValidator ukprnWhitelistValidator,
                                                   IResetRouteQuestionsService resetRouteQuestionsService, IReapplicationCheckService reapplicationCheckService)
             : base(sessionService)
         {
@@ -133,7 +132,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
             else
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId}, "Sequence_1" );
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId }, "Sequence_1");
             }
         }
 
@@ -511,13 +510,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         return RedirectToAction("CharityNotFound", "RoatpShutterPages");
                     }
 
-                    try 
-                    { 
+                    try
+                    {
                         charityDetails = await _outerApiClient.GetCharityDetails(charityNumber);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
-                        _logger.LogError(ex, "Error fetching charity details for charity number `{charityNumber}`", charityNumber);
+                        _logger.LogError(ex, "Error fetching charity details for charity number `{CharityNumber}`", charityNumber);
                         return RedirectToAction("CharityCommissionNotAvailable", "RoatpShutterPages");
                     }
 
@@ -609,7 +608,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
             else
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId});
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
             }
         }
 
@@ -618,7 +617,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> ChangeApplicationProviderRoute(Guid applicationId)
         {
             var model = new SelectApplicationRouteViewModel { ApplicationId = applicationId };
-            
+
             model.ApplicationRoutes = await GetApplicationRoutes();
             var applicationRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
             model.ApplicationRouteId = Convert.ToInt32(applicationRoute.Value);
@@ -634,7 +633,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             return await UpdateProviderRoute(model);
         }
-        
+
         private async Task<IActionResult> UpdateProviderRoute(SelectApplicationRouteViewModel model)
         {
             if (model.ApplicationRouteId == ApplicationRoute.EmployerProviderApplicationRoute && model.LevyPayingEmployer != "Y")
@@ -791,9 +790,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 return RedirectToAction("ConditionsOfAcceptance", new { applicationRouteId = applicationDetails?.RoatpRegisterStatus?.ProviderTypeId.Value });
             }
-            
-                return RedirectToAction("SelectApplicationRoute");
-            
+
+            return RedirectToAction("SelectApplicationRoute");
+
         }
 
         [Route("chosen-stay-on-roatp")]
@@ -843,7 +842,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         private async Task<List<ApplicationRoute>> GetApplicationRoutes()
         {
-            return  (await _roatpApiClient.GetApplicationRoutes()).ToList();
+            return (await _roatpApiClient.GetApplicationRoutes()).ToList();
 
         }
     }

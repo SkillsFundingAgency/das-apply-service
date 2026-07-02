@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 {
-    public class UpdateApplicationStatusHandler : RequestHandler<UpdateApplicationStatusRequest, bool>
+    public class UpdateApplicationStatusHandler : IRequestHandler<UpdateApplicationStatusRequest, bool>
     {
         private ILogger<UpdateApplicationStatusHandler> _logger;
         private readonly IApplyRepository _repository;
@@ -16,17 +18,17 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             _repository = repository;
         }
 
-        protected override bool Handle(UpdateApplicationStatusRequest request)
+        public async Task<bool> Handle(UpdateApplicationStatusRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Updating application status to {request.ApplicationStatus} for application ID {request.ApplicationId}");
+            _logger.LogInformation("Updating application status to {ApplicationStatus} for application ID {ApplicationId}", request.ApplicationStatus, request.ApplicationId);
 
             try
             {
-                _repository.UpdateApplicationStatus(request.ApplicationId, request.ApplicationStatus, request.UserId);
+                await _repository.UpdateApplicationStatus(request.ApplicationId, request.ApplicationStatus, request.UserId);
             }
             catch (Exception updateException)
             {
-                _logger.LogError($"Updating application status failed for application ID {request.ApplicationId}", updateException);
+                _logger.LogError(updateException, "Updating application status failed for application ID {ApplicationId}", request.ApplicationId);
             }
 
             return true;

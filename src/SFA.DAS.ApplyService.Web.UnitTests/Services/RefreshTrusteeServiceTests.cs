@@ -21,11 +21,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
     [TestFixture]
     public class RefreshTrusteeServiceTests
     {
-        private  Mock<IQnaApiClient> _qnaApiClient;
-        private  Mock<IOuterApiClient> _outerApiClient;
-        private  Mock<IOrganisationApiClient> _organisationApiClient;
-        private  Mock<IApplicationApiClient> _applicationApiClient;
-        private  Mock<ILogger<RefreshTrusteesService>> _logger;
+        private Mock<IQnaApiClient> _qnaApiClient;
+        private Mock<IOuterApiClient> _outerApiClient;
+        private Mock<IOrganisationApiClient> _organisationApiClient;
+        private Mock<IApplicationApiClient> _applicationApiClient;
+        private Mock<ILogger<RefreshTrusteesService>> _logger;
         private RefreshTrusteesService _service;
         private Guid _applicationId;
         private Guid _userId;
@@ -43,7 +43,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             Mapper.Reset();
 
-            Mapper.Initialize(cfg => { cfg.AddProfile<CharityCommissionProfile>(); });
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile<CharityCommissionProfile>();
+                cfg.AddProfile<CharityTrusteeProfile>();
+            });
 
             _service = new RefreshTrusteesService(_qnaApiClient.Object,
                 _outerApiClient.Object,
@@ -53,7 +57,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             );
         }
 
-        [TestCase(null, "12345678", "registered", "In Progress",false, false)] 
+        [TestCase(null, "12345678", "registered", "In Progress", false, false)]
         [TestCase(87654321, null, "registered", "In Progress", false, false)]
         [TestCase(87654321, "12345678", "not registered", "In Progress", false, false)]
         [TestCase(87654321, "12345678", "registered", "New", false, false)]
@@ -61,24 +65,23 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         [TestCase(87654321, "12345678", "registered", "In Progress", true, false)]
         [TestCase(87654321, "12345678", "registered", "In Progress", false, true)]
         public async Task RefreshTrustees_InvalidScenarios_ReturnsUnsuccessfulResponse(int? ukprn, string charityNumber, string charityStatus, string applicationStatus, bool setCharityDetailsToNull, bool setTrusteesToEmpty)
-        { 
+        {
             var organisation = new Organisation { OrganisationUkprn = ukprn };
 
             if (int.TryParse(charityNumber, out var charityNumberValue))
             {
-                organisation.OrganisationDetails = new OrganisationDetails { CharityNumber = charityNumber, CharityCommissionDetails = new CharityCommissionDetails()};
+                organisation.OrganisationDetails = new OrganisationDetails { CharityNumber = charityNumber, CharityCommissionDetails = new CharityCommissionDetails() };
             }
-          
+
             _organisationApiClient.Setup(x => x.GetByApplicationId(_applicationId)).ReturnsAsync(organisation);
 
             var listOfTrustees = new List<Trustee>
             {
-                new Trustee
-                {
+                new() {
                     Id = 1234,
                     Name = "Mr A Trustee"
                 },
-                new Trustee
+                new()
                 {
                     Id = 1235,
                     Name = "Mr B Trustee"
@@ -98,7 +101,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             {
                 if (setTrusteesToEmpty)
                 {
-                    charity.Trustees = new List<Trustee>();
+                    charity.Trustees = [];
                 }
             }
 
@@ -109,7 +112,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(new Apply { ApplicationStatus = applicationStatus });
             _outerApiClient.Setup(x => x.GetCharityDetails(charityNumberValue)).ReturnsAsync(charity).Verifiable();
 
-            var updateResponse = new SetPageAnswersResponse {ValidationPassed = true};  
+            var updateResponse = new SetPageAnswersResponse { ValidationPassed = true };
             _qnaApiClient.Setup(x => x.UpdatePageAnswers(_applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, It.IsAny<string>(), It.IsAny<List<Answer>>())).ReturnsAsync(updateResponse);
 
             var result = await _service.RefreshTrustees(_applicationId, _userId);
@@ -124,13 +127,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionTrusteesDob), Times.Never);
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySection(_applicationId, RoatpWorkflowSequenceIds.CriminalComplianceChecks, RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl), Times.Never);
         }
-        
+
         [Test]
         public async Task RefreshTrustees_OnSuccess_ReturnsCharityNumber()
         {
             const int ukprn = 12345678;
             const string charityNumber = "87654321";
-            
+
             var organisation = new Organisation { OrganisationUkprn = ukprn };
 
             if (int.TryParse(charityNumber, out var charityNumberValue))
@@ -142,13 +145,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             var listOfTrustees = new List<Trustee>
             {
-                new Trustee
-                {
+                new() {
                     Id = 1234,
                     Name = "Mr A Trustee"
                 },
-                new Trustee
-                {
+                new() {
                     Id = 1235,
                     Name = "Mr B Trustee"
                 }
@@ -166,7 +167,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             _organisationApiClient.Setup(x => x.UpdateTrustees(ukprn.ToString(), listOfTrustees, It.IsAny<Guid>())).ReturnsAsync(true);
 
-            _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(new Apply { ApplicationStatus = ApplicationStatus.InProgress});
+            _applicationApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(new Apply { ApplicationStatus = ApplicationStatus.InProgress });
             _outerApiClient.Setup(x => x.GetCharityDetails(charityNumberValue)).ReturnsAsync(charity).Verifiable();
 
             var updateResponse = new SetPageAnswersResponse { ValidationPassed = true };
@@ -202,12 +203,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             var listOfTrustees = new List<Trustee>
             {
-                new Trustee
+                new()
                 {
                     Id = 1234,
                     Name = "Mr A Trustee"
                 },
-                new Trustee
+                new()
                 {
                     Id = 1235,
                     Name = "Mr B Trustee"
@@ -254,13 +255,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             var listOfTrustees = new List<Trustee>
             {
-                new Trustee
-                {
+                new() {
                     Id = 1234,
                     Name = "Mr A Trustee"
                 },
-                new Trustee
-                {
+                new() {
                     Id = 1235,
                     Name = "Mr B Trustee"
                 }

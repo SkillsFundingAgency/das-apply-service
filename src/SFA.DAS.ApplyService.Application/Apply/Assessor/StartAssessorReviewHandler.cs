@@ -1,7 +1,7 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 
         public async Task<bool> Handle(StartAssessorReviewRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Starting assessor review for application {request.ApplicationId}");
+            _logger.LogInformation("Starting assessor review for application {ApplicationId}", request.ApplicationId);
             return await _applyRepository.StartAssessorReview(request.ApplicationId, request.Reviewer);
         }
     }

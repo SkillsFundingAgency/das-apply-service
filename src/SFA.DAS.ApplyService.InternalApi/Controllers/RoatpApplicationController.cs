@@ -73,7 +73,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     TimeSpan.FromSeconds(4)
                 }, (exception, timeSpan, retryCount, context) =>
                 {
-                    _logger.LogWarning($"Error retrieving response from RoATP API. Reason: {exception.Message}. Retrying in {timeSpan.Seconds} secs...attempt: {retryCount}");
+                    _logger.LogWarning("Error retrieving response from RoATP API. Reason: {Message}. Retrying in {Seconds} secs...attempt: {RetryCount}", exception.Message, timeSpan.Seconds, retryCount);
                 });
         }
     }

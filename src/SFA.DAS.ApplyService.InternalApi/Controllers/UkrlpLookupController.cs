@@ -39,7 +39,7 @@
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unable to retrieve results from UKRLP", ex);
+                _logger.LogError(ex, "Unable to retrieve results from UKRLP for UKPRN: {Ukprn}", ukprn);
                 providerData = new UkprnLookupResponse
                 {
                     Success = false,
@@ -60,7 +60,7 @@
                     TimeSpan.FromSeconds(4)
                 }, (exception, timeSpan, retryCount, context) =>
                 {
-                    _logger.LogWarning($"Error retrieving response from UKRLP. Reason: {exception.Message}. Retrying in {timeSpan.Seconds} secs...attempt: {retryCount}");
+                    _logger.LogWarning("Error retrieving response from UKRLP. Reason: {ExceptionMessage}. Retrying in {RetryTime} secs...attempt: {RetryCount}", exception.Message, timeSpan.Seconds, retryCount);
                 });
         }
     }

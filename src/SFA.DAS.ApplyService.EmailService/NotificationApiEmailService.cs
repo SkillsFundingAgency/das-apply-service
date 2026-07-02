@@ -42,11 +42,11 @@ namespace SFA.DAS.ApplyService.EmailService
             }
             else if (emailTemplate is null)
             {
-                _logger.LogError($"Cannot find email template: {templateName}");
+                _logger.LogError("Cannot find email template: {TemplateName}", templateName);
             }
             else
             {
-                _logger.LogError($"Cannot send email template: {templateName} to: '{toAddress}'");
+                _logger.LogError("Cannot send email template: {TemplateName} to: '{ToAddress}'", templateName, toAddress);
             }
         }
 
@@ -87,12 +87,12 @@ namespace SFA.DAS.ApplyService.EmailService
                     Tokens = personalisationTokens
                 };
 
-                _logger.LogInformation($"Sending {emailTemplate.TemplateName} email ({emailTemplate.TemplateId}) to: '{toAddress}'");
+                _logger.LogInformation("Sending {TemplateName} email ({TemplateId}) to: '{ToAddress}'", emailTemplate.TemplateName, emailTemplate.TemplateId, toAddress);
                 await _notificationsApi.SendEmail(email);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error sending {emailTemplate.TemplateName} email ({emailTemplate.TemplateId}) to: '{toAddress}'");
+                _logger.LogError(ex, "Error sending {TemplateName} email ({TemplateId}) to: '{ToAddress}'", emailTemplate.TemplateName, emailTemplate.TemplateId, toAddress);
             }
         }
     }

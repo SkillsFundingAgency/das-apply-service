@@ -69,7 +69,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             var actualResult = await _controller.GetClarificationOverview(_applicationId);
 
             _sequenceService.Verify(x => x.GetSequences(_applicationId), Times.Once);
-            CollectionAssert.AreEqual(expectedResult, actualResult);
+            Assert.That(actualResult, Is.EqualTo(expectedResult));
         }
 
         [Test]
@@ -185,7 +185,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             var actualResult = await _controller.GetSectors(_applicationId, request);
 
             _sectorService.Verify(x => x.GetSectorsForClarification(_applicationId, _userId), Times.Once);
-            CollectionAssert.AreEqual(actualResult, expectedResult);
+            Assert.That(actualResult, Is.EqualTo(expectedResult));
         }
 
         [Test]

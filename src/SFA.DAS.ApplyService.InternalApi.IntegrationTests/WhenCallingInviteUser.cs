@@ -1,4 +1,8 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -7,10 +11,6 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Interfaces;
-using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
 {
@@ -26,12 +26,12 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
             var configurationService = new Mock<IConfigurationService>();
             var contactRepository = new Mock<IContactRepository>();
             contactRepository.Setup(r => r.CreateContact("email@email.com", "Fred", "Jones", null, null))
-                .ReturnsAsync(new Contact() {Id = Guid.NewGuid()});
-                
+                .ReturnsAsync(new Contact() { Id = Guid.NewGuid() });
+
             var dfeSignInService = new Mock<IDfeSignInService>();
             dfeSignInService.Setup(s => s.InviteUser("email@email.com", "Fred", "Jones", It.IsAny<Guid>()))
-                .ReturnsAsync(new InviteUserResponse() {IsSuccess = true});
-            
+                .ReturnsAsync(new InviteUserResponse() { IsSuccess = true });
+
             var factory = new WebApplicationFactory<Startup>();
 
             _client = factory.WithWebHostBuilder(builder =>
@@ -42,16 +42,16 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
                     services.AddTransient(p => contactRepository.Object);
                     services.AddTransient(p => dfeSignInService.Object);
                 });
-            }).CreateClient(new WebApplicationFactoryClientOptions() {AllowAutoRedirect = false});
+            }).CreateClient(new WebApplicationFactoryClientOptions() { AllowAutoRedirect = false });
         }
-        
+
         [Ignore("Potentially obsolete")]
         [Test]
         public async Task ThenOkIsReturned()
         {
-            var response = await _client.PostAsJsonAsync("/Account/", 
-                new {Email = "email@email.com", GivenName = "Fred", FamilyName = "Jones"});
-            
+            var response = await _client.PostAsJsonAsync("/Account/",
+                new { Email = "email@email.com", GivenName = "Fred", FamilyName = "Jones" });
+
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
     }

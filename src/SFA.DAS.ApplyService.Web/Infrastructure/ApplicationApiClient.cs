@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Start;
@@ -52,7 +52,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<Apply> GetApplicationByUserId(Guid applicationId, Guid signinId)
         {
-            return await Get<Domain.Entities.Apply>($"Application/{applicationId}/Contact/{ signinId}");
+            return await Get<Domain.Entities.Apply>($"Application/{applicationId}/Contact/{signinId}");
         }
 
         public async Task<List<Apply>> GetApplicationsByUkprn(string ukprn)
@@ -129,14 +129,14 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             var formDataContent = new MultipartFormDataContent();
 
             var fileContent = new StreamContent(file.OpenReadStream())
-                {Headers = {ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType)}};
+            { Headers = { ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType) } };
             formDataContent.Add(fileContent, file.Name, file.FileName);
 
-            _logger.LogInformation($"API ImportWorkflow > Added content {file.FileName}");
+            _logger.LogInformation("API ImportWorkflow > Added content {FileName}", file.FileName);
 
             await _httpClient.PostAsync($"/Import/Workflow", formDataContent);
 
-            _logger.LogInformation($"API ImportWorkflow > After post to Internal API");
+            _logger.LogInformation("API ImportWorkflow > After post to Internal API");
         }
 
         public async Task<List<Option>> GetQuestionDataFedOptions(string dataEndpoint)

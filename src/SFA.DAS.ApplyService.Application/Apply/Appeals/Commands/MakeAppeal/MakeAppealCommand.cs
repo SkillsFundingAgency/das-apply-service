@@ -3,8 +3,8 @@ using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Appeals.Commands.MakeAppeal
 {
-    public class MakeAppealCommand : IRequest
-	{
+    public class MakeAppealCommand : IRequest<Unit>
+    {
         public Guid ApplicationId { get; set; }
         public string HowFailedOnPolicyOrProcesses { get; set; }
         public string HowFailedOnEvidenceSubmitted { get; set; }

@@ -47,7 +47,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.AllowedProvidersLi
         {
             var result = await _handler.Handle(new GetAllowedProvidersListRequest(SORT_COLUMN, SORT_ORDER), new CancellationToken());
 
-            CollectionAssert.AreEquivalent(_allowedProviderList, result);
+            Assert.That(result, Is.EquivalentTo(_allowedProviderList));
         }
     }
 }

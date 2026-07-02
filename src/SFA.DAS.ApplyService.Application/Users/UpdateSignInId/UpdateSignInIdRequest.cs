@@ -3,7 +3,7 @@ using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Users.UpdateSignInId
 {
-    public class UpdateSignInIdRequest : IRequest
+    public class UpdateSignInIdRequest : IRequest<Unit>
     {
         public Guid SignInId { get; }
         public Guid ContactId { get; }

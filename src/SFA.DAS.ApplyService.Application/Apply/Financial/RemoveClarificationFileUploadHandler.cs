@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
 
         public async Task<bool> Handle(RemoveClarificationFileUploadRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Removing clarification file [{request.FileName}] for application ID {request.ApplicationId}");
+            _logger.LogInformation("Removing clarification file '{FileName}' for application ID '{ApplicationId}'", request.FileName, request.ApplicationId);
             return await _applyRepository.RemoveFinancialReviewClarificationFile(request.ApplicationId, request.FileName);
         }
     }

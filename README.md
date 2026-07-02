@@ -1,57 +1,94 @@
 # ![crest](https://assets.publishing.service.gov.uk/government/assets/crests/org_crest_27px-916806dcf065e7273830577de490d5c7c42f36ddec83e907efe62086785f24fb.png) Digital Apprenticeships Service
 
-##  RoATP Apply Service 
-This incorporates the web front end (SFA.DAS.ApplyService.Web) and the api that services it (SFA.DAS.ApplyService.InternalApi)
-Licensed under the [MIT license](https://github.com/SkillsFundingAgency/das-apply-service/blob/master/LICENSE)
+## RoATP Apply Service
+<img src="https://avatars.githubusercontent.com/u/9841374?s=200&v=4" align="right" alt="UK Government logo">
 
-|               |               |
-| ------------- | ------------- |
-|![crest](https://assets.publishing.service.gov.uk/government/assets/crests/org_crest_27px-916806dcf065e7273830577de490d5c7c42f36ddec83e907efe62086785f24fb.png)|RoATP Apply Service|
-| Info | A service which allows an 'approved' Training Provider (ATP) to register (on RoATP). |
-| Build |![Build Status](https://sfa-gov-uk.visualstudio.com/_apis/public/build/definitions/c39e0c0b-7aff-4606-b160-3566f3bbce23/831/badge) |
-| Web | https://localhost:6016/ |
+[![Build Status](https://dev.azure.com/sfa-gov-uk/Digital%20Apprenticeship%20Service/_apis/build/status%2FEndpoint%20Assessment%20Organisation%2Fdas-apply-service?repoName=SkillsFundingAgency%2Fdas-apply-service&branchName=master)](https://dev.azure.com/sfa-gov-uk/Digital%20Apprenticeship%20Service/_build/latest?definitionId=1703&repoName=SkillsFundingAgency%2Fdas-apply-service&branchName=master)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SkillsFundingAgency_das-apply-service&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=SkillsFundingAgency_das-apply-service)
+[![License](https://img.shields.io/badge/license-MIT-lightgrey.svg?longCache=true&style=flat-square)](https://github.com/SkillsFundingAgency/das-apply-service/blob/master/LICENSE)
 
-## Description
+This repository contains the RoATP Apply Service front-end (SFA.DAS.ApplyService.Web) and the internal API (SFA.DAS.ApplyService.InternalApi). The project targets .NET 10 and uses Razor Pages for the public UI.
 
-### Developer Setup
+## About
 
-#### Requirements
+RoATP Apply Service lets approved Training Providers register on the RoATP system. The web UI communicates with the internal API and a set of supporting services (QnA API, RoATP service, login service, etc.).
 
-- Install [.NET Core 8 SDK](https://www.microsoft.com/net/download)
-- Install [SQL Server 2017 Developer Edition] or later (https://go.microsoft.com/fwlink/?linkid=853016)
-- Install [SQL Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
-- Install [Azure Storage Emulator](https://go.microsoft.com/fwlink/?linkid=717179&clcid=0x409) (Make sure you are on v5.3)
-- Install [Azure Storage Explorer](http://storageexplorer.com/)
-- Install the editor of your choice:
-  - [Jetbrains Rider](https://www.jetbrains.com/rider/)
-  - [Visual Studio Code](https://code.visualstudio.com/)
-  - [Visual Studio 2019](https://www.visualstudio.com/downloads/) with these workloads:
-    - ASP.NET and web development
+## Developer setup
 
-#### Setup
+These instructions are for developers who want to run and contribute to the service locally.
 
-- Clone this repository
-- Open Visual Studio as an administrator
+### Requirements
+
+- .NET 10 SDK
+- Visual Studio (recommended) or another IDE that supports .NET 10 (VS Code, Rider)
+- SQL Server (2017+ recommended)
+- SQL Server Management Studio (SSMS)
+- Azure storage emulator or Azurite
+- Azure Storage Explorer (optional)
+
+### Clone and open
+
+- Clone the repository.
+- Open the solution in Visual Studio as an administrator.
+
+### Configuration
+
+We use a configuration row in Azure Table Storage for local development. Obtain the local JSON configuration from the das-employer-config repository and add it to your local Configuration table.
+
+- Das Apply Service config: https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-apply-service/SFA.DAS.ApplyService.json
+- GovSignIn config: https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-shared-config/SFA.DAS.Apply.GovSignIn.json
+
+Create a table named `Configuration` in your local storage emulator and add rows with:
+
+- PartitionKey: LOCAL
+- RowKey: SFA.DAS.ApplyService_1.0 (and SFA.DAS.Apply.GovSignIn_1.0 for GovSignIn)
+- Data: {the appropriate JSON from das-employer-config}
+
+Update the `SqlConnectionString` inside the JSON to point to your local database instance.
+
+If you need to enable Sign Up with DfE SignIn locally, expose the internal API using ngrok and set `DfeSignIn.CallbackUri` in the GovSignIn configuration to the ngrok callback URL (https://.../Account/Callback).
+
+### AppSettings.Development.json example
+
+If you prefer file-based configuration for local debug, add `AppSettings.Development.json` to the web project with keys required for local development (example values):
+
+```json
+{
+  "RoatpApply": {
+	"RedisConnectionString": "",
+	"DataProtectionKeysDatabase": "",
+	"UseDfESignIn": false
+  },
+  "RoatpOuterApi": {
+	"BaseUrl": "http://localhost:5335/",
+	"SubscriptionKey": "Key",
+	"PingUrl": "http://localhost:5335/"
+  }
+}
+```
+
+### Running locally
 
 ##### Publish Database
-- Build the solution SFA.DAS.ApplyService.sln
-- Either use Visual Studio's `Publish Database` tool to publish the database project SFA.DAS.ApplyService.Database to name {{database name}} on {{local instance name}}
+- Build the solution `SFA.DAS.ApplyService.sln`
+- Either use Visual Studio's `Publish Database` tool to publish the database project `SFA.DAS.ApplyService.Database` to name {{database name}} on {{local instance name}}
 
-##### Config
+- Web UI
+  - cd `src/SFA.DAS.ApplyService.Web`
+  - `dotnet restore`
+  - `dotnet run`
+  - Open https://localhost:6016
 
-- Grab the das-apply-service configuration json file from [das-employer-config](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-apply-service/SFA.DAS.ApplyService.json)
-- Create a Configuration table in your (Development) local Azure Storage account.
-- Add a row to the Configuration table with fields: PartitionKey: LOCAL, RowKey: SFA.DAS.ApplyService_1.0, Data: {The contents of the local config json file}.
-- Alter the SqlConnectionString value in the json to point to your database.
-- Grab the GovSignIn configuration json file from [das-employer-config](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-shared-config/SFA.DAS.Apply.GovSignIn.json)
-- Create a Configuration table in your (Development) local Azure Storage account.
-- Add a row to the Configuration table with fields: PartitionKey: LOCAL, RowKey: SFA.DAS.Apply.GovSignIn_1.0, Data: {The contents of the local config json file}.
+- Internal API
+  - cd `src/SFA.DAS.ApplyService.InternalApi`
+  - `dotnet restore`
+  - `dotnet run`
 
-##### To run a local copy you will also require 
+You may also need the following services running locally for full functionality:
 
-- [Login Service](https://github.com/SkillsFundingAgency/das-login-service)
-- [QnA API](https://github.com/SkillsFundingAgency/das-qna-api)
-- [RoATP Service](https://github.com/SkillsFundingAgency/das-roatp-service)
+- Login Service: https://github.com/SkillsFundingAgency/das-login-service
+- QnA API: https://github.com/SkillsFundingAgency/das-qna-api
+- RoATP Service: https://github.com/SkillsFundingAgency/das-roatp-service
 
 To use RoATP admin functionality; you will need to have the following projects running:
 
@@ -60,19 +97,6 @@ To use RoATP admin functionality; you will need to have the following projects r
 - [RoATP Gateway](https://github.com/SkillsFundingAgency/das-roatp-gateway)
 - [RoATP Assessor](https://github.com/SkillsFundingAgency/das-roatp-assessor)
 - [RoATP Oversight](https://github.com/SkillsFundingAgency/das-roatp-oversight)
-
-#### Running the code
-
-The default JSON configuration was created to work with dotnet run:
-
-- Navigate to src/SFA.DAS.ApplyService.Web/
-  - run `dotnet restore`
-  - run `dotnet run`
-  - Open https://localhost:6016
-
-- Navigate to src/SFA.DAS.ApplyService.InternalApi/
-  - run `dotnet restore`
-  - run `dotnet run`
 
 #### Sign Up
 
@@ -105,3 +129,11 @@ Once you have filled out an application, you will then submit it for Assessment
 	- Financial Assessment
 	- Blind Assessor & Moderation
 	- Oversight
+
+## Technologies
+
+- .NET 10
+- Razor Pages
+- NUnit, Moq for tests
+
+

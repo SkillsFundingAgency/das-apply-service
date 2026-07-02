@@ -20,14 +20,14 @@ using SFA.DAS.ApplyService.InternalApi.Types.Requests.Gateway;
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
     [Authorize]
-    public class RoatpGatewayController: Controller
+    public class RoatpGatewayController : Controller
     {
         private readonly IGatewayApiChecksService _gatewayApiChecksService;
         private readonly ILogger<RoatpGatewayController> _logger;
         private readonly IMediator _mediator;
         private readonly IFileStorageService _fileStorageService;
 
-        public RoatpGatewayController(ILogger<RoatpGatewayController> logger, IMediator mediator, IGatewayApiChecksService gatewayApiChecksService, IFileStorageService fileStorageService) 
+        public RoatpGatewayController(ILogger<RoatpGatewayController> logger, IMediator mediator, IGatewayApiChecksService gatewayApiChecksService, IFileStorageService fileStorageService)
         {
             _logger = logger;
             _gatewayApiChecksService = gatewayApiChecksService;
@@ -37,10 +37,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         [Route("Gateway/Page/Submit")]
         [HttpPost]
-         public async Task GatewayPageSubmit([FromBody] Types.Requests.UpdateGatewayPageAnswerRequest request)
+        public async Task GatewayPageSubmit([FromBody] Types.Requests.UpdateGatewayPageAnswerRequest request)
         {
-            _logger.LogInformation($"Submitting Gateway page submit for ApplicationId '{request.ApplicationId}' for PageId '{request.PageId}', Status '{request.Status}', " +
-                                   $"Comments '{request.Comments}', Clarification answer '{request.ClarificationAnswer}'");
+            _logger.LogInformation("Submitting Gateway page submit for ApplicationId '{ApplicationId}' for PageId '{PageId}', Status '{Status}', Comments '{Comments}', Clarification answer '{ClarificationAnswer}'",
+                request.ApplicationId, request.PageId, request.Status, request.Comments, request.ClarificationAnswer);
 
             await _mediator.Send(new UpdateGatewayPageAnswerRequest(request.ApplicationId,
                 request.PageId,
@@ -51,36 +51,36 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
 
-         [Route("Gateway/Page/SubmitClarification")]
-         [HttpPost]
-         public async Task GatewayPageSubmitClarification([FromBody] Types.Requests.UpdateGatewayPageAnswerRequest request)
-         {
-             _logger.LogInformation($"Submitting Gateway page submit clarification for ApplicationId '{request.ApplicationId}' for PageId '{request.PageId}', Status '{request.Status}', " +
-                                    $"Comments '{request.Comments}'");
+        [Route("Gateway/Page/SubmitClarification")]
+        [HttpPost]
+        public async Task GatewayPageSubmitClarification([FromBody] Types.Requests.UpdateGatewayPageAnswerRequest request)
+        {
+            _logger.LogInformation("Submitting Gateway page submit clarification for ApplicationId '{ApplicationId}' for PageId '{PageId}', Status '{Status}', Comments '{Comments}'",
+                request.ApplicationId, request.PageId, request.Status, request.Comments);
 
-             await _mediator.Send(new UpdateGatewayPageAnswerClarificationRequest(request.ApplicationId,
-                 request.PageId,
-                 request.Status,
-                 request.Comments,
-                 request.UserId,
-                 request.UserName, request.ClarificationAnswer));
-         }
+            await _mediator.Send(new UpdateGatewayPageAnswerClarificationRequest(request.ApplicationId,
+                request.PageId,
+                request.Status,
+                request.Comments,
+                request.UserId,
+                request.UserName, request.ClarificationAnswer));
+        }
 
 
-         [Route("Gateway/Page/SubmitPostClarification")]
-         [HttpPost]
-         public async Task GatewayPageSubmitPostClarification([FromBody] Types.Requests.UpdateGatewayPageAnswerRequest request)
-         {
-             _logger.LogInformation($"Submitting Gateway page post clarification for ApplicationId '{request.ApplicationId}' for PageId '{request.PageId}', Status '{request.Status}', " +
-                                    $"Comments '{request.Comments}', Clarification answer '{request.ClarificationAnswer}'");
+        [Route("Gateway/Page/SubmitPostClarification")]
+        [HttpPost]
+        public async Task GatewayPageSubmitPostClarification([FromBody] Types.Requests.UpdateGatewayPageAnswerRequest request)
+        {
+            _logger.LogInformation("Submitting Gateway page post clarification for ApplicationId '{ApplicationId}' for PageId '{PageId}', Status '{Status}', Comments '{Comments}', Clarification answer '{ClarificationAnswer}'",
+                request.ApplicationId, request.PageId, request.Status, request.Comments, request.ClarificationAnswer);
 
-             await _mediator.Send(new UpdateGatewayPageAnswerPostClarificationRequest(request.ApplicationId,
-                 request.PageId,
-                 request.Status,
-                 request.Comments,
-                 request.UserId,
-                 request.UserName, request.ClarificationAnswer));
-         }
+            await _mediator.Send(new UpdateGatewayPageAnswerPostClarificationRequest(request.ApplicationId,
+                request.PageId,
+                request.Status,
+                request.Comments,
+                request.UserId,
+                request.UserName, request.ClarificationAnswer));
+        }
 
 
         [HttpPost("Gateway/UpdateGatewayReviewStatusAndComment")]
@@ -105,23 +105,23 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             {
                 return NotFound();
             }
-            
+
             if (application.GatewayReviewStatus == GatewayReviewStatus.New)
             {
                 var gatewayExternalApiCheckDetails =
                     await _gatewayApiChecksService.GetExternalApiCheckDetails(application.ApplicationId);
 
                 await _mediator.Send(new UpdateExternalApiCheckDetailsRequest(application.ApplicationId, gatewayExternalApiCheckDetails, request.UserId, request.UserName));
-                _logger.LogInformation($"Starting Gateway Review for application {application.ApplicationId}");
+                _logger.LogInformation("Starting Gateway Review for application {ApplicationId}", application.ApplicationId);
                 await _mediator.Send(new StartGatewayReviewRequest(application.ApplicationId, request.UserId, request.UserName));
                 // must refresh to get latest information
                 application = await _mediator.Send(new GetApplicationRequest(application.ApplicationId));
             }
 
             var gatewayPage = await _mediator.Send(new GetGatewayPageAnswerRequest(application.ApplicationId, request.PageId));
-            if(gatewayPage is null)
+            if (gatewayPage is null)
             {
-                _logger.LogWarning($"Could not find page details for application {application.ApplicationId} | pageId {request.PageId}");
+                _logger.LogWarning("Could not find page details for application {ApplicationId} | pageId {PageId}", application.ApplicationId, request.PageId);
                 gatewayPage = new GatewayPageAnswer
                 {
                     ApplicationId = application.ApplicationId,
@@ -174,7 +174,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
                 if (!uploadedSuccessfully)
                 {
-                    _logger.LogError($"Unable to upload subcontractor declaration clarification for application: {applicationId} || File name {clarificationFileName}");
+                    _logger.LogError("Unable to upload subcontractor declaration clarification for application: {ApplicationId} || File name {ClarificationFileName}", applicationId, clarificationFileName);
                     return BadRequest();
                 }
                 await _mediator.Send(new AddSubcontractorDeclarationFileUploadRequest(applicationId, clarificationFileName, command.UserId, command.UserName));
@@ -186,17 +186,17 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("/Gateway/SubcontractorDeclarationClarification/{applicationId}/Remove")]
         public async Task<IActionResult> RemoveClarificationFile(Guid applicationId, [FromBody] SubcontractorDeclarationClarificationFileCommand command)
         {
-           
+
             var clarificationFileName = command.FileName;
             var uploadedSuccessfully = await _fileStorageService.DeleteFile(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, RoatpClarificationUpload.SubcontractorDeclarationClarificationFile, clarificationFileName, ContainerType.Gateway, new CancellationToken());
 
             if (!uploadedSuccessfully)
             {
-                _logger.LogError($"Unable to upload subcontractor declaration clarification for application: {applicationId} || File name {clarificationFileName}");
+                _logger.LogError("Unable to delete subcontractor declaration clarification for application: {ApplicationId} || File name {ClarificationFileName}", applicationId, clarificationFileName);
                 return BadRequest();
             }
             await _mediator.Send(new RemoveSubcontractorDeclarationFileRequest(applicationId, clarificationFileName, command.UserId, command.UserName));
-            
+
             return Ok();
         }
 
@@ -208,7 +208,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             var providerRouteName = application?.ApplyData?.ApplyDetails?.ProviderRouteName;
 
-            _logger.LogInformation($"Getting ProviderRouteName for application '{applicationId}' - ProviderRouteName '{providerRouteName}'");
+            _logger.LogInformation("Getting ProviderRouteName for application '{ApplicationId}' - ProviderRouteName '{ProviderRouteName}'", applicationId, providerRouteName);
 
             return providerRouteName;
         }

@@ -14,7 +14,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.IdentityModel.Logging;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Services.Assessor;
@@ -28,6 +27,7 @@ using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Authorization;
 using SFA.DAS.ApplyService.Web.Configuration;
+using SFA.DAS.ApplyService.Web.Extensions;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.FeatureToggles;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
@@ -79,7 +79,8 @@ namespace SFA.DAS.ApplyService.Web
             );
 
             _configuration = config.Build();
-            _configService = _configuration.GetSection(nameof(ApplyConfig)).Get<ApplyConfig>();
+            _configService = new ApplyConfig();
+            _configuration.Bind(_configService);
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -134,11 +135,14 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddLogging(builder =>
             {
-                builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
-                builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
+                builder.AddFilter(string.Empty, LogLevel.Information);
+                builder.AddFilter("Microsoft", LogLevel.Information);
             });
 
-            services.AddApplicationInsightsTelemetry();
+            if (!_hostingEnvironment.IsDevelopment())
+            {
+                services.AddTelemetryRegistration((IConfigurationRoot)_configuration);
+            }
 
             services.AddOptions();
 
@@ -306,7 +310,7 @@ namespace SFA.DAS.ApplyService.Web
 
                 var httpClient = string.IsNullOrWhiteSpace(apiConfiguration.ClientId)
                     ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(apiConfiguration)).Build()
-                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(apiConfiguration)).Build();
+                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureActiveDirectoryBearerTokenGenerator(apiConfiguration)).Build();
 
                 return new NotificationsApi(httpClient, apiConfiguration);
             });

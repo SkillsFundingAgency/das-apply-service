@@ -9,7 +9,7 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Appeals.Commands.UploadAppealFile
 {
-    public class UploadAppealFileCommandHandler : IRequestHandler<UploadAppealFileCommand>
+    public class UploadAppealFileCommandHandler : IRequestHandler<UploadAppealFileCommand, Unit>
     {
         private readonly IAppealFileRepository _appealFileRepository;
         private readonly IAuditService _auditService;
@@ -50,10 +50,10 @@ namespace SFA.DAS.ApplyService.Application.Appeals.Commands.UploadAppealFile
                 appealFile.UserId = request.UserId;
                 appealFile.UserName = request.UserName;
                 appealFile.CreatedOn = DateTime.UtcNow;
-                
+
                 _appealFileRepository.Update(appealFile);
             }
-             
+
             _auditService.Save();
 
             return await Task.FromResult(Unit.Value);

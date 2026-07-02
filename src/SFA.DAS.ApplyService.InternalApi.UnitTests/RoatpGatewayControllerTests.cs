@@ -49,7 +49,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             {
 
                 cfg.AddProfile<UkrlpCharityCommissionProfile>();
+                cfg.AddProfile<CharityTrusteeProfile>();
                 cfg.AddProfile<UkrlpCompaniesHouseProfile>();
+                cfg.AddProfile<UkrlpDirectorInformationProfile>();
+                cfg.AddProfile<UkrlpPersonSignificantControlInformationProfile>();
             });
 
             Mapper.AssertConfigurationIsValid();

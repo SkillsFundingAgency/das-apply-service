@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Application.Behaviours
             _validators = validators;
         }
 
-        public Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+        public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             var failures = _validators
                 .Select(validator => validator.Validate(request))

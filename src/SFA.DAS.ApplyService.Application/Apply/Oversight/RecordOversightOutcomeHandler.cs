@@ -37,7 +37,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
 
         public async Task<bool> Handle(RecordOversightOutcomeCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Recording Oversight review status of {request.OversightStatus} for application Id {request.ApplicationId}");
+            _logger.LogInformation("Recording Oversight review status of {OversightStatus} for application Id {ApplicationId}", request.OversightStatus, request.ApplicationId);
 
             _auditService.StartTracking(UserAction.RecordOversightOutcome, request.UserId, request.UserName);
 
@@ -142,8 +142,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Oversight
                     application.ApplicationStatus = ApplicationStatus.Successful;
                     break;
                 case OversightReviewStatus.Unsuccessful:
-                    application.ApplicationStatus = application.GatewayReviewStatus == GatewayReviewStatus.Rejected 
-                        ? ApplicationStatus.Rejected : 
+                    application.ApplicationStatus = application.GatewayReviewStatus == GatewayReviewStatus.Rejected
+                        ? ApplicationStatus.Rejected :
                         ApplicationStatus.Unsuccessful;
                     break;
             }

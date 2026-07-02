@@ -6,7 +6,7 @@ using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class CreateEmptyAssessorReviewHandler : IRequestHandler<CreateEmptyAssessorReviewRequest>
+    public class CreateEmptyAssessorReviewHandler : IRequestHandler<CreateEmptyAssessorReviewRequest, Unit>
     {
         private readonly IAssessorRepository _repository;
         private readonly ILogger<CreateEmptyAssessorReviewHandler> _logger;
@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 
         public async Task<Unit> Handle(CreateEmptyAssessorReviewRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"CreateEmptyAssessorReview for ApplicationId '{request.ApplicationId}'");
+            _logger.LogInformation("CreateEmptyAssessorReview for ApplicationId '{ApplicationId}'", request.ApplicationId);
             await _repository.CreateEmptyAssessorReview(request.ApplicationId, request.AssessorUserId, request.AssessorUserName, request.PageReviewOutcomes);
             return Unit.Value;
         }

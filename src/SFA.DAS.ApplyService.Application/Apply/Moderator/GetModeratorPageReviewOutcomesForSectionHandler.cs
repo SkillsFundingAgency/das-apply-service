@@ -1,9 +1,9 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Domain.Apply.Moderator;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Moderator
@@ -21,8 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 
         public async Task<List<ModeratorPageReviewOutcome>> Handle(GetModeratorPageReviewOutcomesForSectionRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"GetModeratorPageReviewOutcomesForSection for ApplicationId '{request.ApplicationId}' - " +
-                                                    $"SequenceNumber '{request.SequenceNumber}' - SectionNumber '{request.SectionNumber}'");
+            _logger.LogInformation("GetModeratorPageReviewOutcomesForSection for ApplicationId '{ApplicationId}' - SequenceNumber '{SequenceNumber}' - SectionNumber '{SectionNumber}'", request.ApplicationId, request.SequenceNumber, request.SectionNumber);
 
             var moderatorPageReviewOutcomes = await _repository.GetModeratorPageReviewOutcomesForSection(request.ApplicationId,
                                                         request.SequenceNumber,

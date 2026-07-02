@@ -49,7 +49,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             if (ukrlpResults == null)
             {
                 var message = $"Unable to retrieve UKRLP details for application {applicationId}";
-                _logger.LogError(message);
+                _logger.LogError("Unable to retrieve UKRLP details for application {ApplicationId}", applicationId);
                 throw new ServiceUnavailableException(message);
             }
 
@@ -60,7 +60,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             if (roatpStatus == null)
             {
                 var message = $"Unable to retrieve APAR register details for application {applicationId}";
-                _logger.LogError(message);
+                _logger.LogError("Unable to retrieve APAR register details for application {ApplicationId}", applicationId);
                 throw new ServiceUnavailableException(message);
             }
 
@@ -93,14 +93,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             catch (Exception ex)
             {
                 var message = $"Unable to retrieve results from companies house for company number {companyNumber}";
-                _logger.LogError(message, ex);
+                _logger.LogError(ex, "Unable to retrieve results from companies house for company number {CompanyNumber}", companyNumber);
                 throw new ServiceUnavailableException(message);
             }
 
             if (string.IsNullOrEmpty(companyDetails?.Response?.CompanyName))
             {
                 var message = $"Unable to retrieve Companies House details for company number {companyNumber}";
-                _logger.LogError(message);
+                _logger.LogError("Unable to retrieve Companies House details for company number {CompanyNumber}", companyNumber);
                 throw new ServiceUnavailableException(message);
             }
             applyGatewayDetails.CompaniesHouseDetails = Mapper.Map<CompaniesHouseSummary>(companyDetails.Response);
@@ -125,7 +125,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             catch (Exception ex)
             {
                 var message = $"Unable to retrieve Charity Commission details for charity number {charityNumber} based on charity number from uklrp: {charityNumberFromUkrlp}";
-                _logger.LogError(ex, message);
+                _logger.LogError(ex, "Unable to retrieve Charity Commission details for charity number {CharityNumber} based on charity number from UKRLP: {CharityNumberFromUkrlp}", charityNumber, charityNumberFromUkrlp);
                 throw new ServiceUnavailableException(message);
             }
         }
