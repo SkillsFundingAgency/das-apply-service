@@ -420,6 +420,9 @@
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('backEndAccessRestrictions')]"
+                    },
+                    "vnetRouteAllEnabled": {
+                        "value": "[parameters('vnetRouteAllEnabled')]"
                     }
                 }
             }
