@@ -33,5 +33,7 @@ namespace SFA.DAS.ApplyService.Configuration
         public string ProvidersExemptedFromHavingTrustees { get; set; }
         //<inherit-doc/>
         public bool UseGovSignIn { get; set; }
+        //<inherit-doc/>
+        public string CdnBaseUrl { get; set; }
     }
 }

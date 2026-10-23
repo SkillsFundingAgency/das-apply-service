@@ -32,5 +32,10 @@ namespace SFA.DAS.ApplyService.Configuration
         /// Gets or Sets the UseGovSignIn value.
         /// </summary>
         bool UseGovSignIn { get; set; }
+
+        /// <summary>
+        /// Base URL of the CDN that serves shared front-end assets (CSS, images, fonts).
+        /// </summary>
+        string CdnBaseUrl { get; set; }
     }
 }
