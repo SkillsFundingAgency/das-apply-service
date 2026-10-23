@@ -106,10 +106,6 @@
         "vnetRouteAllEnabled": {
             "type": "bool",
             "defaultValue": false
-        },
-        "cdnBaseUrl": {
-            "type": "string",
-            "defaultValue": "https://das-prd-frnt-end.azureedge.net"
         }
     },
     "variables": {
@@ -329,10 +325,6 @@
                                 {
                                     "name": "ProvidersExemptedFromHavingTrustees",
                                     "value": "[parameters('ProvidersExemptedFromHavingTrustees')]"
-                                },
-                                {
-                                    "name": "CdnBaseUrl",
-                                    "value": "[parameters('cdnBaseUrl')]"
                                 }
                             ]
                         }
