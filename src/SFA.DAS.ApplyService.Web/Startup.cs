@@ -125,11 +125,17 @@ namespace SFA.DAS.ApplyService.Web
                 options.RequestCultureProviders.Clear();
             });
 
-            services.AddMvc(options =>
+            var mvcBuilder = services.AddMvc(options =>
             {
                 options.Filters.Add<FeatureToggleFilter>();
             })
             .AddSessionStateTempDataProvider();
+
+            if (_hostingEnvironment.IsDevelopment())
+            {
+                // Recompile Razor views on change so edits show on browser refresh without a rebuild
+                mvcBuilder.AddRazorRuntimeCompilation();
+            }
 
             services.AddFluentValidationAutoValidation().AddValidatorsFromAssemblyContaining<ManagementHierarchyValidator>();
 
@@ -370,7 +376,7 @@ namespace SFA.DAS.ApplyService.Web
             app.UseSession();
             app.UseRequestLocalization();
             app.UseStatusCodePagesWithReExecute("/Home/error/{0}");
-            app.UseSecurityHeaders();
+            app.UseSecurityHeaders(_configService.CdnBaseUrl);
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();
